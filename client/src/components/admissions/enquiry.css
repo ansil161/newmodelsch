@@ -1,0 +1,451 @@
+/* ==========================================================================
+   THE ENQUIRY FORM
+   --------------------------------------------------------------------------
+   The one place on the site being asked to convert, so everything around it is
+   deliberately empty: no photography, no second call to action, no reasons to
+   choose the school. A reader who has reached this section has decided.
+
+   The form's behaviour is unchanged from the version this replaced - four
+   steps validated one at a time, a draft kept on the device, the announcements
+   - because all of that was right. What changed is that it now sits on the
+   paper the rest of the site is printed on rather than on a card floating over
+   a wash, and the fields look like fields rather than like a component library.
+   ========================================================================== */
+
+.admissions {
+  position: relative;
+  background: var(--sand);
+  overflow: clip;
+}
+
+/* The old radial wash. It was a lit backdrop behind a form, which is the
+   effect this whole redesign exists to remove. */
+.admissions__wash {
+  display: none;
+}
+
+.admissions__grid {
+  display: grid;
+  gap: clamp(36px, 4vw, 72px);
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   The aside
+   -------------------------------------------------------------------------- */
+.admissions__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.admissions__title {
+  max-width: 13ch;
+  margin-top: 4px;
+}
+
+.admissions__lead {
+  font-size: var(--t-lead);
+  color: var(--ink-2);
+  line-height: 1.5;
+  max-width: 38ch;
+}
+
+.admissions__assurances {
+  display: grid;
+  gap: 11px;
+  margin-top: 8px;
+}
+
+.admissions__assurances li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.admissions__assure-icon {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun-soft);
+  color: var(--sun-deep);
+}
+
+.admissions__call {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 15px 20px;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
+}
+
+.admissions__call:hover {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  transform: translateY(-2px);
+}
+
+.admissions__call-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.admissions__call-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: auto;
+}
+
+.admissions__call-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.admissions__call-value {
+  font-size: var(--t-body);
+  font-weight: 560;
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   The form
+   -------------------------------------------------------------------------- */
+.admissions__form {
+  background: var(--paper);
+  border-radius: var(--r-lg);
+  padding: clamp(24px, 3.4vw, 44px);
+  box-shadow: var(--e-2);
+}
+
+.admissions__progress {
+  padding-bottom: clamp(20px, 2.4vw, 28px);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.admissions__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-bottom: 18px;
+}
+
+.admissions__step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.admissions__step-index {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-size: 0.625rem;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.admissions__step.is-active {
+  color: var(--ink);
+}
+
+.admissions__step.is-active .admissions__step-index {
+  background: var(--ink);
+  color: var(--ivory);
+  box-shadow: none;
+}
+
+.admissions__step.is-done {
+  color: var(--sun-deep);
+}
+
+.admissions__step.is-done .admissions__step-index {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: none;
+}
+
+.admissions__bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.admissions__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--sun);
+  transform-origin: left center;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.admissions__fieldset {
+  display: grid;
+  gap: 18px;
+}
+
+.admissions__legend {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 6px;
+  max-width: 22ch;
+}
+
+.admissions__note {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.55;
+  margin-top: -6px;
+  max-width: 44ch;
+}
+
+/* The class picker. Thirteen options, so it is a set of toggles rather than a
+   select: a parent can see every year the school offers at once, which is
+   itself part of the answer. */
+.admissions__grades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admissions__grade {
+  padding: 10px 16px 11px;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.admissions__grade:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.admissions__grade.is-active {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Fields
+   --------------------------------------------------------------------------
+   The floating label is kept because it is genuinely good here: the label
+   never leaves, so a parent halfway down the form can still see what each
+   filled field is. The placeholder is a single space, which is what lets
+   `:placeholder-shown` drive the lift without JavaScript.
+   -------------------------------------------------------------------------- */
+.field {
+  position: relative;
+}
+
+.field__input {
+  width: 100%;
+  padding: 24px 16px 11px;
+  border-radius: var(--r-ctl);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--t-body);
+  transition: border-color var(--d-state) var(--ease-out), background var(--d-state) var(--ease-out);
+}
+
+.field__input:hover {
+  border-color: var(--line-strong);
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.field__label {
+  position: absolute;
+  left: 17px;
+  top: 17px;
+  font-size: var(--t-body);
+  color: var(--ink-3);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform var(--d-state) var(--ease-out), color var(--d-state) var(--ease-out);
+}
+
+.field__input:focus + .field__label,
+.field__input:not(:placeholder-shown) + .field__label {
+  transform: translateY(-11px) scale(0.72);
+  color: var(--ink-3);
+}
+
+.field__optional {
+  color: var(--ink-4);
+}
+
+.field.has-error .field__input {
+  border-color: var(--err);
+}
+
+.field__error,
+.admissions__error {
+  display: block;
+  margin-top: 7px;
+  font-size: var(--t-small);
+  color: var(--err);
+}
+
+/* Date inputs render their own text, so the floating label has to start
+   lifted or it sits on top of `dd/mm/yyyy`. */
+.field__input[type='date'] + .field__label {
+  transform: translateY(-11px) scale(0.72);
+}
+
+.admissions__summary {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 0;
+  padding: 18px 20px;
+  background: var(--sun-soft);
+  border-radius: var(--r-sm);
+}
+
+.admissions__summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: var(--t-small);
+}
+
+.admissions__summary dt {
+  color: var(--sun-deep);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admissions__summary dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 540;
+  text-align: right;
+}
+
+.admissions__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(24px, 3vw, 34px);
+}
+
+.admissions__back {
+  margin-right: auto;
+  order: -1;
+}
+
+.admissions__draft {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+.admissions__draft svg {
+  flex: none;
+  color: var(--ink-4);
+}
+
+/* --------------------------------------------------------------------------
+   Done
+   -------------------------------------------------------------------------- */
+.admissions__done {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding-block: clamp(16px, 2vw, 28px);
+}
+
+.admissions__done-mark {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.admissions__done-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 20ch;
+}
+
+.admissions__done-copy {
+  font-size: var(--t-body);
+  color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+@media (min-width: 900px) {
+  .admissions__grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+
+  .admissions__aside {
+    position: sticky;
+    top: calc(var(--nav-h) + 5vh);
+  }
+}

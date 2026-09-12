@@ -1,0 +1,820 @@
+@import './variables.css';
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  font-weight: 400;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+figure,
+blockquote,
+fieldset {
+  margin: 0;
+}
+
+fieldset {
+  padding: 0;
+  border: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sun-deep);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+::selection {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+/* ==========================================================================
+   Layout primitives
+   --------------------------------------------------------------------------
+   The grid is 12 columns with a large gutter, and it is meant to be broken.
+   Most compositions on this site sit on it asymmetrically - 7/5, 5/7, 4/8 -
+   and several deliberately overhang it. `.bleed` is the escape hatch for the
+   ones that run to the edge of the viewport.
+   ========================================================================== */
+.wrap {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wrap--narrow {
+  max-width: var(--container-narrow);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2.2vw, 40px);
+  row-gap: clamp(28px, 4vw, 64px);
+}
+
+/* Full-viewport-width child of a `.wrap`. */
+.bleed {
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.section--tight {
+  padding-block: var(--section-y-tight);
+}
+
+.section--navy {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.section--sand {
+  background: var(--sand);
+}
+
+.section--paper {
+  background: var(--paper);
+}
+
+/* Legacy container name, kept so an un-rewritten stylesheet still lays out. */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ==========================================================================
+   Typography
+   --------------------------------------------------------------------------
+   `.ed-*` is the serif: statements the page is making. Everything else -
+   every label, every button, every sentence a parent has to read to get
+   something done - is the grotesque. That division is the design.
+   ========================================================================== */
+.ed-mega,
+.ed-hero,
+.ed-h1,
+.ed-h2,
+.ed-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 144;
+  line-height: 0.94;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.ed-mega {
+  font-size: var(--t-mega);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+}
+
+.ed-hero {
+  font-size: var(--t-hero);
+  line-height: 0.9;
+  letter-spacing: -0.032em;
+}
+
+.ed-h1 {
+  font-size: var(--t-h1);
+  line-height: 0.96;
+  letter-spacing: -0.028em;
+}
+
+.ed-h2 {
+  font-size: var(--t-h2);
+  line-height: 1;
+  letter-spacing: -0.022em;
+}
+
+.ed-h3 {
+  font-size: var(--t-h3);
+  line-height: 1.12;
+  letter-spacing: -0.014em;
+}
+
+/* The italic of the same face. Emphasis inside a serif headline is this and
+   never a second family - a sans word dropped into a serif line is the move
+   to avoid. */
+.ed-em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Functional headings: a card title, a form legend, a table header. These are
+   the grotesque, because they are read to be used rather than to be heard. */
+.fn-h3,
+.fn-h4 {
+  font-family: var(--font-body);
+  font-weight: 560;
+  line-height: 1.18;
+  letter-spacing: -0.014em;
+  color: var(--ink);
+}
+
+.fn-h3 {
+  font-size: var(--t-h3);
+}
+
+.fn-h4 {
+  font-size: var(--t-h4);
+}
+
+.lead {
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+
+.body-text {
+  font-size: var(--t-body);
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+
+.body-text + .body-text {
+  margin-top: 1.1em;
+}
+
+/* Figures. Mono so a column of them aligns on the digit. */
+.stat-num {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  color: var(--ink);
+}
+
+/* On navy, every one of these inverts. Declared once here rather than
+   re-declared in forty section stylesheets. */
+.section--navy .ed-mega,
+.section--navy .ed-hero,
+.section--navy .ed-h1,
+.section--navy .ed-h2,
+.section--navy .ed-h3,
+.section--navy .fn-h3,
+.section--navy .fn-h4,
+.section--navy .stat-num,
+.on-navy .ed-h1,
+.on-navy .ed-h2,
+.on-navy .ed-h3,
+.on-navy .fn-h3,
+.on-navy .fn-h4,
+.on-navy .stat-num {
+  color: var(--on-navy);
+}
+
+.section--navy .lead,
+.section--navy .body-text,
+.on-navy .lead,
+.on-navy .body-text {
+  color: var(--on-navy-2);
+}
+
+/* ==========================================================================
+   The sticker
+   --------------------------------------------------------------------------
+   The section label. It is a torn paper tag, rotated a degree or two, sitting
+   on the line above a headline or overlapping the headline itself.
+
+   It replaced a rule-plus-uppercase-mono eyebrow, which is the correct and
+   invisible solution. This one is the school's voice: the thing a teacher
+   would have stuck on the noticeboard. The rotation is small and the corners
+   are cut rather than rounded, so it reads as cut paper and not as a chip in
+   a design system.
+
+   Rotation is a custom property so a page can alternate the direction down a
+   column and the stickers do not all lean the same way.
+   ========================================================================== */
+.sticker {
+  --tilt: -2.2deg;
+  display: inline-block;
+  padding: 7px 14px 8px;
+  background: var(--sun);
+  color: var(--on-sun);
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: rotate(var(--tilt));
+  /* Cut corners rather than rounded: paper torn off a roll of tape. */
+  clip-path: polygon(0 4px, 4px 0, calc(100% - 3px) 1px, 100% 5px, calc(100% - 1px) calc(100% - 4px), calc(100% - 5px) 100%, 4px calc(100% - 1px), 1px calc(100% - 5px));
+  white-space: nowrap;
+}
+
+.sticker--blue { background: var(--blue); color: var(--paper); }
+.sticker--green { background: var(--green); color: var(--paper); }
+.sticker--coral { background: var(--coral); color: var(--paper); }
+.sticker--ink { background: var(--ink); color: var(--ivory); }
+.sticker--paper { background: var(--paper); color: var(--ink); }
+.sticker--right { --tilt: 2deg; }
+
+/* ==========================================================================
+   The marker
+   --------------------------------------------------------------------------
+   A word inside a headline, drawn over rather than coloured. Two treatments,
+   and they are not interchangeable:
+
+     .mark      a highlighter sweep behind the word. The word stays ink, so
+                the sentence still reads at speed.
+     .mark-ul   a hand-drawn underline beneath it. Used where a highlighter
+                would fill too much of the line - a long phrase, or a word
+                sitting over a photograph.
+
+   Both are drawn with the sweep already at full width and animated by
+   `--mark-scale`, which the reveal animation drives from 0 to 1. That way an
+   unanimated page (reduced motion, JS off) shows the finished mark rather
+   than an empty one.
+   ========================================================================== */
+/* THE SWEEP IS A BACKGROUND, FOR THE SAME REASON THE UNDERLINE IS.
+
+   This began as an absolutely-positioned `::before` behind an inline element,
+   and it looked right on a one-word mark and broke on everything else: an
+   absolutely-positioned pseudo-element on an inline box only covers the first
+   line fragment, so the fix was `white-space: nowrap` - which then pushed a
+   marked phrase straight out of its own column and clipped it.
+
+   As a background image it is inline, it wraps, and `box-decoration-break:
+   clone` gives every line fragment its own sweep with its own ends. Which is
+   also what a highlighter actually does across two lines of a book. */
+.mark {
+  display: inline;
+  color: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23ffc53d'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 62%;
+  background-size: calc(var(--mark-scale, 1) * 100%) 0.82em;
+  padding-inline: 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.mark--blue {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dbe6f6'/%3E%3C/svg%3E");
+}
+
+.mark--green {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dcebe1'/%3E%3C/svg%3E");
+}
+
+.mark--coral {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23fbe1d9'/%3E%3C/svg%3E");
+}
+
+/* THE UNDERLINE IS A BACKGROUND, NOT A PSEUDO-ELEMENT.
+
+   The obvious build is an absolutely-positioned `::after` on an
+   `inline-block`, and that is what this was. It breaks a headline: an
+   inline-block is a single unbreakable box that the line breaker is allowed
+   to break *after*, so a marked phrase followed by a comma puts the comma
+   alone at the start of the next line. Which is exactly what it did.
+
+   A background image keeps the element `inline`, so it wraps like the words
+   either side of it and punctuation stays attached. The stroke is an SVG so
+   it can actually wobble - a `border-bottom` cannot - and the reveal animates
+   `background-size` through the same `--mark-scale` property the other two
+   marks use, so all three are driven by one line in `draw()`. */
+.mark-ul {
+  display: inline;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%23ffc53d' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 88%;
+  background-size: calc(var(--mark-scale, 1) * 100%) 0.15em;
+  padding-bottom: 0.1em;
+}
+
+/* A circled word - the third mark, used once or twice a page at most. */
+/* THE RING IS A DRAWN STROKE, NOT A BORDER.
+
+   The first version was a `border` on a pseudo-element with an asymmetric
+   `border-radius`, which is the usual recipe and does not survive contact with
+   real type: the border thins to nothing where the radius is tightest, so at
+   headline size the "circle" renders as two disconnected arcs with gaps at the
+   top and bottom. It looked broken, because it was.
+
+   This is a single hand-drawn ellipse - one stroke, overshooting itself at the
+   join the way a pen does - as a background image. It has an even weight all
+   the way round, it scales with the type, and it animates through the same
+   `--mark-scale` property as the other two marks.
+
+   It stays `inline-block` and stays reserved for a single word: a circle drawn
+   around a phrase that wraps is not a circle. */
+.mark-ring {
+  display: inline-block;
+  padding-inline: 0.2em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%23ffc53d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: calc(var(--mark-scale, 1) * 100%) 100%;
+}
+
+/* ==========================================================================
+   Figures
+   --------------------------------------------------------------------------
+   Every photograph on the site goes through one of these. The shape carries
+   meaning - see the shape block in variables.css - and the reveal is a clip
+   rather than a fade, because a photograph that fades up reads as a slide
+   transition and one that unmasks reads as being printed.
+   ========================================================================== */
+.fig {
+  position: relative;
+  overflow: hidden;
+  background: var(--sand);
+  isolation: isolate;
+}
+
+.fig img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The scale-down entrance. GSAP drives it from 1.08; the resting value is
+     here so a non-animated render is not permanently zoomed. */
+  transform: scale(1);
+  will-change: transform;
+}
+
+.fig--arch { border-radius: var(--r-arch); }
+.fig--blob { border-radius: var(--r-blob); }
+.fig--blob-2 { border-radius: var(--r-blob-2); }
+.fig--frame { border-radius: var(--r-frame); }
+.fig--round { border-radius: 50%; }
+.fig--square { border-radius: 0; }
+
+/* Aspect helpers, so a figure never collapses before its image loads and the
+   page does not relayout underneath a ScrollTrigger. */
+.fig--portrait { aspect-ratio: 3 / 4; }
+.fig--tall { aspect-ratio: 4 / 6; }
+.fig--square-ar { aspect-ratio: 1 / 1; }
+.fig--landscape { aspect-ratio: 4 / 3; }
+.fig--wide { aspect-ratio: 16 / 10; }
+.fig--cinema { aspect-ratio: 21 / 9; }
+
+/* Hover. A photograph that is a link zooms slightly; one that is not, does
+   not. The distinction is the whole point of a hover state. */
+.fig--hover img {
+  transition: transform 0.9s var(--ease-out);
+}
+
+.fig--hover:hover img,
+a:hover .fig--hover img {
+  transform: scale(1.05);
+}
+
+/* The caption that sits on a figure rather than under it. */
+.fig-note {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  padding: 6px 12px 7px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.04em;
+  border-radius: var(--r-ctl);
+  box-shadow: var(--e-1);
+}
+
+/* ==========================================================================
+   Buttons
+   --------------------------------------------------------------------------
+   Tactile: the fill wipes up from the bottom edge on hover and the whole
+   control drops a hair on press. Squared, per the shape rule.
+   ========================================================================== */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px 32px;
+  border-radius: var(--r-ctl);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 560;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  white-space: nowrap;
+  transition: color var(--d-state) var(--ease-out), transform var(--d-tap) var(--ease-out);
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translateY(101%);
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.btn:hover::after {
+  transform: translateY(0);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn__label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+.btn-primary::after {
+  background: var(--sun);
+}
+
+.btn-primary:hover {
+  color: var(--on-sun);
+}
+
+.btn-sun {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.btn-sun::after {
+  background: var(--ink);
+}
+
+.btn-sun:hover {
+  color: var(--ivory);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+.btn-secondary::after {
+  background: var(--ink);
+}
+
+.btn-secondary:hover {
+  color: var(--ivory);
+}
+
+.on-navy .btn-secondary,
+.section--navy .btn-secondary {
+  color: var(--on-navy);
+  box-shadow: inset 0 0 0 1.5px var(--line-navy);
+}
+
+.on-navy .btn-secondary::after,
+.section--navy .btn-secondary::after {
+  background: var(--sun);
+}
+
+.on-navy .btn-secondary:hover,
+.section--navy .btn-secondary:hover {
+  color: var(--on-sun);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled::after {
+  transform: translateY(101%);
+}
+
+/* The text link with an animated rule. The rule wipes out to the right and
+   back in from the left, so it reads as being drawn rather than as a colour
+   change. */
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 540;
+  color: var(--ink);
+  cursor: pointer;
+  padding-bottom: 3px;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: currentColor;
+  transform-origin: right center;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.link:hover::after {
+  transform: scaleX(0);
+  transform-origin: right center;
+}
+
+.link:hover::before {
+  transform: scaleX(1);
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: var(--sun-deep);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out) 0.12s;
+}
+
+.link svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.link:hover svg {
+  transform: translateX(5px);
+}
+
+.on-navy .link::before,
+.section--navy .link::before {
+  background: var(--sun);
+}
+
+/* ==========================================================================
+   Small furniture
+   ========================================================================== */
+
+/* The mono metadata line: a date, a location, a count. */
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 450;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.on-navy .meta,
+.section--navy .meta {
+  color: var(--on-navy-3);
+}
+
+/* The oversized chapter numeral that opens a section or a panel. */
+.numeral {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 400;
+  font-size: var(--t-numeral);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  opacity: 0.14;
+  user-select: none;
+}
+
+.numeral--sun {
+  color: var(--sun-deep);
+  opacity: 0.28;
+}
+
+/* A hairline that the reader's own scroll draws across the column. */
+.rule {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+  margin: 0;
+  transform-origin: left center;
+}
+
+.rule--navy {
+  background: var(--line-navy);
+}
+
+/* The pill that carries a time, a class, an age band. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px 9px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.chip--sun {
+  background: var(--sun-soft);
+  box-shadow: none;
+  color: var(--sun-deep);
+}
+
+.chip--ink {
+  background: var(--ink);
+  box-shadow: none;
+  color: var(--ivory);
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: var(--z-overlay);
+  padding: 12px 20px;
+  background: var(--ink);
+  color: var(--ivory);
+  border-radius: var(--r-ctl);
+  transform: translateY(-200%);
+  transition: transform var(--d-state);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* SplitText scaffolding. GSAP's `mask` option inserts a wrapper per line;
+   these keep clipped type from collapsing its line box or eating descenders. */
+.split-line,
+.split-word,
+.split-char {
+  will-change: transform;
+}
+
+.split-word { padding-bottom: 0.06em; }
+.split-line { padding-bottom: 0.12em; }
+
+/* Loading / scroll-lock states. */
+html.is-loading,
+html.is-locked {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   Everything the site animates has a resting state that is the finished
+   state, so switching motion off leaves a complete page rather than a page
+   waiting to be revealed. The one thing that needs saying explicitly is the
+   marks, which are driven by a custom property rather than by a transition.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .mark,
+  .mark-ul,
+  .mark-ring {
+    --mark-scale: 1 !important;
+  }
+}

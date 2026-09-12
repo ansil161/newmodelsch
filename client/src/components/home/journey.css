@@ -1,0 +1,408 @@
+/* ==========================================================================
+   07 - THE STUDENT JOURNEY
+   --------------------------------------------------------------------------
+   A near-black band, a claim set large down the left of it, and five sheets
+   of ivory paper fed up the right.
+
+   THE GROUND IS NEUTRAL, NOT NAVY, AND THAT IS THE POINT
+
+   Every other dark band on this site is `--navy-deep`. This one is a warm
+   neutral black, because the section immediately above it (Campus) is navy
+   and the section immediately below it (Voices) is navy too. Three navy
+   bands in a row read as one very long band with the page furniture
+   changing; a neutral black between them reads as a different kind of page -
+   which is what it is. It is the only place on the site this colour appears.
+
+   THE RESTING STATE IS THE FINISHED STATE
+
+   Below 900px, and at any width under reduced motion, there is no pin and no
+   feed. The markup is what it already is - five stages down the page, each
+   with its photograph and its sheet - and nothing captures the scroll.
+   ========================================================================== */
+
+.jr {
+  /* Warm neutral black. Measured against the reference's #1e1e1e and warmed
+     by two points of red so it belongs to the same light as the ivory it
+     carries. */
+  --jr-ground: #1b1a19;
+  --jr-ink: #f4f1e8;
+  --jr-ink-2: #9d9a94;
+  --jr-ink-3: #6e6b66;
+
+  position: relative;
+  padding-block: 0;
+  background: var(--jr-ground);
+  color: var(--jr-ink);
+  isolation: isolate;
+
+  /* NO `overflow`, `filter`, `transform` or `contain` on this element.
+     ScrollTrigger pins it with `position: fixed`, and any of those would make
+     it the containing block for its own fixed positioning - a pin that will
+     not hold still. The sheets are clipped by `.jr__stage`, which is inside
+     the pin rather than around it. */
+}
+
+/* --------------------------------------------------------------------------
+   The stage
+   -------------------------------------------------------------------------- */
+.jr__inner {
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   The claim
+   --------------------------------------------------------------------------
+   Set in the grotesque rather than in the display serif, which is the one
+   place on the site a statement is not in Fraunces.
+
+   It is deliberate and it is narrow: the reference for this section is a
+   single enormous line of clean sans, and at this size - a quarter of the
+   screen tall, ranged left against a black field - the serif's high contrast
+   starts to sparkle rather than sit. The sheet on the right keeps Fraunces,
+   so the publication's own voice is still in the section; it is just on the
+   paper rather than on the wall.
+   -------------------------------------------------------------------------- */
+.jr__eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--jr-ink-2);
+}
+
+.jr__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--jr-ink);
+}
+
+.jr__lead {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--t-small);
+  line-height: 1.62;
+  color: var(--jr-ink-2);
+}
+
+.jr__span {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--jr-ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   The deck
+   -------------------------------------------------------------------------- */
+.jr__deck {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jr-card {
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   The plate
+   --------------------------------------------------------------------------
+   The photograph behind each sheet. Monochrome, because five colour
+   photographs behind five ivory panels is five different colour temperatures
+   arguing with one warm one - and because the picture here is a texture the
+   sheet sits on rather than the subject of the frame.
+   -------------------------------------------------------------------------- */
+.jr-card__plate {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-frame);
+  background: #2a2826;
+}
+
+.jr-card__plate img {
+  display: block;
+  width: 100%;
+  /* Taller than its frame and pulled up by half the surplus, so the parallax
+     has material to travel through and neither edge can be exposed. */
+  height: 118%;
+  margin-top: -9%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.04) brightness(0.94);
+}
+
+/* --------------------------------------------------------------------------
+   The sheet
+   --------------------------------------------------------------------------
+   Ivory paper with a dotted rule ruled inside its own edge - the detail that
+   makes it read as a printed card rather than as a rounded div. The rule is
+   a child element rather than a second border on the sheet, because a border
+   and an outline would both have to share the sheet's own radius, and the
+   inset rule needs a tighter one.
+   -------------------------------------------------------------------------- */
+.jr-card__sheet {
+  position: relative;
+  display: grid;
+  background: var(--ivory);
+  color: var(--ink);
+}
+
+.jr-card__rule {
+  position: absolute;
+  border: 1px dashed rgba(17, 23, 38, 0.28);
+  pointer-events: none;
+}
+
+.jr-card__no,
+.jr-card__cat,
+.jr-card__when {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.jr-card__no {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.jr-card__cat {
+  color: var(--ink);
+}
+
+.jr-card__when {
+  color: var(--ink-3);
+}
+
+.jr-card__say {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   The column - narrow screens, and anyone who asked for less movement
+   --------------------------------------------------------------------------
+   The default, not the fallback. The claim, then five stages down the page,
+   each one its photograph with its sheet laid across the bottom of it.
+   ========================================================================== */
+.jr {
+  padding-block: clamp(80px, 10vw, 132px);
+}
+
+.jr__say {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.4vw, 26px);
+  margin-bottom: clamp(48px, 7vw, 80px);
+}
+
+.jr__title {
+  max-width: 18ch;
+  font-size: clamp(2.1rem, 7vw, 3.4rem);
+}
+
+.jr__deck {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(44px, 9vw, 72px);
+  /* Held to a readable column. On a phone this does nothing; at desktop
+     width - which is what a reader who asked for reduced motion gets, since
+     the feed is off for them at any size - it is the difference between five
+     photographs and five billboards nine hundred pixels tall. */
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.jr-card__plate {
+  aspect-ratio: 4 / 3;
+}
+
+.jr-card__sheet {
+  /* Pulled up over the foot of the photograph, which is the same overlap the
+     feed uses - the two versions are one composition at two sizes. */
+  margin: -18% clamp(12px, 4vw, 28px) 0;
+  padding: clamp(26px, 6vw, 34px);
+  border-radius: var(--r-lg);
+  grid-template-areas:
+    'no'
+    'say'
+    'cat'
+    'when';
+  gap: clamp(14px, 3vw, 20px);
+  box-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.6);
+}
+
+.jr-card__rule {
+  inset: clamp(9px, 2vw, 14px);
+  border-radius: calc(var(--r-lg) - 8px);
+}
+
+.jr-card__no {
+  grid-area: no;
+  text-align: right;
+}
+
+.jr-card__say {
+  grid-area: say;
+  font-size: clamp(1.3rem, 5.2vw, 1.9rem);
+}
+
+.jr-card__cat {
+  grid-area: cat;
+}
+
+.jr-card__when {
+  grid-area: when;
+}
+
+/* ==========================================================================
+   The feed - 900px and up, motion allowed
+   ========================================================================== */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .jr {
+    padding-block: 0;
+  }
+
+  /* The pinned viewport. `overflow: hidden` lives here rather than on the
+     section: a sheet leaves through the top of this box, and this box is
+     inside the pin. */
+  .jr__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 45 / 55, with the gutter between them coming out of the right column so
+     the claim keeps its full measure. */
+  .jr__inner {
+    display: grid;
+    grid-template-columns: 45fr 55fr;
+    align-items: center;
+    gap: clamp(32px, 4vw, 72px);
+    width: 100%;
+    height: 100%;
+  }
+
+  .jr__say {
+    margin: 0;
+    gap: clamp(20px, 2vw, 30px);
+    /* Held to the middle of the column rather than to the middle of the
+       screen: the sheets are the taller object and the claim reads better
+       set slightly above their centre line. */
+    align-self: center;
+    padding-bottom: clamp(0px, 4vh, 48px);
+  }
+
+  .jr__title {
+    /* Large, tight, and ranged left. The ceiling is a measure rather than a
+       taste: past about 4.6rem the third line of this sentence stops fitting
+       the column at 1280px and the claim starts hyphenating. */
+    font-size: clamp(2.4rem, 3.8vw, 4.6rem);
+  }
+
+  /* --- the feed ------------------------------------------------------- */
+
+  .jr__deck {
+    position: relative;
+    display: block;
+    /* Sized from the viewport's height. The sheet's job is to sit inside one
+       screen with air above and below it, which is a height problem. */
+    --jr-h: min(74vh, 40vw);
+
+    width: min(84%, calc(var(--jr-h) * 0.86));
+    height: var(--jr-h);
+    margin-inline: auto;
+  }
+
+  .jr-card {
+    position: absolute;
+    inset: 0;
+    /* Only the sheets move, and only two of the five at any moment. Declared
+       here rather than on every layer inside them. */
+    will-change: transform, opacity;
+  }
+
+  /* The photograph sits up and to the right of the sheet, and behind it -
+     the diagonal pair the reference composes each stage from. It is deliberately
+     inside the card's own box on the right so the group cannot push a
+     horizontal scrollbar at any width. */
+  .jr-card__plate {
+    position: absolute;
+    top: -9%;
+    right: 0;
+    width: 82%;
+    height: 84%;
+    aspect-ratio: auto;
+  }
+
+  .jr-card__sheet {
+    position: absolute;
+    right: 12%;
+    bottom: 0;
+    left: 0;
+    height: 88%;
+    padding: clamp(24px, 2.1vw, 34px);
+    border-radius: clamp(22px, 2vw, 30px);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.72);
+
+    /* Number top-right, statement dead centre, category and span along the
+       foot. Three rows, and the middle one takes all the slack, which is what
+       keeps the statement optically centred however long it runs. */
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      '.   no'
+      'say say'
+      'cat when';
+    gap: 0;
+    align-items: center;
+  }
+
+  .jr-card__rule {
+    inset: clamp(11px, 1.1vw, 16px);
+    border-radius: clamp(14px, 1.4vw, 20px);
+  }
+
+  .jr-card__no {
+    align-self: start;
+    text-align: right;
+  }
+
+  .jr-card__say {
+    align-self: center;
+    /* No inner padding. The sheet's own padding is already the margin of the
+       page; adding a second one inside it squeezed the statement into a
+       column about half the sheet's width, and a sentence broken into five
+       two-word lines reads as a poem rather than as a claim. */
+    font-size: clamp(1.3rem, 1.9vw, 2rem);
+  }
+
+  .jr-card__cat {
+    align-self: end;
+  }
+
+  .jr-card__when {
+    align-self: end;
+    text-align: right;
+  }
+}

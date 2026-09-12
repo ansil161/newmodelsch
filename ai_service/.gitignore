@@ -1,0 +1,20 @@
+# Real secrets. Only .env.example is tracked.
+.env
+.env.*
+!.env.example
+
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Downloaded model weights (~1.5GB). Fetched on first run, never committed.
+.models/
+*.log
+
+# Generated on demand by scripts/prune_orphan_vectors.py and verify_index.py.
+# It is a snapshot of document ids, not configuration - never commit it.
+known-ids.txt

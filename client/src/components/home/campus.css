@@ -1,0 +1,583 @@
+/* ==========================================================================
+   CAMPUS - one photograph that becomes three
+   --------------------------------------------------------------------------
+   A dark band that opens as a single composition - one large plate of the
+   campus, offset right, a heading in the space beside it - and resolves,
+   under the reader's scroll, into three columns: Learning, Life, Explore.
+
+   THE STYLESHEET DESCRIBES THE FINISHED STATE. THE OPENING IS A TRANSFORM.
+
+   The three columns are real layout: a flex row of three equal units, each a
+   plate with a caption under it, spaced on the site's own scale and staggered
+   vertically by a couple of viewport percent. That arrangement is what a
+   phone gets, what a reader with motion turned off gets, and what is left if
+   the module never runs.
+
+   The opening composition is not authored here or anywhere. It is produced by
+   the module measuring the distance from each column to `.cm__slot` - an
+   invisible marker below carrying the hero plate's geometry - and holding the
+   three plates there until the scroll releases them. There is no offset in
+   the timeline, so nothing about the opening breaks when the grid, the
+   gutter, the type scale or the window changes.
+
+   THE DOCUMENT ORDER IS THE PHONE'S ORDER
+
+   Heading, supporting line, the three chapters, the closing statement, the
+   link. On a phone that is simply the order it is read in. On a desktop the
+   grid below puts the heading and the closing statement in the same cell, so
+   they hand over to one another in the middle of the transformation and the
+   section can hold both in one viewport - which it cannot do if they are
+   allowed to reserve their own space.
+
+   THE GROUND IS THE SITE'S NAVY
+
+   `--navy-deep`, the same dark this site's other bands use. A section that
+   invented a second near-black would be the one section belonging to a
+   different publication.
+   ========================================================================== */
+
+.cm {
+  position: relative;
+  background: var(--navy-deep);
+  color: var(--on-navy);
+  isolation: isolate;
+  padding-block: clamp(72px, 9vw, 120px);
+  /* No `overflow`, `filter`, `transform` or `contain` on this element or on
+     any ancestor of it. ScrollTrigger pins it with `position: fixed`, and any
+     of those would make that ancestor the fixed element's containing block,
+     which stops a pin holding still against the viewport. The clipping that
+     is needed happens on `.cm__stage`, inside the pin. */
+}
+
+.cm__inner {
+  position: relative;
+}
+
+/* The opening plate's geometry, and nothing else. Never drawn: the module
+   measures it and moves the three plates onto it. It exists so the opening
+   composition is described here, beside the layout it has to relate to,
+   rather than as a pair of magic numbers in a timeline that cannot see the
+   grid. */
+.cm__slot {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Type
+   -------------------------------------------------------------------------- */
+.cm__eyebrow,
+.cm__label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--on-navy-3);
+}
+
+.cm__label b {
+  font-weight: 500;
+  color: var(--sun);
+}
+
+/* THE SCALE IS BOUND BY THE VIEWPORT'S HEIGHT AS WELL AS ITS WIDTH.
+
+   Every other headline on this site is free to be as tall as it likes,
+   because the page grows under it. This one is not: it shares one pinned
+   viewport with three photographs and their captions, and a heading sized
+   only against the width takes a third of a laptop screen and leaves the
+   columns overflowing the bottom of it. `min(3.4vw, 4.6vh)` is what makes the
+   section fit a 1366x600 window and a 1920x1200 one on the same rules. */
+.cm__head,
+.cm__statement {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, min(3.4vw, 4.6vh), 3.4rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  color: var(--on-navy);
+}
+
+/* Each line gets its own overflow box so it can set itself from below without
+   the block needing to clip anything of its own. The site's own headline
+   vocabulary - see `lines()` in `lib/motion.ts`. */
+.cm__line,
+.cm__mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.cm__line > span,
+.cm__mask > span {
+  display: block;
+}
+
+/* The second line carries the idea, so it is the one the contrast is spent
+   on. */
+.cm__head .cm__line:last-child > span,
+.cm__statement .cm__line:last-child > span {
+  color: var(--on-navy-2);
+}
+
+.cm__lede {
+  margin: 0;
+  max-width: 40ch;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--on-navy-2);
+}
+
+/* --------------------------------------------------------------------------
+   The columns
+   -------------------------------------------------------------------------- */
+.cm-cols {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cm-col {
+  position: relative;
+}
+
+/* Reserves the plate's height in the layout, so the caption underneath never
+   moves while the plate is being transformed above it. */
+.cm-col__media {
+  position: relative;
+}
+
+.cm-panel {
+  position: relative;
+  /* Scaled about its own centre for the whole of its travel from the hero
+     slot, and positioned by that centre. */
+  transform-origin: 50% 50%;
+}
+
+.cm-frame {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  /* Architectural rather than soft, and smaller than it looks like it ought
+     to be: the plate is scaled by 1.85 at the opening, so whatever is written
+     here is nearly doubled for the part of the section anybody looks at
+     longest. At 6px it reads as a printed edge at both sizes. At the 14px it
+     started life as, the opening plate was a lozenge. */
+  border-radius: clamp(3px, 0.4vw, 6px);
+  /* The ground, not a lighter grey: a plate whose photograph has not landed
+     should read as a plate, not as a missing image. */
+  background: var(--navy);
+  transform-origin: 50% 50%;
+}
+
+.cm-img {
+  display: block;
+  width: 100%;
+  /* Taller than its frame and pulled up by half the surplus, so the parallax
+     inside has material to travel through and neither edge is ever exposed. */
+  height: 114%;
+  margin-top: -7%;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   The caption
+   --------------------------------------------------------------------------
+   Number, rule, title, description. A specimen label rather than a card: no
+   panel, no border, no background. The photograph above it is the object;
+   this is the label on the wall beside it.
+   -------------------------------------------------------------------------- */
+.cm-cap {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(7px, 0.8vw, 11px);
+}
+
+.cm-cap__mask {
+  display: block;
+  overflow: hidden;
+}
+
+.cm-cap__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cm-cap__num {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--sun);
+}
+
+.cm-cap__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line-navy);
+}
+
+.cm-cap__title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-navy);
+}
+
+.cm-cap__body {
+  margin: 0;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--on-navy-2);
+}
+
+/* --------------------------------------------------------------------------
+   The link
+   -------------------------------------------------------------------------- */
+.cm__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-navy);
+}
+
+/* The arrow sits in a ring that fills on hover - the one flourish in the
+   section, and it is on the only thing in it that is interactive. */
+.cm__cta i {
+  display: grid;
+  place-items: center;
+  width: clamp(36px, 3vw, 44px);
+  height: clamp(36px, 3vw, 44px);
+  border: 1px solid var(--line-navy);
+  border-radius: 50%;
+  color: var(--on-navy);
+  transition:
+    background var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+}
+
+.cm__cta:hover i {
+  background: var(--sun);
+  border-color: var(--sun);
+  color: var(--on-sun);
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   THE COLUMN - phones, and anyone who asked for less movement
+   --------------------------------------------------------------------------
+   This is the default, not the fallback. The three chapters run down the page
+   in order, each plate pulled off an alternating edge so the sequence reads
+   as a composition rather than as three identical cards.
+
+   There is no pin here and there is no hero slot. A pinned scroll hijack on a
+   phone fights the browser's own gesture handling and loses; the scroll still
+   drives the section - each plate is printed as it arrives and parallaxes as
+   it passes - but it is never taken away.
+   ========================================================================== */
+.cm__eyebrow {
+  margin-bottom: 14px;
+}
+
+.cm__head {
+  margin-bottom: clamp(20px, 4vw, 30px);
+}
+
+.cm-cols {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 9vw, 80px);
+  margin-top: clamp(48px, 8vw, 76px);
+  margin-inline: auto;
+  max-width: 560px;
+}
+
+.cm-col__media {
+  height: min(62vh, 116vw);
+}
+
+/* Alternating insets. Three plates flush to the same two edges is a list;
+   pulled off alternating edges it is a sequence with a rhythm. */
+.cm-col:nth-child(1) .cm-col__media { margin-right: 12%; }
+.cm-col:nth-child(2) .cm-col__media { margin-left: 16%; }
+.cm-col:nth-child(3) .cm-col__media { margin-right: 6%; }
+
+.cm-col:nth-child(2) .cm-cap { margin-left: 16%; }
+
+.cm-panel,
+.cm-frame {
+  height: 100%;
+}
+
+.cm-cap {
+  margin-top: clamp(18px, 4vw, 24px);
+}
+
+.cm-cap__body {
+  font-size: var(--t-body);
+  max-width: 34ch;
+}
+
+.cm__outro {
+  margin-top: clamp(56px, 10vw, 96px);
+}
+
+.cm__label {
+  margin-bottom: 18px;
+}
+
+.cm__cta {
+  margin-top: clamp(28px, 5vw, 40px);
+}
+
+/* ==========================================================================
+   THE TRANSFORMATION - 900px and up, motion allowed
+   --------------------------------------------------------------------------
+   The query is the one `HomeCampus.tsx` gives its `matchMedia`, in the same
+   words. If the two ever disagree the section composes itself for a timeline
+   that was never built, and waits.
+   ========================================================================== */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .cm {
+    padding-block: 0;
+  }
+
+  /* The pinned element: one viewport, and the only thing in the section that
+     clips. The plates travel well outside the grid on their way in from the
+     hero slot, and this is what keeps that off the page. */
+  .cm__stage {
+    /* THE COLUMN'S SIZE, AND THE OPENING PLATE'S, FROM ONE SET OF NUMBERS.
+
+       The width is taken from the viewport's width - a column has to hold
+       four lines of caption - and the height is capped against the viewport's
+       height, because three plates and their captions have to fit inside one
+       pinned screen. The plate's proportions therefore vary a little with the
+       shape of the window, which is fine. What must not vary is that the
+       opening plate has the SAME proportions as a column, or the uniform
+       scale that lands one on the other would distort the photograph.
+       `--cm-zoom` guarantees that by construction. */
+    /* THE HEIGHT LEADS AND THE WIDTH FOLLOWS IT.
+
+       The other way round - a width from `vw`, a height capped by `vh` - is
+       the obvious arrangement and it is wrong: on a laptop window the cap
+       bites, the height collapses below the width, and the three "vertical
+       columns" are three landscape cards. Deriving the width from the height
+       holds the plate portrait at every window this section will ever see:
+       0.86 of its height wherever the height leads, and narrower still on a
+       screen too narrow to give it 19vw. */
+    --cm-col-h: clamp(180px, 30vh, 340px);
+    --cm-col-w: min(19vw, calc(var(--cm-col-h) * 0.86));
+    --cm-zoom: 2.05;
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Three rows - text, columns, foot - and two of them hold two things each.
+
+     THE HEADING AND THE CLOSING STATEMENT SHARE THE TOP ROW.
+
+     They have to. Given a row each they reserve about 350px of a 768px
+     screen between them and the columns no longer fit, which is the whole
+     reason this section is pinned rather than simply tall. Sharing the cell
+     also happens to be the right gesture: the statement arrives in the space
+     the heading has just left, rather than somewhere else on the screen. */
+  .cm__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    row-gap: clamp(12px, 2vh, 26px);
+    height: 100vh;
+    /* The masthead is fixed and this section is pinned to the top of the
+       viewport, so without clearance the heading opens underneath the
+       navigation. */
+    /* 62px, not `--nav-h`. By the time this section is pinned the reader has
+       scrolled, so the masthead is in its compact state - and often gone
+       entirely, since it hides on the way down. Clearing the full 76px would
+       spend fourteen pixels of a laptop screen on a bar that is not there. */
+    padding-top: calc(62px + clamp(6px, 1.4vh, 20px));
+    padding-bottom: clamp(20px, 3.6vh, 44px);
+  }
+
+  /* Right of centre and a little below it. Asymmetry on purpose: a plate
+     centred in the viewport with a heading beside it is a two-column layout,
+     and this has to read as one composition with a heading in its negative
+     space. */
+  .cm__slot {
+    position: absolute;
+    top: 52%;
+    left: 68%;
+    display: block;
+    width: calc(var(--cm-col-w) * var(--cm-zoom));
+    height: calc(var(--cm-col-h) * var(--cm-zoom));
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* --- the top row ----------------------------------------------------- */
+
+  .cm__intro,
+  .cm__outro {
+    grid-area: 1 / 1;
+    justify-self: start;
+    align-self: start;
+    margin: 0;
+  }
+
+  /* THE TWO BLOCKS SHARE A CELL BUT NOT A WIDTH, AND THAT IS THE POINT.
+
+     The heading is on screen while the opening plate is, so it has to stay
+     out from under it - a little under half the grid. The closing statement
+     is not: by the time it arrives the plates are three columns in the row
+     below. Holding it to the heading's width breaks its first line across
+     three, and the third of them runs down into the columns. */
+  .cm__intro {
+    max-width: min(46%, 30rem);
+  }
+
+  .cm__outro {
+    max-width: min(78%, 52rem);
+  }
+
+  .cm__eyebrow,
+  .cm__label {
+    margin-bottom: clamp(10px, 1.6vh, 18px);
+  }
+
+  /* --- the columns ---------------------------------------------------- */
+
+  .cm-cols {
+    grid-area: 2 / 1;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(22px, 3.2vw, 52px);
+    margin: 0;
+    max-width: none;
+    align-self: center;
+  }
+
+  .cm-col {
+    flex: 0 0 auto;
+    width: var(--cm-col-w);
+    margin: 0;
+  }
+
+  /* THE STAGGER IS LAYOUT, NOT ANIMATION.
+
+     Three plates on one baseline is a row of three cards. Dropped against
+     each other by a couple of viewport percent it becomes a composition with
+     depth in it - and because the offsets are real layout, the module has
+     only to cancel them at the opening and let them resolve, rather than
+     animating three columns to three authored resting positions. */
+  .cm-col:nth-child(1) { margin-top: 3vh; }
+  .cm-col:nth-child(2) { margin-top: 0; }
+  .cm-col:nth-child(3) { margin-top: 5.2vh; }
+
+  /* The middle plate is the opening plate, so it is the one that has to be on
+     top: the other two sit exactly behind it until the scroll pulls them out
+     from its edges. Occlusion, not a mask - which is why nothing has to be
+     clipped or faded for the split to read. */
+  .cm-col:nth-child(1) { z-index: 1; }
+  .cm-col:nth-child(3) { z-index: 2; }
+  .cm-col:nth-child(2) { z-index: 3; }
+
+  .cm-col__media {
+    height: var(--cm-col-h);
+    margin: 0;
+  }
+
+  .cm-col:nth-child(1) .cm-col__media,
+  .cm-col:nth-child(2) .cm-col__media,
+  .cm-col:nth-child(3) .cm-col__media {
+    margin-inline: 0;
+  }
+
+  /* One shadow, and a small one.
+
+     `box-shadow`, not `filter: drop-shadow()`. A filter is re-rasterised on
+     every frame of a scrub, and these three are scaled through a 1.7 range
+     the whole way. It is also a containing block for fixed descendants, which
+     is a trap this section is already carrying a warning about.
+
+     Kept light because at the opening all three plates are stacked and their
+     shadows coincide - a shadow tuned for one plate reads as a hole under
+     three. */
+  .cm-frame {
+    box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.55);
+  }
+
+  .cm-cap {
+    margin-top: clamp(12px, 1.8vh, 20px);
+  }
+
+  .cm-col:nth-child(2) .cm-cap {
+    margin-left: 0;
+  }
+
+  .cm-cap__body {
+    max-width: none;
+    font-size: clamp(0.75rem, 0.82vw, 0.875rem);
+  }
+
+  /* --- the foot -------------------------------------------------------- */
+
+  /* The opening line and the closing link share the bottom row at opposite
+     ends of it, so neither has to wait for the other to leave. */
+  .cm__lede {
+    grid-area: 3 / 1;
+    justify-self: start;
+    align-self: end;
+    max-width: min(46%, 32rem);
+    font-size: var(--t-small);
+  }
+
+  .cm__cta {
+    grid-area: 3 / 1;
+    justify-self: end;
+    align-self: end;
+    margin: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The transformation, on a laptop
+   --------------------------------------------------------------------------
+   The same choreography at a smaller size. The travel is not damped anywhere -
+   it is measured from this layout by the module, so a narrower screen
+   produces a shorter journey without anything being told to.
+   -------------------------------------------------------------------------- */
+@media (min-width: 900px) and (max-width: 1199px) and (prefers-reduced-motion: no-preference) {
+  .cm__stage {
+    --cm-col-h: clamp(170px, 28vh, 280px);
+    --cm-col-w: min(20vw, calc(var(--cm-col-h) * 0.86));
+    --cm-zoom: 1.9;
+  }
+
+  .cm__slot {
+    left: 70%;
+  }
+
+  .cm__intro {
+    max-width: min(44%, 24rem);
+  }
+
+  .cm__outro {
+    max-width: min(82%, 40rem);
+  }
+}

@@ -1,0 +1,565 @@
+/* ==========================================================================
+   INVITE - the collage spreads that close a page
+   --------------------------------------------------------------------------
+   Chalk ground, navy ink, slate copy, one yellow. The spreads are the only
+   place the site goes near-white, and they are allowed to because they are
+   the only place the photographs are laid on the page like prints: a white
+   border reads as paper only when the ground is almost - not quite - white.
+
+   See InviteSection.tsx for the hierarchy and Collage.tsx for the plate.
+   ========================================================================== */
+
+.invite {
+  position: relative;
+  padding-block: clamp(96px, 11vw, 176px);
+  background: var(--chalk);
+  color: var(--navy);
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* The pale arc in the corner - a sweep of the brush that dried before the
+   page was pasted up. It is the only decoration the section itself carries. */
+.invite::before {
+  --arc: clamp(280px, 36vw, 560px);
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: calc(var(--arc) * -0.42);
+  left: calc(var(--arc) * -0.52);
+  width: var(--arc);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: clamp(22px, 2.6vw, 40px) solid rgba(157, 180, 210, 0.14);
+  pointer-events: none;
+}
+
+.invite--right::before {
+  left: auto;
+  right: calc(var(--arc) * -0.52);
+}
+
+/* ==========================================================================
+   The grid
+   ========================================================================== */
+.invite__grid {
+  display: grid;
+  align-items: center;
+  gap: clamp(48px, 5.5vw, 96px);
+}
+
+.invite__copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 34rem;
+}
+
+.invite__media {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+@media (min-width: 960px) {
+  .invite__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .invite--right .invite__grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .invite--right .invite__copy {
+    order: 2;
+  }
+
+  /* Runs to the viewport's right edge: past the gutter, and past whatever the
+     container leaves either side on a screen wider than it. */
+  .invite--bleed .invite__media {
+    margin-right: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--container)) / 2)));
+  }
+}
+
+/* ==========================================================================
+   The copy
+   ========================================================================== */
+
+/* The eyebrow: a small pill with a sun dot, set in the grotesque. It replaced
+   the torn sticker for these four spreads only - the sticker is the site's
+   noticeboard voice, and these are invitations, which are quieter. */
+.invite__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 clamp(22px, 2.4vw, 32px);
+  padding: 8px 15px 8px 12px;
+  border-radius: var(--r-pill);
+  background: #fff4d6;
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.invite__eyebrow::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 3px rgba(255, 197, 61, 0.3);
+}
+
+/* "Open" - the one piece of state on the spread, so it is set apart. */
+.invite__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 2px;
+  padding: 4px 9px 4px 8px;
+  border-radius: var(--r-pill);
+  background: var(--navy);
+  color: var(--chalk);
+  letter-spacing: 0.1em;
+}
+
+.invite__status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6fd494;
+}
+
+/* The year, as a display line. The label rides above it as the pill. */
+.invite__year {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(10px, 1.2vw, 16px);
+  margin-bottom: clamp(20px, 2.2vw, 30px);
+}
+
+.invite__year .invite__eyebrow {
+  margin: 0;
+}
+
+.invite__year-fig {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 400;
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  font-feature-settings: 'lnum' 1;
+  line-height: 0.84;
+  letter-spacing: -0.045em;
+  color: var(--navy);
+}
+
+.invite__year-swash {
+  position: absolute;
+  left: 2%;
+  bottom: -0.36em;
+  width: 78%;
+}
+
+.invite__year-swash [data-stroke] {
+  stroke-width: 2.6;
+}
+
+.invite__title {
+  margin: 0;
+  max-width: 13ch;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 560;
+  font-size: clamp(2.6rem, 4.9vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--navy);
+}
+
+/* The written word. Caveat sits small on its body, so it is set a size up
+   to meet the serif's cap height, and tilted a degree or two - enough to
+   read as a hand, not enough to read as a gimmick. Gold-ink, not sun: the
+   sun is 1.6:1 on chalk and cannot be read; gold-ink is 3.9:1 at this size. */
+.script {
+  position: relative;
+  display: inline-block;
+  padding-inline: 0.04em 0.08em;
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.3em;
+  line-height: 0.7;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--gold-ink);
+  rotate: -2.5deg;
+}
+
+.script__swash {
+  position: absolute;
+  left: -2%;
+  top: 92%;
+  width: 104%;
+  pointer-events: none;
+}
+
+.invite__lead {
+  margin: clamp(22px, 2.4vw, 30px) 0 0;
+  max-width: 40ch;
+  font-size: clamp(1rem, 1.15vw, 1.0625rem);
+  line-height: 1.62;
+  color: var(--slate);
+}
+
+.invite__extra {
+  margin-top: 20px;
+}
+
+.invite__slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.invite .chip {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.invite__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: clamp(28px, 3vw, 38px);
+}
+
+/* The one pill on the site. The rest of the kit keeps its controls squared;
+   an invitation is allowed to be softer than a form. */
+.invite .invite__cta {
+  min-height: 54px;
+  padding: 17px 26px 17px 30px;
+  border-radius: var(--r-pill);
+  box-shadow: 0 12px 26px -16px rgba(168, 119, 10, 0.7);
+}
+
+.invite__cta svg {
+  transition: translate var(--d-move) var(--ease-out);
+}
+
+.invite__cta:hover svg {
+  translate: 4px 0;
+}
+
+.invite__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 560;
+  color: var(--navy);
+  background:
+    linear-gradient(var(--sun), var(--sun)) left bottom 9px / 0% 2px no-repeat,
+    linear-gradient(var(--line-strong), var(--line-strong)) left bottom 9px / 100% 1px no-repeat;
+  transition: background-size var(--d-move) var(--ease-out);
+}
+
+.invite__link:hover {
+  background-size: 100% 2px, 100% 1px;
+}
+
+.invite__link svg {
+  transition: translate var(--d-move) var(--ease-out);
+}
+
+.invite__link:hover svg {
+  translate: 4px 0;
+}
+
+.invite a:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+}
+
+.invite__foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: clamp(24px, 2.6vw, 34px) 0 0;
+  max-width: 44ch;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--slate);
+}
+
+.invite__foot-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--navy);
+}
+
+/* ==========================================================================
+   The plate
+   --------------------------------------------------------------------------
+   Every item is placed by custom properties set inline from the composition
+   data, and swaps to its `sm` placement on phones. Rotation lives on each
+   item's child rather than the item, because the item's own transform
+   belongs to the parallax.
+   ========================================================================== */
+.clg {
+  --rot-scale: 1;
+  position: relative;
+  aspect-ratio: var(--ratio);
+}
+
+.clg__item {
+  --rot: var(--r);
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w, auto);
+  margin: 0;
+}
+
+.clg__photo--main {
+  z-index: 1;
+}
+
+.clg__photo--print {
+  z-index: 3;
+}
+
+.clg__mark {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.clg__mark--brush {
+  z-index: 0;
+}
+
+.clg__note {
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ----- photographs */
+.clg__print {
+  position: relative;
+  rotate: var(--rot);
+  transition:
+    rotate 0.7s var(--ease-out),
+    scale 0.7s var(--ease-out);
+}
+
+.clg__print img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ar);
+  object-fit: cover;
+}
+
+/* The lead has no border - it is the photograph, not a print of one - and
+   takes one of the kit's shapes. */
+.clg__photo--main .clg__print {
+  overflow: hidden;
+  background: var(--sand);
+  border-radius: var(--r-frame);
+}
+
+.clg__photo--main img {
+  transition: scale 0.9s var(--ease-out);
+}
+
+.clg__photo--arch .clg__print {
+  border-radius: 50% 50% 22px 22px / 38% 38% 22px 22px;
+}
+
+.clg__photo--blob .clg__print {
+  border-radius: var(--r-blob);
+}
+
+.clg__photo--soft .clg__print {
+  border-radius: var(--r-lg);
+}
+
+.clg__photo--bleed .clg__print {
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+}
+
+/* A print: white paper border, a contact shadow, a hair of radius where the
+   corner has been handled. */
+.clg__photo--print .clg__print {
+  padding: clamp(5px, 0.6vw, 9px);
+  background: var(--white);
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(22, 35, 60, 0.08),
+    0 16px 30px -18px rgba(22, 35, 60, 0.42);
+}
+
+@media (hover: hover) {
+  .clg__photo--print:hover .clg__print {
+    rotate: calc(var(--rot) * 0.4);
+    scale: 1.02;
+  }
+
+  .clg__photo--main:hover img {
+    scale: 1.02;
+  }
+}
+
+/* ----- the pen */
+.clg__mark svg {
+  rotate: var(--rot);
+}
+
+.hand-mark {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hand-mark [data-stroke] {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.hand-mark--sun { color: var(--sun); }
+.hand-mark--sky { color: var(--sky-line); }
+.hand-mark--ink { color: var(--navy); }
+
+.hand-mark--loop [data-stroke],
+.hand-mark--path [data-stroke] { stroke-width: 5.5; }
+.hand-mark--swash [data-stroke] { stroke-width: 5; }
+.hand-mark--sparks [data-stroke] { stroke-width: 4.5; }
+.hand-mark--arrow [data-stroke],
+.hand-mark--arrow-down [data-stroke] { stroke-width: 3.2; }
+.hand-mark--ring [data-stroke] { stroke-width: 3.8; }
+.hand-mark--star [data-stroke] { stroke-width: 2.6; }
+
+.hand-mark--brush [data-fill] {
+  fill: var(--mist);
+}
+
+.hand-mark--brush [data-stroke] {
+  stroke: var(--mist);
+  stroke-width: 24;
+  opacity: 0.8;
+}
+
+.hand-mark.is-flipped {
+  transform: scaleX(-1);
+}
+
+/* ----- the handwriting */
+.clg__note {
+  font-family: var(--font-hand);
+  font-size: clamp(1.4rem, 1.9vw, 1.85rem);
+  font-weight: 600;
+  line-height: 0.95;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.clg__ink {
+  display: inline-block;
+  rotate: var(--rot);
+}
+
+/* ==========================================================================
+   Below the desktop grid
+   --------------------------------------------------------------------------
+   Stacked, and interleaved: the headline first, then the photographs, then
+   the paragraph and the ask. The column is dissolved with `display:
+   contents` so its children can take their place around the collage, which
+   is what lets a phone read heading - picture - reason - action rather than
+   a wall of copy followed by a wall of photographs.
+   ========================================================================== */
+@media (max-width: 959px) {
+  .invite__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .invite__copy {
+    display: contents;
+  }
+
+  .invite__grid > * {
+    justify-self: start;
+  }
+
+  .invite__copy > [data-in='eyebrow'] { order: 1; }
+  .invite__title { order: 2; }
+
+  .invite__media {
+    order: 3;
+    justify-self: stretch;
+    width: 100%;
+    max-width: 720px;
+    margin-block: clamp(44px, 9vw, 72px) clamp(36px, 7vw, 56px);
+  }
+
+  .invite__lead { order: 4; margin-top: 0; }
+  .invite__extra { order: 5; }
+  .invite__actions { order: 6; }
+  .invite__foot { order: 7; }
+
+  .invite--bleed .invite__media {
+    max-width: none;
+    width: auto;
+    margin-right: calc(-1 * var(--gutter));
+  }
+}
+
+/* The phone arrangement. */
+@media (max-width: 699px) {
+  .clg {
+    aspect-ratio: var(--ratio-sm);
+  }
+
+  .clg__item {
+    --rot: var(--rs, var(--r));
+    left: var(--xs, var(--x));
+    top: var(--ys, var(--y));
+    width: var(--ws, var(--w, auto));
+  }
+
+  .clg__item.is-desk-only {
+    display: none;
+  }
+
+  .invite__title {
+    font-size: clamp(2.35rem, 10vw, 3rem);
+  }
+
+  .invite__actions {
+    width: 100%;
+  }
+}

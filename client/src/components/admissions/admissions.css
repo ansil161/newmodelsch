@@ -1,0 +1,430 @@
+/* ==========================================================================
+   ADMISSIONS
+   --------------------------------------------------------------------------
+   The one page where a reader is trying to *do* something, so the editorial
+   language is turned down: simpler compositions, smaller type, nothing hidden,
+   and the only real motion is a progress spine that is genuinely a progress
+   indicator.
+   ========================================================================== */
+
+/* ==========================================================================
+   01 - Eligibility
+   ========================================================================== */
+.elig__head {
+  margin-bottom: clamp(40px, 5vw, 68px);
+}
+
+.elig__table {
+  border-top: 2px solid var(--ink);
+}
+
+.elig__row {
+  display: grid;
+  gap: 6px 20px;
+  padding-block: clamp(18px, 2.2vw, 26px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The header row is furniture on a narrow screen - each cell is already
+   labelled by its own treatment - so it only appears once there are columns
+   for it to head. */
+.elig__row--head {
+  display: none;
+}
+
+.elig__entry {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.elig__age,
+.elig__note {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.elig__seats {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sun-deep);
+}
+
+.elig__foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(24px, 3vw, 36px);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.elig__foot svg {
+  flex: none;
+  color: var(--sun-deep);
+}
+
+@media (min-width: 860px) {
+  .elig__row {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.6fr) minmax(0, 1.5fr);
+    align-items: baseline;
+  }
+
+  .elig__row--head {
+    display: grid;
+    padding-block: 14px;
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+/* ==========================================================================
+   02 - The process
+   ========================================================================== */
+.proc__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: clamp(48px, 6vw, 84px);
+}
+
+.proc__title {
+  color: var(--on-navy);
+  max-width: 17ch;
+}
+
+.proc__steps {
+  position: relative;
+  display: grid;
+  gap: clamp(28px, 3.4vw, 48px);
+  padding-left: 52px;
+}
+
+/* The spine. One rule for the whole sequence rather than a connector per
+   step - a single continuous line is what makes six steps read as one
+   process. */
+.proc__spine {
+  position: absolute;
+  left: 21px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--line-navy);
+  overflow: hidden;
+}
+
+.proc__spine-fill {
+  display: block;
+  height: 100%;
+  background: var(--sun);
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+
+.proc__step {
+  position: relative;
+}
+
+.proc__node {
+  position: absolute;
+  left: -52px;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--navy);
+  box-shadow: inset 0 0 0 2px var(--sun);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  color: var(--sun);
+  z-index: 2;
+}
+
+.proc__text {
+  display: grid;
+  gap: 9px;
+  padding-top: 8px;
+}
+
+.proc__step-title {
+  color: var(--on-navy);
+}
+
+.proc__step-body {
+  font-size: var(--t-small);
+  color: var(--on-navy-2);
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+.proc__step-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.proc__step-meta .chip--sun {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+@media (min-width: 900px) {
+  .proc__steps {
+    padding-left: 84px;
+  }
+
+  .proc__spine {
+    left: 31px;
+  }
+
+  .proc__node {
+    left: -84px;
+    width: 62px;
+    height: 62px;
+    font-size: var(--t-small);
+  }
+}
+
+/* ==========================================================================
+   03 - Documents & dates
+   ========================================================================== */
+.docs {
+  background: var(--paper);
+}
+
+.docs__head {
+  margin-bottom: clamp(40px, 5vw, 68px);
+}
+
+.docs__body {
+  display: grid;
+  gap: clamp(36px, 4vw, 64px);
+  align-items: start;
+}
+
+.docs__lists {
+  display: grid;
+  gap: clamp(26px, 3vw, 40px);
+}
+
+.docs__group-name {
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 14px;
+}
+
+.docs__items {
+  display: grid;
+  gap: 10px;
+}
+
+.docs__items li {
+  display: flex;
+  gap: 11px;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.docs__items svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--sun-deep);
+}
+
+.dates {
+  display: grid;
+  gap: 0;
+  padding: clamp(22px, 2.6vw, 32px);
+  background: var(--ivory);
+  border-radius: var(--r-lg);
+}
+
+.dates__title {
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 4px;
+}
+
+.date {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 4px 16px;
+  padding-block: 15px;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+
+.date:last-child {
+  border-bottom: 0;
+}
+
+.date__when {
+  grid-column: 1;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.date__what {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  gap: 3px;
+}
+
+.date__what b {
+  font-size: var(--t-small);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.date__what span {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+
+.date__state {
+  grid-column: 3;
+  grid-row: 1;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px 5px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+}
+
+/* Three states, three treatments. A list of dates with no state on it makes
+   the reader work out where they are in the calendar themselves. */
+.date--closed .date__state {
+  color: var(--ink-4);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.date--closed .date__when,
+.date--closed .date__what b {
+  color: var(--ink-4);
+}
+
+.date--open .date__state {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.date--upcoming .date__state {
+  color: var(--ink-3);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+@media (min-width: 900px) {
+  .docs__body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    gap: clamp(40px, 5vw, 80px);
+  }
+}
+
+/* ==========================================================================
+   04 - FAQ
+   ========================================================================== */
+.faq__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .faq__inner {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+
+  .faq__head {
+    position: sticky;
+    top: calc(var(--nav-h) + 6vh);
+  }
+}
+
+/* ==========================================================================
+   05 - The visit
+   ========================================================================== */
+.visit__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+}
+
+.visit__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.visit__title {
+  max-width: 15ch;
+}
+
+.visit__points {
+  display: grid;
+  gap: 11px;
+  margin-top: 4px;
+}
+
+.visit__points li {
+  display: flex;
+  gap: 11px;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.visit__points svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--sun-deep);
+}
+
+.visit__slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.visit__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.visit__fig {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .visit__inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+}

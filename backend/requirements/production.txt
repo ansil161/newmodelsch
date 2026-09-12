@@ -1,0 +1,7 @@
+-r base.txt
+
+gunicorn==26.0.0
+
+# Shared rate-limit counters across worker processes (set REDIS_URL).
+# Without Redis, production settings fall back to the database cache.
+redis==5.2.1

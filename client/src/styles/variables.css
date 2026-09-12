@@ -1,0 +1,370 @@
+/* ==========================================================================
+   Design tokens - New Model High School
+   --------------------------------------------------------------------------
+   EDITORIAL SCHOOLBOOK.
+
+   The site is set as a printed thing: a warm paper ground, a high-contrast
+   serif carrying the statements, a clean grotesque carrying everything a
+   person has to actually use, and one accent that behaves like a highlighter
+   pen rather than like a brand gradient.
+
+   What the palette is, and why:
+
+     GROUND     Ivory, not white. Paper stock has a temperature; a screen
+                that renders pure #fff for a school founded in 1962 reads as
+                a form, not as a prospectus.
+
+     INK        Deep navy-black. Warmer than #000, and it belongs to the same
+                family as the dark sections, so a navy band under an ivory
+                one reads as the same publication turned over.
+
+     ACCENT     One yellow. It is the highlighter, the sticker, the underline
+                and the fill. It never appears as a gradient and never as a
+                glow. Ink sits on it - the yellow is a ground, never type on
+                paper, because at this chroma it cannot be read.
+
+     SECONDARY  Blue, green, coral. Each is muted to roughly the same value
+                so they can sit beside each other without one shouting. They
+                distinguish things that are genuinely different - a band of
+                the curriculum, a strand of activity - and never decorate a
+                section that is already fine.
+
+   Everything downstream - the shapes, the shadows, the motion - follows the
+   same idea: a document, printed warm, that happens to move.
+   ========================================================================== */
+
+:root {
+  /* -------------------------------------------------- ground
+     Three warm sheets. `ivory` is the page, `paper` is anything raised off
+     it, `sand` is a band that separates without changing material. */
+  --ivory: #f7f3ea;
+  --paper: #fffdf8;
+  --sand: #efe8da;
+  --sand-deep: #e5dbc8;
+  --white: #ffffff;
+
+  /* -------------------------------------------------- ink
+     Measured against ivory #f7f3ea:
+       --ink    16.9:1     --ink-2   9.1:1     --ink-3   5.4:1
+     Nothing here carries running text and fails AA. --ink-4 is for hairline
+     furniture only and is never given a sentence. */
+  --ink: #111726;
+  --ink-2: #414a5c;
+  --ink-3: #6b7383;
+  --ink-4: #9aa1ad;
+
+  /* -------------------------------------------------- the dark ground
+     Navy, for the two or three bands that turn the page over. Deliberately
+     not black: black under an ivory sheet reads as a hole, navy reads as the
+     reverse of the same paper. */
+  --navy: #16233c;
+  --navy-2: #1d2f4e;
+  --navy-deep: #0e1829;
+
+  /* Type on navy: 14.8:1, 8.9:1, 5.6:1. Real colours rather than opacities,
+     because an alpha over a photograph is not a contrast guarantee. */
+  --on-navy: #f4f1e8;
+  --on-navy-2: #c3cad8;
+  --on-navy-3: #8e99ab;
+
+  /* -------------------------------------------------- the accent
+     School yellow. A ground colour, not a type colour.
+
+       --sun       the fill: buttons, stickers, highlights
+       --sun-deep  the pressed state, and the one place it may be type
+       --sun-soft  a wash behind something, at full opacity so it composites
+                   predictably over photography
+
+     Ink on --sun is 7.9:1. --sun as type on ivory is 1.6:1, which is why it
+     is never allowed to be type there. */
+  --sun: #ffc53d;
+  --sun-deep: #9a6c00;
+  --sun-soft: #ffeab5;
+  --sun-wash: rgba(255, 197, 61, 0.22);
+  --on-sun: #111726;
+
+  /* -------------------------------------------------- the invitation spreads
+     The four collage spreads that close a page (see InviteSection) are set on
+     chalk rather than ivory: a near-white with just enough warmth that the
+     photographs' own white paper borders still read as paper against it.
+
+       --chalk     the ground. #fcfcfa.
+       --slate     muted blue-grey for running copy. 5.9:1 on chalk.
+       --mist      the pale blue brush behind a collage. Never a type colour.
+       --sky-line  the pale blue secondary pen mark. Furniture only.
+       --gold-ink  the sun, deep enough to be type: 3.9:1 on chalk, which is
+                   AA for large text and nothing else - so it is only ever the
+                   handwritten word in a headline, never a sentence. */
+  --chalk: #fcfcfa;
+  --slate: #56637a;
+  --mist: #e9eff7;
+  --sky-line: #9db4d2;
+  --gold-ink: #a8770a;
+
+  /* -------------------------------------------------- secondary accents
+     Three, held at a similar value so no one of them dominates a page they
+     share. Each has a soft companion for use as a ground. */
+  --blue: #2f5fa8;
+  --blue-soft: #dbe6f6;
+  --green: #3d7a58;
+  --green-soft: #dcebe1;
+  --coral: #c8543a;
+  --coral-soft: #fbe1d9;
+
+  /* Semantic state keeps its own colour; it is not decoration. */
+  --ok: #2f7a52;
+  --warn: #9a6c00;
+  --err: #b3372b;
+
+  /* -------------------------------------------------- rules
+     Hairlines are ink at low alpha rather than grey, so a rule on ivory
+     belongs to the same light as the type it divides. */
+  --line: rgba(17, 23, 38, 0.12);
+  --line-strong: rgba(17, 23, 38, 0.22);
+  --line-soft: rgba(17, 23, 38, 0.07);
+  --line-navy: rgba(244, 241, 232, 0.16);
+
+  /* ==========================================================================
+     Type
+     --------------------------------------------------------------------------
+     FRAUNCES carries the statements. A high-contrast display serif with a
+     deliberate wobble in its curves - the reason it is here rather than a
+     Playfair or a Garamond, both of which are correct and both of which read
+     as "premium serif" the instant you use them. A school is warm before it
+     is expensive.
+
+     GEIST carries everything a person operates: navigation, body copy,
+     buttons, form labels, metadata. GEIST MONO carries figures, so a column
+     of statistics lines up and a six-digit number cannot be misread as prose.
+
+     Two families, three faces. The contrast between the serif and the
+     grotesque is the whole typographic idea, so nothing is set in the serif
+     unless it is a statement the page is making.
+     ========================================================================== */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Ink. Annotation only - a note written on a photograph, never a heading and
+     never a label. If it is doing an interface's job it is the wrong face. */
+  --font-hand: 'Caveat', 'Segoe Script', cursive;
+
+  /* Legacy names, repointed rather than renamed. */
+  --font-editorial: var(--font-display);
+  --font-serif: var(--font-display);
+  --font-label: var(--font-mono);
+  --font-stats: var(--font-mono);
+
+  /* Fluid scale. The top of it is genuinely large - this is a site whose
+     headlines are a primary visual element, and a 5rem ceiling is a headline
+     that has been told to be quiet. */
+  --t-mega: clamp(3.25rem, 11vw, 11rem);
+  --t-hero: clamp(2.75rem, 6.8vw, 6.25rem);
+  --t-h1: clamp(2.4rem, 5.6vw, 5rem);
+  --t-h2: clamp(2rem, 4.2vw, 3.5rem);
+  --t-h3: clamp(1.4rem, 2.1vw, 2rem);
+  --t-h4: clamp(1.125rem, 1.45vw, 1.3125rem);
+  --t-lead: clamp(1.0625rem, 1.4vw, 1.28rem);
+  --t-body: clamp(1rem, 1.05vw, 1.0625rem);
+  --t-small: clamp(0.875rem, 0.95vw, 0.9375rem);
+  --t-label: clamp(0.6875rem, 0.78vw, 0.75rem);
+  --t-stat: clamp(3rem, 7vw, 6.5rem);
+  --t-numeral: clamp(4rem, 13vw, 13rem);
+
+  /* Measure. Running copy stops at 62 characters. */
+  --measure: 62ch;
+  --measure-tight: 44ch;
+  --measure-wide: 74ch;
+
+  /* -------------------------------------------------- layout */
+  --container: 1480px;
+  --container-narrow: 1080px;
+  --gutter: clamp(20px, 5vw, 88px);
+  --section-y: clamp(88px, 10vw, 172px);
+  --section-y-tight: clamp(56px, 6vw, 96px);
+  --nav-h: 76px;
+
+  /* -------------------------------------------------- shape
+     Images are the only thing on this site allowed an unusual shape, and each
+     shape means something:
+
+       --r-arch   a doorway. Portraits, and anything that is a person.
+       --r-blob   an organic squircle. Candid photography, in motion.
+       --r-frame  a plain generous radius. Places, buildings, wide frames.
+       50%        a circle. Thumbnails, and the horizontal strips.
+
+     Controls stay squared, because a pill button inside a ruled editorial
+     grid reads as a widget dropped onto a document. */
+  --r-ctl: 6px;
+  --r-sm: 10px;
+  --r-frame: 20px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+  --r-arch: 50% 50% 16px 16px / 42% 42% 16px 16px;
+  /* THE BLOB IS A SQUIRCLE, NOT AN ELLIPSE.
+
+     Percentage radii are the obvious way to write an organic shape and they
+     are the wrong way: once every value is above about 35% on both axes the
+     four corners meet and the result is a plain oval, whatever numbers you
+     put in. The shapes on the reference boards are rounded rectangles with
+     two heavy corners and two light ones - cut paper, not a bubble - so these
+     are absolute lengths with the corners deliberately unequal, and they
+     scale with the viewport so a 300px thumbnail and a 900px frame read as
+     the same shape rather than the small one reading as a pill. */
+  --r-blob: clamp(24px, 5vw, 64px) clamp(52px, 11vw, 132px) clamp(24px, 5vw, 64px)
+    clamp(52px, 11vw, 132px);
+  --r-blob-2: clamp(52px, 11vw, 132px) clamp(24px, 5vw, 64px) clamp(52px, 11vw, 132px)
+    clamp(24px, 5vw, 64px);
+
+  /* -------------------------------------------------- elevation
+     Warm shadows. A neutral-black shadow on an ivory ground reads as dirt.
+     Used sparingly - most grouping here is done with a rule or with space. */
+  --e-1: 0 1px 2px rgba(50, 38, 18, 0.05), 0 8px 20px -14px rgba(50, 38, 18, 0.24);
+  --e-2: 0 1px 3px rgba(50, 38, 18, 0.06), 0 20px 44px -26px rgba(50, 38, 18, 0.32);
+  --e-3: 0 2px 6px rgba(50, 38, 18, 0.07), 0 38px 78px -44px rgba(50, 38, 18, 0.4);
+
+  /* -------------------------------------------------- z-index
+     A documented scale, so nothing has to reach for 9999. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-drawer: 30;
+  --z-nav: 40;
+  /* The floating chat dock and its panel: over the navigation, under
+     the cursor ring and every overlay, including the page transition. */
+  --z-assistant: 50;
+  --z-cursor: 55;
+  --z-overlay: 60;
+}
+
+/* ==========================================================================
+   Motion
+   --------------------------------------------------------------------------
+   Durations are chosen against the job, not against a ratio. Anything a user
+   triggers stays under 300ms; anything longer is a first appearance, which
+   happens once and is allowed to be noticed.
+   ========================================================================== */
+:root {
+  --d-tap: 120ms;
+  --d-state: 240ms;
+  --d-move: 420ms;
+  --d-enter: 900ms;
+
+  /* Fast off the mark, long tail. */
+  --ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-soft: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Slight overshoot. Never on anything carrying running text. */
+  --ease-back: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --rise: 28px;
+  --rise-lg: 48px;
+  --stagger: 70ms;
+}
+
+/* ==========================================================================
+   Legacy aliases
+   --------------------------------------------------------------------------
+   The previous palette's names, repointed at the new one. They exist so a
+   stylesheet not yet rewritten renders in the new palette rather than
+   rendering in nothing. Nothing written from here on should reference a name
+   in this block.
+   ========================================================================== */
+:root {
+  --navy-ink: var(--navy);
+  --navy-ink-2: var(--navy-2);
+  --navy-mid: var(--navy-2);
+  --navy-deepest: var(--navy-deep);
+  --navy-abyss: var(--navy-deep);
+  --forest-ink: var(--navy);
+  --forest-ink-2: var(--navy-2);
+  --forest-mid: var(--navy-2);
+  --forest-deep: var(--navy-deep);
+  --blue-primary: var(--blue);
+  --blue-dark: var(--navy-2);
+  --ink-shadow: var(--navy-deep);
+
+  --paper-deep: var(--sand);
+  --paper-sunk: var(--sand-deep);
+  --bone: var(--ivory);
+  --bone-deep: var(--sand);
+  --bone-sunk: var(--sand-deep);
+  --bg-soft: var(--ivory);
+  --bg-warm: var(--sand);
+  --cream: var(--sand-deep);
+  --ground-porcelain: var(--ivory);
+  --ground-linen: var(--sand);
+
+  --blue-text: var(--blue);
+  --blue-deep: #24497f;
+  --blue-bright: #8fb4e8;
+  --blue-wash: var(--blue-soft);
+  --on-blue: #ffffff;
+
+  --amber: var(--sun);
+  --amber-text: var(--sun-deep);
+  --amber-deep: var(--sun-deep);
+  --amber-bright: var(--sun);
+  --amber-wash: var(--sun-wash);
+  --on-amber: var(--on-sun);
+  --crimson: var(--coral);
+  --crimson-deep: var(--coral);
+  --crimson-bright: var(--coral);
+  --cyan-glow: var(--sun-deep);
+  --cyan-subtle: var(--sun-wash);
+  --gold-achievement: var(--sun);
+  --gold-dim: var(--sun-wash);
+  --green-success: var(--ok);
+  --red-error: var(--err);
+
+  --text-primary: var(--ink);
+  --text-body: var(--ink-2);
+  --text-muted: var(--ink-3);
+  --text-inverse: var(--on-navy);
+  --on-dark: var(--on-navy);
+  --on-dark-2: var(--on-navy-2);
+  --on-dark-3: var(--on-navy-3);
+
+  --border-subtle: var(--line);
+  --border-glass: var(--line-navy);
+  --line-ink: var(--line);
+  --line-ink-strong: var(--line-strong);
+  --line-glass: var(--line-navy);
+
+  --t-large: var(--t-lead);
+  --container-max: var(--container);
+
+  --r-btn: var(--r-ctl);
+  --r-md: var(--r-frame);
+  --r-xl: var(--r-lg);
+  --r-2xl: var(--r-lg);
+  --e-4: var(--e-3);
+  --glass-bg: rgba(244, 241, 232, 0.06);
+  --glass-bg-hi: rgba(244, 241, 232, 0.1);
+  --glass-blur: blur(16px) saturate(140%);
+  --ac-a: var(--sun);
+  --ac-b: var(--sun-deep);
+
+  --dur-1: var(--d-tap);
+  --dur-2: 180ms;
+  --dur-3: var(--d-state);
+  --dur-4: 300ms;
+  --dur-5: var(--d-move);
+  --dur-enter: var(--d-enter);
+  --m-tap: var(--d-tap);
+  --m-state: var(--d-state);
+  --m-move: var(--d-move);
+  --m-enter: var(--d-enter);
+  --m-nudge: 6px;
+  --m-rise: var(--rise);
+  --m-rise-lg: var(--rise-lg);
+  --m-stagger: var(--stagger);
+
+  --ease-out-quad: var(--ease-out-soft);
+  --ease-out-cubic: var(--ease-out-soft);
+  --ease-out-quart: var(--ease-out);
+  --ease-out-quint: var(--ease-out-soft);
+  --ease-out-expo: var(--ease-out);
+  --ease-in-out-cubic: var(--ease-in-out);
+  --ease-in-out-quart: var(--ease-in-out);
+  --ease-spring: var(--ease-back);
+}

@@ -1,0 +1,215 @@
+/* ==========================================================================
+   STUDENT LIFE
+   --------------------------------------------------------------------------
+   The page the site spends its photography on. Positioning only.
+   ========================================================================== */
+
+/* ==========================================================================
+   02 - Campus explorer
+   ========================================================================== */
+.campex__head {
+  margin-bottom: clamp(44px, 5vw, 72px);
+}
+
+.campex__body {
+  display: grid;
+  gap: clamp(28px, 3.4vw, 52px);
+  align-items: start;
+}
+
+.campex__frame {
+  position: relative;
+}
+
+.campex__caption {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+}
+
+.campex__caption b {
+  font-size: var(--t-body);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.campex__list {
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.campex__row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding-block: clamp(13px, 1.6vw, 18px);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-3);
+  transition: color var(--d-state) var(--ease-out), padding-left var(--d-state) var(--ease-out);
+}
+
+.campex__row svg {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
+}
+
+.campex__name {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
+}
+
+.campex__row:hover,
+.campex__row.is-on {
+  color: var(--ink);
+  padding-left: 12px;
+}
+
+.campex__row.is-on {
+  border-bottom-color: var(--ink);
+}
+
+.campex__row.is-on .campex__num {
+  color: var(--sun-deep);
+}
+
+.campex__row.is-on svg,
+.campex__row:hover svg {
+  opacity: 1;
+  transform: none;
+}
+
+.campex__stats {
+  margin-top: clamp(44px, 5vw, 76px);
+  padding-top: clamp(28px, 3.4vw, 44px);
+  border-top: 1px solid var(--line-strong);
+}
+
+@media (min-width: 960px) {
+  .campex__body {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: clamp(36px, 4vw, 72px);
+  }
+}
+
+/* ==========================================================================
+   03 - Beyond the classroom
+   ========================================================================== */
+.beyond-cl {
+  background: var(--paper);
+}
+
+.beyond-cl__head {
+  margin-bottom: clamp(48px, 6vw, 84px);
+}
+
+.strands {
+  display: grid;
+  gap: clamp(56px, 7vw, 110px);
+}
+
+.strand {
+  display: grid;
+  gap: clamp(24px, 3vw, 48px);
+  align-items: center;
+}
+
+.strand__fig {
+  width: 100%;
+}
+
+.strand__text {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+}
+
+.strand__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.strand__stat .stat-num {
+  font-size: clamp(2.5rem, 4.4vw, 3.75rem);
+}
+
+.strand__stat span:last-child {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  max-width: 12ch;
+  line-height: 1.35;
+}
+
+.strand__title {
+  max-width: 14ch;
+}
+
+.strand__items {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.strand__items li {
+  position: relative;
+  padding-left: 20px;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.strand__items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--sun);
+}
+
+/* Each strand owns one of the secondary accents, so four things that are
+   genuinely different read as different. */
+.strand--coral .strand__items li::before { background: var(--coral); }
+.strand--violet .strand__items li::before { background: var(--blue); }
+.strand--mint .strand__items li::before { background: var(--green); }
+.strand--blue .strand__items li::before { background: var(--blue); }
+
+.strand--coral .strand__stat .stat-num { color: var(--coral); }
+.strand--violet .strand__stat .stat-num { color: var(--blue); }
+.strand--mint .strand__stat .stat-num { color: var(--green); }
+.strand--blue .strand__stat .stat-num { color: var(--blue); }
+
+@media (min-width: 860px) {
+  .strand {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+
+  .strand:nth-child(even) .strand__fig {
+    order: 2;
+  }
+}
+
+/* ==========================================================================
+   04 - Safety: see safety.css
+   ========================================================================== */
+
+/* ==========================================================================
+   05 - The visit: an InviteSection, styled by the kit (editorial/invite.css)
+   ========================================================================== */

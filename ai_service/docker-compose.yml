@@ -1,0 +1,117 @@
+# Local development for ai_service.
+#
+# WHAT THIS IS AND IS NOT. It runs the two processes this service owns — the
+# API and the reindex worker — against a local Qdrant. It does not run
+# Django, Postgres or the frontend: those have their own lifecycle, their own
+# migrations and their own ports, and folding them in here would produce one
+# compose file that nobody can reason about and that has to be restarted in
+# full to change a setting in either half. Run them side by side; see README.
+#
+#     docker compose up --build          API + worker + Qdrant
+#     docker compose up api qdrant       just the API
+#     docker compose --profile local-models up --build   in-process BGE
+#
+# THE WORKER IS A SEPARATE SERVICE, NOT A BACKGROUND THREAD. A reindex is
+# tens of minutes of embedding calls. Sharing an event loop with request
+# handling means it competes with every user's question, and a crash in it
+# takes the API down. Separate processes also means they scale independently,
+# which is the point — one API replica per unit of traffic, one worker.
+
+name: jaaz-ai-service
+
+x-service-base: &service-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  # Read at run time, never baked into the image. See .dockerignore.
+  env_file:
+    - .env
+  environment:
+    # Overrides whatever .env says, because inside the compose network Qdrant
+    # is a service name rather than localhost. Everything else — keys,
+    # models, tuning — comes from .env unchanged.
+    QDRANT__URL: http://qdrant:6333
+    QDRANT__API_KEY: ""
+  depends_on:
+    qdrant:
+      condition: service_healthy
+  restart: unless-stopped
+  volumes:
+    # Weights survive a container replacement. Without this, every restart
+    # re-downloads several hundred megabytes from Hugging Face — and does it
+    # while the readiness probe is failing.
+    - model-cache:/home/app/.cache/huggingface
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.16.1
+    ports:
+      # Bound to the loopback interface only. A vector database with no
+      # authentication that answers on every interface is reachable from
+      # anything else on the network the moment this runs outside a laptop.
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+    healthcheck:
+      # /readyz, not /healthz: the second answers as soon as the process is
+      # up, and the API would then start against a store not yet accepting
+      # collections.
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/6333 && printf 'GET /readyz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -1 <&3 | grep -q '200 OK'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  api:
+    <<: *service-base
+    ports:
+      # Loopback again. Django reaches it over the compose network by service
+      # name; nothing outside this machine should be able to reach a service
+      # that holds the Gemini and Qdrant credentials.
+      - "127.0.0.1:8001:8001"
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+
+  worker:
+    <<: *service-base
+    command: ["python", "-m", "app.workers.worker"]
+    # No ports and no healthcheck: it serves no traffic, and its readiness is
+    # not something a load balancer needs an opinion about.
+    healthcheck:
+      disable: true
+    # SIGTERM stops it claiming new work and lets the job in hand finish, so
+    # a deploy does not leave a document half-indexed. Long enough for a
+    # single document's embedding batch to complete.
+    stop_grace_period: 60s
+
+  # -- optional: run the models in-process ---------------------------------
+  # docker compose --profile local-models up --build api-local-models
+  #
+  # A ~3GB image against the default's ~400MB, in exchange for no per-query
+  # network hop, no cold starts, no rate limit, and document text that never
+  # leaves the machine. The vectors are identical — same model, same 768
+  # dimensions, same normalisation — so switching needs no reindex.
+  api-local-models:
+    <<: *service-base
+    profiles: ["local-models"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INCLUDE_LOCAL_MODELS: "true"
+    environment:
+      QDRANT__URL: http://qdrant:6333
+      QDRANT__API_KEY: ""
+      EMBEDDING__PROVIDER: sentence_transformers
+      RERANKER__PROVIDER: cross_encoder
+    ports:
+      - "127.0.0.1:8001:8001"
+
+volumes:
+  qdrant-storage:
+  model-cache:

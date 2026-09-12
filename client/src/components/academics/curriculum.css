@@ -1,0 +1,758 @@
+/* ==========================================================================
+   THE CURRICULUM SPREAD
+   --------------------------------------------------------------------------
+   A page from a school annual. Everything in this file is trying to be a
+   physical material rather than an interface:
+
+     - paper with a tooth, not a flat fill
+     - photographs with a printed border and a contact shadow, not cards with
+       a radius and an elevation
+     - tape, registration crosses, trim ticks and a folio, not rules
+     - one handwritten note per chapter, in ink
+     - torn edges on the fragments, cut edges on the prints
+
+   THE ONE RULE THIS FILE KEEPS
+   No `border-radius` above 2px anywhere, and no long thin horizontal lines.
+   Both are what make a layout read as software. Where something needs
+   separating, it gets a tick, a gap, or a change of material.
+
+   THE PALETTE IS SCOPED, ON PURPOSE
+   This section runs an older, warmer ink than the rest of the site: charcoal
+   rather than navy-black, aged mustard rather than the site's yellow, and two
+   faded process colours off a printed page. They are defined on `.curric` and
+   nowhere else, so one section can be a different material without the site
+   acquiring five new global colours.
+   ========================================================================== */
+
+.curric {
+  --paper: #f3eee1;
+  --paper-2: #ece5d4;
+  /* Warm charcoal. The site's ink is navy-black; on this ground it reads cold
+     and modern, which is the opposite of what the section is for. */
+  --ink-print: #29251f;
+  --ink-print-2: #57503f;
+  --ink-print-3: #8a8170;
+  /* Aged mustard, off a printed page rather than off a screen. */
+  --mustard: #c08a1e;
+  --mustard-wash: rgba(192, 138, 30, 0.16);
+  /* Two faded process colours, used once or twice each. */
+  --print-red: #a34a3c;
+  --print-blue: #46617f;
+
+  position: relative;
+  padding-block: clamp(80px, 9vw, 150px);
+  background: var(--paper);
+  color: var(--ink-print);
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* Paper tooth. Static: this is stock, not film grain, and a moving one would
+   make the whole section vibrate. */
+.curric__tooth {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E");
+}
+
+.curric > .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Registration marks
+   --------------------------------------------------------------------------
+   A printer's cross. Drawn at 24px and never scaled up, because a registration
+   mark that is 60px across is a logo.
+   -------------------------------------------------------------------------- */
+.reg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--print-blue);
+  stroke-width: 1;
+  opacity: 0.55;
+  flex: none;
+}
+
+.curric__reg {
+  position: absolute;
+}
+
+.curric__reg--head {
+  right: 0;
+  top: 6px;
+  display: none;
+}
+
+.curric__reg--tl {
+  left: -22px;
+  top: -18px;
+}
+
+/* Bottom LEFT, not bottom right: on a wide screen the folio bleeds off the
+   plate's right edge, and a registration cross under a 7rem page number is
+   two marks fighting over one corner. */
+.curric__reg--br {
+  left: -20px;
+  bottom: -18px;
+  stroke: var(--print-red);
+}
+
+/* ==========================================================================
+   The head
+   ========================================================================== */
+.curric__head {
+  position: relative;
+  display: grid;
+  gap: clamp(18px, 2.2vw, 28px);
+  margin-bottom: clamp(40px, 5vw, 68px);
+}
+
+.curric__title {
+  color: var(--ink-print);
+  /* Tighter and a shade larger than the site's hero line, because this one is
+     a chapter opener rather than a page opener. */
+  line-height: 0.86;
+  letter-spacing: -0.036em;
+  max-width: 12ch;
+}
+
+.curric__intro {
+  max-width: 54ch;
+}
+
+.curric__intro .lead {
+  color: var(--ink-print-2);
+  max-width: none;
+}
+
+/* Not a caption and not a label - an instruction, in ink. */
+.curric__intro-note {
+  font-family: var(--font-hand);
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  color: var(--mustard);
+  margin-top: 10px;
+  transform: rotate(-1.4deg);
+  transform-origin: left center;
+}
+
+@media (min-width: 900px) {
+  .curric__head {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: end;
+    column-gap: clamp(32px, 4vw, 72px);
+  }
+
+  .curric__head-tag {
+    grid-column: 1;
+  }
+
+  .curric__title {
+    grid-column: 1;
+  }
+
+  .curric__intro {
+    grid-column: 2;
+    /* Dropped off the baseline of the headline rather than aligned to it. The
+       misalignment is the point: a spread is set, not centred. */
+    padding-bottom: 6px;
+  }
+
+  .curric__reg--head {
+    display: block;
+  }
+}
+
+/* ==========================================================================
+   Contents
+   --------------------------------------------------------------------------
+   A printed contents line. The current chapter is marked in ink - a mustard
+   tick and a rough underline - rather than filled in like a selected button.
+   ========================================================================== */
+.curric__contents {
+  margin-bottom: clamp(28px, 3.4vw, 48px);
+}
+
+.curric__contents-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-print-3);
+  margin-bottom: 14px;
+}
+
+.curric__chapters {
+  display: grid;
+  gap: 2px;
+}
+
+.chapter {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 14px auto 1fr auto;
+  align-items: baseline;
+  gap: 0 14px;
+  padding: 11px 0 12px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-print-3);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+/* The trim tick. Two of them, top and bottom, in place of a rule. */
+.chapter__tick {
+  position: relative;
+  align-self: center;
+  height: 100%;
+  min-height: 22px;
+}
+
+.chapter__tick::before,
+.chapter__tick::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 9px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+.chapter__tick::before { top: 0; }
+.chapter__tick::after { bottom: 0; }
+
+.chapter__index {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  padding-top: 4px;
+}
+
+.chapter__band {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  line-height: 1.05;
+  color: inherit;
+}
+
+.chapter__classes {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.chapter:hover {
+  color: var(--ink-print-2);
+}
+
+.chapter.is-current {
+  color: var(--ink-print);
+}
+
+.chapter.is-current .chapter__index {
+  color: var(--mustard);
+}
+
+.chapter.is-current .chapter__tick::before,
+.chapter.is-current .chapter__tick::after {
+  background: var(--mustard);
+  opacity: 1;
+  width: 13px;
+}
+
+/* The rough underline under the current chapter's name. A drawn stroke, not a
+   border: a border under this would be the thin rule the whole section is
+   avoiding. */
+.chapter.is-current .chapter__band {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 7.5c25-3.4 51-5 77-4.2 26 .8 53 4.4 77 2.4' stroke='%23c08a1e' stroke-width='4.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 92%;
+  background-size: 100% 0.17em;
+  padding-bottom: 0.1em;
+}
+
+@media (min-width: 780px) {
+  .curric__chapters {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 2vw, 32px);
+  }
+
+  .chapter {
+    grid-template-columns: 12px auto;
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    gap: 3px 12px;
+    padding-top: 14px;
+  }
+
+  .chapter__tick {
+    grid-row: 1 / span 3;
+    min-height: 46px;
+  }
+
+  .chapter__band {
+    grid-column: 2;
+  }
+
+  .chapter__classes {
+    grid-column: 2;
+  }
+
+  /* Each chapter sits a little lower than the one before it, so the contents
+     line steps down the page the way the years do. */
+  .curric__chapters > li:nth-child(2) .chapter { padding-top: 22px; }
+  .curric__chapters > li:nth-child(3) .chapter { padding-top: 30px; }
+  .curric__chapters > li:nth-child(4) .chapter { padding-top: 38px; }
+}
+
+/* ==========================================================================
+   The spread
+   ========================================================================== */
+.curric__spread {
+  display: grid;
+  gap: clamp(40px, 5vw, 72px);
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   Left page: the paste-up
+   -------------------------------------------------------------------------- */
+.curric__plate {
+  position: relative;
+  /* The plate is a fixed shape so the compositions inside it can be authored
+     in percentages and stay where they were put. */
+  aspect-ratio: 4 / 4.4;
+}
+
+.plate {
+  position: absolute;
+  inset: 0;
+}
+
+/* ONLY THE CURRENT CHAPTER IS ON THE BOARD, AND THE STYLESHEET SAYS SO.
+
+   This is the one place in the codebase where a resting state is hidden in
+   CSS rather than by the animation, and it is deliberate: which chapter is
+   showing is the component's *state*, not an entrance. If GSAP never runs -
+   a backgrounded tab throttling rAF, reduced motion, a script that failed -
+   the alternative is all four paste-ups stacked on top of each other, which
+   is not a degraded experience, it is a broken one.
+
+   The transition writes inline styles that outrank these rules for its
+   duration and clears them afterwards, so the stylesheet is always the thing
+   holding the truth in between.
+
+   `visibility` rather than `display`, so the photographs on the chapters
+   nobody has turned to yet still load before they are needed. */
+.plate {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.plate.is-current {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   A frame
+   --------------------------------------------------------------------------
+   A photographic print: white paper border, a contact shadow tight underneath,
+   and a paste-up rotation. Not a card.
+   -------------------------------------------------------------------------- */
+.frame {
+  position: absolute;
+  margin: 0;
+  padding: 6px 6px 6px;
+  background: #fbf8f0;
+  transform: rotate(var(--paste, 0deg));
+  box-shadow:
+    0 1px 1px rgba(41, 37, 31, 0.16),
+    0 10px 22px -14px rgba(41, 37, 31, 0.5);
+  will-change: transform;
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame--lead {
+  padding: 8px 8px 30px;
+}
+
+.frame--lead img {
+  aspect-ratio: 4 / 5;
+}
+
+.frame--behind {
+  padding: 5px;
+}
+
+.frame--behind img {
+  aspect-ratio: 4 / 3;
+}
+
+.frame--scrap {
+  padding: 4px;
+}
+
+.frame--scrap img {
+  aspect-ratio: 1 / 1;
+}
+
+/* The photocopy. Grey, a touch contrastier, and slightly lifted in the blacks
+   so it reads as reproduced rather than as a desaturated photograph. */
+.frame--mono img {
+  filter: grayscale(1) contrast(1.12) brightness(1.04);
+}
+
+/* Torn rather than cut, along the bottom and right. The clip-path is uneven on
+   purpose - a symmetrical tear is a shape, not a tear. */
+.frame--torn {
+  padding: 4px;
+  clip-path: polygon(
+    0% 0%, 100% 0%, 99% 22%, 100% 41%, 98% 63%, 100% 79%, 97% 100%,
+    78% 98%, 61% 100%, 42% 97%, 23% 100%, 5% 98%, 0% 100%
+  );
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Tape
+   --------------------------------------------------------------------------
+   Translucent, so the photograph and the paper both show through it - that is
+   the entire trick. The ends are ragged rather than square.
+   -------------------------------------------------------------------------- */
+.tape {
+  position: absolute;
+  width: clamp(52px, 7vw, 84px);
+  height: clamp(18px, 2vw, 24px);
+  background: rgba(206, 173, 96, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(160, 128, 52, 0.14);
+  transform: rotate(var(--tilt, -6deg));
+  clip-path: polygon(
+    3% 6%, 97% 0%, 100% 30%, 96% 62%, 99% 96%, 62% 100%, 28% 94%, 0% 99%, 2% 58%, 0% 24%
+  );
+  pointer-events: none;
+}
+
+.tape--tl { left: -12%; top: -4%; }
+.tape--tr { right: -12%; top: -4%; }
+.tape--bl { left: -10%; bottom: -3%; }
+.tape--br { right: -10%; bottom: -3%; }
+.tape--t  { left: 50%; top: -5%; margin-left: -32px; }
+
+/* --------------------------------------------------------------------------
+   The handwriting
+   -------------------------------------------------------------------------- */
+.hand {
+  position: absolute;
+  z-index: 4;
+  font-family: var(--font-hand);
+  font-size: clamp(1.5rem, 2.7vw, 2.125rem);
+  font-weight: 600;
+  line-height: 1.05;
+  /* Ballpoint blue-black rather than the body ink: a note written on a print
+     was written with whatever was to hand, and it was not the typesetter's
+     ink. It is the one place the faded process blue carries words. */
+  color: #2f3a46;
+  transform: rotate(var(--tilt, -3deg));
+  transform-origin: left center;
+  /* Wide enough for the longest of the four to break onto two lines the way a
+     person would break it, and narrow enough that it never crosses the plate. */
+  max-width: 32%;
+  pointer-events: none;
+}
+
+.hand__ink {
+  display: inline-block;
+}
+
+.hand-arrow {
+  position: absolute;
+  fill: none;
+  stroke: var(--mustard);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.hand-arrow--left {
+  width: 62px;
+  height: 36px;
+  left: -58px;
+  top: 60%;
+  transform: scaleX(-1);
+}
+
+.hand-arrow--right {
+  width: 62px;
+  height: 36px;
+  right: -58px;
+  top: 60%;
+}
+
+.hand-arrow--down {
+  width: 42px;
+  height: 46px;
+  left: 8%;
+  top: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   The folio
+   --------------------------------------------------------------------------
+   Bleeding off the outer edge, half in the margin, the way a page number does
+   when the trim was generous.
+   -------------------------------------------------------------------------- */
+.curric__folio {
+  position: absolute;
+  left: -2%;
+  bottom: -6%;
+  z-index: 5;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.curric__folio-num {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 400;
+  line-height: 0.7;
+  letter-spacing: -0.06em;
+  color: var(--ink-print);
+  opacity: 0.16;
+}
+
+.curric__folio-of {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-print-3);
+}
+
+/* --------------------------------------------------------------------------
+   Right page: the chapter
+   -------------------------------------------------------------------------- */
+.curric__sheet {
+  position: relative;
+  display: grid;
+}
+
+.sheet {
+  grid-area: 1 / 1;
+}
+
+.sheet {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sheet.is-current {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.sheet:focus-visible {
+  outline: 2px solid var(--mustard);
+  outline-offset: 10px;
+}
+
+.sheet__kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-print-3);
+  margin-bottom: clamp(14px, 1.8vw, 20px);
+}
+
+.sheet__num {
+  font-size: 0.8125rem;
+  color: var(--mustard);
+  /* A hanging numeral: pulled into the margin so the kicker's words line up
+     with the paragraph below rather than with the number. */
+  margin-left: -1.6em;
+  width: 1.6em;
+}
+
+.sheet__focus {
+  color: var(--ink-print);
+  max-width: 15ch;
+  margin-bottom: clamp(18px, 2.2vw, 26px);
+  letter-spacing: -0.026em;
+}
+
+.sheet__note {
+  font-size: var(--t-lead);
+  line-height: 1.52;
+  color: var(--ink-print-2);
+  max-width: 46ch;
+}
+
+.sheet__facts {
+  margin: clamp(26px, 3.2vw, 40px) 0 0;
+  display: grid;
+  gap: clamp(20px, 2.4vw, 30px);
+}
+
+/* Separated by a short tick in the margin rather than by a rule across the
+   column. */
+.sheet__facts > div {
+  position: relative;
+  padding-left: 26px;
+}
+
+.sheet__facts > div::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 1px;
+  height: 1.5em;
+  background: var(--mustard);
+}
+
+.sheet__facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-print-3);
+  margin-bottom: 7px;
+}
+
+.sheet__facts dd {
+  margin: 0;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--ink-print-2);
+  max-width: 44ch;
+}
+
+/* --------------------------------------------------------------------------
+   Colophon
+   -------------------------------------------------------------------------- */
+.curric__colophon {
+  margin-top: clamp(48px, 6vw, 84px);
+  padding-top: 18px;
+  max-width: 70ch;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--ink-print-3);
+  /* The only horizontal line in the section, and it is short, offset, and in
+     the margin rather than across the column. */
+  position: relative;
+}
+
+.curric__colophon::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 46px;
+  height: 2px;
+  background: var(--ink-print);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   Wide
+   ========================================================================== */
+@media (min-width: 980px) {
+  .curric__spread {
+    /* Deliberately not half and half. The photographs get the larger page. */
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+
+  .curric__plate {
+    aspect-ratio: 4 / 4.1;
+  }
+
+  .curric__sheet {
+    /* Dropped down the page so the two pages do not start on the same line -
+       the single cheapest way to stop a two-column layout reading as a table. */
+    padding-top: clamp(30px, 5vw, 76px);
+  }
+
+  .curric__folio {
+    left: auto;
+    right: -6%;
+    bottom: -4%;
+  }
+}
+
+/* ==========================================================================
+   Narrow
+   --------------------------------------------------------------------------
+   The paste-up survives. It is the section's whole personality, so it is not
+   flattened into a single photograph on a phone - the frames just have more
+   room to overlap because the plate is taller.
+   ========================================================================== */
+@media (max-width: 979px) {
+  .curric__plate {
+    aspect-ratio: 4 / 4.6;
+    margin-bottom: clamp(30px, 6vw, 48px);
+  }
+
+  .curric__reg--tl,
+  .curric__reg--br {
+    display: none;
+  }
+
+  .hand {
+    font-size: clamp(1.25rem, 5.4vw, 1.625rem);
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 560px) {
+  .curric__folio-num {
+    font-size: 3.25rem;
+  }
+
+  /* The arrows are the first thing to go: at this width they have nowhere to
+     travel and end up pointing at the edge of the screen. */
+  .hand-arrow {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   The annotations are clipped closed until they are written on, and that clip
+   is applied by JavaScript rather than by CSS - so with motion off, nothing is
+   ever clipped and every note is simply already written. Nothing to undo here
+   except the paste-up rotations, which stay: they are composition, not motion.
+   ========================================================================== */

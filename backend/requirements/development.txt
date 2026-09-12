@@ -1,0 +1,3 @@
+# Local development. The test suite runs on Django's own runner, so nothing
+# beyond the runtime set is needed yet.
+-r base.txt

@@ -1,0 +1,1704 @@
+/* ==========================================================================
+   EDITORIAL KIT
+   --------------------------------------------------------------------------
+   One stylesheet for the whole component kit. It is one file rather than
+   fifteen because these components share a vocabulary - the same frame
+   offsets, the same sticky geometry, the same cue treatment - and splitting
+   them means that vocabulary gets copied rather than referenced.
+
+   Section stylesheets that sit on top of this one only ever position things.
+   Nothing below is allowed to be redefined downstream.
+   ========================================================================== */
+
+/* ==========================================================================
+   Section head
+   ========================================================================== */
+/* The measure is set on the TITLE, not on this container.
+
+   `ch` resolves against the font-size of the element carrying it, and this
+   container is set at body size - so `max-width: 20ch` here is about 200px,
+   which crushes a 3.5rem display heading into a column four characters wide.
+   It is an easy thing to get wrong and an obvious thing once seen, so the
+   rule is: any measure expressed in `ch` belongs on the element that is
+   actually set in that type. */
+.sec-head {
+  max-width: min(100%, 56rem);
+}
+
+.sec-head__title {
+  margin-top: 18px;
+  max-width: 15ch;
+}
+
+.sec-head--centre {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.sec-head--centre .sec-head__title {
+  max-width: 18ch;
+  margin-inline: auto;
+}
+
+.sec-head--centre .sec-head__lead,
+.sec-head--centre .sec-head__tail {
+  margin-inline: auto;
+}
+
+.sec-head__tail {
+  margin-top: clamp(20px, 2.4vw, 32px);
+  max-width: var(--measure);
+}
+
+.sec-head__lead {
+  margin: 0;
+}
+
+/* A head that sits beside its own content rather than above it, so the title
+   is allowed a longer line before it breaks. */
+.sec-head--wide .sec-head__title {
+  max-width: 21ch;
+}
+
+/* ==========================================================================
+   Stats
+   ========================================================================== */
+.stats {
+  margin: 0;
+  display: grid;
+  gap: clamp(24px, 3vw, 48px);
+}
+
+.stats--row {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.stats--grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stats--stack {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.stats--stack .stat {
+  padding-block: clamp(18px, 2vw, 26px);
+  border-top: 1px solid var(--line);
+}
+
+.stats--stack .stat:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.stat__body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat__value {
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+}
+
+.stats--large .stat__value {
+  font-size: var(--t-stat);
+}
+
+.stat__label {
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  font-weight: 560;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+
+.stat__detail {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.4;
+  max-width: 26ch;
+}
+
+.section--navy .stat__label,
+.on-navy .stat__label {
+  color: var(--on-navy);
+}
+
+.section--navy .stat__detail,
+.on-navy .stat__detail {
+  color: var(--on-navy-3);
+}
+
+/* Every figure sits on a hairline, which is what makes a row of them read as
+   a table of record rather than as four decorated numbers. */
+.stats--row .stat,
+.stats--grid .stat {
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+}
+
+.section--navy .stats--row .stat,
+.section--navy .stats--grid .stat,
+.on-navy .stats--row .stat,
+.on-navy .stats--grid .stat {
+  border-top-color: var(--sun);
+}
+
+@media (min-width: 700px) {
+  .stats--grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Editorial hero
+   ========================================================================== */
+.hero {
+  position: relative;
+  padding-top: calc(var(--nav-h) + clamp(28px, 6vw, 72px));
+  padding-bottom: clamp(72px, 8vw, 120px);
+  overflow: clip;
+}
+
+.hero__inner {
+  display: grid;
+  gap: clamp(40px, 5vw, 64px);
+  align-items: center;
+}
+
+.hero__type {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__tag {
+  margin-bottom: clamp(18px, 2vw, 26px);
+}
+
+/* Each authored line gets its own mask, so the entrance can travel a line at
+   a time without SplitText re-measuring on every resize. */
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.hero__line > span {
+  display: block;
+  will-change: transform;
+}
+
+.hero__tail {
+  margin-top: clamp(26px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 1.8vw, 24px);
+  align-items: flex-start;
+}
+
+.hero__question {
+  color: var(--sun-deep);
+}
+
+.hero__lead {
+  max-width: 46ch;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.hero__media {
+  position: relative;
+}
+
+.hero__frame {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.hero__frame .fig,
+.hero__frame img {
+  height: 100%;
+  border-radius: 0;
+}
+
+/* The small round crop, overlapping the frame's top-right corner. It sits
+   outside the frame on both axes so it reads as laid on top of the
+   composition rather than as an inset panel. */
+.hero__inset {
+  position: absolute;
+  /* Inside the frame on a narrow screen, where the media column runs the full
+     width of the page and anything hung off its right edge falls outside the
+     section's own clip. */
+  right: 4%;
+  top: -5%;
+  width: clamp(78px, 20vw, 150px);
+  z-index: 3;
+  box-shadow: 0 0 0 8px var(--ivory);
+  border-radius: 50%;
+}
+
+@media (min-width: 900px) {
+  .hero__inset {
+    right: -5%;
+    top: -6%;
+    width: clamp(88px, 13vw, 150px);
+  }
+}
+
+/* The floating figures.
+   On a narrow screen they are a plain row under the photograph. On a wide one
+   they lift onto the foot of the frame as a paper plate that overhangs its
+   left edge - which is the composition the references keep reaching for, and
+   the only place on this screen they can go without colliding with a headline
+   set this large. */
+.hero__figs {
+  display: flex;
+  gap: clamp(18px, 2.4vw, 34px);
+  margin-top: 26px;
+}
+
+.hero__fig {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hero__fig-value {
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+}
+
+.hero__fig-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  max-width: 14ch;
+  line-height: 1.35;
+}
+
+.hero__cue {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(20px, 3vw, 34px);
+  display: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero__cue i {
+  display: block;
+  width: 54px;
+  height: 1px;
+  background: var(--line-strong);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__cue i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  animation: cue-sweep 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes cue-sweep {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+
+@media (min-width: 900px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(48px, 5vw, 88px);
+    min-height: calc(100svh - var(--nav-h) - 60px);
+  }
+
+  .hero__cue {
+    display: flex;
+  }
+
+  .hero__figs {
+    position: absolute;
+    left: -8%;
+    bottom: -22px;
+    gap: clamp(16px, 1.8vw, 28px);
+    margin: 0;
+    padding: 20px clamp(18px, 1.8vw, 26px);
+    background: var(--paper);
+    border-radius: var(--r-frame);
+    box-shadow: var(--e-2);
+    z-index: 3;
+  }
+
+  .hero__fig + .hero__fig {
+    padding-left: clamp(16px, 1.8vw, 28px);
+    border-left: 1px solid var(--line);
+  }
+
+  .hero__frame {
+    aspect-ratio: 4 / 5.1;
+  }
+}
+
+/* ==========================================================================
+   Page cover
+   ========================================================================== */
+.cover {
+  position: relative;
+  padding-top: calc(var(--nav-h) + clamp(20px, 4vw, 40px));
+}
+
+.cover__top {
+  position: relative;
+  margin-inline: var(--gutter);
+}
+
+.cover__media {
+  position: relative;
+  height: clamp(400px, 68svh, 760px);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+}
+
+.cover__media .fig,
+.cover__media img {
+  height: 100%;
+  border-radius: 0;
+}
+
+.cover__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(9, 14, 25, 0.82) 0%,
+    rgba(9, 14, 25, 0.45) 34%,
+    rgba(9, 14, 25, 0.06) 66%
+  );
+}
+
+.cover--light .cover__scrim {
+  background: linear-gradient(
+    to top,
+    rgba(247, 243, 234, 0.94) 0%,
+    rgba(247, 243, 234, 0.6) 34%,
+    rgba(247, 243, 234, 0.1) 68%
+  );
+}
+
+/* The title plate sits inside the photograph, on its foot. */
+.cover__plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(24px, 3.4vw, 48px);
+  padding-inline: clamp(20px, 3.4vw, 56px);
+}
+
+.cover__title {
+  color: var(--on-navy);
+  max-width: 16ch;
+}
+
+.cover--light .cover__title {
+  color: var(--ink);
+}
+
+.cover__title > span {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.cover__title > span > span {
+  display: block;
+}
+
+.cover__tag {
+  margin-bottom: 18px;
+}
+
+.cover__under {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
+  padding-top: clamp(40px, 5vw, 72px);
+  padding-bottom: clamp(8px, 1vw, 16px);
+}
+
+.cover__question {
+  color: var(--sun-deep);
+  margin-bottom: 12px;
+}
+
+.cover__facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 34px);
+}
+
+.cover__fact dd {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 14px;
+  border-top: 2px solid var(--ink);
+}
+
+.cover__fact-value {
+  font-size: clamp(1.6rem, 2.4vw, 2.25rem);
+}
+
+.cover__fact-label {
+  font-size: var(--t-small);
+  font-weight: 560;
+}
+
+.cover__fact-detail {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+@media (min-width: 900px) {
+  .cover__under {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  .cover__facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   Sticky story
+   ========================================================================== */
+.sticky-story {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
+}
+
+.sticky-story__media {
+  display: none;
+}
+
+.sticky-story__panels {
+  display: grid;
+  gap: 0;
+}
+
+.sticky-story__panel {
+  position: relative;
+  padding-block: clamp(48px, 7vw, 110px);
+  border-top: 1px solid var(--line);
+}
+
+.sticky-story__panel:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The last panel has no successor to make room for, and its full padding
+   leaves most of a screen of empty ground before the next section. */
+.sticky-story__panel:last-child {
+  padding-bottom: clamp(24px, 3vw, 48px);
+}
+
+.sticky-story__index {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--sun-deep);
+  display: block;
+  margin-bottom: 14px;
+}
+
+.sticky-story__title {
+  margin-block: 10px 16px;
+  max-width: 18ch;
+}
+
+.sticky-story__proof {
+  margin-top: 18px;
+  padding: 12px 16px 13px;
+  background: var(--sun-soft);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  color: var(--sun-deep);
+  max-width: 44ch;
+  line-height: 1.5;
+}
+
+.sticky-story__inline {
+  margin-top: 26px;
+}
+
+.sticky-story__counter {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .sticky-story {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(48px, 6vw, 96px);
+    align-items: start;
+  }
+
+  /* The media is first in the DOM, so it lands on the left by default and the
+     `--right` variant is the one that has to move. It was written the other
+     way round, which put every `media="right"` story's photograph on the left. */
+  .sticky-story--right .sticky-story__media {
+    order: 2;
+  }
+
+  .sticky-story__media {
+    display: block;
+    position: sticky;
+    /* Held just below the masthead, and short enough that a 700px-tall laptop
+       still shows a whole panel beside it. */
+    top: calc(var(--nav-h) + 4vh);
+    height: min(70svh, 640px);
+  }
+
+  /* Every panel is at least as tall as the frame it is holding on screen.
+     Without this the last panel - which is usually the shortest - runs out
+     before the sticky frame does, the frame is pushed off the top edge, and
+     the section ends on a column of dimmed text beside nothing. */
+  .sticky-story__panel {
+    min-height: min(74svh, 660px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .sticky-story__stack {
+    position: relative;
+    height: 100%;
+  }
+
+  .sticky-story__frame {
+    position: absolute;
+    inset: 0;
+  }
+
+  .sticky-story__frame .fig,
+  .sticky-story__frame img {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .sticky-story__counter {
+    position: absolute;
+    left: 0;
+    bottom: -34px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sticky-story__counter i {
+    width: 26px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  /* The inactive panels sit back so the active one reads as the one being
+     talked about. Only the text dims - the numeral stays put, so the column
+     still scans as a numbered list. */
+  .sticky-story__panel .sticky-story__text {
+    opacity: 0.44;
+    transition: opacity var(--d-move) var(--ease-out);
+  }
+
+  .sticky-story__panel.is-active .sticky-story__text {
+    opacity: 1;
+  }
+
+  .sticky-story__inline {
+    /* Never downloaded on desktop: the figures inside are lazy, and a lazy
+       image inside a `display: none` box is never in the viewport, so the
+       browser never fetches it. */
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Horizontal gallery
+   ========================================================================== */
+.hgal {
+  position: relative;
+  padding-block: var(--section-y);
+  overflow: clip;
+}
+
+.hgal__head {
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+.hgal__viewport {
+  position: relative;
+  padding-inline: var(--gutter);
+}
+
+.hgal__viewport:focus-visible {
+  outline: 2px solid var(--sun-deep);
+  outline-offset: -6px;
+}
+
+.hgal__track {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 34px);
+  width: max-content;
+  will-change: transform;
+}
+
+.hgal__item {
+  flex: none;
+  width: clamp(220px, 30vw, 400px);
+}
+
+.hgal__item--sm { width: clamp(170px, 21vw, 280px); }
+.hgal__item--lg { width: clamp(280px, 40vw, 560px); }
+.hgal__item--tall { width: clamp(200px, 25vw, 330px); }
+
+/* The unequal vertical offsets are what stop this reading as a row. */
+.hgal__item--sm { transform: translateY(clamp(18px, 3vw, 46px)); }
+.hgal__item--tall { transform: translateY(clamp(-40px, -3vw, -16px)); }
+
+.hgal__cap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+}
+
+.hgal__cap-title {
+  font-size: var(--t-small);
+  font-weight: 560;
+  color: var(--ink);
+}
+
+.section--navy .hgal__cap-title {
+  color: var(--on-navy);
+}
+
+@media (max-width: 899px) {
+  /* A thumb already knows how to do this, so it is native scrolling with snap
+     points rather than a transform the page has to drive. */
+  .hgal__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    /* See the note in life.css: snapping ignores padding without this. */
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hgal__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hgal__track {
+    padding-right: var(--gutter);
+  }
+
+  .hgal__item {
+    scroll-snap-align: center;
+    transform: none;
+  }
+}
+
+@media (min-width: 900px) {
+  /* The contextual cursor. It is a pseudo-element on the viewport rather than
+     a real custom cursor, so it costs no pointer tracking and cannot be left
+     behind on the page when the section unmounts. */
+  .hgal__viewport {
+    cursor: grab;
+  }
+
+  .hgal__viewport:active {
+    cursor: grabbing;
+  }
+
+  .hgal__viewport::after {
+    content: attr(data-cue);
+    position: absolute;
+    right: var(--gutter);
+    top: -34px;
+    padding: 8px 14px 9px;
+    background: var(--ink);
+    color: var(--ivory);
+    border-radius: var(--r-pill);
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+}
+
+/* ==========================================================================
+   Editorial timeline
+   ========================================================================== */
+.etl {
+  position: relative;
+  background: var(--sand);
+  overflow: clip;
+}
+
+/* A PINNED SECTION IS EXACTLY ONE SCREEN, AND IT HAS TO PROVE IT.
+
+   While this is pinned the viewport cannot scroll, so anything that overflows
+   the screen is unreachable - not clipped-but-scrollable, genuinely gone. The
+   height is therefore fixed rather than a minimum, and every child inside it
+   is sized in `svh` so the whole composition shrinks together on a short
+   laptop instead of the last element falling off the bottom. */
+.etl__inner {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 3svh, 40px);
+  padding-block: clamp(32px, 6svh, 72px);
+  overflow: hidden;
+}
+
+.etl__head {
+  padding-inline: var(--gutter);
+  max-width: var(--container);
+  margin-inline: auto;
+  width: 100%;
+  flex: none;
+}
+
+.etl__viewport {
+  position: relative;
+  padding-inline: var(--gutter);
+}
+
+.etl__track {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(28px, 4vw, 72px);
+  width: max-content;
+  will-change: transform;
+  padding-bottom: 42px;
+}
+
+.etl__entry {
+  flex: none;
+  width: clamp(230px, 26vw, 340px);
+  position: relative;
+}
+
+.etl__entry--major {
+  width: clamp(260px, 31vw, 420px);
+}
+
+/* The tick that stands on the axis. */
+.etl__tick {
+  position: absolute;
+  left: 0;
+  bottom: -46px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--sand);
+  box-shadow: 0 0 0 2px var(--ink);
+  transform: translateY(50%);
+  z-index: 2;
+}
+
+.etl__entry--major .etl__tick {
+  background: var(--sun);
+  box-shadow: 0 0 0 2px var(--ink);
+  width: 15px;
+  height: 15px;
+}
+
+.etl__year {
+  display: block;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(2.25rem, 7svh, 4.25rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  margin-bottom: clamp(12px, 2svh, 20px);
+}
+
+.etl__entry--major .etl__year {
+  color: var(--sun-deep);
+}
+
+/* Sized in svh so the strip and its photographs shrink together rather than
+   the captions being pushed off the bottom of the pin. */
+.etl__media {
+  margin-bottom: clamp(12px, 2svh, 18px);
+  height: clamp(120px, 26svh, 260px);
+}
+
+.etl__media .fig {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.etl__title {
+  margin-bottom: 8px;
+  max-width: 22ch;
+}
+
+.etl__body {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.5;
+  max-width: 34ch;
+}
+
+/* On a short laptop the body copy is the first thing to go. The year, the
+   photograph and the title still carry the whole diagram without it. */
+@media (max-height: 720px) {
+  .etl__body {
+    display: none;
+  }
+}
+
+/* The axis itself, drawn under the ticks. */
+.etl__axis {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 0;
+  height: 2px;
+  background: var(--line);
+}
+
+.etl__axis-fill {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.etl__cue {
+  padding-inline: var(--gutter);
+  max-width: var(--container);
+  margin-inline: auto;
+  width: 100%;
+  flex: none;
+}
+
+@media (max-width: 899px) {
+  .etl__inner {
+    height: auto;
+    overflow: visible;
+    padding-block: clamp(56px, 8vw, 96px);
+  }
+
+  .etl__viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .etl__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .etl__entry {
+    scroll-snap-align: start;
+    width: min(78vw, 340px);
+  }
+
+  .etl__track {
+    padding-right: var(--gutter);
+  }
+}
+
+/* ==========================================================================
+   Chapter rail
+   --------------------------------------------------------------------------
+   IT LIVES IN THE GUTTER, AND THE GUTTER IS NARROW.
+
+   The first version printed the chapter names permanently down the left
+   margin, which read beautifully in isolation and overlapped the page's own
+   content at every viewport under about 1500px - the numerals sat inside the
+   gutter but the labels ran straight across the text beside them.
+
+   So at rest the rail is only its numerals: about 26px wide, comfortably
+   inside the smallest gutter it is ever shown at. The names appear on hover
+   or when anything inside it takes focus, on their own paper ground, so they
+   are legible over whatever they cover for the moment they are covering it.
+
+   The keyboard path is the reason for `:focus-within` rather than `:hover`
+   alone: a rail whose labels only exist under a pointer is a table of
+   contents that cannot be read by tabbing to it.
+   ========================================================================== */
+.rail {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .rail {
+    display: block;
+    position: fixed;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: var(--z-sticky);
+    padding: 12px 10px;
+    border-radius: var(--r-sm);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--d-move) var(--ease-out),
+      background var(--d-state) var(--ease-out),
+      box-shadow var(--d-state) var(--ease-out);
+  }
+
+  .rail.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* The paper ground only appears while the names are out, so the rail is
+     invisible furniture the rest of the time. */
+  .rail:hover,
+  .rail:focus-within {
+    background: var(--paper);
+    box-shadow: var(--e-2);
+  }
+
+  .rail__title {
+    max-width: 14ch;
+    color: var(--ink-3);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: opacity var(--d-state) var(--ease-out);
+  }
+
+  .rail:hover .rail__title,
+  .rail:focus-within .rail__title {
+    opacity: 1;
+    height: auto;
+    margin-bottom: 14px;
+  }
+
+  .rail__list {
+    display: grid;
+    gap: 2px;
+  }
+
+  .rail__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+    white-space: nowrap;
+    transition: color var(--d-state) var(--ease-out);
+  }
+
+  .rail__index {
+    position: relative;
+    flex: none;
+  }
+
+  .rail__label {
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-width var(--d-move) var(--ease-out),
+      opacity var(--d-state) var(--ease-out);
+  }
+
+  .rail:hover .rail__label,
+  .rail:focus-within .rail__label {
+    max-width: 18ch;
+    opacity: 1;
+  }
+
+  .rail__link:hover,
+  .rail__link.is-current {
+    color: var(--ink);
+  }
+
+  .rail__link.is-current .rail__index {
+    color: var(--sun-deep);
+  }
+
+  /* The mark against the current chapter. It is the only thing the rail shows
+     at rest beyond the numerals themselves, and it is what makes the closed
+     state readable as a position rather than as a list. */
+  .rail__link.is-current .rail__index::after {
+    content: '';
+    position: absolute;
+    right: -7px;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--sun-deep);
+    transform: translateY(-50%);
+  }
+}
+
+/* ==========================================================================
+   Quote
+   ========================================================================== */
+.quote {
+  position: relative;
+}
+
+.quote__stage {
+  position: relative;
+  display: grid;
+}
+
+.quote__slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.quote__slide.is-current {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.quote__fig {
+  margin: 0;
+}
+
+.quote__text {
+  margin: 0;
+  max-width: 18ch;
+  /* Hanging punctuation, so the opening quote mark sits in the margin and the
+     first letter of the sentence lines up with everything below it. */
+  hanging-punctuation: first;
+  text-indent: -0.06em;
+}
+
+.quote__by {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: clamp(28px, 3.4vw, 44px);
+}
+
+.quote__face {
+  width: 62px;
+  flex: none;
+  box-shadow: 0 0 0 3px var(--sun);
+}
+
+.quote__who {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.quote__name {
+  font-size: var(--t-body);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.section--navy .quote__name,
+.on-navy .quote__name {
+  color: var(--on-navy);
+}
+
+.quote__bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: clamp(28px, 3.4vw, 44px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.section--navy .quote__bar,
+.on-navy .quote__bar {
+  border-top-color: var(--line-navy);
+}
+
+.quote__count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quote__count i {
+  width: 22px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.quote__nav {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.quote__btn {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-tap) var(--ease-out);
+}
+
+.quote__btn:hover {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: none;
+}
+
+.quote__btn:active {
+  transform: scale(0.94);
+}
+
+.section--navy .quote__btn,
+.on-navy .quote__btn {
+  color: var(--on-navy);
+  box-shadow: inset 0 0 0 1.5px var(--line-navy);
+}
+
+.quote__group {
+  order: -1;
+}
+
+/* ==========================================================================
+   Accordion
+   ========================================================================== */
+.acc {
+  border-top: 1px solid var(--line);
+}
+
+.acc__row {
+  border-bottom: 1px solid var(--line);
+}
+
+.acc__heading {
+  margin: 0;
+}
+
+.acc__q {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(16px, 2vw, 32px);
+  padding-block: clamp(22px, 2.6vw, 34px);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.acc__q:hover {
+  color: var(--sun-deep);
+}
+
+.acc__q-text {
+  max-width: 26ch;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.acc__q:hover .acc__q-text {
+  transform: translateX(8px);
+}
+
+.acc__tag {
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: 8px;
+}
+
+/* The mark is a plus that becomes a minus. Two rules, one of which rotates -
+   which is cheaper and steadier than swapping an icon. */
+.acc__mark {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  transition: background var(--d-state) var(--ease-out), box-shadow var(--d-state) var(--ease-out);
+}
+
+.acc__mark i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 1.8px;
+  margin: -0.9px 0 0 -7px;
+  background: currentColor;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.acc__mark i:last-child {
+  transform: rotate(90deg);
+}
+
+.acc__row.is-open .acc__mark {
+  background: var(--sun);
+  box-shadow: none;
+}
+
+.acc__row.is-open .acc__mark i:last-child {
+  transform: rotate(0deg);
+}
+
+.acc__panel {
+  overflow: hidden;
+}
+
+.acc__answer {
+  padding-bottom: clamp(24px, 3vw, 38px);
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: var(--t-lead);
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   Journey path
+   ========================================================================== */
+.jpath {
+  position: relative;
+  padding-block: var(--section-y);
+  overflow: clip;
+}
+
+.jpath__head {
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+
+.jpath__stage {
+  position: relative;
+}
+
+.jpath__svg {
+  display: none;
+}
+
+.jpath__stops {
+  display: grid;
+  gap: clamp(34px, 4vw, 52px);
+  position: relative;
+  padding-left: 34px;
+}
+
+/* The narrow layout: one straight rule down the margin, stops hung off it. */
+.jpath__stops::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--line);
+}
+
+.jpath__stop {
+  position: relative;
+}
+
+.jpath__stop::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.jpath__face {
+  width: clamp(78px, 12vw, 112px);
+  margin-bottom: 16px;
+  box-shadow: 0 0 0 5px var(--ivory), 0 0 0 7px var(--sun);
+}
+
+.jpath__stage-name {
+  color: var(--sun-deep);
+  margin-bottom: 6px;
+}
+
+.jpath__label {
+  margin-bottom: 6px;
+}
+
+.jpath__detail {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  max-width: 30ch;
+  line-height: 1.5;
+}
+
+@media (min-width: 900px) {
+  .jpath__stage {
+    min-height: 520px;
+  }
+
+  .jpath__svg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .jpath__ghost,
+  .jpath__line {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .jpath__ghost {
+    stroke: var(--line);
+    stroke-dasharray: 7 9;
+  }
+
+  .jpath__line {
+    stroke: var(--ink);
+  }
+
+  .jpath__nib {
+    fill: var(--sun);
+    stroke: var(--ink);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .jpath__stops {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(16px, 2vw, 32px);
+    padding-left: 0;
+    position: relative;
+    z-index: 2;
+    align-items: start;
+  }
+
+  .jpath__stops::before {
+    display: none;
+  }
+
+  .jpath__stop::before {
+    display: none;
+  }
+
+  /* The stops rise and fall with the curve. The offsets are read off the
+     path's own control points, so moving the curve means moving these. */
+  .jpath__stop:nth-child(1) { margin-top: 168px; }
+  .jpath__stop:nth-child(2) { margin-top: 56px; }
+  .jpath__stop:nth-child(3) { margin-top: 210px; }
+  .jpath__stop:nth-child(4) { margin-top: 82px; }
+  .jpath__stop:nth-child(5) { margin-top: 190px; }
+}
+
+/* ==========================================================================
+   Photo break
+   ========================================================================== */
+.pbreak {
+  padding-block: clamp(48px, 6vw, 96px);
+  overflow: clip;
+}
+
+.pbreak__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  gap: 0;
+}
+
+.pbreak__frame--a {
+  grid-column: 1 / span 4;
+  z-index: 2;
+}
+
+.pbreak__frame--b {
+  grid-column: 4 / span 7;
+  z-index: 1;
+}
+
+.pbreak__frame--c {
+  grid-column: 10 / span 3;
+  z-index: 3;
+  transform: translateY(-30%);
+}
+
+.pbreak--flip .pbreak__frame--a {
+  grid-column: 1 / span 3;
+  transform: translateY(24%);
+}
+
+.pbreak--flip .pbreak__frame--b {
+  grid-column: 4 / span 6;
+}
+
+.pbreak--flip .pbreak__frame--c {
+  grid-column: 9 / span 4;
+  transform: translateY(-18%);
+}
+
+.pbreak__caption {
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  transform: translateX(-50%);
+  background: var(--ivory);
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+}
+
+@media (max-width: 700px) {
+  .pbreak__frame--c {
+    display: none;
+  }
+
+  .pbreak__frame--a {
+    grid-column: 1 / span 5;
+  }
+
+  .pbreak__frame--b {
+    grid-column: 5 / span 8;
+  }
+}
+
+/* ==========================================================================
+   CTA
+   ========================================================================== */
+.cta {
+  position: relative;
+  padding-block: clamp(88px, 11vw, 180px);
+  background: var(--navy);
+  color: var(--on-navy);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.cta__media {
+  position: absolute;
+  inset: -8% 0;
+  z-index: -1;
+}
+
+.cta__media .fig,
+.cta__media img {
+  height: 100%;
+  border-radius: 0;
+}
+
+.cta__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(14, 24, 41, 0.94) 0%,
+    rgba(14, 24, 41, 0.82) 46%,
+    rgba(14, 24, 41, 0.6) 100%
+  );
+}
+
+.cta__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(18px, 2.2vw, 28px);
+}
+
+.cta__title {
+  color: var(--on-navy);
+  max-width: 15ch;
+}
+
+.cta__lead {
+  color: var(--on-navy-2);
+  max-width: 48ch;
+}
+
+.cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cta__foot {
+  color: var(--on-navy-3);
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Achievement archive
+   ========================================================================== */
+.arch {
+  padding-block: var(--section-y);
+}
+
+.arch__head {
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+.arch__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: clamp(28px, 3.4vw, 44px);
+  border-bottom: 2px solid var(--ink);
+}
+
+.arch__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px 11px;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.arch__filter:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.arch__filter.is-on {
+  background: var(--ink);
+  color: var(--ivory);
+  box-shadow: none;
+}
+
+.arch__count {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--ink-4);
+}
+
+.arch__filter.is-on .arch__count {
+  color: var(--sun);
+}
+
+.arch__year {
+  padding-block: clamp(28px, 3.4vw, 48px);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+}
+
+.arch__year-num {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+
+.arch__rows {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 34px);
+}
+
+.arch__row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.3fr) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 32px);
+  align-items: start;
+}
+
+.arch__fig {
+  width: 100%;
+}
+
+.arch__text {
+  display: grid;
+  gap: 6px;
+}
+
+.arch__cat {
+  color: var(--sun-deep);
+}
+
+.arch__title {
+  max-width: 32ch;
+}
+
+.arch__detail {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 52ch;
+}
+
+.arch__empty {
+  padding-block: clamp(40px, 5vw, 72px);
+  font-size: var(--t-lead);
+  color: var(--ink-3);
+}
+
+@media (min-width: 900px) {
+  .arch__year {
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: clamp(24px, 3vw, 56px);
+    align-items: start;
+  }
+
+  .arch__row {
+    grid-template-columns: minmax(0, 0.26fr) minmax(0, 1fr);
+  }
+}

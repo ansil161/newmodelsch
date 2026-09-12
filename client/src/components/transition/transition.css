@@ -1,0 +1,173 @@
+/* ==========================================================================
+   PAGE TRANSITION
+   --------------------------------------------------------------------------
+   Two fixed layers, both inert to the pointer:
+
+     .pt__sheet    the ivory ground the site is introduced on. It is the same
+                   colour as the page underneath, so it leaves by fading and
+                   what the visitor sees is not a curtain lifting - it is the
+                   page arriving.
+     .pt__stage    the brand, above the sheet, so the lockup keeps travelling
+                   after the ground it stood on has gone.
+
+   THE LOCKUP IS LAID OUT AT `--k` TIMES THE MASTHEAD'S SIZE.
+
+   Every length below is the navigation's own measurement multiplied by
+   `--k`, which the controller sets from the real `.nav__brand` at runtime. At
+   `scale(1/k)` this element is pixel-for-pixel the masthead's brand, which is
+   what lets the transition end by swapping one for the other.
+
+   `transform-origin: 0 0` is load-bearing: the controller positions the
+   lockup by its top-left corner in viewport coordinates, so the landing is
+   the masthead's own `getBoundingClientRect()` and nothing has to be
+   corrected for the origin moving as the thing scales.
+
+   Nothing here is hidden by the stylesheet except the layers themselves. A
+   build where the script never runs shows the site, not a blank sheet.
+   ========================================================================== */
+
+.pt {
+  position: fixed;
+  inset: 0;
+  /* Above the masthead, the drawer and the cursor. Nothing on this site is
+     allowed to sit over a transition. */
+  z-index: calc(var(--z-overlay) + 5);
+  pointer-events: none;
+}
+
+/* While a transition is covering the viewport the layer swallows clicks, or a
+   visitor can start a second navigation into the back of the first. */
+.pt.is-busy {
+  pointer-events: auto;
+}
+
+.pt__sheet,
+.pt__stage {
+  visibility: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   The masthead is held still while a transition is running
+   --------------------------------------------------------------------------
+   The lockup lands on `.nav__brand`'s measured position, and that position
+   moves twice underneath the sheet. The scroll is reset, which un-shrinks the
+   bar from 62px back to 76px over 420ms and un-hides it if the reader had
+   scrolled down before clicking - and a bar that has scrolled away is sitting
+   at `top: -48px`, so a lockup measured against it flies off the top of the
+   screen instead of landing on the navigation.
+
+   For the length of a transition the bar is therefore pinned to its
+   top-of-page state with no easing, which is the state it will be in when the
+   next page appears. All of it happens behind an opaque sheet, so the snap is
+   never seen; the bar goes back to behaving normally the moment the sheet is
+   gone.
+   -------------------------------------------------------------------------- */
+html.is-swapping .nav {
+  transform: none !important;
+  transition: none !important;
+}
+
+html.is-swapping .nav__inner {
+  height: var(--nav-h) !important;
+  transition: none !important;
+}
+
+.pt__sheet {
+  position: fixed;
+  inset: 0;
+  background: var(--ivory);
+  will-change: opacity;
+}
+
+.pt__stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   The lockup - `.nav__brand`, at `--k` times the size
+   -------------------------------------------------------------------------- */
+.pt__lockup {
+  --k: 3;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  display: flex;
+  align-items: center;
+  gap: calc(11px * var(--k));
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.pt__mark {
+  position: relative;
+  width: calc(30px * var(--k));
+  height: calc(30px * var(--k));
+  flex: none;
+}
+
+.pt__mark i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(2.5px * var(--k));
+  background: var(--ink);
+  border-radius: calc(2px * var(--k));
+}
+
+.pt__mark i:nth-of-type(1) {
+  top: calc(5px * var(--k));
+}
+
+.pt__mark i:nth-of-type(2) {
+  top: calc(13px * var(--k));
+  width: 62%;
+}
+
+.pt__mark b {
+  position: absolute;
+  left: 0;
+  bottom: calc(2px * var(--k));
+  width: calc(9px * var(--k));
+  height: calc(9px * var(--k));
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+.pt__name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.pt__name b {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  font-size: calc(1.0625rem * var(--k));
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.pt__name span {
+  font-family: var(--font-mono);
+  font-size: calc(0.5625rem * var(--k));
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------
+   The controller builds no timeline in this mode - it cross-fades the sheet
+   and nothing moves. Only the compositor hints need standing down.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .pt__sheet,
+  .pt__lockup {
+    will-change: auto;
+  }
+}

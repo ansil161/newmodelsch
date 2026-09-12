@@ -1,0 +1,4 @@
+# Client-side routing: every path must be served index.html, or a direct hit on
+# /admissions returns 404 from the static host. Netlify reads this file; Vercel
+# uses vercel.json, Apache a .htaccess rewrite, nginx `try_files`.
+/*  /index.html  200

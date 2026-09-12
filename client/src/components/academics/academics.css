@@ -1,0 +1,156 @@
+/* ==========================================================================
+   ACADEMICS
+   --------------------------------------------------------------------------
+   Positioning only.
+   ========================================================================== */
+
+.method {
+  background: var(--paper);
+}
+
+.method__head {
+  margin-bottom: clamp(48px, 6vw, 90px);
+}
+
+/* ==========================================================================
+   After Class 10
+   ========================================================================== */
+.next__head {
+  margin-bottom: clamp(40px, 5vw, 68px);
+}
+
+.next__rows {
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.next__row {
+  display: grid;
+  gap: 8px;
+  padding-block: clamp(24px, 3vw, 38px);
+  border-bottom: 1px solid var(--line);
+}
+
+.next__num {
+  color: var(--sun-deep);
+}
+
+.next__subjects,
+.next__paths {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+.next__paths {
+  color: var(--ink-3);
+}
+
+@media (min-width: 860px) {
+  .next__row {
+    grid-template-columns: 4rem minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: clamp(20px, 2.6vw, 44px);
+  }
+
+  .next__num {
+    align-self: center;
+  }
+}
+
+/* ==========================================================================
+   Beyond the syllabus
+   --------------------------------------------------------------------------
+   Four rows, alternating which side the photograph sits on. The type is at
+   h1 scale because the argument of the section is that these four things are
+   worth as much as the examined ones - and a section that says that in 14px
+   is not saying it.
+   ========================================================================== */
+.beyond__head {
+  margin-bottom: clamp(48px, 6vw, 84px);
+}
+
+.beyond__list {
+  display: grid;
+  gap: clamp(48px, 6vw, 96px);
+}
+
+.skill {
+  position: relative;
+  display: grid;
+  gap: clamp(20px, 2.6vw, 40px);
+  align-items: center;
+  padding-top: clamp(24px, 3vw, 40px);
+  border-top: 1px solid var(--line);
+}
+
+.skill__index {
+  position: absolute;
+  right: 0;
+  top: clamp(24px, 3vw, 40px);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.12em;
+  color: var(--ink-4);
+}
+
+.skill__text {
+  display: grid;
+  gap: 16px;
+}
+
+.skill__title {
+  max-width: 12ch;
+}
+
+.skill__fig {
+  width: 100%;
+}
+
+@media (min-width: 860px) {
+  .skill {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .skill:nth-child(even) .skill__fig {
+    order: -1;
+  }
+
+  .skill:nth-child(even) {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+}
+
+/* ==========================================================================
+   The record
+   ========================================================================== */
+.record {
+  background: var(--sand);
+}
+
+/* ==========================================================================
+   Proof
+   ========================================================================== */
+.proof__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: clamp(48px, 6vw, 84px);
+}
+
+.proof__title {
+  color: var(--on-navy);
+  max-width: 14ch;
+}
+
+.proof__foot {
+  margin-top: clamp(32px, 4vw, 52px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line-navy);
+  color: var(--on-navy-3);
+  max-width: 62ch;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}

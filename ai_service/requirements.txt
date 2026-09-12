@@ -1,0 +1,58 @@
+# ai_service — base runtime dependencies.
+#
+#     python -m venv venv
+#     venv/Scripts/pip install -r requirements.txt      # Windows
+#     venv/bin/pip install -r requirements.txt          # POSIX
+#
+# Deliberately light. Nothing here pulls torch, so the service installs in
+# under a minute and runs on a small box. Local model inference is opt-in:
+# see requirements-local-models.txt.
+#
+# Pinned, because an embedding model that silently changes version changes
+# every vector in the collection.
+
+# --- Web ---
+fastapi==0.121.2
+uvicorn[standard]==0.41.0
+pydantic==2.12.4
+pydantic-settings==2.12.0
+
+# --- HTTP ---
+# One async client for every remote provider: Hugging Face inference, Gemini,
+# Groq/xAI. Each is a REST call, two of them with SSE bodies. An SDK per
+# provider would be three more dependencies, three retry policies and three
+# ways for cancellation to behave.
+httpx==0.28.1
+
+# --- Vector database ---
+qdrant-client==1.16.1
+
+# --- Document ingestion ---
+# Pure-Python parsers: no system libraries, no subprocess, nothing that
+# executes content. pypdf reads the PDF text layer; `cryptography` lets it
+# open the many PDFs that are "protected" with an empty user password.
+# python-docx reads Word files through lxml with entity resolution off.
+# python-multipart is what FastAPI needs to accept a file upload at all.
+pypdf==6.18.0
+cryptography==50.0.1
+python-docx==1.2.0
+python-multipart==0.0.32
+
+# --- Testing / quality ---
+pytest==8.4.2
+pytest-asyncio==1.3.0
+respx==0.22.0
+ruff==0.14.6
+mypy==1.19.1
+
+# Deliberately absent:
+#   torch / sentence-transformers — optional, see requirements-local-models.txt
+#   langchain / langgraph         — see README, "Why no LangChain or LangGraph"
+#   celery / redis                — document ingestion is driven by the Django
+#                                   worker that already exists; the reindex
+#                                   worker uses the JobQueue interface in
+#                                   app/workers/queue.py, whose Redis backend
+#                                   is the documented upgrade path.
+#   fastembed                     — sparse vectors are term-frequency vectors
+#                                   scored by Qdrant's own IDF modifier, which
+#                                   needs no extra model.

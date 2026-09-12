@@ -1,0 +1,556 @@
+/* ==========================================================================
+   08 - LEADERSHIP
+   --------------------------------------------------------------------------
+   One portrait on the left, four names on the right, and a black strip that
+   travels down the names as the reader scrolls. The person the strip is on
+   is the person in the photograph.
+
+   THE STRIP IS A WINDOW, NOT A BACKGROUND.
+
+   The obvious build is a black background on whichever row is active, and it
+   is wrong in a way that only shows up in motion: a background that moves by
+   turning off on one row and on at another does not travel, it teleports,
+   and a background that travels has to pass over the rows in between - which
+   are still set in ink, and are unreadable underneath it for the length of
+   the move.
+
+   So the strip is a clipping window with its own copy of the whole list
+   inside it, set in white, offset by exactly as much as the window has
+   travelled. Whatever the window is over, it shows in white, correctly
+   aligned, at every frame of the journey - including halfway between two
+   names. There is no state to get out of step, because there is no state:
+   the window's position IS the selection.
+
+   The pair of translations that make that work are driven from one number
+   in the module, so they cannot drift apart.
+
+   ROWS ARE A FIXED HEIGHT, AND THAT IS THE POINT
+
+   The strip keeps one rectangle for the whole interaction. If the active row
+   grew, every row below it would move, the strip's target would move while
+   it was travelling to it, and the composition would breathe every time the
+   reader scrolled a notch. The row does not change size; the strip arrives.
+   ========================================================================== */
+
+.ld {
+  position: relative;
+  isolation: isolate;
+}
+
+.ld {
+  /* The curve, written once. The module animates the strip with a GSAP ease
+     registered from these same four numbers, so the scripted travel and the
+     CSS state changes underneath it are the same motion. */
+  --ld-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ld-row-h: clamp(62px, 7.6vh, 88px);
+  /* The strip runs wider than the type on both sides, which is what makes it
+     read as a strip the row sits in rather than as a highlighted line. */
+  --ld-pad: clamp(16px, 1.6vw, 26px);
+  --ld-rule: rgba(17, 23, 38, 0.1);
+}
+
+.ld__pin {
+  position: relative;
+  z-index: 1;
+}
+
+.ld__inner {
+  display: grid;
+  gap: clamp(28px, 3.6vw, 52px);
+}
+
+/* --------------------------------------------------------------------------
+   The head
+   --------------------------------------------------------------------------
+   Deliberately small. This section is an interface, and a headline at the
+   scale the rest of the site uses would be the loudest thing on a screen
+   whose whole job is to point at one person at a time.
+   -------------------------------------------------------------------------- */
+.ld__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(12px, 1.6vw, 18px);
+}
+
+.ld__title {
+  max-width: 22ch;
+}
+
+.ld__lead {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  max-width: 46ch;
+}
+
+.ld__stage {
+  display: grid;
+  gap: clamp(28px, 3.4vw, 56px);
+  align-items: stretch;
+  min-height: clamp(360px, 58vh, 640px);
+}
+
+/* ==========================================================================
+   Left - the portrait
+   --------------------------------------------------------------------------
+   THREE LAYERS, AND EACH OWNS DIFFERENT PROPERTIES.
+
+     .ld-shots  the deck. Carries the one slow travel that runs for the whole
+                pin, and nothing else.
+     .ld-shot   one leader's frame. Carries only the crossfade and the short
+                move that belongs to becoming the current portrait.
+     .ld-shot img
+                the photograph, larger than its frame and hung above it, so
+                there is material for the travel and no edge is ever exposed.
+
+   No two layers animate the same property, which is why none of it needs
+   `overwrite`.
+   ========================================================================== */
+.ld__plate {
+  position: relative;
+  min-width: 0;
+}
+
+.ld-frame {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-frame);
+  background: var(--sand);
+}
+
+.ld-shots {
+  position: absolute;
+  inset: 0;
+}
+
+.ld-shot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+/* Before the module runs - and after it reverts - the first leader is the
+   one in the frame. */
+.ld-shot:first-child {
+  opacity: 1;
+}
+
+.ld-shot img {
+  position: absolute;
+  top: -4%;
+  left: -3%;
+  width: 106%;
+  height: 108%;
+  object-fit: cover;
+  /* The global reset caps every image at the width of its box, which is
+     exactly what this one must not be: it is hung wider than its frame so
+     the move on arrival has material to travel through. Without this the
+     picture is clamped back to 100% and the frame shows down one edge. */
+  max-width: none;
+}
+
+/* --------------------------------------------------------------------------
+   The caption plate
+   --------------------------------------------------------------------------
+   A thumbnail and a name, over the foot of the portrait. It is a caption:
+   the names are in a column on the other side of the composition, and a
+   photograph of a person should say who it is without the reader having to
+   look across and match a black strip to a face.
+   -------------------------------------------------------------------------- */
+.ld-badge {
+  position: absolute;
+  left: clamp(14px, 1.4vw, 22px);
+  /* Top, not bottom. The quote hangs off the foot of the portrait and the
+     two would sit on each other - and the corner a caption can have without
+     covering a face is the one furthest from it. */
+  top: clamp(14px, 1.4vw, 22px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 15px 7px 7px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: var(--e-1);
+}
+
+.ld-badge__av {
+  position: relative;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--sand);
+}
+
+.ld-badge__av img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+.ld-badge__av img:first-child {
+  opacity: 1;
+}
+
+/* A stack of names in one slot, one visible. Stacking them is what lets the
+   change be a crossfade rather than a text node rewritten under the reader. */
+.ld-badge__names {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.ld-badge__name {
+  font-size: var(--t-small);
+  font-weight: 540;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.ld-badge__name + .ld-badge__name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The quote
+   --------------------------------------------------------------------------
+   Held off the portrait's bottom-right corner, overlapping it. Light card,
+   small radius, no border - it should read as a slip of paper laid on the
+   photograph, which is the only decoration this section gets.
+   -------------------------------------------------------------------------- */
+.ld-quote {
+  position: relative;
+  z-index: 2;
+  margin: clamp(-72px, -6vh, -44px) 0 0 auto;
+  width: min(100%, 34ch);
+  padding: clamp(14px, 1.5vw, 20px) clamp(16px, 1.7vw, 22px);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  box-shadow: var(--e-2);
+}
+
+.ld-quote__stack {
+  position: relative;
+}
+
+.ld-quote__line {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.05vw, 1.0625rem);
+  line-height: 1.42;
+  color: var(--ink);
+  opacity: 0;
+}
+
+.ld-quote__line:first-child {
+  opacity: 1;
+}
+
+/* Every line after the first is taken out of flow, so the card is the height
+   of the tallest quote and never resizes as they change. The module measures
+   that height and holds it, because "tallest" is a different quote at
+   different widths. */
+.ld-quote__line + .ld-quote__line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* ==========================================================================
+   Right - the names
+   ========================================================================== */
+.ld__side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 2.4vw, 32px);
+  min-width: 0;
+}
+
+.ld-list {
+  position: relative;
+  border-top: 1px solid var(--ld-rule);
+  border-bottom: 1px solid var(--ld-rule);
+}
+
+/* --------------------------------------------------------------------------
+   The row
+   --------------------------------------------------------------------------
+   Declared once and worn by two elements: the real button, and the white
+   copy inside the strip. Every property that affects where a glyph lands is
+   set here rather than inherited, because the two have to be identical to
+   the pixel - a button and a span do not start from the same place.
+   -------------------------------------------------------------------------- */
+.ld-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 24px);
+  width: 100%;
+  height: var(--ld-row-h);
+  padding-inline: var(--ld-pad);
+  margin: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+}
+
+.ld-row + .ld-row {
+  border-top: 1px solid var(--ld-rule);
+}
+
+.ld-row__name {
+  font-family: var(--font-body);
+  font-weight: 560;
+  font-size: clamp(1.3rem, 2vw, 1.95rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  /* The hover nudge. `transform` rather than padding, so a row can never
+     change the height the strip is measured against. */
+  transform: translateX(0);
+  transition:
+    transform var(--d-move) var(--ld-ease),
+    color var(--d-state) var(--ld-ease);
+}
+
+.ld-row__role {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 450;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--ink-3);
+  transition: color var(--d-state) var(--ld-ease);
+}
+
+/* Only the real rows are pressable, and only the ones not already selected
+   respond - a hover state on the row you are already on is noise. */
+.ld-list button.ld-row {
+  cursor: pointer;
+}
+
+.ld-list button.ld-row:hover .ld-row__name {
+  transform: translateX(6px);
+}
+
+.ld-list button.ld-row:hover .ld-row__role {
+  color: var(--ink-2);
+}
+
+.ld-list button.ld-row:focus-visible {
+  outline-offset: -3px;
+}
+
+/* --------------------------------------------------------------------------
+   The strip
+   --------------------------------------------------------------------------
+   Sits over the rows rather than behind them: it is opaque, so it covers the
+   ink row underneath and shows its own white copy instead. `pointer-events`
+   off, or it would swallow the press meant for the button under it.
+   -------------------------------------------------------------------------- */
+.ld-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--ld-row-h);
+  z-index: 1;
+  overflow: hidden;
+  background: var(--ink);
+  pointer-events: none;
+}
+
+.ld-bar__inner {
+  display: block;
+  width: 100%;
+}
+
+.ld-bar .ld-row {
+  border-top: 0;
+}
+
+.ld-bar .ld-row__name {
+  color: var(--paper);
+  /* The copy never hovers; only the button underneath does. Without this it
+     would inherit the nudge and slide out from under its own row. */
+  transform: none !important;
+}
+
+.ld-bar .ld-row__role {
+  color: rgba(255, 253, 248, 0.66);
+}
+
+/* --------------------------------------------------------------------------
+   The supporting line
+   -------------------------------------------------------------------------- */
+.ld__detail {
+  position: relative;
+  padding-inline: var(--ld-pad);
+}
+
+.ld__detail p {
+  margin: 0;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 54ch;
+  opacity: 0;
+}
+
+.ld__detail p:first-child {
+  opacity: 1;
+}
+
+.ld__detail p + p {
+  position: absolute;
+  top: 0;
+  left: var(--ld-pad);
+  right: var(--ld-pad);
+}
+
+/* ==========================================================================
+   Narrow - the portrait leads, the names follow
+   --------------------------------------------------------------------------
+   Not the wide composition squeezed. The photograph goes to the top at a
+   height a thumb can scroll past, the strip keeps working exactly as it
+   does on a desktop, and the row grows enough to set the name and the role
+   on two lines rather than fighting for one.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .ld {
+    --ld-row-h: clamp(70px, 9.6vh, 92px);
+  }
+
+  .ld__stage {
+    min-height: 0;
+  }
+
+  .ld-frame {
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+    max-height: 44vh;
+    margin-inline: auto;
+    width: min(100%, 300px);
+  }
+
+  .ld-quote {
+    margin: -30px auto 0;
+    width: min(100%, 40ch);
+  }
+
+  .ld-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 5px;
+  }
+
+  .ld-row__role {
+    text-align: left;
+  }
+}
+
+/* ==========================================================================
+   Wide - the composition from the reference
+   ========================================================================== */
+@media (min-width: 1024px) {
+  /* The plate takes a third rather than a half. A portrait crop wants to be
+     taller than it is wide, and the column is what decides that - the names
+     are happy to take the space it gives back. */
+  .ld__stage {
+    grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
+  }
+
+  /* The quote hangs off the portrait's inner corner and overlaps it. */
+  .ld__plate {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ld-frame {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .ld-quote {
+    margin-right: clamp(-64px, -3vw, -28px);
+  }
+}
+
+/* ==========================================================================
+   THE PINNED COMPOSITION
+   --------------------------------------------------------------------------
+   Added by the module, and only once it has built the run and measured that
+   the whole composition fits on the screen. Everything above stays true;
+   this holds it still while the strip travels.
+   ========================================================================== */
+.ld--pinned {
+  padding-block: 0;
+}
+
+.ld--pinned .ld__pin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100svh;
+  /* Clearance for the masthead, which is fixed. Less than its full height
+     because it hides itself on a downward scroll, and this composition is
+     only ever met on the way down. */
+  padding-block: clamp(44px, 7vh, 88px) clamp(26px, 4.5vh, 52px);
+}
+
+.ld--pinned .ld__inner {
+  width: 100%;
+}
+
+/* On a short screen the head gives way first. It is read once; the interface
+   is read four times. */
+@media (max-height: 900px) {
+  .ld--pinned .ld__head {
+    gap: 10px;
+  }
+
+  .ld--pinned .ld__title {
+    font-size: clamp(1.5rem, 2.1vw, 1.9rem);
+    max-width: 34ch;
+  }
+
+  .ld--pinned .ld__lead {
+    display: none;
+  }
+
+  .ld--pinned .ld__inner {
+    gap: clamp(18px, 2.6vh, 34px);
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   The module builds no scroll run under it, so the section becomes what it
+   already is without one: a list of four people, the first selected, and
+   every other one a press away. Nothing is unreachable and nothing moves on
+   its own.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ld *,
+  .ld *::before,
+  .ld *::after {
+    transition-duration: 1ms !important;
+  }
+}

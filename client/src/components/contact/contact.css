@@ -1,0 +1,281 @@
+/* ==========================================================================
+   CONTACT & VISIT
+   --------------------------------------------------------------------------
+   The least designed page on the site, deliberately. Positioning only.
+   ========================================================================== */
+
+/* ==========================================================================
+   The opening
+   ========================================================================== */
+.hello {
+  padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 80px));
+  padding-bottom: clamp(56px, 7vw, 110px);
+}
+
+.hello__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+}
+
+.hello__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.hello__title {
+  max-width: 10ch;
+}
+
+.hello__lead {
+  max-width: 42ch;
+}
+
+.hello__quick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: 8px;
+}
+
+.hello__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 22px;
+  border-radius: var(--r-ctl);
+  background: var(--sun);
+  color: var(--on-sun);
+  font-size: var(--t-lead);
+  font-weight: 560;
+  transition: transform var(--d-state) var(--ease-out), box-shadow var(--d-state) var(--ease-out);
+}
+
+.hello__phone:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--e-2);
+}
+
+.hello__fig {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .hello__inner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+}
+
+/* ==========================================================================
+   Channels
+   ========================================================================== */
+.chan-sec__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: start;
+}
+
+.chan-sec__list {
+  display: grid;
+  gap: 12px;
+}
+
+.chan {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 4px 16px;
+  padding: 18px 20px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
+}
+
+.chan:hover {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  transform: translateY(-2px);
+}
+
+.chan__icon {
+  grid-row: 1 / span 3;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun-soft);
+  color: var(--sun-deep);
+  flex: none;
+}
+
+.chan__label {
+  grid-column: 2;
+}
+
+.chan__value {
+  grid-column: 2;
+  font-size: var(--t-body);
+  font-weight: 560;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.chan__detail {
+  grid-column: 2;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.chan__go {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  color: var(--ink-4);
+  transition: color var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
+}
+
+.chan:hover .chan__go {
+  color: var(--ink);
+  transform: translate(2px, -2px);
+}
+
+/* --------------------------------------------------------------------------
+   Hours
+   -------------------------------------------------------------------------- */
+.hours {
+  padding: clamp(22px, 2.6vw, 32px);
+  border-radius: var(--r-lg);
+  background: var(--sand);
+}
+
+.hours__title {
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.hours__list {
+  display: grid;
+  margin: 0;
+}
+
+.hours__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding-block: 13px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--t-small);
+}
+
+.hours__row dt {
+  color: var(--ink-2);
+}
+
+.hours__row dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 540;
+  white-space: nowrap;
+}
+
+.hours__addr {
+  font-style: normal;
+  margin-top: 18px;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+
+@media (min-width: 860px) {
+  .chan-sec__inner {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: clamp(32px, 4vw, 64px);
+  }
+}
+
+/* ==========================================================================
+   Directions
+   ========================================================================== */
+.dir__head {
+  margin-bottom: clamp(40px, 5vw, 68px);
+}
+
+.dir__body {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: start;
+}
+
+.dir__routes {
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.route {
+  display: grid;
+  gap: 7px;
+  padding-block: clamp(20px, 2.4vw, 28px);
+  border-bottom: 1px solid var(--line);
+}
+
+.route__num {
+  color: var(--sun-deep);
+}
+
+.route__detail {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.dir__map {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.dir__fig-link {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.dir__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: var(--e-2);
+  transition: transform var(--d-move) var(--ease-back);
+}
+
+.dir__fig-link:hover .dir__pin {
+  transform: translate(-50%, -58%) scale(1.06);
+}
+
+.dir__note {
+  max-width: 44ch;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 900px) {
+  .dir__body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: clamp(40px, 5vw, 80px);
+  }
+}

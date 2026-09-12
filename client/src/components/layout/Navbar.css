@@ -1,0 +1,388 @@
+/* ==========================================================================
+   NAVBAR
+   ========================================================================== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  /* The masthead sits above the panel it opens, so the close button stays on
+     top of the thing it is closing. */
+  transition:
+    transform var(--d-move) var(--ease-out),
+    background var(--d-move) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out);
+}
+
+.nav.is-scrolled {
+  background: rgba(247, 243, 234, 0.88);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.nav.is-hidden {
+  transform: translateY(-104%);
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 44px);
+  height: var(--nav-h);
+  padding-inline: var(--gutter);
+  max-width: var(--container);
+  margin-inline: auto;
+  transition: height var(--d-move) var(--ease-out);
+}
+
+.nav.is-scrolled .nav__inner {
+  height: 62px;
+}
+
+/* --------------------------------------------------------------------------
+   Brand
+   -------------------------------------------------------------------------- */
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: none;
+}
+
+/* The mark: two rules and a disc. Same vocabulary as the marks drawn on the
+   headlines, so the logo belongs to the type rather than sitting beside it. */
+.nav__mark {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+.nav__mark i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.nav__mark i:first-child { top: 5px; }
+.nav__mark i:last-child { top: 13px; width: 62%; }
+
+.nav__mark b {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+.nav__name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.nav__name b {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.nav__name span {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   Links
+   -------------------------------------------------------------------------- */
+.nav__links {
+  display: none;
+  margin-left: auto;
+  gap: clamp(14px, 1.8vw, 30px);
+}
+
+.nav__link {
+  position: relative;
+  font-size: 0.9375rem;
+  font-weight: 480;
+  color: var(--ink-2);
+  padding-block: 6px;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--sun);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nav__link:hover {
+  color: var(--ink);
+}
+
+.nav__link:hover::after,
+.nav__link.is-current::after {
+  transform: scaleX(1);
+}
+
+.nav__link.is-current {
+  color: var(--ink);
+  font-weight: 560;
+}
+
+.nav__end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.nav__phone {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.nav__phone:hover {
+  color: var(--ink);
+}
+
+.nav__cta {
+  display: none;
+  padding: 12px 22px;
+  font-size: 0.875rem;
+}
+
+/* --------------------------------------------------------------------------
+   Toggle
+   --------------------------------------------------------------------------
+   Two rules that become an X. Kept as two elements rather than three, because
+   the three-bar version needs the middle one to disappear and a disappearing
+   element is the part that always looks cheap.
+   -------------------------------------------------------------------------- */
+.nav__toggle {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--ivory);
+  transition: background var(--d-state) var(--ease-out);
+}
+
+.nav__toggle:hover {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.nav__toggle-bars {
+  position: relative;
+  width: 17px;
+  height: 12px;
+}
+
+.nav__toggle-bars i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nav__toggle-bars i:first-child { top: 1px; }
+.nav__toggle-bars i:last-child { bottom: 1px; }
+
+.nav.is-open .nav__toggle-bars i:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.nav.is-open .nav__toggle-bars i:last-child {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+@media (min-width: 1080px) {
+  .nav__links {
+    display: flex;
+  }
+
+  .nav__phone,
+  .nav__cta {
+    display: inline-flex;
+  }
+
+  .nav__end {
+    margin-left: 0;
+  }
+
+  .nav__toggle {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   MENU
+   --------------------------------------------------------------------------
+   A page, not a drawer. The links are set at display scale in the serif, with
+   the line that says what is on each of them.
+   ========================================================================== */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  background: var(--ivory);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Clipped from the top edge rather than faded, so it reads as a sheet being
+     pulled down over the page. */
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition:
+    clip-path 0.62s var(--ease-out),
+    visibility 0s linear 0.62s;
+}
+
+.menu.is-open {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transition:
+    clip-path 0.62s var(--ease-out),
+    visibility 0s;
+}
+
+.menu:focus-visible {
+  outline: none;
+}
+
+.menu__inner {
+  min-height: 100svh;
+  display: grid;
+  gap: clamp(36px, 5vw, 64px);
+  align-content: center;
+  padding-top: calc(var(--nav-h) + 32px);
+  padding-bottom: 48px;
+}
+
+.menu__list {
+  display: grid;
+}
+
+.menu__item {
+  overflow: hidden;
+}
+
+.menu__link {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: clamp(14px, 2vw, 26px);
+  padding-block: clamp(10px, 1.6vw, 18px);
+  border-bottom: 1px solid var(--line);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.menu__num {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  color: var(--ink-4);
+}
+
+.menu__label {
+  display: block;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.menu__blurb {
+  grid-column: 2;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.menu__link:hover .menu__label,
+.menu__link:focus-visible .menu__label {
+  transform: translateX(14px);
+  color: var(--sun-deep);
+}
+
+.menu__link.is-current .menu__num {
+  color: var(--sun-deep);
+}
+
+.menu__aside {
+  display: grid;
+  gap: 26px;
+  align-content: start;
+  justify-items: start;
+}
+
+.menu__fig {
+  display: none;
+  width: 100%;
+}
+
+.menu__contact {
+  display: grid;
+  gap: 5px;
+}
+
+.menu__phone,
+.menu__mail {
+  font-size: var(--t-lead);
+  font-weight: 540;
+  color: var(--ink);
+  width: fit-content;
+  border-bottom: 1.5px solid var(--sun);
+  padding-bottom: 2px;
+}
+
+.menu__addr {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  max-width: 30ch;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+@media (min-width: 860px) {
+  .menu__inner {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .menu__fig {
+    display: block;
+  }
+}

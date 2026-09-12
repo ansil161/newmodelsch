@@ -1,0 +1,65 @@
+[project]
+name = "jaaz-ai-service"
+version = "1.0.0"
+description = "Retrieval-augmented generation over the JAAZ knowledge base."
+requires-python = ">=3.12"
+
+# Dependencies are pinned in requirements.txt rather than here. The project
+# has no build step and is deployed from a lockfile-style requirements set;
+# duplicating the list would give two places to forget.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-q --strict-markers"
+markers = [
+    "integration: exercises the API through its real dependency graph, with fakes at the network edge",
+    "evaluation: measures retrieval and answer quality; slower, and not a pass/fail gate",
+]
+filterwarnings = ["error::DeprecationWarning:app.*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = ["venv", ".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # import sorting
+    "B",        # bugbear
+    "UP",       # pyupgrade
+    "ASYNC",    # blocking calls in async functions — the bug this service
+                # is most prone to
+    "S",        # bandit: hard-coded secrets, insecure defaults
+    "RUF",
+]
+ignore = [
+    "S101",  # assert: used in tests and as internal invariants
+    "B008",  # function call in a default argument: FastAPI's Depends() idiom
+]
+# Typographic characters used on purpose: the section-path separator shown in
+# citations, the curly quotes a sentence splitter has to recognise, and the
+# bullets and dashes PDFs emit at the start of list items.
+allowed-confusables = ["›", "–", "×", "’", "‘", "⁃"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106"]  # fake tokens in fixtures
+
+[tool.mypy]
+python_version = "3.12"
+files = ["app"]
+strict_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+no_implicit_optional = true
+disallow_untyped_defs = true
+# Third-party packages without published stubs. Ignoring the import is
+# narrower than turning the check off globally.
+[[tool.mypy.overrides]]
+module = ["qdrant_client.*", "sentence_transformers.*", "torch.*"]
+ignore_missing_imports = true

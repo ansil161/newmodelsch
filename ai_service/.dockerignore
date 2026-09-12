@@ -1,0 +1,31 @@
+# Anything not needed to run the service, and anything that must never be
+# baked into an image.
+#
+# .env is the important line. An image is copied to a registry, pulled onto
+# machines, and inspected by anyone who can run `docker history` — a real
+# Qdrant key or Gemini key inside one is a leaked credential, not a
+# configured one. Secrets are injected at run time.
+.env
+.env.*
+!.env.example
+
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Weights are hundreds of megabytes and are fetched into a mounted cache at
+# run time, not shipped.
+.models/
+*.log
+
+.git/
+.gitignore
+tests/
+scripts/
+docker-compose.yml
+Dockerfile
+README.md

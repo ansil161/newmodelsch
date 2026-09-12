@@ -1,0 +1,560 @@
+/* ==========================================================================
+   ABOUT
+   --------------------------------------------------------------------------
+   Positioning only. Everything else is the tokens and the editorial kit.
+   ========================================================================== */
+
+/* ==========================================================================
+   01 - The story
+   ========================================================================== */
+.story__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
+}
+
+.story__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.story__title {
+  max-width: 16ch;
+}
+
+.story__fig {
+  width: 100%;
+}
+
+.story__prose {
+  display: grid;
+  gap: 1.15em;
+  align-content: start;
+}
+
+.story__marks {
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
+@media (min-width: 900px) {
+  .story__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: clamp(32px, 4vw, 72px);
+    align-items: start;
+  }
+
+  .story__head {
+    grid-column: 1;
+  }
+
+  .story__fig {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .story__prose {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+/* ==========================================================================
+   02 - The film
+   ========================================================================== */
+.film {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.film__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+}
+
+.film__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.film__title,
+.film__lead {
+  color: var(--on-navy);
+}
+
+.film__lead {
+  color: var(--on-navy-2);
+  max-width: 40ch;
+}
+
+.film__cap {
+  color: var(--on-navy-3);
+}
+
+.film__frame {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--navy-deep);
+}
+
+.film__video {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #000;
+}
+
+.film__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(14, 24, 41, 0.15), rgba(14, 24, 41, 0.66));
+  pointer-events: none;
+}
+
+.film__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  cursor: pointer;
+  color: var(--on-navy);
+}
+
+.film__play-ring {
+  width: clamp(66px, 8vw, 92px);
+  height: clamp(66px, 8vw, 92px);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+  transition: transform var(--d-move) var(--ease-back);
+}
+
+/* The pulse is one ring, drawn once, on the button's own hover - not an
+   always-running animation. A permanently pulsing play button is a page that
+   is always demanding something. */
+.film__play-ring::after {
+  content: '';
+  position: absolute;
+  width: clamp(66px, 8vw, 92px);
+  height: clamp(66px, 8vw, 92px);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 var(--sun-wash);
+  transition: box-shadow var(--d-move) var(--ease-out);
+}
+
+.film__play:hover .film__play-ring {
+  transform: scale(1.08);
+}
+
+.film__play:hover .film__play-ring::after {
+  box-shadow: 0 0 0 18px var(--sun-wash);
+}
+
+.film__play-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.film__error {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: min(92%, 46ch);
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: var(--t-small);
+  text-align: center;
+  line-height: 1.45;
+}
+
+.film__error code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--ink);
+}
+
+@media (min-width: 900px) {
+  .film__inner {
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+}
+
+/* ==========================================================================
+   04/05 - Vision & mission, and the charter
+   --------------------------------------------------------------------------
+   Both have their own component and their own stylesheet now:
+   `vision-mission.css` and `charter.css`. The charter used to be a numbered
+   column here; it is a scroll-driven composition and the `.value*` rules it
+   left behind have gone with it.
+   ========================================================================== */
+
+/* ==========================================================================
+   06 - Philosophy
+   ========================================================================== */
+.phil {
+  background: var(--sand);
+}
+
+.phil__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+}
+
+.phil__fig {
+  width: 100%;
+}
+
+.phil__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.phil__title {
+  max-width: 15ch;
+}
+
+.phil__prose {
+  display: grid;
+  gap: 1.1em;
+}
+
+@media (min-width: 900px) {
+  .phil__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+}
+
+/* ==========================================================================
+   06 - The letter
+   ========================================================================== */
+.letter__inner {
+  display: grid;
+  gap: clamp(36px, 4vw, 72px);
+  align-items: start;
+}
+
+.letter__media {
+  position: relative;
+}
+
+.letter__fig {
+  width: 100%;
+}
+
+.letter__plate {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: -30px;
+  margin-left: clamp(12px, 3vw, 30px);
+  position: relative;
+  padding: 13px 20px 14px;
+  background: var(--sun);
+  color: var(--on-sun);
+  border-radius: var(--r-sm);
+  box-shadow: var(--e-2);
+}
+
+.letter__plate b {
+  font-weight: 600;
+}
+
+.letter__plate .meta {
+  color: var(--sun-deep);
+}
+
+.letter__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(20px, 2.4vw, 30px);
+}
+
+.letter__quote {
+  margin: 0;
+  max-width: 17ch;
+}
+
+.letter__body {
+  display: grid;
+  gap: 1.1em;
+  padding-top: clamp(20px, 2.4vw, 30px);
+  border-top: 1px solid var(--line);
+  width: 100%;
+}
+
+.letter__sign {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.letter__name {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  font-style: italic;
+  font-size: var(--t-h4);
+  color: var(--ink);
+}
+
+@media (min-width: 900px) {
+  .letter__inner {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  }
+}
+
+/* ==========================================================================
+   07 - Leadership
+   --------------------------------------------------------------------------
+   Its own component and its own stylesheet now: `leadership.css`. The four
+   people used to be a row of portrait cards here; they are a selector with a
+   travelling strip, and the `.lead-card` rules went with the cards.
+   ========================================================================== */
+
+/* ==========================================================================
+   08 - Faculty archive
+   ========================================================================== */
+.faculty__body {
+  display: grid;
+  gap: clamp(28px, 3.4vw, 56px);
+  margin-top: clamp(44px, 5vw, 76px);
+  align-items: start;
+}
+
+.faculty__list {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
+.dept {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: clamp(16px, 1.8vw, 22px);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-3);
+  transition: color var(--d-state) var(--ease-out), padding-left var(--d-state) var(--ease-out);
+}
+
+.dept__name {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.1;
+}
+
+.dept:hover {
+  color: var(--ink);
+  padding-left: 10px;
+}
+
+.dept.is-open {
+  color: var(--ink);
+  padding-left: 14px;
+  border-bottom-color: var(--ink);
+}
+
+.dept.is-open .dept__strength {
+  color: var(--sun-deep);
+}
+
+.faculty__detail {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.faculty__detail .fig {
+  margin-bottom: 6px;
+}
+
+.faculty__leads {
+  display: grid;
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.faculty__leads li {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+  padding-left: 16px;
+  position: relative;
+}
+
+.faculty__leads li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 1.5px;
+  background: var(--sun);
+}
+
+.faculty__stats {
+  margin-top: clamp(44px, 5vw, 76px);
+}
+
+@media (min-width: 900px) {
+  .faculty__body {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(40px, 5vw, 88px);
+  }
+}
+
+/* ==========================================================================
+   09 - Recognition
+   ========================================================================== */
+.recog__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: clamp(48px, 6vw, 84px);
+}
+
+.recog__title {
+  color: var(--on-navy);
+  max-width: 14ch;
+}
+
+.recog__lead {
+  color: var(--on-navy-2);
+  max-width: 44ch;
+}
+
+.recog__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+.recog__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 17px 11px;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px var(--line-navy);
+  font-size: var(--t-small);
+  color: var(--on-navy-2);
+}
+
+.recog__badge svg {
+  color: var(--sun);
+  flex: none;
+}
+
+.recog__foot {
+  margin-top: 26px;
+  max-width: 60ch;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   10 - Alumni
+   ========================================================================== */
+.alumni__list {
+  display: grid;
+  gap: clamp(40px, 5vw, 80px);
+  margin-top: clamp(48px, 6vw, 84px);
+}
+
+.alum {
+  display: grid;
+  gap: clamp(20px, 2.6vw, 40px);
+  align-items: center;
+}
+
+.alum__fig {
+  width: min(100%, 260px);
+}
+
+.alum__text {
+  display: grid;
+  gap: 12px;
+}
+
+.alum__quote {
+  margin: 0;
+  max-width: 24ch;
+}
+
+.alum__who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  font-size: var(--t-small);
+}
+
+.alum__who b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.alum__who span {
+  color: var(--ink-3);
+}
+
+.alumni__stats {
+  margin-top: clamp(48px, 6vw, 84px);
+  padding-top: clamp(32px, 4vw, 52px);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 800px) {
+  .alum {
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+  }
+
+  /* Alternated, so the column reads as a correspondence rather than as a
+     directory of four identical rows. */
+  .alum:nth-child(even) .alum__fig {
+    order: 2;
+    justify-self: end;
+  }
+
+  .alum:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.34fr);
+  }
+
+  .alum:nth-child(even) .alum__text {
+    text-align: right;
+    justify-items: end;
+  }
+
+  .alum:nth-child(even) .alum__who {
+    justify-content: flex-end;
+  }
+}

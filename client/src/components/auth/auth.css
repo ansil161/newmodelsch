@@ -1,0 +1,388 @@
+/* ==========================================================================
+   SIGN-IN PAGES
+   --------------------------------------------------------------------------
+   /login and the signed-in landing behind it: the only pages on the site
+   that are operated rather than read. They use the site's materials - the
+   ivory ground, the serif statement, the sticker, the paper panel, the mono
+   field labels of the enquiry forms - and none of its motion. Nothing here
+   animates except the button's own fill and the spinner inside it.
+   ========================================================================== */
+
+.auth {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--ivory);
+}
+
+/* --------------------------------------------------------------------------
+   Masthead - a copy of the navigation's lockup, so the brand is the same
+   object here as everywhere else
+   -------------------------------------------------------------------------- */
+.auth__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: clamp(18px, 2.4vw, 28px);
+}
+
+.auth__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  flex: none;
+}
+
+.auth__mark {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+.auth__mark i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.auth__mark i:first-child { top: 5px; }
+.auth__mark i:last-child { top: 13px; width: 62%; }
+
+.auth__mark b {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+.auth__name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.auth__name b {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.auth__name span {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.auth__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.auth__back:hover {
+  color: var(--ink);
+}
+
+.auth__back svg {
+  flex: none;
+  transition: transform var(--d-state) var(--ease-out);
+}
+
+.auth__back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* --------------------------------------------------------------------------
+   The spread: statement on the left, panel on the right; stacked below 960
+   -------------------------------------------------------------------------- */
+.auth__main {
+  display: grid;
+  align-content: center;
+  padding-block: clamp(20px, 5vw, 72px);
+}
+
+.auth__grid {
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+}
+
+.auth__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+/* `ch` on the heading itself, which is set in the display face. */
+.auth__title {
+  max-width: 9ch;
+}
+
+.auth__title--wide {
+  max-width: 16ch;
+  overflow-wrap: anywhere;
+}
+
+.auth__lead {
+  max-width: 36ch;
+}
+
+.auth__panel {
+  width: 100%;
+  background: var(--paper);
+  border-radius: var(--r-lg);
+  padding: clamp(22px, 4vw, 44px);
+  box-shadow: var(--e-3);
+}
+
+.auth__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (min-width: 960px) {
+  .auth__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 29rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The form
+   -------------------------------------------------------------------------- */
+.auth-form {
+  display: grid;
+  gap: 20px;
+}
+
+.auth-form__field {
+  display: grid;
+  gap: 7px;
+}
+
+.auth-form__label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.auth-form__input {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  border-radius: var(--r-ctl);
+  background: var(--ivory);
+  /* --ink-4 rather than the enquiry forms' hairline: an input's edge is the
+     control itself, and a hairline at 1.2:1 does not show where it is. */
+  border: 1px solid var(--ink-4);
+  color: var(--ink);
+  /* Never below 16px: under it, iOS Safari zooms the page on focus. */
+  font-size: max(1rem, var(--t-body));
+  transition:
+    border-color var(--d-state) var(--ease-out),
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.auth-form__input:hover {
+  border-color: var(--ink-3);
+}
+
+.auth-form__input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px var(--sun-soft);
+}
+
+.auth-form__input[aria-invalid='true'] {
+  border-color: var(--err);
+}
+
+.auth-form__input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px var(--coral-soft);
+}
+
+.auth-form__input[readonly] {
+  color: var(--ink-2);
+}
+
+.auth-form__password {
+  position: relative;
+}
+
+.auth-form__password .auth-form__input {
+  padding-right: 58px;
+}
+
+.auth-form__reveal {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-ctl);
+  color: var(--ink-3);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color var(--d-tap) var(--ease-out), background var(--d-tap) var(--ease-out);
+}
+
+.auth-form__reveal:hover,
+.auth-form__reveal[aria-pressed='true'] {
+  color: var(--ink);
+}
+
+.auth-form__reveal:hover {
+  background: var(--sand);
+}
+
+.auth-form__error {
+  font-size: var(--t-small);
+  color: var(--err);
+}
+
+/* Reserves the widget's height before its script arrives, so the button does
+   not jump down under a reader's thumb. */
+.auth-form__captcha {
+  min-height: 65px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.auth-form__hint {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.auth-form__hint:empty,
+.auth-form__alerts:empty {
+  display: none;
+}
+
+.auth-form__submit {
+  width: 100%;
+}
+
+/* Disabled while a request is in flight - but it is busy, not unavailable,
+   so it keeps most of its ink. */
+.auth-form__submit:disabled[aria-busy='true'] {
+  opacity: 0.86;
+  cursor: progress;
+}
+
+.auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--coral-soft);
+  box-shadow: inset 3px 0 0 var(--coral);
+  color: var(--ink);
+  font-size: var(--t-small);
+  line-height: 1.45;
+}
+
+.auth-alert svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--err);
+}
+
+.auth-spinner {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: auth-spin 0.7s linear infinite;
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Pending - the panel's placeholder while the session or config loads
+   -------------------------------------------------------------------------- */
+.auth-pending {
+  display: grid;
+  place-items: center;
+  min-height: 19rem;
+}
+
+.auth-pending__bar {
+  position: relative;
+  width: 44px;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.auth-pending__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: translateX(-100%);
+  animation: auth-pending 1.1s var(--ease-in-out) infinite;
+}
+
+@keyframes auth-pending {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Foot
+   -------------------------------------------------------------------------- */
+.auth__foot {
+  padding-block: 18px 26px;
+}
+
+.auth__foot p {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+
+.auth__foot a {
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth__foot a:hover {
+  color: var(--ink);
+}

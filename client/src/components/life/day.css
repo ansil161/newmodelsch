@@ -1,0 +1,389 @@
+/* ==========================================================================
+   01 - A DAY AT SCHOOL
+   --------------------------------------------------------------------------
+   Nine rows down an ivory page. Each one is an hour on the left, a card on
+   the right, and a brushed stroke running from the hour toward the next one.
+
+   THE COMPOSITION IS TWO COLUMNS, NOT THREE
+
+   The hour and the card. The stroke is not a column - it is positioned
+   against the row and sits under the hour, because the moment a mark like
+   that becomes a grid track it has to have a height, and a height means it
+   stretches with whichever card has the longest paragraph. A brush stroke
+   that is 190px in one row and 340px in the next is not a brush stroke.
+
+   THE PHOTOGRAPH BREAKS THE CARD
+
+   This is the whole visual idea and it is worth stating plainly: the frame is
+   wider than its track and hangs past the card's edge, top and bottom as well
+   as out to the side. A picture that fits neatly inside its card is a
+   thumbnail; a picture that overhangs is a print laid on paper. The card
+   therefore never gets `overflow: hidden`, and the frame is the only thing in
+   the section with a z-index.
+
+   THE RESTING STATE IS THE FINISHED STATE
+
+   Nothing here is hidden. Every row is fully drawn before a line of
+   JavaScript runs; the module adds a small entrance and scrubs the stroke,
+   and if it never runs the section is complete.
+   ========================================================================== */
+
+.day {
+  /* The brush. Deliberately its own value rather than `--sand-deep`, which is
+     a ground colour: at 1.06:1 against ivory it disappears, and a mark that
+     disappears reads as a rendering fault rather than as restraint. This sits
+     at about 1.3:1 - still quiet, still clearly drawn. */
+  --day-mark: #cdc3ac;
+
+  position: relative;
+  /* The frames hang past their cards, and on a narrow window the outermost
+     one can reach past the gutter. Clipping x only - the section has nothing
+     pinned or sticky in it, so there is no y behaviour to protect. */
+  overflow-x: clip;
+  background: var(--ivory);
+  isolation: isolate;
+}
+
+/* The clip paths and the erosion filter. Not `display: none`, which in some
+   engines takes the referenced fragments out of the render tree along with
+   the element and leaves every `url(#…)` in the section resolving to
+   nothing. Zero-sized and out of flow does the same job safely. */
+.day__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.day__inner {
+  position: relative;
+  z-index: var(--z-raised);
+}
+
+/* --------------------------------------------------------------------------
+   The head
+   --------------------------------------------------------------------------
+   Centred, which is the one place this section departs from the site's
+   left-ranged editorial default. It is centred in the reference and it is
+   right there: what follows is a column of nine left-ranged rows, and a
+   left-ranged headline on top of them reads as the first row rather than as
+   the title of the set.
+   -------------------------------------------------------------------------- */
+.day__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 1.6vw, 22px);
+  margin-bottom: clamp(56px, 7vw, 108px);
+  text-align: center;
+}
+
+.day__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-h1);
+  font-weight: 600;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.day__statement {
+  max-width: var(--measure-tight);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-lead);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   The list
+   --------------------------------------------------------------------------
+   `--day-rail` is the hour column and `--day-gap` is the space to the card.
+   Both are named because the stroke is positioned against them - it has to
+   land on the centre of the hour above it, and a magic number there would
+   drift the first time the pill's padding changed.
+   -------------------------------------------------------------------------- */
+.day__list {
+  --day-rail: clamp(168px, 15vw, 232px);
+  --day-gap: clamp(24px, 3.4vw, 64px);
+  --day-row-gap: clamp(28px, 4vw, 56px);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--day-row-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day-row {
+  /* Where the stroke starts, measured from the top of the row. Two values,
+     because a row that opens a period carries a label above its pill. */
+  --thread-top: 4.9rem;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--day-rail) minmax(0, 1fr);
+  gap: var(--day-gap);
+  align-items: start;
+}
+
+.day-row--opens {
+  --thread-top: 7.4rem;
+  margin-top: clamp(12px, 2vw, 34px);
+}
+
+/* --------------------------------------------------------------------------
+   The hour
+   -------------------------------------------------------------------------- */
+.day-row__when {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: clamp(10px, 1.6vw, 26px);
+}
+
+/* Morning / Midday / Afternoon. Printed once each, in the mono metadata face,
+   and deliberately quieter than the hour beneath it - it is a heading for a
+   run of rows, not a label on this one. */
+.day-row__period {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.day-row__time {
+  margin: 0;
+  padding: 0.82em 1.5em;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: var(--e-1);
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   The brush stroke
+   --------------------------------------------------------------------------
+   Positioned against the row and centred on the hour column, so it hangs
+   from the pill without being in a track with it. Fixed height on purpose:
+   see the note at the top of this file.
+   -------------------------------------------------------------------------- */
+.day-thread {
+  position: absolute;
+  top: var(--thread-top);
+  left: calc(var(--day-rail) / 2);
+  width: 26px;
+  height: 190px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  /* Behind the card, in case a wide window ever brings the two close enough
+     to touch. */
+  z-index: 0;
+}
+
+.day-thread__stroke {
+  fill: none;
+  stroke: var(--day-mark);
+  stroke-linecap: round;
+}
+
+/* --------------------------------------------------------------------------
+   The card
+   --------------------------------------------------------------------------
+   Two tracks: the copy, and the frame. The frame's track is narrower than the
+   frame itself - the overhang is produced by a negative margin rather than by
+   absolute positioning, so the card still reserves the right height and
+   nothing has to be measured.
+   -------------------------------------------------------------------------- */
+.day-row__card {
+  /* The card is sized by its copy, not by its picture. Three lines and a
+     heading is about 170px; a frame much taller than that leaves a band of
+     empty paper beside the text that reads as a layout that failed to fill
+     rather than as air. */
+  --shot: clamp(168px, 17vw, 236px);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--shot);
+  gap: clamp(20px, 3vw, 52px);
+  align-items: center;
+  max-width: 980px;
+  padding: clamp(26px, 2.9vw, 40px);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  box-shadow: var(--e-1);
+}
+
+.day-row--flip .day-row__card {
+  grid-template-columns: var(--shot) minmax(0, 1fr);
+}
+
+.day-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.2vw, 16px);
+}
+
+/* On a flipped row the copy is the second track and the frame the first. */
+.day-row--flip .day-row__text {
+  order: 2;
+}
+
+.day-row__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.day-row__body {
+  max-width: 46ch;
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.62;
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   The photograph
+   --------------------------------------------------------------------------
+   Wider than its track and taller than the card's padding allows, clipped to
+   one of the two clouds. The `border-radius` underneath is not dead code: it
+   is what the frame falls back to anywhere the clip path does not resolve, so
+   the failure mode is a soft-cornered picture rather than a hard rectangle.
+   -------------------------------------------------------------------------- */
+.day-row__figure {
+  position: relative;
+  z-index: var(--z-raised);
+  width: calc(var(--shot) + clamp(24px, 4vw, 68px));
+  margin-block: clamp(-34px, -2.4vw, -14px);
+  border-radius: var(--r-blob);
+}
+
+/* Out past the card's right edge, and its left edge on a flipped row. The
+   figure is justified to the outside of its own track so the overhang is all
+   on one side rather than split between two. */
+.day-row__figure--a {
+  justify-self: end;
+  margin-right: clamp(-72px, -5vw, -28px);
+  clip-path: url(#day-cloud-a);
+}
+
+.day-row__figure--b {
+  order: 1;
+  justify-self: start;
+  margin-left: clamp(-72px, -5vw, -28px);
+  clip-path: url(#day-cloud-b);
+}
+
+/* The frame is taller than the crop it shows, so the parallax the module adds
+   has material to travel through and no edge can be exposed at either end. */
+.day-row__figure img {
+  height: 114%;
+  margin-top: -7%;
+}
+
+/* ==========================================================================
+   Narrow
+   --------------------------------------------------------------------------
+   Not a second design. The same row, unstacked: the hour moves above the
+   card, the card's two tracks become one, and the frame stops overhanging
+   because at this width there is no margin left for it to hang into.
+   ========================================================================== */
+@media (max-width: 880px) {
+  .day__list {
+    --day-row-gap: clamp(44px, 11vw, 72px);
+  }
+
+  .day-row {
+    --thread-top: auto;
+
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .day-row--opens {
+    margin-top: clamp(20px, 6vw, 40px);
+  }
+
+  /* Left-ranged rather than centred: with the pill above the card, centring
+     it puts the hour in the middle of nowhere. */
+  .day-row__when {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding-top: 0;
+  }
+
+  .day-row__period {
+    order: 2;
+  }
+
+  /* The stroke moves into the gap below the row, so the column of hours is
+     still visibly threaded together as the reader comes down it. */
+  .day-thread {
+    top: auto;
+    bottom: calc(var(--day-row-gap) * -1 + 4px);
+    left: 22px;
+    height: clamp(38px, 9vw, 62px);
+  }
+
+  .day-row__card,
+  .day-row--flip .day-row__card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(18px, 4vw, 26px);
+    padding: clamp(22px, 5vw, 32px);
+  }
+
+  /* The frame leads on a phone. A picture under three lines of copy is a
+     footnote; above them it is the reason to read the three lines. */
+  .day-row__text,
+  .day-row--flip .day-row__text {
+    order: 2;
+  }
+
+  .day-row__figure,
+  .day-row__figure--a,
+  .day-row__figure--b {
+    order: 1;
+    width: min(74%, 320px);
+    justify-self: center;
+    margin: 0 auto;
+  }
+
+  .day-row__body {
+    max-width: none;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   The module already returns without building anything - every helper in
+   `lib/motion` checks the query itself. This is here for the one thing it
+   cannot reach: the stroke is drawn with a dash offset, and `grow` sets that
+   to its finished value rather than tweening it. Stating the finished value
+   here as well means the mark is solid even if the module never runs at all.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .day-thread__stroke {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

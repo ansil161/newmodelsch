@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# Local configuration and secrets - see .env.example
+.env
+.env.*
+!.env.example
+
+# Build and runtime artefacts
+staticfiles/
+media/
+# Knowledge-base uploads (KB_STORAGE_ROOT's default)
+var/
+.coverage
+htmlcov/
+*.log

@@ -1,0 +1,9 @@
+# Runtime dependencies shared by every environment. Pinned; upgrade deliberately.
+Django==6.1.1
+djangorestframework==3.18.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+django-environ==0.14.0
+psycopg[binary]==3.3.5
+# Server-to-server calls to the AI service, including its streamed answers.
+httpx==0.28.1

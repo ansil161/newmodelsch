@@ -1,0 +1,449 @@
+/* ==========================================================================
+   FOOTER
+   --------------------------------------------------------------------------
+   One 12-column grid shared by the statement and the directory, so the
+   admissions desk and the campus address hang from the same vertical line
+   and the whole footer reads as one page rather than three stacked strips.
+   ========================================================================== */
+.foot {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  padding-top: clamp(80px, 10vw, 152px);
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* --------------------------------------------------------------------------
+   Statement
+   -------------------------------------------------------------------------- */
+.foot__top {
+  display: grid;
+  gap: clamp(52px, 7vw, 72px);
+  padding-bottom: clamp(64px, 8vw, 120px);
+}
+
+.foot__title {
+  font-size: clamp(2.75rem, 5.2vw + 0.4rem, 5.25rem);
+  max-width: 12ch;
+}
+
+.foot__lead {
+  margin-top: clamp(22px, 2.4vw, 32px);
+  max-width: 40ch;
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.foot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 32px;
+  margin-top: clamp(30px, 3.2vw, 44px);
+}
+
+.foot__visit {
+  font-size: var(--t-small);
+}
+
+/* The admissions desk. */
+.foot__desk {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.foot__desk .meta {
+  margin-bottom: 6px;
+}
+
+.foot__phone {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: clamp(1.875rem, 2.7vw, 2.625rem);
+  font-weight: 450;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.foot__mail {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+/* The highlighter, drawn under a contact on hover. Same stroke and same
+   yellow as `.mark` in the headlines, so the hover belongs to the page's
+   own vocabulary rather than being a colour change. */
+.foot__hl {
+  background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 92% / 0% 0.3em;
+  transition:
+    background-size 380ms var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.foot__hl:hover,
+.foot__hl:focus-visible {
+  background-size: 100% 0.3em;
+  color: var(--ink);
+}
+
+.foot__hours {
+  display: grid;
+  width: 100%;
+  max-width: 36ch;
+  margin: 18px 0 0;
+}
+
+.foot__hours > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 9px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.foot__hours > div:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.foot__hours dd {
+  margin: 0;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/* The hairline between statement and directory. Drawn by the scroll. */
+.foot__rule {
+  display: block;
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: left center;
+}
+
+/* --------------------------------------------------------------------------
+   Directory
+   -------------------------------------------------------------------------- */
+.foot__dir {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 44px 24px;
+  padding-block: clamp(36px, 4.4vw, 60px) clamp(88px, 11vw, 168px);
+}
+
+.foot__group--social,
+.foot__group--visit {
+  grid-column: 1 / -1;
+}
+
+.foot__label {
+  margin-bottom: 14px;
+}
+
+.foot__list {
+  display: grid;
+}
+
+/* A directory link. The rule under it draws in from the left and leaves to
+   the right, the link steps a few pixels in, and its neighbours dim - three
+   small movements that read as one because they share a duration. */
+.foot__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+  font-size: clamp(0.9375rem, 1vw, 1rem);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  transition:
+    opacity 360ms var(--ease-out),
+    transform 360ms var(--ease-out);
+}
+
+.foot__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 360ms var(--ease-out);
+}
+
+.foot__link svg {
+  opacity: 0.5;
+  transition:
+    transform 360ms var(--ease-out),
+    opacity 360ms var(--ease-out);
+}
+
+.foot__link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .foot__list:has(.foot__link:hover) .foot__link:not(:hover) {
+    opacity: 0.4;
+  }
+
+  .foot__link:hover {
+    transform: translateX(5px);
+  }
+
+  .foot__link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .foot__link--out:hover svg {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+}
+
+/* On a phone the four networks sit in a row rather than a column: they are
+   short, parallel, and a column of them is a list nobody needs to scan. */
+.foot__group--social .foot__list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 22px;
+}
+
+.foot__addr {
+  max-width: 30ch;
+  margin-bottom: 14px;
+  font-style: normal;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.foot__map {
+  font-size: var(--t-small);
+}
+
+/* --------------------------------------------------------------------------
+   Wordmark
+   -------------------------------------------------------------------------- */
+.foot__sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 24px;
+  padding-bottom: clamp(14px, 1.8vw, 26px);
+}
+
+.foot__sign-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* The masthead's mark - two rules and a disc - at the masthead's size, so
+   the lockup at the foot is recognisably the one at the head. */
+.foot__mark {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.foot__mark i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.foot__mark i:first-child { top: 4px; }
+.foot__mark i:last-child { top: 11px; width: 62%; }
+
+.foot__mark b {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+/* The size here is an estimate of the fitted size - the column width over
+   the name's width in ems - so the name is close to right before the script
+   measures it, and right enough if the script never runs. */
+.foot__wordmark {
+  display: flex;
+  width: max-content;
+  column-gap: 0.2em;
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: calc((min(100vw, var(--container)) - 2 * var(--gutter)) / 4.7);
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--ink);
+  user-select: none;
+  /* The tracking is applied after the last letter too, which pulls the box
+     in behind the final "l" and lets its ink run past the margin. This hands
+     that space back, so the fitted name ends on the rule below it. */
+  padding-right: 0.025em;
+}
+
+/* The vanishing point for `stand()`, in em so it scales with the letters. */
+.foot__word {
+  display: block;
+  perspective: 3.2em;
+}
+
+/* --------------------------------------------------------------------------
+   Legal
+   -------------------------------------------------------------------------- */
+.foot__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-top: clamp(24px, 3vw, 44px);
+  padding-block: 18px clamp(20px, 2.4vw, 28px);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.foot__up {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.foot__up-ring {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  transition:
+    background 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out);
+}
+
+.foot__up svg {
+  transform: rotate(180deg);
+  transition: transform 300ms var(--ease-out);
+}
+
+.foot__up:hover {
+  color: var(--ink);
+}
+
+.foot__up:hover .foot__up-ring {
+  background: var(--sun);
+  box-shadow: none;
+}
+
+/* Rotated half a turn, so a positive Y is up on screen. */
+.foot__up:hover svg {
+  transform: rotate(180deg) translateY(2px);
+}
+
+/* --------------------------------------------------------------------------
+   Phone
+   --------------------------------------------------------------------------
+   Designed here rather than inherited: the name breaks onto two lines and
+   is fitted to "Model", so on a phone it is larger than on a laptop, not
+   smaller. The button takes the full width, where a thumb expects it.
+   -------------------------------------------------------------------------- */
+@media (max-width: 699px) {
+  .foot__wordmark {
+    flex-direction: column;
+    line-height: 0.84;
+    font-size: calc((100vw - 2 * var(--gutter)) / 2.9);
+  }
+
+  .foot__cta {
+    flex: 1 1 100%;
+  }
+
+  .foot__legal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tablet
+   -------------------------------------------------------------------------- */
+@media (min-width: 700px) {
+  .foot__dir {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .foot__group--social {
+    grid-column: auto;
+  }
+
+  .foot__group--social .foot__list {
+    display: grid;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Desktop - the shared 12-column grid
+   -------------------------------------------------------------------------- */
+@media (min-width: 900px) {
+  .foot__top,
+  .foot__dir {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(16px, 2.2vw, 40px);
+  }
+
+  .foot__top {
+    align-items: end;
+  }
+
+  .foot__say {
+    grid-column: 1 / span 7;
+  }
+
+  .foot__desk {
+    grid-column: 9 / span 4;
+  }
+
+  .foot__group {
+    grid-column: span 2;
+  }
+
+  .foot__group--visit {
+    grid-column: 9 / span 4;
+  }
+}

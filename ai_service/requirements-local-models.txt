@@ -1,0 +1,29 @@
+# Optional: run the embedding and reranking models on this machine instead of
+# calling Hugging Face's hosted inference.
+#
+#     pip install -r requirements.txt -r requirements-local-models.txt
+#
+# then set:
+#     EMBEDDING__PROVIDER=sentence_transformers
+#     RERANKER__PROVIDER=cross_encoder
+#
+# WHY YOU MIGHT WANT THIS
+#   * No per-request network hop — a warm local BGE embeds a query in ~15ms,
+#     where the hosted API is 100-400ms round trip.
+#   * No cold starts. The serverless API unloads idle models and answers 503
+#     with an "estimated_time" while it reloads.
+#   * No rate limits, no per-call cost, and document text never leaves the
+#     machine — which may be the deciding factor for the knowledge base.
+#
+# WHAT IT COSTS
+#   ~1.0GB of installed packages, plus model weights on first run:
+#     BAAI/bge-base-en-v1.5    ~440MB
+#     BAAI/bge-reranker-base   ~1.1GB
+#   Weights land in EMBEDDING__CACHE_DIR (default: the HuggingFace cache).
+#
+# The vectors are identical either way — same model, same 768 dimensions,
+# same L2 normalisation — so the two providers can be swapped without
+# reindexing.
+
+torch==2.13.0
+sentence-transformers==5.1.2

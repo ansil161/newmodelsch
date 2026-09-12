@@ -1,0 +1,295 @@
+/* ==========================================================================
+   THE SHORT ENQUIRY
+   --------------------------------------------------------------------------
+   Five fields, one of them optional. It is deliberately lighter than the
+   admissions form: this is the "I just have a question" route, and every
+   extra required field is a parent who closes the tab instead.
+
+   It sits on navy because it is the one panel on the contact page that is
+   asking for something, and the page around it is otherwise entirely quiet.
+   ========================================================================== */
+
+.qe__inner {
+  display: grid;
+  gap: clamp(36px, 4vw, 72px);
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   The head
+   -------------------------------------------------------------------------- */
+.qe__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.qe__title {
+  color: var(--on-navy);
+  max-width: 14ch;
+}
+
+.qe__lead {
+  font-size: var(--t-lead);
+  color: var(--on-navy-2);
+  line-height: 1.5;
+  max-width: 40ch;
+}
+
+.qe__direct {
+  display: grid;
+  gap: 18px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.qe__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 20px;
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 1px var(--line-navy);
+  width: fit-content;
+  transition: box-shadow var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
+}
+
+.qe__phone:hover {
+  box-shadow: inset 0 0 0 1.5px var(--sun);
+  transform: translateY(-2px);
+}
+
+.qe__phone-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.qe__phone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.qe__phone-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-navy-3);
+}
+
+.qe__phone-value {
+  font-size: var(--t-body);
+  font-weight: 560;
+  color: var(--on-navy);
+}
+
+.qe__assurances {
+  display: grid;
+  gap: 9px;
+}
+
+.qe__assurances li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--t-small);
+  color: var(--on-navy-3);
+}
+
+.qe__assurances svg {
+  flex: none;
+  color: var(--sun);
+}
+
+/* --------------------------------------------------------------------------
+   The panel
+   -------------------------------------------------------------------------- */
+.qe__panel {
+  background: var(--paper);
+  border-radius: var(--r-lg);
+  padding: clamp(24px, 3.4vw, 44px);
+  box-shadow: var(--e-3);
+}
+
+.qe__form {
+  display: grid;
+  gap: 18px;
+}
+
+.qe__field {
+  display: grid;
+  gap: 7px;
+  position: relative;
+}
+
+.qe__field label {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.qe__optional {
+  color: var(--ink-4);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.qe__field input,
+.qe__field select,
+.qe__field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--r-ctl);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--t-body);
+  transition: border-color var(--d-state) var(--ease-out), background var(--d-state) var(--ease-out);
+}
+
+.qe__field textarea {
+  resize: vertical;
+  min-height: 128px;
+  line-height: 1.55;
+}
+
+.qe__field input:hover,
+.qe__field select:hover,
+.qe__field textarea:hover {
+  border-color: var(--line-strong);
+}
+
+.qe__field input:focus,
+.qe__field select:focus,
+.qe__field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.qe__field input.has-error,
+.qe__field select.has-error,
+.qe__field textarea.has-error {
+  border-color: var(--err);
+}
+
+/* The select's own arrow is removed and redrawn, so it matches the rest of
+   the controls across engines. */
+.qe__field--select select {
+  appearance: none;
+  padding-right: 44px;
+}
+
+.qe__select-mark {
+  position: absolute;
+  right: 16px;
+  bottom: 17px;
+  width: 9px;
+  height: 9px;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.qe__error {
+  font-size: var(--t-small);
+  color: var(--err);
+}
+
+.qe__actions {
+  display: grid;
+  gap: 14px;
+  margin-top: 6px;
+  justify-items: start;
+}
+
+.qe__privacy {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+/* --------------------------------------------------------------------------
+   Done
+   -------------------------------------------------------------------------- */
+.qe__done {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding-block: clamp(12px, 1.6vw, 24px);
+}
+
+.qe__done-mark {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.qe__done-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-size: var(--t-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 20ch;
+}
+
+.qe__done-copy {
+  font-size: var(--t-body);
+  color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.qe__done .btn-secondary {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+.qe__done .btn-secondary::after {
+  background: var(--ink);
+}
+
+.qe__done .btn-secondary:hover {
+  color: var(--ivory);
+}
+
+@media (min-width: 700px) {
+  .qe__form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .qe__field--wide,
+  .qe__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 980px) {
+  .qe__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(48px, 6vw, 96px);
+  }
+
+  .qe__head {
+    position: sticky;
+    top: calc(var(--nav-h) + 5vh);
+  }
+}

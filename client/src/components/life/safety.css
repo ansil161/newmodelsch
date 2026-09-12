@@ -1,0 +1,592 @@
+/* ==========================================================================
+   04 - Safety & wellbeing
+   --------------------------------------------------------------------------
+   Ivory ground, navy type, and one muted antique gold used for lines, rules
+   and a single italic phrase. The site's school yellow is too loud for a
+   section about child protection, so this scene keeps its own gold.
+
+   Gold as type is held to two values, both checked against the ivory:
+     --sw-gold      3.2:1   display sizes only (the italic, the note)
+     --sw-gold-ink  4.8:1   small type (the card numbers, the eyebrow number)
+   ========================================================================== */
+.sw {
+  --sw-navy: var(--navy);
+  --sw-slate: #5d6679; /* 5.2:1 on ivory */
+  --sw-gold: #a8814f;
+  --sw-gold-ink: #876539;
+  --sw-card: #fcfaf5;
+  --sw-edge: rgba(92, 72, 40, 0.1);
+  --sw-shadow: 0 1px 2px rgba(60, 44, 20, 0.04), 0 18px 40px -28px rgba(60, 44, 20, 0.26);
+  --sw-shadow-up: 0 2px 4px rgba(60, 44, 20, 0.05), 0 28px 56px -30px rgba(60, 44, 20, 0.34);
+
+  /* The card slice: a curved cut into the text side, heavier at the foot.
+     Stretched to the slice's box, so it reads as the same cut at any size. */
+  --sw-mask-side: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M8 0H100V100H44C30 100 24 90 21 78C16 56 12 30 8 0Z'/%3E%3C/svg%3E");
+  /* The narrow-card band: the same cut, turned to run along the foot. */
+  --sw-mask-band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0H100V64C86 90 66 100 40 100H0Z'/%3E%3C/svg%3E");
+
+  background: var(--ivory);
+  color: var(--sw-navy);
+  padding-block: clamp(96px, 10vw, 160px);
+  /* The arc, the paper shapes and the note are allowed to overhang their
+     column; the section is what keeps them off the page edge. */
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   The intro: claim on the left, the photograph on the right
+   ========================================================================== */
+.sw__intro {
+  display: grid;
+  gap: clamp(48px, 7vw, 72px);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .sw__intro {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(32px, 4vw, 64px);
+  }
+}
+
+.sw__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 clamp(24px, 3vw, 36px);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--sw-navy);
+}
+
+.sw__num {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--sw-gold-ink);
+}
+
+.sw__rule {
+  width: clamp(40px, 5vw, 68px);
+  height: 1px;
+  background: var(--sw-gold);
+}
+
+.sw__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 400;
+  font-size: clamp(3rem, 6.4vw, 6.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--sw-navy);
+}
+
+.sw__title em {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--sw-gold);
+}
+
+.sw__lead {
+  margin: clamp(24px, 2.6vw, 32px) 0 0;
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  line-height: 1.65;
+  color: var(--sw-slate);
+}
+
+.sw__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: clamp(28px, 3vw, 40px);
+  padding-block: 8px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sw-navy);
+}
+
+.sw__cta-rule {
+  width: 48px;
+  height: 1px;
+  background: var(--sw-gold);
+  transform-origin: 0 50%;
+  transition: scale var(--d-move) var(--ease-out);
+}
+
+.sw__cta-arrow {
+  color: var(--sw-gold-ink);
+  transition: translate var(--d-move) var(--ease-out);
+}
+
+.sw__cta:hover .sw__cta-rule {
+  scale: 1.35 1;
+}
+
+.sw__cta:hover .sw__cta-arrow {
+  translate: 4px 0;
+}
+
+.sw__cta:focus-visible,
+.sw__scroll:focus-visible {
+  outline: 2px solid var(--sw-gold-ink);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   The stage
+   --------------------------------------------------------------------------
+   Every piece is placed in percentages of one fixed-ratio box - the same
+   640 x 520 box the arc's SVG is drawn in - so the photograph, the paper
+   shapes and the arc scale as one composition and never drift apart.
+   -------------------------------------------------------------------------- */
+.sw__visual {
+  position: relative;
+}
+
+.sw__stage {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 640 / 520;
+  margin-inline: auto;
+}
+
+.sw__stage > * {
+  position: absolute;
+}
+
+.sw__shape--left {
+  left: 4.69%;
+  top: 19.23%;
+  width: 20.31%;
+  height: 57.69%;
+  border-radius: 999px;
+  background: rgba(229, 219, 200, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(92, 72, 40, 0.05);
+}
+
+.sw__shape--right {
+  left: 39.06%;
+  top: 7.69%;
+  width: 46.88%;
+  height: 73.08%;
+  border-radius: 44px 60px 52px 44px;
+  background: rgba(226, 208, 176, 0.4);
+}
+
+.sw__stage .sw__photo {
+  left: 14.06%;
+  top: 9.62%;
+  width: 51.56%;
+  height: 84.62%;
+  margin: 0;
+  border-radius: 38px 72px 44px 44px;
+  box-shadow: 0 34px 64px -40px rgba(40, 30, 14, 0.45);
+}
+
+/* Taller than its frame by the parallax travel, so the drift never shows an
+   edge. */
+.sw__stage .sw__photo img {
+  position: absolute;
+  inset: -24px 0;
+  height: calc(100% + 48px);
+}
+
+.sw__ring {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sw__ring-arc {
+  fill: none;
+  stroke: var(--sw-gold);
+  stroke-width: 1.25;
+}
+
+.sw__ring-dot {
+  fill: var(--sw-gold);
+}
+
+.sw__hand {
+  left: 86%;
+  top: 30%;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: clamp(1.25rem, 1.9vw, 1.875rem);
+  font-weight: 500;
+  line-height: 0.92;
+  color: var(--sw-gold);
+  white-space: nowrap;
+  rotate: -14deg;
+  transform-origin: 0 0;
+}
+
+.sw__hand-line {
+  display: block;
+  width: 82%;
+  height: auto;
+  margin-top: 10px;
+  overflow: visible;
+}
+
+.sw__hand-line path {
+  fill: none;
+  stroke: var(--sw-gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.sw__scroll {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .sw__stage {
+    margin-inline: auto 0;
+  }
+}
+
+/* The scroll cue needs its own strip to the right of the stage, and only has
+   one on a wide screen. */
+@media (min-width: 1200px) {
+  .sw__visual {
+    padding-right: clamp(72px, 7vw, 120px);
+  }
+
+  .sw__scroll {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    line-height: 2;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    color: var(--sw-navy);
+  }
+
+  /* Letter-spacing trails after the last letter; this pads the other side so
+     the word centres over the line. */
+  .sw__scroll-text {
+    padding-left: 0.34em;
+  }
+
+  .sw__scroll-line {
+    width: 1px;
+    height: 52px;
+    background: var(--sw-gold);
+  }
+
+  .sw__scroll svg {
+    transition: translate var(--d-move) var(--ease-out);
+  }
+
+  .sw__scroll:hover svg {
+    translate: 0 4px;
+  }
+}
+
+/* A phone gets a recomposed stage rather than a shrunken one: a bigger
+   photograph, one paper shape, and the note tucked beside the frame. */
+@media (max-width: 699.98px) {
+  .sw__stage {
+    aspect-ratio: 1 / 1.08;
+  }
+
+  .sw__shape--left,
+  .sw__ring {
+    display: none;
+  }
+
+  .sw__shape--right {
+    left: 30%;
+    top: 3%;
+    width: 62%;
+    height: 80%;
+    border-radius: 32px 44px 40px 32px;
+  }
+
+  .sw__stage .sw__photo {
+    left: 2%;
+    top: 7%;
+    width: 68%;
+    height: 90%;
+    border-radius: 30px 56px 34px 34px;
+  }
+
+  .sw__hand {
+    left: 74%;
+    top: 58%;
+    font-size: 1.25rem;
+  }
+}
+
+/* ==========================================================================
+   The six measures
+   ========================================================================== */
+.sw__measures {
+  margin-top: clamp(72px, 8vw, 120px);
+}
+
+.sw__measures:focus {
+  outline: none;
+}
+
+.sw__grid {
+  display: grid;
+  gap: clamp(18px, 1.9vw, 26px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .sw__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .sw__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* The card is a size container, so its layout follows the width it actually
+   gets rather than the viewport: the same card is three columns wide on a
+   laptop and full-width on a phone, and both need to read. */
+.sw-card {
+  container-type: inline-size;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--sw-edge);
+  border-radius: 26px;
+  background: var(--sw-card);
+  box-shadow: var(--sw-shadow);
+  transition:
+    translate 0.6s var(--ease-out),
+    box-shadow 0.6s var(--ease-out);
+}
+
+.sw-card__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 232px;
+}
+
+.sw-card__body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 24px 24px;
+  padding-right: calc(36% + 14px);
+}
+
+.sw-card__head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sw-card__badge {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f3ebdd;
+  color: var(--sw-navy);
+}
+
+/* A partial gold ring, as if the badge were drawn with one stroke. */
+.sw-card__badge::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid transparent;
+  border-right-color: var(--sw-gold);
+  border-bottom-color: var(--sw-gold);
+  border-radius: 50%;
+  rotate: -30deg;
+  opacity: 0.55;
+  transition: opacity var(--d-move) var(--ease-out);
+}
+
+.sw-card__num {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: 0.02em;
+  color: var(--sw-gold-ink);
+  transition: color var(--d-move) var(--ease-out);
+}
+
+.sw-card__title {
+  margin: 16px 0 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 36;
+  font-weight: 400;
+  font-size: clamp(1.1875rem, 1.35vw, 1.375rem);
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  color: var(--sw-navy);
+}
+
+.sw-card__desc {
+  margin: 10px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--sw-slate);
+}
+
+.sw-card__arrow {
+  display: inline-flex;
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--sw-navy);
+  transition:
+    translate var(--d-move) var(--ease-out),
+    color var(--d-move) var(--ease-out);
+}
+
+.sw-card__media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 36%;
+}
+
+.sw-card__echo,
+.sw-card .sw-card__fig {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--sw-mask-side) no-repeat 0 0 / 100% 100%;
+  mask: var(--sw-mask-side) no-repeat 0 0 / 100% 100%;
+}
+
+/* A paler copy of the slice, set a few pixels into the text side: the
+   layered-paper edge the photograph sits on. */
+.sw-card__echo {
+  translate: -12px 0;
+  background: rgba(226, 208, 176, 0.5);
+}
+
+.sw-card .sw-card__fig {
+  margin: 0;
+}
+
+.sw-card .sw-card__fig img {
+  position: absolute;
+  inset: -10px 0;
+  height: calc(100% + 20px);
+  transition: scale 0.9s var(--ease-out);
+}
+
+/* Wide card: the composed layout, with the text hung off the badge. */
+@container (min-width: 480px) {
+  .sw-card__body {
+    padding: 30px 32px 28px;
+    padding-right: calc(38% + 16px);
+  }
+
+  .sw-card__media {
+    width: 38%;
+  }
+
+  .sw-card__title,
+  .sw-card__desc {
+    margin-left: 62px;
+  }
+}
+
+/* Narrow card: a side slice would leave the text a column of single words,
+   so the photograph moves to a band across the top. */
+@container (max-width: 339.98px) {
+  .sw-card__inner {
+    min-height: 0;
+  }
+
+  .sw-card__media {
+    position: relative;
+    order: -1;
+    width: 100%;
+    height: 156px;
+  }
+
+  .sw-card__echo,
+  .sw-card .sw-card__fig {
+    -webkit-mask-image: var(--sw-mask-band);
+    mask-image: var(--sw-mask-band);
+  }
+
+  .sw-card__echo {
+    translate: 0 10px;
+  }
+
+  .sw-card__body {
+    padding-right: 24px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sw-card:hover {
+    translate: 0 -5px;
+    box-shadow: var(--sw-shadow-up);
+  }
+
+  .sw-card:hover .sw-card__fig img {
+    scale: 1.045;
+  }
+
+  .sw-card:hover .sw-card__arrow {
+    translate: 4px 0;
+    color: var(--sw-gold-ink);
+  }
+
+  .sw-card:hover .sw-card__badge::after {
+    opacity: 1;
+  }
+
+  .sw-card:hover .sw-card__num {
+    color: #6f5230;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-card,
+  .sw-card .sw-card__fig img,
+  .sw-card__arrow,
+  .sw__cta-rule,
+  .sw__cta-arrow {
+    transition: none;
+  }
+}
