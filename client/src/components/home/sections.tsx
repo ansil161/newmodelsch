@@ -1,13 +1,5 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ADMISSIONS_INTRO,
-  PRINCIPAL,
-  ROUTES,
-  STATS,
-  TESTIMONIALS,
-  WHY_CHOOSE,
-} from '@/constants';
+import { ADMISSIONS_INTRO, PRINCIPAL, ROUTES, STATS, WHY_CHOOSE } from '@/constants';
 import {
   academicImages,
   artsImages,
@@ -30,7 +22,6 @@ import {
   InviteSection,
   Mark,
   PhotoBreak,
-  QuoteSection,
   Script,
   SectionHead,
   StatReveal,
@@ -38,7 +29,6 @@ import {
   StickyStory,
 } from '@/components/editorial';
 import type { StoryPanel } from '@/components/editorial';
-import type { TestimonialGroup } from '@/types';
 import './home.css';
 
 /* ==========================================================================
@@ -340,73 +330,16 @@ export { HomeJourney } from './HomeJourney';
 
 /* --------------------------------------------------------------------------
    07 - VOICES
+   --------------------------------------------------------------------------
+   The community stories section: four categories of witness, one quote at
+   display scale, and a rail of the rest underneath. It is the third section
+   on this page with real animation logic of its own - a two-halved swap
+   between categories, a scrubbed horizontal rail and a film in a dialog - so
+   it lives beside this file rather than inside it, the same arrangement as
+   the campus deck and the journey above.
    -------------------------------------------------------------------------- */
 
-// Parents first: they are the reader this page is written for.
-const VOICE_GROUPS: TestimonialGroup[] = ['Parents', 'Teachers', 'Alumni', 'Students'];
-
-export function HomeVoices() {
-  const [group, setGroup] = useState<TestimonialGroup>(VOICE_GROUPS[0]);
-  const shown = TESTIMONIALS.filter((testimonial) => testimonial.group === group);
-
-  return (
-    <section className="section section--navy voices" id="voices">
-      <div className="wrap voices__inner">
-        <div className="voices__head">
-          <Sticker tone="paper" tilt={-2}>
-            In their words
-          </Sticker>
-          <p className="voices__note">
-            Unedited, from parents, the staff room, alumni and students. Nothing here was written
-            by the school.
-          </p>
-        </div>
-
-        {/* The switch sits directly above the quote rather than in the side
-            column, so it is the first thing read before the quote itself. */}
-        <div className="voices__main">
-          <div className="voices__groups" role="group" aria-label="Whose words to show">
-            {VOICE_GROUPS.map((name) => (
-              <button
-                key={name}
-                type="button"
-                className={`voices__group${group === name ? ' is-on' : ''}`}
-                aria-pressed={group === name}
-                aria-controls="voices-quotes"
-                onClick={() => setGroup(name)}
-              >
-                {name}
-                <span className="voices__group-count">
-                  {TESTIMONIALS.filter((testimonial) => testimonial.group === name).length}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <p className="sr-only" aria-live="polite">
-            Showing {shown.length} quotes from {group.toLowerCase()}.
-          </p>
-
-          {/* Keyed by group so switching remounts the carousel: it starts again
-              at the first quote and replays its entrance, which is the cue that
-              the voice has changed. */}
-          <QuoteSection
-            key={group}
-            id="voices-quotes"
-            entries={shown.map((testimonial) => ({
-              id: testimonial.id,
-              quote: testimonial.quote,
-              name: testimonial.name,
-              role: testimonial.role,
-              photo: testimonial.photo,
-            }))}
-            className="voices__quote"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
+export { HomeVoices } from './HomeVoices';
 
 /* --------------------------------------------------------------------------
    08 - THE PRINCIPAL

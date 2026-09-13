@@ -1,0 +1,417 @@
+/* ==========================================================================
+   04 - IN THEIR OWN WORDS
+   --------------------------------------------------------------------------
+   The reel. Four vertical panels in one row; the open one takes a little
+   under half the width and the other three stay as slats.
+
+   THE WIDTH CHANGE IS A CSS TRANSITION, NOT A TWEEN, AND THAT IS DELIBERATE.
+
+   `flex-grow` is the only property being animated and it is animated on four
+   elements, once per pointer move. A GSAP tween would buy nothing here and
+   cost the thing that matters most in this interaction: interruptibility. A
+   reader running the pointer across the row changes their mind three times a
+   second, and a CSS transition retargets from wherever it is with no bookkeeping.
+   The section's scroll entrance is GSAP, because that is scroll-driven and
+   one-shot; this is neither.
+
+   THE DARKEST BAND ON THE SITE, AND THE ONLY ONE.
+
+   Navy-deep rather than the navy used everywhere else. This is the one place
+   on any page with moving pictures in it, and a room you watch something in
+   is darker than a room you read in. It is also what keeps four photographs
+   of four faces from competing with the warm paper the rest of the page is
+   printed on.
+   ========================================================================== */
+
+.reel {
+  background: var(--navy-deep);
+  /* The panels sit flush to their own radius and the posters scale inside
+     them; without this a subpixel edge shows on the outer two. */
+  overflow: hidden;
+}
+
+.reel__head {
+  margin-bottom: clamp(40px, 5vw, 76px);
+}
+
+/* ==========================================================================
+   The row
+   ========================================================================== */
+.reel__cast {
+  display: flex;
+  gap: clamp(8px, 0.9vw, 14px);
+  /* Tall enough that the open panel stays taller than it is wide - a portrait
+     stretched into a landscape panel is a photograph of one eye - and short
+     enough that the row plus its head still fits one laptop screen. */
+  height: clamp(460px, 70vh, 660px);
+}
+
+/* The open panel's share of the row. Held at 1 until the entrance releases
+   it, which is what makes the four panels arrive equal and then step.
+
+   2.6 rather than the 4-or-5 this composition wants to be. Past about three
+   the open panel goes landscape, and a portrait cropped to landscape at this
+   height is a close-up of somebody's eye. The number is set by the crop, not
+   by how much room the quote would like. */
+.reel__cast {
+  --grow-on: 1;
+}
+
+.reel__cast[data-open='true'] {
+  --grow-on: 2.6;
+}
+
+.reel__card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--r-frame);
+  background: var(--navy);
+  isolation: isolate;
+  transition: flex-grow 900ms var(--ease-out);
+}
+
+.reel__card.is-on {
+  flex-grow: var(--grow-on);
+}
+
+/* A panel playing a film owns the row: the slats beside it are still there,
+   but nothing competes for attention with a person speaking. It can go wider
+   than the poster ever does, because the video is letterboxed inside it
+   rather than cropped to fill it. */
+.reel__card.is-live {
+  flex-grow: 5.4;
+}
+
+/* ==========================================================================
+   The poster
+   --------------------------------------------------------------------------
+   Taller than its panel and offset upward, so the parallax has material to
+   move and no edge can be exposed at either end of the travel.
+   ========================================================================== */
+.reel__shot {
+  position: absolute;
+  inset: -6% 0;
+  height: 112%;
+  background: var(--navy);
+}
+
+.reel__shot img {
+  height: 100%;
+  transition: filter 900ms var(--ease-out);
+  /* Desaturated until chosen. The open panel is the only one in full colour,
+     which does more to say 'this one' than any border would. */
+  filter: saturate(0.35) brightness(0.72);
+}
+
+.reel__card.is-on .reel__shot img {
+  filter: none;
+}
+
+/* Two stops rather than one: a light wash over the whole frame so the spine
+   is legible against a bright sky, and a deep foot so the quote sits on ink
+   rather than on a face. */
+.reel__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(14, 24, 41, 0.5) 0%, rgba(14, 24, 41, 0) 30%),
+    linear-gradient(0deg, rgba(14, 24, 41, 0.95) 0%, rgba(14, 24, 41, 0.82) 30%, rgba(14, 24, 41, 0.34) 58%, rgba(14, 24, 41, 0) 78%);
+}
+
+.reel__video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* ==========================================================================
+   The closed edge
+   --------------------------------------------------------------------------
+   The name set bottom-to-top up the panel. It is the whole of a slat's
+   content, so it carries the role underneath it at half the weight - a name
+   with no class beside it is a stranger.
+   ========================================================================== */
+.reel__spine {
+  position: absolute;
+  left: 0;
+  bottom: 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-inline: 20px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 420ms var(--ease-out);
+}
+
+.reel__spine b {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 30;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  color: var(--on-navy);
+}
+
+.reel__spine i {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-navy-3);
+}
+
+/* The spine and the body are the same content at two sizes, so they cross-fade
+   rather than both being present. The spine leaves first, quickly. */
+.reel__cast[data-open='true'] .reel__card.is-on .reel__spine {
+  opacity: 0;
+  transition-duration: 180ms;
+}
+
+/* ==========================================================================
+   The open panel
+   ========================================================================== */
+.reel__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: clamp(22px, 2.4vw, 36px);
+  /* Everything inside is laid out at the open width from the start, so the
+     type does not reflow line by line while the panel is widening. */
+  width: max(100%, 26ch);
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 460ms var(--ease-out), transform 620ms var(--ease-out);
+}
+
+/* Gated on the row being open as well as the panel being chosen: before the
+   entrance releases the row, the first panel is already `is-on` but is still
+   a slat, and a 34ch quote inside a 200px slat is a column of syllables. */
+.reel__cast[data-open='true'] .reel__card.is-on .reel__body {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  /* Late, so the quote arrives into a panel that has already made room for
+     it rather than being dragged open behind it. */
+  transition-delay: 220ms;
+}
+
+.reel__index {
+  position: absolute;
+  top: clamp(18px, 2vw, 26px);
+  left: clamp(20px, 2.2vw, 32px);
+  z-index: 1;
+  color: var(--on-navy-2);
+  pointer-events: none;
+}
+
+.reel__pull {
+  margin: 0;
+  max-width: 30ch;
+}
+
+.reel__pull p {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 60;
+  font-size: clamp(1.15rem, 1.55vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.26;
+  letter-spacing: -0.012em;
+  color: var(--on-navy);
+  text-wrap: pretty;
+}
+
+/* The quotation marks are drawn rather than typed, so the first word of the
+   sentence still starts on the measure's left edge. */
+.reel__pull p::before {
+  content: '\201C';
+  margin-left: -0.42em;
+  color: var(--sun);
+}
+
+.reel__pull p::after {
+  content: '\201D';
+  color: var(--sun);
+}
+
+.reel__who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-navy);
+  width: 100%;
+  max-width: 30ch;
+}
+
+.reel__who b {
+  font-size: var(--t-body);
+  font-weight: 600;
+  color: var(--on-navy);
+}
+
+/* ==========================================================================
+   Play
+   ========================================================================== */
+.reel__play {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--on-navy);
+}
+
+.reel__ring {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+  /* The icon is a triangle; nudged right so it sits optically centred in a
+     circle rather than mathematically centred and looking left-heavy. */
+  padding-left: 3px;
+  transition: transform var(--d-move) var(--ease-back), box-shadow var(--d-move) var(--ease-out);
+}
+
+.reel__play:hover .reel__ring,
+.reel__play:focus-visible .reel__ring {
+  transform: scale(1.09);
+  box-shadow: 0 0 0 12px var(--sun-wash);
+}
+
+.reel__cue {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reel__error {
+  max-width: 40ch;
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: var(--t-small);
+  line-height: 1.45;
+}
+
+.reel__error code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.reel__stop {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px 9px 11px;
+  border-radius: var(--r-pill);
+  background: rgba(14, 24, 41, 0.72);
+  backdrop-filter: blur(6px);
+  color: var(--on-navy);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--d-state) var(--ease-out);
+}
+
+.reel__stop:hover {
+  background: rgba(14, 24, 41, 0.92);
+}
+
+/* ==========================================================================
+   The footnote
+   ========================================================================== */
+.reel__foot {
+  margin-top: clamp(22px, 2.4vw, 34px);
+  padding-top: clamp(16px, 1.8vw, 24px);
+  border-top: 1px solid var(--line-navy);
+}
+
+/* ==========================================================================
+   Below 900px the reel stops being a reel
+   --------------------------------------------------------------------------
+   There is no pointer to open a panel with, and a tap that only reveals text
+   is a tap that costs the reader something for nothing. So every panel is a
+   whole card: the poster, the quote, the name and a play button, stacked.
+
+   Which is to say the expansion is a desktop affordance, not the content. All
+   four quotes were always in the DOM; here they are simply all visible too.
+   ========================================================================== */
+@media (max-width: 899px) {
+  .reel__cast {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(14px, 3vw, 22px);
+    height: auto;
+  }
+
+  .reel__card,
+  .reel__card.is-on,
+  .reel__card.is-live {
+    flex: none;
+    aspect-ratio: 4 / 5;
+  }
+
+  .reel__spine {
+    display: none;
+  }
+
+  .reel__shot img {
+    filter: none;
+  }
+
+  .reel__body {
+    width: 100%;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition: none;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  /* Three panels' worth of room and four panels in it: the open one has to
+     take a smaller share or the slats fall below a readable name. */
+  .reel__cast[data-open='true'] {
+    --grow-on: 2.2;
+  }
+
+  .reel__cast {
+    height: clamp(440px, 62vh, 580px);
+  }
+}
+
+/* A row whose width is animated is a row a reader with vestibular sensitivity
+   should not be shown moving. It arrives open and stays put. */
+@media (prefers-reduced-motion: reduce) {
+  .reel__card,
+  .reel__shot img,
+  .reel__spine,
+  .reel__body {
+    transition: none;
+  }
+}

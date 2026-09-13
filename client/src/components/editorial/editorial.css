@@ -63,6 +63,12 @@
 /* ==========================================================================
    Stats
    ========================================================================== */
+/* The frame StatReveal wraps every list in. It is the size container the grid
+   layout measures, because the list cannot query its own width. */
+.stats-frame {
+  container-type: inline-size;
+}
+
 .stats {
   margin: 0;
   display: grid;
@@ -73,8 +79,24 @@
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
+/* One column, then 2x2, then a single row of four - switched on the width the
+   list is actually given. The thresholds are set by the widest authored figure
+   ('10,000+', seven mono characters, ~141px at the 2.25rem floor) plus the
+   gaps: 20rem holds two of them side by side, 42rem holds four. */
 .stats--grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container (min-width: 20rem) {
+  .stats--grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 42rem) {
+  .stats--grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .stats--stack {
@@ -91,6 +113,11 @@
   border-bottom: 1px solid var(--line);
 }
 
+/* A grid track may shrink to its share of the row, never below it. */
+.stat {
+  min-width: 0;
+}
+
 .stat__body {
   margin: 0;
   display: flex;
@@ -98,8 +125,17 @@
   gap: 6px;
 }
 
+/* A figure is one unbreakable unit - '10,000+' must never split across lines. */
 .stat__value {
   font-size: clamp(2.25rem, 4vw, 3.5rem);
+  white-space: nowrap;
+}
+
+/* In the grid the figure scales with the box it is given, not the viewport.
+   4.5cqi tracks the old 4vw wherever the list spans the page (the container is
+   ~90% of the viewport there), and stays at the floor in a narrow column. */
+.stats--grid .stat__value {
+  font-size: clamp(2.25rem, 4.5cqi, 3.5rem);
 }
 
 .stats--large .stat__value {
@@ -112,6 +148,7 @@
   font-weight: 560;
   color: var(--ink);
   letter-spacing: -0.005em;
+  overflow-wrap: break-word;
 }
 
 .stat__detail {
@@ -144,12 +181,6 @@
 .on-navy .stats--row .stat,
 .on-navy .stats--grid .stat {
   border-top-color: var(--sun);
-}
-
-@media (min-width: 700px) {
-  .stats--grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 /* ==========================================================================

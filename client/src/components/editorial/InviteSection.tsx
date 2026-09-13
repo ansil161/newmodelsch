@@ -79,12 +79,16 @@ interface InviteSectionProps {
  * The one word in a headline that is written rather than set. A child of the
  * headline, so it wraps with it and is read as part of the sentence; the
  * swash under it is drawn, and hidden from assistive tech.
+ *
+ * `tone` exists for the community stories section on the home page, which is
+ * the one spread on the site set in blue rather than in the school yellow.
+ * The hand is the same hand; only the ink changes.
  */
-export function Script({ children }: { children: ReactNode }) {
+export function Script({ children, tone = 'sun' }: { children: ReactNode; tone?: 'sun' | 'blue' }) {
   return (
-    <span className="script">
+    <span className={tone === 'sun' ? 'script' : 'script script--blue'}>
       {children}
-      <Hand kind="swash" className="script__swash" />
+      <Hand kind="swash" tone={tone} className="script__swash" />
     </span>
   );
 }

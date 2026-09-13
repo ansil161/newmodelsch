@@ -9,7 +9,7 @@ import { Figure } from '@/components/editorial';
 import './safety.css';
 
 /* ==========================================================================
-   04 - SAFETY & WELLBEING
+   05 - SAFETY & WELLBEING
    --------------------------------------------------------------------------
    One composed scene rather than a heading followed by six boxes: the claim
    on the left, a photograph laid on two paper shapes on the right with a gold
@@ -192,7 +192,7 @@ export function SlSafety() {
         <div className="sw__intro">
           <div className="sw__copy">
             <p className="sw__eyebrow">
-              <span className="sw__num">04</span>
+              <span className="sw__num">05</span>
               <span className="sw__rule" aria-hidden="true" />
               <span>Safety &amp; wellbeing</span>
             </p>

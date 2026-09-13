@@ -28,6 +28,9 @@ import type { CSSProperties } from 'react';
    TONES
 
      sun    the expressive stroke. One or two per spread, never more.
+     blue   the same expressive stroke in the school blue. It is the sun's
+            counterpart for the one section that runs in blue rather than in
+            yellow, and it obeys the same rule: one or two per spread.
      sky    the pale blue secondary mark. Quieter, and allowed to repeat.
      ink    the ballpoint, for arrows that sit next to handwriting.
    ========================================================================== */
@@ -43,7 +46,7 @@ export type HandKind =
   | 'star'
   | 'brush';
 
-export type HandTone = 'sun' | 'sky' | 'ink';
+export type HandTone = 'sun' | 'blue' | 'sky' | 'ink';
 
 interface HandProps {
   kind: HandKind;

@@ -127,13 +127,16 @@ export function AboutStory() {
               {paragraph}
             </p>
           ))}
-
-          <StatReveal
-            items={STORY.marks.map((mark) => ({ value: mark.value, label: mark.label }))}
-            layout="grid"
-            className="story__marks"
-          />
         </div>
+
+        {/* A sibling of the prose, not a child of it: from 900px the prose
+            column is a third of the page, too narrow for four figures, so the
+            marks take their own row across all three columns. */}
+        <StatReveal
+          items={STORY.marks.map((mark) => ({ value: mark.value, label: mark.label }))}
+          layout="grid"
+          className="story__marks"
+        />
       </div>
     </section>
   );

@@ -99,6 +99,58 @@ export interface Testimonial {
   photo: Photo;
 }
 
+/* --------------------------------------------------------------------------
+   The community stories section
+   --------------------------------------------------------------------------
+   `Testimonial` above is a flat list with a `group` tag, and it stays that
+   way: three other places on the site read it as a flat list. The home page's
+   stories section needs something the flat list cannot carry - an ordered set
+   of categories, each with its own eyebrow and its own introduction, and a
+   story that knows whether it has a film behind it.
+
+   The content lives in `constants/voices.ts`, which composes these out of
+   TESTIMONIALS, STUDENT_FILMS, ALUMNI and LEADERSHIP rather than restating
+   any of them.
+   -------------------------------------------------------------------------- */
+
+/** A clip served straight out of `public/videos/`, as `StudentFilm` is. */
+export interface VoiceFilm {
+  src: string;
+  /** As written on a player - '1:12'. Text, so it needs no formatting. */
+  runtime: string;
+  /** A WebVTT file beside the clip. Undefined renders no <track>. */
+  captions?: string;
+}
+
+export interface VoiceStory {
+  id: string;
+  name: string;
+  /** 'Class 10 · Robotics', 'Head of Science', 'Parent, Class 7'. */
+  role: string;
+  quote: string;
+  /**
+   * The tail of `quote`, set in the handwritten blue. It must be a suffix of
+   * `quote` - the component checks, and falls back to the plain quote if it
+   * is not - so the sentence is never held in two places at once.
+   */
+  accent?: string;
+  photo: Photo;
+  film?: VoiceFilm;
+}
+
+export type VoiceCategoryId = 'students' | 'teachers' | 'alumni' | 'parents';
+
+export interface VoiceCategory {
+  id: VoiceCategoryId;
+  /** '01' - shown in the navigation, and it is the reading order. */
+  index: string;
+  label: string;
+  /** Replaces the section eyebrow while this category is the one shown. */
+  eyebrow: string;
+  lead: string;
+  stories: VoiceStory[];
+}
+
 export interface Feature {
   id: string;
   title: string;
@@ -282,6 +334,34 @@ export interface ActivityStrand {
   accent: 'blue' | 'coral' | 'violet' | 'mint';
   /** Headline number for the strand's floating badge. */
   stat: { value: string; label: string };
+}
+
+/**
+ * One student film on the Student Life reel.
+ *
+ * `src` is served straight out of `public/videos/`, so the school drops the
+ * clip in and it plays with no code change — the same arrangement as the
+ * school film on About. Until a file is there the src 404s, which the section
+ * handles rather than hides.
+ *
+ * `pull` is the one sentence the student says that the page is willing to
+ * print. It is not a caption for the clip and it is not a summary of it: it
+ * is what stays on the page for the reader who never presses play, which is
+ * most of them.
+ */
+export interface StudentFilm {
+  id: string;
+  name: string;
+  /** ‘Class 10 · Robotics club’. The class first, because that is what a parent is placing. */
+  role: string;
+  pull: string;
+  /** As written on a player — ‘1:12’. Kept as text so it needs no formatting. */
+  runtime: string;
+  src: string;
+  /** A WebVTT file beside the clip. Undefined renders no <track>, which is honest. */
+  captions?: string;
+  /** The still behind the play button, from `voiceImages`. */
+  poster: Photo;
 }
 
 export interface SafetyMeasure {

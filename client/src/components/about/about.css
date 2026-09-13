@@ -33,11 +33,12 @@
   align-content: start;
 }
 
-.story__marks {
-  margin-top: clamp(20px, 2.4vw, 32px);
-}
-
 @media (min-width: 900px) {
+  .story__marks {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
   .story__inner {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
     column-gap: clamp(32px, 4vw, 72px);

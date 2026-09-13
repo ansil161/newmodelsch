@@ -207,6 +207,13 @@
   rotate: -2.5deg;
 }
 
+/* The blue ink. Same hand, same rotation, one section. --blue is 5.4:1 on
+   chalk, so unlike --gold-ink it is allowed to carry a phrase rather than
+   only a word. */
+.script--blue {
+  color: var(--blue);
+}
+
 .script__swash {
   position: absolute;
   left: -2%;
@@ -451,6 +458,7 @@
 }
 
 .hand-mark--sun { color: var(--sun); }
+.hand-mark--blue { color: var(--blue); }
 .hand-mark--sky { color: var(--sky-line); }
 .hand-mark--ink { color: var(--navy); }
 

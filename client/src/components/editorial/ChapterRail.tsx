@@ -85,8 +85,11 @@ export function ChapterRail({ items, title }: ChapterRailProps) {
           })
         : null;
 
+    // These are created outside a tween, so the scope's revert does not own
+    // them. Killed by hand, or every route change leaves a page's worth of
+    // triggers measuring sections that no longer exist.
     return () => {
-      triggers.forEach((t) => t.kill());
+      triggers.forEach((trigger) => trigger.kill());
       shown?.kill();
     };
   }, [items]);
@@ -98,6 +101,7 @@ export function ChapterRail({ items, title }: ChapterRailProps) {
       aria-label="Chapters on this page"
     >
       {title ? <p className="rail__title meta">{title}</p> : null}
+
       <ol className="rail__list">
         {items.map((item, i) => (
           <li key={item.id}>
@@ -105,8 +109,10 @@ export function ChapterRail({ items, title }: ChapterRailProps) {
               href={`#${item.id}`}
               className={`rail__link${i === active ? ' is-current' : ''}`}
               aria-current={i === active ? 'true' : undefined}
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={(event) => {
+                // Lenis owns scrolling, so the browser's own jump would fight
+                // it. The offset clears the masthead.
+                event.preventDefault();
                 scrollTo(`#${item.id}`, -80);
               }}
             >

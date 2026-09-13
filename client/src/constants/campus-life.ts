@@ -1,4 +1,5 @@
-import type { ActivityStrand, DayBlock, SafetyMeasure } from '@/types';
+import type { ActivityStrand, DayBlock, SafetyMeasure, StudentFilm } from '@/types';
+import { voiceImages } from './imagery';
 import { img } from './media';
 
 /* ==========================================================================
@@ -211,6 +212,74 @@ export const SAFETY_MEASURES: SafetyMeasure[] = [
     title: 'Counselling and anti-bullying',
     description:
       'Two full-time counsellors, a published anti-bullying procedure, and a reporting route a child can use without going through their own teacher.',
+  },
+];
+
+/* ==========================================================================
+   The student films — four clips, on the reel
+   --------------------------------------------------------------------------
+   WHY THIS EXISTS WHEN THE PAGE ALREADY HAS QUOTES ON IT.
+
+   A printed quote is the school's account of what a child said. A child on
+   film saying it is the child. The whole value of this section is that it is
+   the one place on the site where the school is not the narrator, so the copy
+   here has to sound like the student and not like the prospectus — no
+   ‘nurturing environment’, no ‘holistic’, and no sentence a fourteen-year-old
+   would not say out loud.
+
+   FOUR, AND NOT MORE.
+
+   Four fits one row on a laptop without any of them collapsing to a sliver,
+   and four is about as many strangers as a parent will actually sit through.
+   A fifth is not more evidence; it is a queue.
+
+   The names are the ones already quoted elsewhere on the site wherever they
+   exist, so a parent who read Aarav on the homepage meets the same Aarav
+   here. Replace these with real students and real clips before launch.
+   ========================================================================== */
+
+export const STUDENT_VOICES = {
+  eyebrow: 'In their own words',
+  lead: 'Four students, filmed in one afternoon, each asked the same question and none of them shown the answer first. Nothing below is a script, and nothing was re-recorded.',
+  footnote: 'Filmed in the courtyard and the library. Every family gave written permission.',
+} as const;
+
+export const STUDENT_FILMS: StudentFilm[] = [
+  {
+    id: 'aarav',
+    name: 'Aarav Menon',
+    role: 'Class 10 · Robotics',
+    pull: 'I built my first robot in Class 6 and it did not work. My teacher made me present the failure to the whole class. That is when I actually learnt something.',
+    runtime: '1:12',
+    src: '/videos/voices/aarav.mp4',
+    poster: voiceImages.aarav,
+  },
+  {
+    id: 'kavya',
+    name: 'Kavya Reddy',
+    role: 'Class 9 · House captain',
+    pull: 'I was running a team of twelve at fourteen. Nobody checked whether I was ready. They just told me Thursday was mine.',
+    runtime: '0:58',
+    src: '/videos/voices/kavya.mp4',
+    poster: voiceImages.kavya,
+  },
+  {
+    id: 'zoya',
+    name: 'Zoya Fatima',
+    role: 'Class 7 · Library monitor',
+    pull: 'I was the quiet one in my old school and I stayed quiet for a term here too. Then somebody put me in charge of the reading hour, and that was that.',
+    runtime: '1:04',
+    src: '/videos/voices/zoya.mp4',
+    poster: voiceImages.zoya,
+  },
+  {
+    id: 'rohan',
+    name: 'Rohan Deshpande',
+    role: 'Class 10 · Athletics',
+    pull: 'Training is before school, so I am on the track at six. No teacher has ever once asked me to choose between that and my marks.',
+    runtime: '1:21',
+    src: '/videos/voices/rohan.mp4',
+    poster: voiceImages.rohan,
   },
 ];
 

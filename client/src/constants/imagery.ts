@@ -456,6 +456,53 @@ export const everydayImages = {
   },
 } satisfies Record<string, Photo>;
 
+/* ==========================================================================
+   voiceImages - the poster frames for the student films
+   --------------------------------------------------------------------------
+   One per student who speaks on the Student Life page, keyed by the film's
+   own id so a reordered list can never hand Kavya's clip Aarav's face.
+
+   TWO CONSTRAINTS THE REST OF THE LIBRARY DOES NOT HAVE.
+
+   They are cropped to a tall 9:16 panel, so `focus` places the face in the
+   upper third rather than at the frame's centre - a portrait centred in a
+   vertical slat is a photograph of a torso.
+
+   They are all `tone: 'dark'`, because the reel lays a name, a role and a
+   runtime over the bottom of each one. A light poster under white type is
+   unreadable, and the section reads the tone rather than guessing.
+
+   When the school's own clips are shot, the poster is a still pulled from the
+   film itself. Replacing the `id` here is the whole change.
+   ========================================================================== */
+
+export const voiceImages = {
+  aarav: {
+    id: '1500648767791-00dcc994a43e',
+    alt: 'Aarav, a Class 10 student, looking into the camera',
+    focus: '50% 26%',
+    tone: 'dark',
+  },
+  kavya: {
+    id: '1494790108377-be9c29b29330',
+    alt: 'Kavya, a Class 9 student and house captain, mid-sentence',
+    focus: '50% 24%',
+    tone: 'dark',
+  },
+  zoya: {
+    id: '1517841905240-472988babdf9',
+    alt: 'Zoya, a Class 7 student, sitting in the school library',
+    focus: '52% 24%',
+    tone: 'dark',
+  },
+  rohan: {
+    id: '1519085360753-af0119f7cbe7',
+    alt: 'Rohan, a Class 10 student, on the athletics track after training',
+    focus: '48% 22%',
+    tone: 'dark',
+  },
+} satisfies Record<string, Photo>;
+
 /**
  * Everything, in one object, for the two or three places that want to pick a
  * frame by group name rather than importing the list.
@@ -473,4 +520,5 @@ export const IMAGERY = {
   admission: admissionImages,
   gallery: galleryImages,
   everyday: everydayImages,
+  voices: voiceImages,
 } as const;

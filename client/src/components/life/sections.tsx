@@ -53,8 +53,9 @@ export const SL_CHAPTERS = [
   { id: 'day', index: '01', label: 'A day here' },
   { id: 'campus', index: '02', label: 'The campus' },
   { id: 'beyond', index: '03', label: 'Beyond the classroom' },
-  { id: 'safety', index: '04', label: 'Safety' },
-  { id: 'visit', index: '05', label: 'Come and see' },
+  { id: 'voices', index: '04', label: 'In their own words' },
+  { id: 'safety', index: '05', label: 'Safety' },
+  { id: 'visit', index: '06', label: 'Come and see' },
 ];
 
 /* --------------------------------------------------------------------------
@@ -291,14 +292,23 @@ export function SlWall() {
 }
 
 /* --------------------------------------------------------------------------
-   04 - SAFETY
+   04 - IN THEIR OWN WORDS
+   --------------------------------------------------------------------------
+   Four students on film, as four panels that open under the pointer. It is
+   the one section on the site where the school is not the narrator, and the
+   only one with a video player in it, so it lives beside this file rather
+   than inside it. See `SlVoices.tsx`.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   05 - SAFETY
    --------------------------------------------------------------------------
    A composed scene with its own master timeline, so it lives beside this file
    rather than inside it - the same arrangement as the day. See `SlSafety.tsx`.
    -------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
-   05 - THE VISIT
+   06 - THE VISIT
    -------------------------------------------------------------------------- */
 
 /* Student life is a collection of ordinary moments, so this spread is the
@@ -309,7 +319,7 @@ export function SlVisit() {
     <InviteSection
       id="visit"
       className="invite--visit"
-      eyebrow={`05 · ${VISIT_CAMPUS.eyebrow}`}
+      eyebrow={`06 · ${VISIT_CAMPUS.eyebrow}`}
       title={
         <>
           Come on a Tuesday, while the lessons are <Script>running.</Script>

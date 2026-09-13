@@ -21,6 +21,14 @@ import { count, rise } from '@/lib/motion';
    the whole group is marked `aria-busy` while it runs and the final text is
    restored verbatim rather than reformatted.
 
+   THE COLUMNS FOLLOW THE BOX, NOT THE SCREEN
+
+   The same component sits across a full-width band and inside a one-third
+   prose column, so a viewport breakpoint is the wrong question: a 1440px
+   screen can hand it 430px. The `<dl>` is wrapped in a size container and
+   `.stats--grid` picks its column count from that container's width, so a
+   figure like '10,000+' is never set in a track narrower than itself.
+
    THREE LAYOUTS, AND THEY ARE NOT INTERCHANGEABLE
 
      row     a horizontal band of three or four. The proof strip.
@@ -52,22 +60,21 @@ export function StatReveal({ items, layout = 'row', large = false, className = '
   }, [items]);
 
   return (
-    <dl
-      ref={scope}
-      className={`stats stats--${layout}${large ? ' stats--large' : ''} ${className}`.trim()}
-    >
-      {items.map((item) => (
-        <div className="stat" key={item.label + item.value}>
-          <dt className="sr-only">{item.label}</dt>
-          <dd className="stat__body">
-            <span className="stat-num stat__value">{item.value}</span>
-            <span className="stat__label" aria-hidden="true">
-              {item.label}
-            </span>
-            {item.detail ? <span className="stat__detail">{item.detail}</span> : null}
-          </dd>
-        </div>
-      ))}
-    </dl>
+    <div className={`stats-frame ${className}`.trim()}>
+      <dl ref={scope} className={`stats stats--${layout}${large ? ' stats--large' : ''}`}>
+        {items.map((item) => (
+          <div className="stat" key={item.label + item.value}>
+            <dt className="sr-only">{item.label}</dt>
+            <dd className="stat__body">
+              <span className="stat-num stat__value">{item.value}</span>
+              <span className="stat__label" aria-hidden="true">
+                {item.label}
+              </span>
+              {item.detail ? <span className="stat__detail">{item.detail}</span> : null}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }

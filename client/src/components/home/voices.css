@@ -1,0 +1,1038 @@
+/* ==========================================================================
+   COMMUNITY STORIES
+   --------------------------------------------------------------------------
+   The blue section.
+
+   Everywhere else on this site the accent is the school yellow on a warm
+   ivory sheet. Here it is the school blue on chalk - the same near-white the
+   invitation spreads use, and for the same reason: it is the only ground a
+   white card reads as paper against.
+
+   The palette is declared once at the top of the section as four local
+   custom properties, so the whole thing can be re-inked by changing four
+   lines rather than forty.
+
+     --vx-ink     navy. Every statement, every name.
+     --vx-quiet   slate. Running copy and metadata.
+     --vx-pen     the school blue. Handwriting, strokes, the active card, the
+                  quotation marks. It is a type colour here, unlike the
+                  yellow, which is why the handwriting is allowed to carry a
+                  phrase rather than only a word: 5.4:1 on chalk.
+     --vx-wash    the pale blue behind the portrait. Never a type colour.
+   ========================================================================== */
+
+.vx {
+  --vx-ink: var(--navy);
+  --vx-quiet: var(--slate);
+  --vx-pen: var(--blue);
+  --vx-wash: var(--blue-soft);
+  --vx-line: rgba(22, 35, 60, 0.12);
+
+  background: var(--chalk);
+  color: var(--vx-ink);
+  /* The section either side of this one is dark, then warm. A hairline at the
+     foot keeps chalk from bleeding into the paper of the principal's letter
+     below it, which is two points warmer and otherwise reads as a seam. */
+  border-bottom: 1px solid var(--vx-line);
+  /* Every blob, stroke and note in here is placed off the edge of something.
+     Clip rather than hidden: nothing in this section is pinned, and clip does
+     not make the element a containing block for the dialog's top layer. */
+  overflow: clip;
+  isolation: isolate;
+}
+
+.vx :focus-visible {
+  outline-color: var(--vx-pen);
+}
+
+.vx__inner {
+  display: grid;
+}
+
+.vx__grid {
+  display: grid;
+  gap: clamp(36px, 4.5vw, 60px);
+  align-items: start;
+}
+
+/* ==========================================================================
+   The intro
+   ========================================================================== */
+
+.vx__intro {
+  grid-area: intro;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.vx__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vx__eyebrow-rule {
+  width: clamp(28px, 3vw, 48px);
+  height: 2px;
+  background: var(--vx-ink);
+  flex: none;
+}
+
+.vx__eyebrow .meta {
+  color: var(--vx-ink);
+  letter-spacing: 0.18em;
+}
+
+.vx__title {
+  margin-top: clamp(20px, 2.4vw, 34px);
+  color: var(--vx-ink);
+  /* Smaller than `.ed-h1` resolves to. This headline lives in the narrowest
+     column on the page and the display scale was written for a half-width
+     one; left alone, 'Real Voices,' sets wider than the column it sits in. */
+  font-size: clamp(2.35rem, 3.3vw, 3.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: initial;
+}
+
+.vx__lead {
+  margin-top: clamp(20px, 2vw, 28px);
+  max-width: 34ch;
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.68;
+  color: var(--vx-quiet);
+}
+
+.vx__cta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: clamp(28px, 3vw, 44px);
+}
+
+/* Pulled into the gutter beside the link, the way the arrow on the reference
+   board is. Hidden below the desktop grid, where there is no gutter to pull
+   into and it would be the one thing pushing the page sideways. */
+.vx__cta-arrow {
+  display: none;
+  position: absolute;
+  top: -4px;
+  left: -54px;
+  width: 42px;
+  pointer-events: none;
+}
+
+.vx__link {
+  color: var(--vx-ink);
+  font-weight: 560;
+}
+
+.vx .link::before {
+  background: var(--vx-pen);
+}
+
+.vx__cta-note {
+  letter-spacing: 0.14em;
+}
+
+/* ==========================================================================
+   The quote
+   ========================================================================== */
+
+.vx__quote {
+  grid-area: quote;
+  position: relative;
+  min-width: 0;
+}
+
+.vx__quote:focus {
+  outline: none;
+}
+
+.vx__quotemark {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 4.6vw, 5rem);
+  font-weight: 600;
+  line-height: 0.62;
+  color: var(--vx-pen);
+  user-select: none;
+}
+
+.vx__said {
+  margin-top: clamp(14px, 1.6vw, 22px);
+}
+
+.vx__head {
+  color: var(--vx-ink);
+  /* `.ed-h2` is set at 1.0 leading for two- and three-word statements. This is
+     a spoken sentence four lines long, so it gets reading leading and most of
+     its tracking back. */
+  font-size: clamp(1.3rem, 1.95vw, 1.9rem);
+  line-height: 1.32;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
+
+/* The closing phrase, written rather than set.
+
+   Not the `Script` primitive: that is one word inside a headline and it holds
+   itself on a single line, which is right for 'journey?' and wrong for a
+   clause. This one is allowed to wrap. */
+.vx__accent {
+  margin-top: clamp(10px, 1.1vw, 16px);
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 2.5vw, 2.45rem);
+  line-height: 1.02;
+  letter-spacing: 0.004em;
+  color: var(--vx-pen);
+  rotate: -1.6deg;
+  transform-origin: left center;
+  max-width: 18ch;
+}
+
+.vx__by {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.2vw, 18px);
+  margin-top: clamp(26px, 2.8vw, 40px);
+}
+
+.vx__face {
+  width: 66px;
+  flex: none;
+  box-shadow: 0 0 0 3px var(--chalk), 0 0 0 4.5px var(--vx-wash);
+}
+
+.vx__who {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.vx__name {
+  font-size: 1rem;
+  font-weight: 620;
+  letter-spacing: -0.008em;
+  color: var(--vx-ink);
+}
+
+.vx__who .meta {
+  color: var(--vx-quiet);
+}
+
+.vx__meter {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 1.6vw, 26px);
+  margin-top: clamp(26px, 2.8vw, 40px);
+  max-width: 320px;
+}
+
+.vx__meter-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  color: var(--vx-quiet);
+}
+
+.vx__meter-count b {
+  font-weight: 600;
+  color: var(--vx-ink);
+}
+
+.vx__meter-count i {
+  font-style: normal;
+  opacity: 0.5;
+}
+
+.vx__meter-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--vx-line);
+  overflow: hidden;
+}
+
+/* Rests full rather than empty: an unfilled progress line reads as a broken
+   graphic. The layout effect writes the real fraction before first paint. */
+.vx__meter-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--vx-ink);
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ==========================================================================
+   The portrait
+   ========================================================================== */
+
+.vx__media {
+  grid-area: media;
+  position: relative;
+  /* Room above the frame for the play button and the note that points at it,
+     so neither of them has to be placed on a negative offset. */
+  padding-top: clamp(34px, 4.5vw, 78px);
+  min-width: 0;
+}
+
+.vx__portrait {
+  position: relative;
+  z-index: 2;
+  /* `rotate` rather than a transform: GSAP writes `transform` on this element
+     during every swap, and the tilt has to survive it. The two properties
+     compose; one property fought over does not. */
+  rotate: 1.6deg;
+}
+
+.vx__shot {
+  border-radius: var(--r-lg);
+  box-shadow: 0 2px 6px rgba(22, 35, 60, 0.06), 0 34px 70px -40px rgba(22, 35, 60, 0.42);
+}
+
+/* The two soft shapes behind the frame. Cut-paper squircles rather than
+   ellipses - see the shape block in variables.css for why that distinction
+   is load-bearing. */
+.vx__blob {
+  position: absolute;
+  z-index: 0;
+  border-radius: var(--r-blob);
+  pointer-events: none;
+}
+
+.vx__blob--a {
+  top: 2%;
+  left: -9%;
+  width: 58%;
+  aspect-ratio: 3 / 4;
+  background: var(--vx-wash);
+  opacity: 0.6;
+}
+
+.vx__blob--b {
+  right: -16%;
+  bottom: 4%;
+  width: 56%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-blob-2);
+  background: var(--mist);
+}
+
+/* The line thrown round the photograph. In front of it, not behind: on the
+   reference the stroke crosses the subject, which is what makes it read as
+   drawn on the print rather than printed with it. */
+.vx__loop {
+  position: absolute;
+  left: -13%;
+  bottom: 1%;
+  width: 126%;
+  z-index: 3;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.vx__play {
+  position: absolute;
+  top: clamp(6px, 1.4vw, 26px);
+  left: -5%;
+  z-index: 5;
+  cursor: pointer;
+}
+
+/* The pale disc the button sits on, so it holds against a busy photograph. */
+.vx__play::before {
+  content: '';
+  position: absolute;
+  inset: -14px -14px -10px -10px;
+  border-radius: 50%;
+  background: var(--vx-wash);
+  opacity: 0.75;
+  z-index: -1;
+}
+
+.vx__play-ring {
+  display: grid;
+  place-items: center;
+  width: clamp(54px, 4.4vw, 66px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--vx-ink);
+  color: var(--white);
+  box-shadow: 0 10px 24px -12px rgba(22, 35, 60, 0.6);
+  transition:
+    transform var(--d-state) var(--ease-out),
+    background var(--d-state) var(--ease-out);
+}
+
+.vx__play-ring svg {
+  margin-left: 2px;
+}
+
+.vx__play:hover .vx__play-ring {
+  transform: scale(1.07);
+  background: var(--vx-pen);
+}
+
+.vx__play:active .vx__play-ring {
+  transform: scale(0.96);
+}
+
+.vx__filmnote {
+  position: absolute;
+  top: 0;
+  right: 1%;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.vx__filmnote-ink {
+  font-family: var(--font-hand);
+  font-size: clamp(1.05rem, 1.25vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.02;
+  color: var(--vx-ink);
+  rotate: -4deg;
+  max-width: 9ch;
+}
+
+/* Points back down and to the left, at the play button on the far shoulder
+   of the frame. */
+.vx__filmnote-arrow {
+  order: -1;
+  width: clamp(34px, 3vw, 46px);
+  margin-top: 16px;
+  rotate: 152deg;
+}
+
+.vx__sparks {
+  position: absolute;
+  top: clamp(0px, 0.8vw, 14px);
+  left: 16%;
+  width: clamp(26px, 2.2vw, 34px);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Left on a phone, right everywhere else. Right-aligned they land in the same
+   corner as the floating assistant dock, which is a thumb-sized ambiguity
+   nobody needs; the tablet grid moves the dock clear of them again. */
+.vx__arrows {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: clamp(20px, 2.2vw, 32px);
+}
+
+.vx__arrow {
+  display: grid;
+  place-items: center;
+  width: clamp(46px, 3.6vw, 54px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: var(--vx-ink);
+  box-shadow: inset 0 0 0 1.5px var(--vx-line);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
+    translate var(--d-tap) var(--ease-out);
+}
+
+.vx__arrow:hover {
+  box-shadow: inset 0 0 0 1.5px var(--vx-ink);
+}
+
+.vx__arrow:active {
+  translate: 0 1px;
+}
+
+.vx__arrow--solid {
+  background: var(--vx-ink);
+  color: var(--white);
+  box-shadow: none;
+}
+
+.vx__arrow--solid:hover {
+  background: var(--vx-pen);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   The index
+   --------------------------------------------------------------------------
+   A numbered contents page rather than a row of pills: the four categories
+   are an order, not four equivalent filters, and a contents list is the one
+   piece of furniture that says so.
+   ========================================================================== */
+
+.vx__cats {
+  grid-area: cats;
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+/* The block behind the chosen category. Positioned and sized by GSAP off the
+   button itself, so it serves the vertical column and the horizontal strip
+   without either of them being special-cased. */
+.vx__marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: var(--r-sm);
+  background: var(--vx-wash);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vx__tab {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.vx__tab-index {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--vx-line);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--vx-quiet);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.vx__tab-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.004em;
+  color: var(--vx-quiet);
+  white-space: nowrap;
+  transition:
+    color var(--d-state) var(--ease-out),
+    font-weight var(--d-state) var(--ease-out);
+}
+
+.vx__tab:hover .vx__tab-label,
+.vx__tab:hover .vx__tab-index {
+  color: var(--vx-ink);
+}
+
+.vx__tab.is-on .vx__tab-index {
+  background: var(--vx-ink);
+  color: var(--white);
+  box-shadow: none;
+}
+
+.vx__tab.is-on .vx__tab-label {
+  color: var(--vx-ink);
+  font-weight: 640;
+}
+
+/* ==========================================================================
+   The rail
+   --------------------------------------------------------------------------
+   Every voice in the category, as cards. The one currently open above is the
+   active card, so the rail is a table of contents for the section rather than
+   a second set of quotes nobody can finish reading.
+   ========================================================================== */
+
+.vx__rail {
+  position: relative;
+  margin-top: clamp(52px, 6vw, 96px);
+  /* The shadows and the scrubbed depth both live in this padding, so the
+     horizontal clip never cuts the top or bottom off a card. */
+  padding-block: 28px;
+  margin-block: -6px;
+  overflow: clip;
+}
+
+.vx__track {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(16px, 1.6vw, 26px);
+  will-change: transform;
+}
+
+.vx__card {
+  flex: 0 0 clamp(282px, 29vw, 424px);
+  display: flex;
+  will-change: transform;
+}
+
+.vx__card-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(14px, 1.3vw, 22px);
+  align-items: start;
+  width: 100%;
+  padding: clamp(22px, 2vw, 30px);
+  text-align: left;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow:
+    inset 0 0 0 1px var(--vx-line),
+    0 18px 40px -32px rgba(22, 35, 60, 0.5);
+  opacity: 0.84;
+  cursor: pointer;
+  /* `translate` rather than `transform`: the card's parent carries the
+     scrubbed depth and this carries the lift, and two declarations fighting
+     over one `transform` is a fight neither of them wins. */
+  translate: 0 0;
+  transition:
+    translate var(--d-move) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out),
+    opacity var(--d-move) var(--ease-out);
+}
+
+.vx__card-btn:hover {
+  opacity: 1;
+  translate: 0 -4px;
+}
+
+.vx__card-btn.is-on {
+  opacity: 1;
+  translate: 0 -8px;
+  box-shadow:
+    inset 0 0 0 1.5px var(--vx-pen),
+    0 26px 54px -34px rgba(22, 35, 60, 0.55);
+}
+
+.vx__card-mark {
+  position: absolute;
+  top: clamp(14px, 1.4vw, 22px);
+  right: clamp(18px, 1.6vw, 26px);
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 2.6vw, 3rem);
+  font-weight: 600;
+  line-height: 0.8;
+  color: var(--vx-wash);
+  user-select: none;
+}
+
+.vx__card-btn.is-on .vx__card-mark {
+  color: var(--sky-line);
+  opacity: 0.7;
+}
+
+.vx__card-face {
+  width: clamp(64px, 5.6vw, 84px);
+  flex: none;
+}
+
+.vx__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.4vw, 20px);
+  min-width: 0;
+}
+
+.vx__card-quote {
+  /* Clamped rather than truncated in the data: the whole sentence is in the
+     DOM, so find-in-page finds it and a screen reader reads all of it. */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding-right: 26px;
+  font-size: clamp(0.875rem, 0.95vw, 0.9375rem);
+  line-height: 1.64;
+  color: var(--vx-pen);
+}
+
+.vx__card-who {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vx__card-who b {
+  font-size: 0.9375rem;
+  font-weight: 620;
+  color: var(--vx-ink);
+}
+
+.vx__card-who .meta {
+  color: var(--vx-quiet);
+}
+
+.vx__railnote {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: clamp(14px, 1.6vw, 22px);
+  pointer-events: none;
+}
+
+.vx__railnote-ink {
+  font-family: var(--font-hand);
+  font-size: clamp(1.05rem, 1.25vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--vx-ink);
+  rotate: -3deg;
+}
+
+.vx__railnote-arrow {
+  width: clamp(32px, 2.8vw, 44px);
+  rotate: 8deg;
+}
+
+/* ==========================================================================
+   Phone
+   --------------------------------------------------------------------------
+   Not the desktop composition scaled down. The order is deliberately
+   different: the eyebrow and the headline, then the index, then the face,
+   then what that person said - a reader on a phone meets the person before
+   the sentence, which is the opposite of the desktop reading order and the
+   right one for a column four hundred pixels wide.
+   ========================================================================== */
+
+.vx__grid {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'intro'
+    'cats'
+    'media'
+    'quote';
+}
+
+/* The index is a strip that runs to both edges of the screen, so a thumb has
+   something to push against rather than a row squeezed inside the gutter. */
+.vx__cats {
+  gap: 6px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 4px var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vx__cats::-webkit-scrollbar {
+  display: none;
+}
+
+.vx__tab {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+
+/* On a phone the rail is a thumb rail. No ScrollTrigger is built at this
+   width - see the guard in HomeVoices - so this is the whole behaviour. */
+.vx__rail {
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vx__rail::-webkit-scrollbar {
+  display: none;
+}
+
+.vx__card {
+  flex: 0 0 min(84vw, 380px);
+  scroll-snap-align: center;
+}
+
+.vx__media {
+  max-width: 460px;
+}
+
+.vx__filmnote {
+  right: -2%;
+}
+
+/* ==========================================================================
+   Tablet
+   --------------------------------------------------------------------------
+   The three-column composition collapses to two, and the index straightens
+   out into a full-width contents bar above them - still above the content it
+   controls, which is the one thing about it that does not change with the
+   viewport.
+   ========================================================================== */
+
+@media (min-width: 700px) {
+  .vx__grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    column-gap: clamp(32px, 4vw, 64px);
+    grid-template-areas:
+      'intro intro'
+      'cats  cats'
+      'quote media';
+    align-items: start;
+  }
+
+  .vx__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(32px, 4vw, 64px);
+    align-items: end;
+  }
+
+  .vx__eyebrow,
+  .vx__title {
+    grid-column: 1;
+  }
+
+  .vx__lead,
+  .vx__cta {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .vx__cta {
+    margin-top: clamp(20px, 2vw, 30px);
+  }
+
+  .vx__cats {
+    margin-inline: 0;
+    padding: 0;
+    overflow: visible;
+    gap: clamp(4px, 1vw, 14px);
+    padding-block: clamp(14px, 1.6vw, 22px);
+    border-block: 1px solid var(--vx-line);
+  }
+
+  .vx__tab {
+    flex: 1 1 0;
+  }
+
+  .vx__media {
+    max-width: none;
+    padding-top: clamp(46px, 5vw, 78px);
+  }
+
+  .vx__arrows {
+    justify-content: flex-end;
+  }
+
+  .vx__card {
+    flex: 0 0 clamp(300px, 42vw, 400px);
+  }
+}
+
+/* ==========================================================================
+   Desktop
+   --------------------------------------------------------------------------
+   The reference composition: four columns, the index standing on its own at
+   the right-hand edge behind a rule, and the rail running underneath all of
+   it.
+   ========================================================================== */
+
+@media (min-width: 1180px) {
+  .vx__grid {
+    grid-template-columns:
+      minmax(0, 0.92fr) minmax(0, 1.02fr) minmax(0, 1.08fr)
+      minmax(150px, 0.4fr);
+    grid-template-areas: 'intro quote media cats';
+    column-gap: clamp(30px, 3.1vw, 56px);
+    row-gap: 0;
+  }
+
+  .vx__intro {
+    display: flex;
+    padding-top: clamp(20px, 2.4vw, 40px);
+  }
+
+  .vx__lead,
+  .vx__cta {
+    margin-top: clamp(20px, 2vw, 28px);
+  }
+
+  .vx__cta {
+    margin-top: clamp(28px, 3vw, 44px);
+  }
+
+  .vx__cta-arrow {
+    display: block;
+  }
+
+  .vx__quote {
+    padding-top: clamp(20px, 2.4vw, 40px);
+  }
+
+  .vx__cats {
+    flex-direction: column;
+    gap: 2px;
+    padding: clamp(14px, 1.6vw, 24px) 0 clamp(14px, 1.6vw, 24px) 22px;
+    border-block: 0;
+    border-left: 1px solid var(--vx-line);
+    overflow: visible;
+  }
+
+  .vx__tab {
+    flex: none;
+    gap: 14px;
+  }
+
+  /* The blue bar that rides the rule as the category changes. It belongs to
+     the marker rather than to the tab, so it moves on the marker's tween
+     instead of appearing under the new tab a frame early. */
+  .vx__marker::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: -22px;
+    width: 2px;
+    background: var(--vx-pen);
+  }
+}
+
+@media (min-width: 1480px) {
+  .vx__title {
+    font-size: 3.5rem;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   Nothing is built in the section's setup when motion is off, so there is
+   nothing here to switch off. The two lines below are the CSS transitions the
+   stylesheet owns rather than GSAP - the card lift and the smooth scroll of
+   the index strip - which the global reduced-motion block already flattens;
+   `scroll-behavior` on the strip is set in script, and reads the same query.
+   ========================================================================== */
+
+/* ==========================================================================
+   THE FILM
+   --------------------------------------------------------------------------
+   The clip, over the page. A native <dialog> in the browser's top layer, so
+   it is not clipped by the section's own `overflow: clip` and it comes with
+   the focus trap, the Escape key and the inert page already done.
+   ========================================================================== */
+
+.vxf {
+  width: min(1040px, calc(100vw - 2 * var(--gutter)));
+  max-width: none;
+  max-height: calc(100vh - 8vh);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--navy);
+  overflow: visible;
+}
+
+.vxf::backdrop {
+  background: rgba(14, 24, 41, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.vxf__frame {
+  display: grid;
+  gap: clamp(12px, 1.4vw, 18px);
+  padding: clamp(16px, 1.8vw, 24px);
+  background: var(--chalk);
+  border-radius: var(--r-lg);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
+}
+
+.vxf__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.vxf__who {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.vxf__who b {
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.vxf__close {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 50%;
+  color: var(--navy);
+  box-shadow: inset 0 0 0 1.5px rgba(22, 35, 60, 0.14);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.vxf__close:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.vxf__video {
+  width: 100%;
+  /* The clips are shot portrait for the reel on Student Life, so the frame is
+     a letterbox the film sits inside rather than a crop of it. */
+  max-height: min(66vh, 620px);
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: var(--navy-deep);
+  border-radius: var(--r-frame);
+}
+
+.vxf__error {
+  padding: clamp(28px, 5vw, 56px) clamp(20px, 3vw, 36px);
+  background: var(--mist);
+  border-radius: var(--r-frame);
+  text-align: center;
+  font-size: var(--t-small);
+  line-height: 1.7;
+  color: var(--slate);
+}
+
+.vxf__error code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--navy);
+}
+
+.vxf__foot {
+  color: var(--slate);
+}
