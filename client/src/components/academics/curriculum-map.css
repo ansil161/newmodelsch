@@ -1,0 +1,813 @@
+/* ==========================================================================
+   02 - THE CURRICULUM MAP
+   --------------------------------------------------------------------------
+   An editorial chapter: ivory stock, charcoal ink, a large serif opener,
+   mono micro-labels, hairline rules, overlapping prints at a slight angle,
+   and yellow used only as a marker - the progress rule, the active stage,
+   the stage numeral, one bar on each small print.
+
+   THE PALETTE IS SCOPED to `.cm`, so this section can run a warmer ink
+   than the site without adding global colours.
+
+   TWO STATES
+     default        a flowing section: head, stage navigation, the current
+                    stage. Presses change the stage.
+     .cm--pinned    added by the module once it has measured that the held
+                    composition fits the viewport. The frame is at least one
+                    screen tall and scrolling drives the stage.
+   ========================================================================== */
+
+.cm {
+  --cm-ground: #f6f1e7;
+  --cm-stock: #fffdf7;
+  --cm-ink: #24211c;
+  --cm-ink-2: #595347;
+  --cm-ink-3: #8b8475;
+  --cm-rule: rgba(36, 33, 28, 0.16);
+  --cm-rule-soft: rgba(36, 33, 28, 0.09);
+  --cm-sun: var(--sun);
+  /* Yellow that can carry a numeral on ivory. The site's `--sun` cannot. */
+  --cm-sun-ink: #8f6700;
+  --cm-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  padding-block: var(--section-y) clamp(64px, 7vw, 120px);
+  background: var(--cm-ground);
+  color: var(--cm-ink);
+}
+
+/* ==========================================================================
+   The head
+   ========================================================================== */
+.cm__head {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 30px);
+  margin-bottom: clamp(48px, 6vw, 96px);
+}
+
+.cm__label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 450;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+}
+
+.cm__label-mark {
+  width: 8px;
+  height: 8px;
+  background: var(--cm-sun);
+}
+
+.cm__label-sep {
+  color: var(--cm-rule);
+}
+
+.cm__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(2.875rem, 7.2vw, 7rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.042em;
+  color: var(--cm-ink);
+}
+
+.cm__intro p {
+  margin: 0;
+  max-width: 42ch;
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--cm-ink-2);
+}
+
+.cm__intro .cm__intro-meta {
+  margin-top: clamp(18px, 2vw, 26px);
+  padding-top: 14px;
+  border-top: 1px solid var(--cm-rule);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+}
+
+@media (min-width: 900px) {
+  .cm__head {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    column-gap: clamp(40px, 6vw, 120px);
+    align-items: end;
+  }
+
+  .cm__label {
+    grid-column: 1 / -1;
+  }
+
+  /* Set on the headline's last line rather than aligned to its top - a
+     spread is set, not centred. */
+  .cm__intro {
+    padding-bottom: 0.6em;
+  }
+}
+
+/* ==========================================================================
+   The frame
+   ========================================================================== */
+.cm__pin {
+  position: relative;
+}
+
+.cm__frame {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+}
+
+/* ==========================================================================
+   Stage navigation
+   --------------------------------------------------------------------------
+   A contents line, not a set of buttons. A hairline runs across the top and
+   the yellow rule drawn along it is the reader's progress. The active stage
+   is marked three ways, so colour is never the only signal: a filled marker
+   (hollow when inactive), a drawn underline, and darker type.
+   ========================================================================== */
+.cm-nav {
+  position: relative;
+}
+
+.cm-nav__track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--cm-rule);
+}
+
+.cm-nav__fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 3px;
+  background: var(--cm-sun);
+  transform-origin: left center;
+  transform: scaleX(var(--fill, 0));
+  transition: transform 700ms var(--cm-ease);
+}
+
+/* While pinned the rule is written every frame by the scrub, and a CSS
+   transition underneath would drag behind it. */
+.cm--pinned .cm-nav__fill {
+  transition: none;
+}
+
+.cm-nav__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cm-tab {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  gap: 8px 10px;
+  width: 100%;
+  margin: 0;
+  padding: clamp(14px, 1.6vw, 20px) clamp(10px, 1.4vw, 22px) 6px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--cm-ink-3);
+  cursor: pointer;
+}
+
+.cm-tab + .cm-tab {
+  padding-left: clamp(10px, 1.4vw, 22px);
+  box-shadow: inset 1px 0 0 var(--cm-rule-soft);
+}
+
+.cm-tab__marker {
+  align-self: center;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  transition:
+    background-color var(--d-state) var(--cm-ease),
+    border-color var(--d-state) var(--cm-ease),
+    transform var(--d-move) var(--cm-ease);
+}
+
+.cm-tab__num {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+.cm-tab__title {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding-bottom: 3px;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48;
+  font-size: clamp(1.0625rem, 1.55vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  color: var(--cm-ink-2);
+  /* The drawn underline, sized rather than faded in. */
+  background-image: linear-gradient(var(--cm-sun), var(--cm-sun));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 2px;
+  transition:
+    color var(--d-state) var(--cm-ease),
+    background-size var(--d-move) var(--cm-ease);
+}
+
+.cm-tab__range {
+  grid-column: 1 / -1;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cm-tab:hover {
+  color: var(--cm-ink-2);
+}
+
+.cm-tab:hover .cm-tab__title {
+  color: var(--cm-ink);
+  background-size: 28% 2px;
+}
+
+.cm-tab:focus-visible {
+  outline: 2px solid var(--cm-ink);
+  outline-offset: 4px;
+}
+
+.cm-tab.is-past .cm-tab__marker {
+  background: var(--cm-ink-3);
+  border-color: var(--cm-ink-3);
+}
+
+.cm-tab.is-active {
+  color: var(--cm-ink-2);
+}
+
+.cm-tab.is-active .cm-tab__marker {
+  background: var(--cm-sun);
+  border-color: var(--cm-ink);
+  transform: scale(1.2);
+}
+
+.cm-tab.is-active .cm-tab__num {
+  color: var(--cm-sun-ink);
+  font-weight: 600;
+}
+
+.cm-tab.is-active .cm-tab__title {
+  color: var(--cm-ink);
+  background-size: 100% 2px;
+}
+
+/* ==========================================================================
+   The stage
+   ========================================================================== */
+.cm__stage {
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+  min-height: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The plates
+   -------------------------------------------------------------------------- */
+.cm__plates {
+  position: relative;
+  min-height: clamp(240px, 64vw, 440px);
+}
+
+.cm-plate {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.cm-plate.is-current {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* A print: ivory border, a soft contact shadow, set down at an angle. The
+   resting angle is the `rotate` property, not `transform`, so the entrance
+   can animate a transform on top of it without wiping it. */
+.cm-shot {
+  position: absolute;
+  margin: 0;
+  padding: clamp(5px, 0.5vw, 8px);
+  background: var(--cm-stock);
+  box-shadow:
+    0 1px 1px rgba(36, 33, 28, 0.1),
+    0 26px 44px -30px rgba(36, 33, 28, 0.6);
+}
+
+.cm-shot__crop {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--sand);
+}
+
+.cm-shot__crop img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cm-shot--main {
+  z-index: 1;
+}
+
+.cm-shot--second {
+  z-index: 2;
+}
+
+/* One small yellow bar on the smaller print's edge, where tape would be. */
+.cm-shot--second::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 16%;
+  width: 26%;
+  height: 6px;
+  background: var(--cm-sun);
+}
+
+.cm-shot__cap {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--cm-ink-3);
+}
+
+.cm-shot__cap--end {
+  left: auto;
+  right: 0;
+}
+
+.cm-shot__cap-num {
+  color: var(--cm-sun-ink);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   The copy
+   -------------------------------------------------------------------------- */
+.cm__panels {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+.cm__panel-stack {
+  display: grid;
+}
+
+.cm-panel {
+  grid-area: 1 / 1;
+  align-self: center;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.cm-panel.is-current {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cm-panel:focus-visible {
+  outline: 2px solid var(--cm-ink);
+  outline-offset: 10px;
+}
+
+.cm-panel__kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+}
+
+.cm-panel__kicker > span + span::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 14px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--cm-rule);
+}
+
+.cm-panel__num {
+  color: var(--cm-sun-ink);
+  font-weight: 600;
+}
+
+.cm-panel__title {
+  margin: clamp(14px, 2vh, 22px) 0 clamp(14px, 2vh, 22px);
+  max-width: 17ch;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 96;
+  font-size: clamp(1.75rem, 3.1vw, 3rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--cm-ink);
+}
+
+.cm-panel__stage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.55em;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 560;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--cm-ink-2);
+}
+
+.cm-panel__stage::before {
+  content: '';
+  width: 18px;
+  height: 2px;
+  background: var(--cm-sun);
+}
+
+.cm-panel__desc {
+  margin: 0;
+  max-width: 50ch;
+  font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--cm-ink-2);
+}
+
+.cm-panel__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px clamp(18px, 2vw, 32px);
+  margin: clamp(18px, 2.8vh, 32px) 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--cm-rule);
+}
+
+.cm-panel__facts dt {
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+}
+
+.cm-panel__facts dd {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--cm-ink-2);
+}
+
+.cm-panel__detail {
+  margin: clamp(16px, 2.6vh, 28px) 0 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--cm-sun);
+}
+
+.cm-panel__detail p {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 36;
+  font-style: italic;
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  line-height: 1.4;
+  color: var(--cm-ink);
+}
+
+.cm-panel__detail footer {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   The foot - hint and counter
+   -------------------------------------------------------------------------- */
+.cm__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: clamp(20px, 3vh, 36px);
+  padding-top: 14px;
+  border-top: 1px solid var(--cm-rule-soft);
+}
+
+.cm-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cm-ink-3);
+  opacity: 0;
+  transition: opacity 400ms var(--cm-ease);
+}
+
+.cm-hint__line {
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left center;
+  animation: cm-hint 2.4s var(--cm-ease) infinite;
+}
+
+@keyframes cm-hint {
+  0% { transform: scaleX(0); }
+  55% { transform: scaleX(1); }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+.cm--pinned:not(.cm--started) .cm-hint {
+  opacity: 1;
+}
+
+.cm-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 -0.1em auto;
+}
+
+.cm-count__roll {
+  display: inline-block;
+  overflow: hidden;
+  padding-top: 0.08em;
+}
+
+.cm-count__now {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--cm-ink);
+}
+
+.cm-count__of {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--cm-ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   Colophon
+   -------------------------------------------------------------------------- */
+.cm__colophon {
+  position: relative;
+  max-width: 70ch;
+  margin: clamp(44px, 5vw, 72px) 0 0;
+  padding-top: 18px;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--cm-ink-3);
+}
+
+.cm__colophon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--cm-sun);
+}
+
+/* ==========================================================================
+   Wide - the asymmetric spread
+   --------------------------------------------------------------------------
+   The prints take the larger column and are placed from each stage's own
+   `layout`, in percentages of the plate.
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .cm__stage {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(48px, 5.4vw, 104px);
+  }
+
+  .cm__plates {
+    min-height: clamp(440px, 42vw, 640px);
+  }
+
+  .cm-shot {
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: var(--h);
+    rotate: var(--r);
+  }
+}
+
+/* ==========================================================================
+   Narrow - one simplified composition for every stage
+   --------------------------------------------------------------------------
+   The per-stage layouts are written for a wide plate; squeezed onto a phone
+   they turn into slivers. Below 1024px every stage uses the same pair: a
+   large print on the left and a smaller one overlapping it on the right.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .cm-shot--main {
+    left: 0;
+    top: 0;
+    width: 74%;
+    height: 90%;
+    rotate: -1deg;
+  }
+
+  .cm-shot--second {
+    right: 0;
+    top: 30%;
+    width: 40%;
+    height: 66%;
+    rotate: 2.5deg;
+  }
+
+  .cm-shot__cap {
+    display: none;
+  }
+
+  .cm-count__now {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 699px) {
+  .cm-nav__list {
+    gap: 0;
+  }
+
+  .cm-tab {
+    gap: 6px 7px;
+    padding-top: 14px;
+  }
+
+  .cm-tab__title {
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* The class range is in the panel's kicker; on a phone the tab is just a
+     numeral and a name. */
+  .cm-tab__range {
+    display: none;
+  }
+
+  .cm-panel__facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   THE PINNED COMPOSITION
+   --------------------------------------------------------------------------
+   At least one screen tall, cleared for the masthead, with the stage taking
+   whatever height the navigation leaves. The module measures this before it
+   pins and stands down if it does not fit.
+
+   On short screens the two supplementary blocks give way first - the
+   outcome line, then subjects and assessment - so that the stage copy
+   itself is never what gets cut. On a screen tall enough for them, or when
+   the section is not pinned, they are printed.
+   ========================================================================== */
+.cm--pinned .cm__pin {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-block: clamp(70px, 10vh, 104px) clamp(18px, 3.5vh, 40px);
+}
+
+.cm--pinned .cm__frame {
+  flex: 1;
+  width: 100%;
+  gap: clamp(20px, 3.4vh, 44px);
+}
+
+.cm--pinned .cm__plates {
+  min-height: clamp(260px, 44vh, 560px);
+}
+
+@media (min-width: 1024px) and (max-height: 820px) {
+  .cm--pinned .cm-panel__detail {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 680px) {
+  .cm--pinned .cm-panel__facts {
+    display: none;
+  }
+
+  .cm--pinned .cm-panel__title {
+    font-size: clamp(1.625rem, 5vh, 2.25rem);
+  }
+}
+
+@media (max-width: 1023px) {
+  .cm--pinned .cm__pin {
+    padding-block: 68px 16px;
+  }
+
+  .cm--pinned .cm__plates {
+    min-height: clamp(180px, 30svh, 300px);
+  }
+
+  .cm--pinned .cm-panel__facts,
+  .cm--pinned .cm-panel__detail {
+    display: none;
+  }
+
+  .cm--pinned .cm-panel__title {
+    margin-block: 10px 12px;
+    font-size: clamp(1.5rem, 6.4vw, 2rem);
+  }
+
+  .cm--pinned .cm__foot {
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   The module never pins under it, so the section is a plain tablist and a
+   press changes the stage at once. Only the CSS state changes are left to
+   stop.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .cm *,
+  .cm *::before,
+  .cm *::after {
+    transition-duration: 1ms !important;
+    animation: none !important;
+  }
+}

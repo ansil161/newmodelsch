@@ -110,7 +110,7 @@ export function Figure({
     <figure className={classes} style={style}>
       <img
         src={resolve(photo, width)}
-        srcSet={resolveSet(photo, set)}
+        srcSet={resolveSet(photo, set) || undefined}
         sizes={sizes ?? `${width}px`}
         alt={decorative ? '' : photo.alt}
         aria-hidden={decorative || undefined}

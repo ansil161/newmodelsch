@@ -7,7 +7,7 @@ export {
   HomeJourney,
   HomeVoices,
   HomePrincipal,
-  HomeWall,
+  HomeWeek,
   HomeBreak,
   HomeAdmissions,
 } from './sections';

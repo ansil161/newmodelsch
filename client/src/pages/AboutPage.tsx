@@ -33,7 +33,7 @@ import {
  *   05 Charter     the six things it will not trade
  *   06 Philosophy  what leadership actually believes about teaching
  *   07 Principal   the letter, from the person accountable for all of it
- *   08 Leadership  the other three, and what each of them said
+ *   08 Leadership  the four who run the school, face by face
  *   09 Faculty     a hundred and one teachers, by department
  *   10 Recognition the figures, stated plainly
  *   11 Alumni      who came back

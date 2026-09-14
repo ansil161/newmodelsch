@@ -151,6 +151,239 @@
   font-weight: 560;
 }
 
+/* --------------------------------------------------------------------------
+   Dropdown
+   --------------------------------------------------------------------------
+   A sheet of paper laid under the masthead: the site's warm paper, a hairline
+   and the deepest of the three shadows, because it is the only thing on the
+   page that floats over content rather than sitting in it.
+   -------------------------------------------------------------------------- */
+.nav__drop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.nav__drop-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: -6px;
+  border-radius: 50%;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition:
+    color var(--d-state) var(--ease-out),
+    background var(--d-state) var(--ease-out);
+}
+
+.nav__drop-btn svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nav__drop-btn:hover,
+.nav__drop.is-open .nav__drop-btn {
+  color: var(--ink);
+  background: var(--sun-wash);
+}
+
+.nav__drop.is-open .nav__drop-btn svg {
+  transform: rotate(180deg);
+}
+
+.nav__panel {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  width: min(620px, calc(100vw - 2 * var(--gutter)));
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 10px);
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out),
+    visibility 0s linear var(--d-state);
+}
+
+/* The bridge across the gap under the link, so moving the pointer down to
+   the panel never crosses dead space that would start the close timer. */
+.nav__panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -18px;
+  height: 18px;
+}
+
+.nav__drop.is-open .nav__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out),
+    visibility 0s;
+}
+
+.nav__panel-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  gap: 14px;
+  padding: 14px;
+  background: var(--paper);
+  border-radius: var(--r-frame);
+  box-shadow: var(--e-3), 0 0 0 1px var(--line-soft);
+}
+
+.nav__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.nav__panel-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 540;
+  color: var(--ink-2);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.nav__panel-all svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nav__panel-head:hover .nav__panel-all {
+  color: var(--ink);
+}
+
+.nav__panel-head:hover .nav__panel-all svg {
+  transform: translateX(4px);
+}
+
+.nav__sub {
+  display: grid;
+  padding-top: 6px;
+}
+
+.nav__sub-link {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  transition: background var(--d-state) var(--ease-out);
+}
+
+.nav__sub-link:hover,
+.nav__sub-link:focus-visible {
+  background: var(--ivory);
+}
+
+.nav__sub-num {
+  padding-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.nav__sub-link:hover .nav__sub-num {
+  color: var(--sun-deep);
+}
+
+.nav__sub-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 540;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.nav__sub-blurb {
+  grid-column: 2;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.nav__sub-new {
+  padding: 3px 6px 2px;
+  border-radius: 3px;
+  background: var(--sun);
+  color: var(--on-sun);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nav__feature {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  isolation: isolate;
+  color: var(--on-navy);
+}
+
+.nav__feature .fig {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+}
+
+.nav__feature .fig img {
+  transition: transform 1.1s var(--ease-out);
+}
+
+.nav__feature:hover .fig img {
+  transform: scale(1.06);
+}
+
+.nav__feature::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(14, 24, 41, 0) 35%, rgba(14, 24, 41, 0.82) 100%);
+}
+
+.nav__feature-text {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+}
+
+.nav__feature-kicker {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--sun);
+}
+
+.nav__feature-title {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
 .nav__end {
   display: flex;
   align-items: center;
@@ -338,6 +571,56 @@
 
 .menu__link.is-current .menu__num {
   color: var(--sun-deep);
+}
+
+/* A chapter with pages under it: the sub-links hang under the label, inside
+   the same ruled row, so the list still reads as six entries rather than
+   twelve. */
+.menu__item--parent .menu__link {
+  border-bottom: 0;
+  padding-bottom: 8px;
+}
+
+.menu__sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 0 clamp(14px, 1.8vw, 20px) clamp(32px, 4.4vw, 56px);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu__sub-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px 9px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: var(--t-small);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--ink-2);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.menu__sub-link:hover,
+.menu__sub-link:focus-visible {
+  background: var(--sun-soft);
+  color: var(--ink);
+}
+
+.menu__sub-link--new {
+  background: var(--ink);
+  box-shadow: none;
+  color: var(--ivory);
+}
+
+.menu__sub-link--new:hover,
+.menu__sub-link--new:focus-visible {
+  background: var(--sun);
+  color: var(--on-sun);
 }
 
 .menu__aside {

@@ -15,19 +15,20 @@ import {
 /**
  * PAGE 03 - Academics. Evaluation: "What will my child actually learn?"
  *
- * The most interactive page on the site, and the one where every interaction
- * is an elaboration rather than a gate. The curriculum map is a tablist, the
- * record is a filterable archive, the method is a sticky sequence - and a
- * parent who never touches any of them still reads the whole page.
+ * The most interactive page on the site. The curriculum map is a pinned,
+ * scroll-driven chapter, the record is a filterable archive, the method is a
+ * sticky sequence.
  *
- * NOTHING IS BEHIND AN INTERACTION.
+ * THE MAP IS THE ONE DELIBERATE EXCEPTION TO "NOTHING IS BEHIND AN
+ * INTERACTION".
  *
- * Three of these sections used to hide their content. The method held one
- * practice at a time on a sticky stage; the map pinned the viewport for four
- * screens and showed one band per screen; the habits shared a fixed-height
- * frame and compressed to their titles. All of it is printed now. The page
- * can be searched, printed, and read on a phone without anyone discovering
- * that something was hidden.
+ * It holds the viewport while the reader scrolls through four stages and
+ * shows one stage at a time. Every stage is still a keyboard-reachable tab,
+ * it never pins under reduced motion or when the composition does not fit
+ * the screen, and on short screens only the supplementary lines (outcome,
+ * subjects, assessment) give way while pinned. The other sections print
+ * everything, so the rest of the page can still be searched and read on a
+ * phone without anyone discovering that something was hidden.
  *
  * THE ANCHORS ARE THE OLD ANCHORS.
  *

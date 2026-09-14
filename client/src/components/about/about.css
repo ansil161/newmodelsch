@@ -199,8 +199,8 @@
    --------------------------------------------------------------------------
    Both have their own component and their own stylesheet now:
    `vision-mission.css` and `charter.css`. The charter used to be a numbered
-   column here; it is a scroll-driven composition and the `.value*` rules it
-   left behind have gone with it.
+   column here; it is an editorial index of its own now, and the `.value*`
+   rules it left behind have gone with it.
    ========================================================================== */
 
 /* ==========================================================================

@@ -1,0 +1,122 @@
+/* ==========================================================================
+   08 - Weekly life - the moving ribbon
+   --------------------------------------------------------------------------
+   Proportions taken from the reference: tiles about a sixth of the viewport
+   wide at roughly 18:25, a hairline gap, a small soft radius, and a short
+   sentence sitting close above the strip rather than a headline over it.
+   ========================================================================== */
+.week {
+  --tile-w: clamp(210px, 16.4vw, 320px);
+  --tile-gap: clamp(8px, 0.75vw, 14px);
+  --tile-r: clamp(12px, 1.05vw, 18px);
+
+  position: relative;
+  padding-block: var(--section-y-tight);
+  background: var(--ivory);
+  /* The track is several viewports wide; it must never widen the page. */
+  overflow: clip;
+}
+
+.week__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: clamp(32px, 4vw, 64px);
+}
+
+.week__eyebrow {
+  margin-bottom: clamp(12px, 1.2vw, 18px);
+}
+
+.week__title {
+  max-width: 24ch;
+  font-family: var(--font-body);
+  font-weight: 620;
+  font-size: clamp(1.5rem, 2.7vw, 2.5rem);
+  line-height: 1.14;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.week__viewport {
+  overflow: hidden;
+}
+
+/* Two copies of the sequence in a row. The gap between them equals the gap
+   inside them, which is what makes the measured span loop without a seam. */
+.week__track,
+.week__set {
+  display: flex;
+  gap: var(--tile-gap);
+}
+
+.week__track {
+  width: max-content;
+  will-change: transform;
+}
+
+.week__set {
+  flex: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.week__tile {
+  flex: none;
+  width: var(--tile-w);
+}
+
+/* The space is reserved before the photograph arrives, so nothing shifts. */
+.week__fig {
+  width: 100%;
+  aspect-ratio: 18 / 25;
+  border-radius: var(--tile-r);
+}
+
+@media (max-width: 899px) {
+  .week {
+    --tile-w: clamp(170px, 26vw, 240px);
+  }
+}
+
+@media (max-width: 599px) {
+  .week {
+    --tile-w: 46vw;
+    --tile-gap: 8px;
+    --tile-r: 12px;
+  }
+
+  .week__title {
+    max-width: 20ch;
+  }
+}
+
+/* No loop is built. The strip becomes a row a person can swipe or scroll,
+   and the copy that only existed to hide the seam goes away. */
+@media (prefers-reduced-motion: reduce) {
+  .week__viewport {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .week__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .week__track {
+    padding-inline: var(--gutter);
+    will-change: auto;
+  }
+
+  .week__set[aria-hidden='true'] {
+    display: none;
+  }
+
+  .week__tile {
+    scroll-snap-align: center;
+  }
+}

@@ -1,666 +1,505 @@
 /* ==========================================================================
    05 - THE CHARTER
    --------------------------------------------------------------------------
-   Six principles, discovered one at a time. On a wide screen the section
-   holds the viewport, a photograph stands on the left, and the six lines of
-   the charter stack on the right; the reader's own scroll opens them in
-   order, one open at a time.
+   A continuous editorial list. Six rows on the page ground, each ruled off
+   by a hairline, each tied to the height of its photograph:
 
-   THE RESTING STATE IS THE FINISHED STATE.
+     chips ........... argument ........... photograph (16:9)
+     title ........... READ MORE ->         photograph
 
-   Everything outside the `--pinned` modifier is the ordinary layout: six
-   cards down the page with every word already showing, each with its own
-   photograph. That is what a phone gets, what a reader with reduced motion
-   gets, and what the page is before a line of JavaScript has run. The pinned
-   composition is a class the motion module adds only once it has actually
-   built the run, so the section can never be left half-composed - collapsed
-   cards with nothing to open them is the one failure this file must not
-   allow.
+   Proportions are taken from the reference at a 1440 viewport: columns of
+   roughly 36 / 33 / 31 per cent, a row padding of about 3vw, a title a
+   touch under 2vw, and the argument at body size in a narrow measure.
 
-   WHY THE COLUMN NEVER MOVES
+   ONE SWITCH DRIVES THE ACTIVE STATE
 
-   The open panel is a real height animation, which is the only honest way to
-   make a card expand. It would normally make the whole right-hand column
-   grow and shrink under the reader - the thing the brief is most explicit
-   about not doing - so two rules hold it still:
-
-     1. Every panel opens to the SAME height, measured once as the tallest of
-        the six. The column's total is therefore constant: six heads, five
-        gaps, one panel.
-     2. The closing panel and the opening one are tweened with the same
-        duration and the same ease, in opposite directions. GSAP interpolates
-        both as `start + (end - start) * ease(t)`, so their two heights are
-        exact complements at every frame and their sum never leaves that
-        constant, not even mid-transition.
-
-   THREE LAYERS INSIDE THE PHOTOGRAPH, AND WHY THERE ARE THREE
-
-     .charter__shots  the deck. Carries the one slow scale that runs for the
-                      whole pin, and nothing else.
-     .charter__shot   one principle's frame. Carries only the crossfade and
-                      the settle that belong to becoming the active picture.
-     .charter__image  the photograph. Taller than its frame and hung above
-                      it, so the parallax has material to travel through and
-                      no edge is ever exposed.
-
-   No two layers animate the same property, which is why none of it needs
-   `overwrite`.
+   A row is active when it holds the middle of the screen (`.is-current`),
+   when it is pointed at, when it holds keyboard focus, or when its practices
+   are open. All of them set `--on`, and the roll, the arrow, the link rule
+   and the chip are written against that one number. A pointer anywhere in
+   the list takes focus away from the scroll, so two rows never roll at once.
    ========================================================================== */
 
 .charter {
+  --ch-accent: var(--blue);
+  --ch-roll: 620ms cubic-bezier(0.7, 0, 0.2, 1);
+  --ch-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
   position: relative;
-  isolation: isolate;
-}
-
-/* --------------------------------------------------------------------------
-   The accent
-   --------------------------------------------------------------------------
-   One lime, scoped to this section and defined nowhere else.
-
-   The site spends exactly one accent - school yellow - and a second one
-   loose in the token file would show up on a button three pages away. This
-   is a local variable on a local composition: the charter is the only place
-   on the site where a reader is asked to watch a state travel down a
-   column, and the mark that says "this one, now" has to be a colour that
-   means nothing else here. It is the school's yellow turned toward green
-   rather than a neon: same chroma, and 10.9:1 on the navy it sits on.
-   -------------------------------------------------------------------------- */
-.charter {
-  --ch-lime: #c8dc4f;
-  --ch-line: rgba(244, 241, 232, 0.13);
-  --ch-line-on: rgba(200, 220, 79, 0.42);
-  --ch-well: rgba(8, 15, 27, 0.4);
-  --ch-well-on: rgba(8, 15, 27, 0.72);
-  --ch-pad-x: clamp(16px, 1.8vw, 28px);
-  --ch-pad-y: clamp(15px, 1.9vh, 22px);
-}
-
-/* The global focus ring is a dark amber, which is correct on ivory and
-   invisible on navy. Keyboard users open these cards; they have to be able
-   to see which one they are on. */
-.charter :focus-visible {
-  outline-color: var(--ch-lime);
-}
-
-.charter__pin {
-  position: relative;
-  z-index: 1;
-}
-
-.charter__inner {
-  display: grid;
-  gap: clamp(32px, 4.5vw, 58px);
+  background: var(--ivory);
+  padding-block: clamp(72px, 8vw, 128px);
 }
 
 /* ==========================================================================
-   The head
+   The head - title and lead on the left, one control on the right
    ========================================================================== */
 .charter__head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(16px, 2.2vw, 26px);
+  gap: 24px;
+  padding-bottom: clamp(32px, 3.4vw, 52px);
 }
 
-/* The sticker and the statement travel together; the lead sits apart from
-   them, and on a wide screen it sits on the other side of the head. */
-.charter__head-left {
+.charter__head-copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(14px, 1.8vw, 22px);
+}
+
+.charter__eyebrow {
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
 .charter__title {
-  color: var(--on-navy);
-  max-width: 15ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+  max-width: 16ch;
+  color: var(--ink);
 }
 
 .charter__lead {
-  color: var(--on-navy-2);
-  font-size: var(--t-lead);
-  line-height: 1.5;
-  max-width: 44ch;
+  margin: clamp(14px, 1.4vw, 20px) 0 0;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  max-width: 42ch;
+  color: var(--ink-3);
 }
 
-.charter__body {
-  display: grid;
-  gap: clamp(28px, 4vw, 52px);
+.charter__cta {
+  padding: 14px 22px;
+}
+
+@media (min-width: 700px) {
+  .charter__head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+  }
 }
 
 /* ==========================================================================
-   Left - the plate
-   --------------------------------------------------------------------------
-   Hidden from assistive technology in one piece. Six photographs of which
-   five are invisible at any moment would be read out as six descriptions
-   before the charter itself, and every one of them illustrates a principle
-   that is written in full three inches to the right. On a narrow screen the
-   deck is not rendered at all: each card carries its own frame there, with
-   its own real alt text.
+   The list
    ========================================================================== */
-.charter__plate {
+.charter__list {
+  list-style: none;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
 }
 
-.charter__frame {
+/* --------------------------------------------------------------------------
+   A row - phone first: chips, photograph, title, argument, link
+   -------------------------------------------------------------------------- */
+.ch-row {
+  --on: 0;
+
   position: relative;
-  overflow: hidden;
-  border-radius: var(--r-frame);
-  background: var(--navy-deep);
-  aspect-ratio: 4 / 5;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding-block: 28px 32px;
 }
 
-.charter__shots {
-  position: absolute;
-  inset: 0;
+.ch-row.is-current,
+.ch-row.is-open,
+.ch-row:focus-within {
+  --on: 1;
 }
 
-.charter__shot {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
+@media (hover: hover) and (pointer: fine) {
+  .ch-row:hover {
+    --on: 1;
+  }
+
+  .charter__list:hover > .ch-row:not(:hover):not(.is-open) {
+    --on: 0;
+  }
 }
 
-/* Before the run builds - and after it reverts - the first principle's
-   photograph is the one on the plate. */
-.charter__shot:first-child {
-  opacity: 1;
-}
-
-.charter__image {
-  position: absolute;
-  top: -6%;
-  left: 0;
-  width: 100%;
-  height: 112%;
-  object-fit: cover;
-}
-
-/* A scrim under the numeral only. It is here because type has to be legible
-   over a photograph nobody has art-directed yet, not because the picture
-   wanted a gradient. */
-.charter__veil {
+.ch-row__rule {
   position: absolute;
   inset: 0 0 auto;
-  height: 42%;
-  background: linear-gradient(180deg, rgba(8, 15, 27, 0.5), rgba(8, 15, 27, 0));
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
   pointer-events: none;
 }
 
-.charter__stamp {
-  position: absolute;
-  top: clamp(14px, 2.2vh, 26px);
-  left: clamp(18px, 1.6vw, 28px);
+.ch-row__lead,
+.ch-row__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
 }
 
-/* Six numerals in one place, one visible. Stacking them is what lets the
-   change be a crossfade rather than a text node being rewritten under the
-   reader. */
-.charter__numeral {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 400;
-  font-size: clamp(3rem, 4.6vw, 4.8rem);
-  line-height: 0.8;
-  letter-spacing: -0.05em;
-  color: rgba(244, 241, 232, 0.92);
-  opacity: 0;
+/* The phone reads chips, photograph, title - so the lead column is dissolved
+   into the row's grid and its two parts are placed either side of the
+   photograph. */
+.ch-row__lead {
+  display: contents;
 }
 
-.charter__numeral:first-child {
-  opacity: 1;
+.ch-row__chips {
+  order: 1;
 }
 
-/* The readout under the plate: where the reader is, and how far the section
-   has left to run. It only means anything while something is driving it. */
-.charter__foot {
-  display: none;
+.ch-row__media {
+  order: 2;
+}
+
+.ch-row__title {
+  order: 3;
+}
+
+.ch-row__text {
+  order: 4;
+}
+
+/* --------------------------------------------------------------------------
+   Chips
+   -------------------------------------------------------------------------- */
+.ch-row__chips {
+  display: flex;
   align-items: center;
-  gap: clamp(14px, 1.4vw, 22px);
-  padding-top: clamp(12px, 1.6vh, 18px);
+  gap: 8px;
 }
 
-.charter__count {
-  color: var(--on-navy-3);
-  font-variant-numeric: tabular-nums;
+.ch-row__chip {
+  display: inline-flex;
+  align-items: center;
+  height: 2.2em;
+  padding-inline: 0.95em;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  font-weight: 560;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--ink);
   white-space: nowrap;
 }
 
-.charter__track {
-  flex: 1;
-  height: 1px;
-  background: var(--ch-line);
+.ch-row__chip--index {
+  padding-inline: 0.8em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ch-accent);
 }
 
-.charter__runner {
+/* --------------------------------------------------------------------------
+   Title, and the roll
+   --------------------------------------------------------------------------
+   Two copies of the title stacked in a mask. Active, both travel up by their
+   own height: the ink copy leaves through the top as the accent copy arrives
+   from below. Percentages of their own box, so it is exact at every size and
+   every line count.
+   -------------------------------------------------------------------------- */
+.ch-row__title {
+  margin: 20px 0 0;
+  font-family: var(--font-body);
+  font-weight: 580;
+  font-size: clamp(1.3rem, 1.85vw, 1.75rem);
+  line-height: 1.24;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+  max-width: 19ch;
+}
+
+.ch-roll {
+  position: relative;
   display: block;
-  height: 100%;
-  background: var(--ch-lime);
-  transform: scaleX(0);
-  transform-origin: left center;
+  overflow: hidden;
+  /* Room for descenders inside the mask, given back underneath. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
 }
 
-/* ==========================================================================
-   Right - the six
-   ========================================================================== */
-.charter__list {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.1vh, 14px);
+.ch-roll__line {
+  display: block;
+  color: var(--ink);
+  transform: translateY(calc(var(--on) * -100%));
+  transition: transform var(--ch-roll);
+}
+
+.ch-roll__line--next {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  color: var(--ch-accent);
+}
+
+/* --------------------------------------------------------------------------
+   The argument
+   -------------------------------------------------------------------------- */
+.ch-row__text {
+  margin-top: 14px;
+}
+
+.ch-row__body {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  max-width: 38ch;
+  color: var(--ink-3);
+}
+
+/* The practices. A 0fr -> 1fr track, so the panel opens to exactly its
+   content's height without a measurement. */
+.ch-row__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 560ms var(--ch-ease);
+}
+
+.ch-row.is-open .ch-row__panel {
+  grid-template-rows: 1fr;
+}
+
+.ch-row__panel-inner {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s 560ms;
+}
+
+.ch-row.is-open .ch-row__panel-inner {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.ch-row__proof {
+  display: grid;
+  gap: 8px;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 16px 0 0;
 }
 
-.ch-card {
-  position: relative;
-  overflow: hidden;
-  /* The column is given an explicit height in the held composition. Without
-     this a burst of fast scrolling - two panels briefly mid-move - would be
-     absorbed by squashing the cards instead of by the slack that height was
-     reserved for. */
-  flex-shrink: 0;
-  border: 1px solid var(--ch-line);
-  border-radius: var(--r-ctl);
-  background: var(--ch-well);
-  transition:
-    border-color var(--d-move) var(--ease-out) 80ms,
-    background-color var(--d-move) var(--ease-out);
-}
-
-.ch-card.is-active {
-  border-color: var(--ch-line-on);
-  background: var(--ch-well-on);
-}
-
-/* The lime edge. Drawn downward rather than faded on, so the border reads as
-   having been ruled against the card - the site's own language for a line a
-   reader's attention has arrived at. */
-.ch-card__edge {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--ch-lime);
-  transform: scaleY(0);
-  transform-origin: top center;
-  transition: transform var(--d-move) var(--ease-out) 80ms;
-}
-
-.ch-card.is-active .ch-card__edge {
-  transform: scaleY(1);
-}
-
-/* --------------------------------------------------------------------------
-   The card's own photograph - narrow screens only
-   -------------------------------------------------------------------------- */
-.ch-card__fig {
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: var(--navy-deep);
-}
-
-.ch-card__fig img {
-  position: absolute;
-  top: -5%;
-  left: 0;
-  width: 100%;
-  height: 110%;
-  object-fit: cover;
-}
-
-/* --------------------------------------------------------------------------
-   The head - and it is a button on every screen
-   --------------------------------------------------------------------------
-   Pressing it moves the page, not the card. Inside the pinned run a
-   principle's position is a scroll offset, so the button converts its stage
-   into one and asks Lenis for it: the press and the wheel then drive the
-   same timeline and the two can never disagree about which card is open.
-   -------------------------------------------------------------------------- */
-.ch-card__head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: clamp(14px, 1.5vw, 22px);
-  width: 100%;
-  padding: var(--ch-pad-y) var(--ch-pad-x);
-  text-align: left;
-  cursor: pointer;
-}
-
-.ch-card__index {
-  color: var(--on-navy-3);
-  transition: color var(--d-state) var(--ease-out);
-}
-
-.ch-card.is-active .ch-card__index {
-  color: var(--ch-lime);
-}
-
-/* Size is fixed on purpose. Growing the type would change the head's height,
-   and the whole column's stillness depends on that height being a constant -
-   so prominence is carried by colour and by four per cent of scale, neither
-   of which touches layout. */
-.ch-card__title {
-  font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 500;
-  font-size: clamp(1.15rem, 1.45vw, 1.45rem);
-  line-height: 1.1;
-  letter-spacing: -0.014em;
-  color: var(--on-navy-2);
-  opacity: 0.74;
-  transform-origin: left center;
-  transition:
-    color var(--d-move) var(--ease-out),
-    opacity var(--d-move) var(--ease-out),
-    transform var(--d-move) var(--ease-out);
-}
-
-.ch-card.is-active .ch-card__title {
-  color: var(--on-navy);
-  opacity: 1;
-  transform: scale(1.04);
-}
-
-.ch-card__head:hover .ch-card__title {
-  color: var(--on-navy);
-  opacity: 1;
-}
-
-/* A square, turned. Not an arrow: nothing here opens, and a chevron would be
-   promising an accordion the section deliberately is not. */
-.ch-card__dot {
-  width: 7px;
-  height: 7px;
-  border: 1px solid var(--on-navy-3);
-  transform: rotate(45deg) scale(0.86);
-  transition:
-    transform var(--d-move) var(--ease-out) 80ms,
-    background-color var(--d-move) var(--ease-out) 80ms,
-    border-color var(--d-move) var(--ease-out) 80ms;
-}
-
-.ch-card.is-active .ch-card__dot {
-  background: var(--ch-lime);
-  border-color: var(--ch-lime);
-  transform: rotate(135deg) scale(1);
-}
-
-/* --------------------------------------------------------------------------
-   The panel
-   --------------------------------------------------------------------------
-   `.ch-card__panel` is the clip and the only thing whose height is ever
-   animated. `.ch-card__inner` keeps its natural height throughout, which is
-   what makes it measurable while the panel around it is shut.
-   -------------------------------------------------------------------------- */
-.ch-card__panel {
-  overflow: hidden;
-}
-
-.ch-card__inner {
-  display: grid;
-  gap: clamp(11px, 1.3vh, 16px);
-  padding: 0 var(--ch-pad-x) clamp(17px, 2vh, 24px);
-}
-
-.ch-card__body {
-  color: var(--on-navy-2);
-  font-size: var(--t-small);
-  line-height: 1.62;
-  max-width: 48ch;
-}
-
-.ch-card__proof {
-  display: grid;
-  gap: 9px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ch-card__proof li {
+.ch-row__proof li {
   position: relative;
   padding-left: 20px;
-  color: var(--on-navy-2);
   font-size: var(--t-small);
-  line-height: 1.55;
-  max-width: 50ch;
+  line-height: 1.5;
+  max-width: 40ch;
+  color: var(--ink-2);
 }
 
-.ch-card__proof li::before {
+.ch-row__proof li::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 0.66em;
+  top: 0.72em;
   width: 10px;
   height: 1px;
-  background: var(--ch-lime);
+  background: var(--ink-3);
 }
 
-.ch-card__mark {
+.ch-row__mark {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  padding-top: clamp(9px, 1.1vh, 13px);
-  border-top: 1px solid var(--ch-line);
+  gap: 10px;
+  margin: 14px 0 0;
+  font-size: var(--t-small);
+  color: var(--ink-3);
 }
 
-.ch-card__mark b {
+.ch-row__mark b {
   font-family: var(--font-mono);
   font-weight: 500;
-  font-size: clamp(1.05rem, 1.25vw, 1.2rem);
-  letter-spacing: -0.01em;
-  color: var(--ch-lime);
+  color: var(--ink);
 }
 
-/* The stage marker. Fills across the card's own share of the scroll, and
-   stays filled once the reader is past it - so the column reads as a ledger
-   of what has been covered rather than as six identical boxes. */
-.ch-card__track {
-  display: none;
+/* --------------------------------------------------------------------------
+   READ MORE ->
+   -------------------------------------------------------------------------- */
+.ch-row__more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 4px 0 6px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.ch-row__more::after {
+  content: '';
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: 1px;
-  background: rgba(244, 241, 232, 0.09);
-}
-
-.ch-card__fill {
-  display: block;
-  height: 100%;
-  background: var(--ch-lime);
-  transform: scaleX(0);
+  background: currentColor;
+  transform: scaleX(var(--on));
   transform-origin: left center;
-  /* A principle already covered keeps its rule, at a third of the weight.
-     At full strength four filled rules above the open card read as four more
-     active states, which is the one thing the accent must never say. */
-  opacity: 0.3;
-  transition: opacity var(--d-move) var(--ease-out);
+  transition: transform 520ms var(--ch-ease);
 }
 
-.ch-card.is-active .ch-card__fill {
-  opacity: 1;
+/* Two arrows in a mask: the resting one leaves to the right, the next
+   arrives from the left. */
+.ch-row__arrow {
+  position: relative;
+  display: block;
+  width: 13px;
+  height: 13px;
+  overflow: hidden;
+}
+
+.ch-row__arrow svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 520ms var(--ch-ease);
+}
+
+.ch-row__arrow svg:first-child {
+  transform: translateX(calc(var(--on) * 110%));
+}
+
+.ch-row__arrow svg:last-child {
+  transform: translateX(calc((var(--on) - 1) * 110%));
+}
+
+.ch-row.is-open .ch-row__arrow {
+  transform: rotate(90deg);
+}
+
+.ch-row__more:focus-visible {
+  outline: 2px solid var(--ch-accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   The photograph
+   -------------------------------------------------------------------------- */
+.ch-row__media {
+  margin: 18px 0 0;
+  min-width: 0;
+}
+
+.ch-row__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: var(--sand);
+}
+
+.ch-row__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ==========================================================================
-   Wide - two columns, whether or not anything is driving them
+   Tablet - words on the left, the photograph on the right
    ========================================================================== */
-@media (min-width: 1024px) {
-  .charter__head {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: clamp(32px, 4vw, 88px);
+@media (min-width: 700px) {
+  .ch-row {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas:
+      'lead media'
+      'text media';
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(28px, 4vw, 48px);
+    padding-block: clamp(28px, 3vw, 44px);
   }
 
-  .charter__lead {
-    padding-bottom: 0.35em;
+  .ch-row__lead {
+    display: flex;
+    grid-area: lead;
   }
 
-  .charter__body {
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    column-gap: clamp(32px, 3.6vw, 72px);
-    align-items: start;
+  .ch-row__text {
+    grid-area: text;
+    justify-content: flex-end;
   }
 
-  /* Without the run there is nothing to hold the plate in place, so it holds
-     itself: the photograph follows the six cards down instead of scrolling
-     away under the first one. */
-  .charter:not(.charter--pinned) .charter__plate {
-    position: sticky;
-    /* Sticky needs a box shorter than its row, and a grid item stretches to
-       fill one by default. */
+  .ch-row__media {
+    grid-area: media;
+    margin: 0;
     align-self: start;
-    top: calc(var(--nav-h) + 28px);
+  }
+
+  .ch-row__chips,
+  .ch-row__media,
+  .ch-row__title,
+  .ch-row__text {
+    order: 0;
   }
 }
 
 /* ==========================================================================
-   THE PINNED COMPOSITION
+   Desktop - the three columns
    --------------------------------------------------------------------------
-   Added by the motion module, and only on a wide viewport, tall enough to
-   hold it, with motion allowed.
+   Chips at the top of the first column and the title on its floor; the
+   argument at the top of the second and the link on its floor; the
+   photograph setting the height of both.
    ========================================================================== */
 @media (min-width: 1024px) {
-  /* The section's own band of padding goes. It would otherwise sit above the
-     held composition as 170px of empty page the reader scrolls through twice
-     - once in, once back out - and the stage carries its own clearance. */
-  .charter--pinned {
-    padding-block: 0;
+  .ch-row {
+    grid-template-columns: 36.3fr 33.1fr 30.6fr;
+    grid-template-areas: 'lead text media';
+    grid-template-rows: auto;
+    column-gap: 0;
   }
 
-  .charter--pinned .charter__pin {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100svh;
-    /* Clearance for the masthead, which is fixed. Less than its full height
-       because it hides itself on a downward scroll, and this composition is
-       only ever met on the way down. */
-    padding-block: clamp(46px, 7.5vh, 92px) clamp(26px, 4.5vh, 54px);
+  .ch-row__lead,
+  .ch-row__text {
+    justify-content: space-between;
+    padding-right: clamp(24px, 3vw, 56px);
   }
 
-  .charter--pinned .charter__inner {
-    width: 100%;
-    gap: clamp(22px, 3.6vh, 44px);
+  .ch-row__title {
+    margin-top: 32px;
   }
 
-  /* The plate takes the height the six cards ask for, which is a constant -
-     so the photograph is the same size on every principle. */
-  .charter--pinned .charter__body {
-    align-items: stretch;
+  .ch-row__text {
+    margin-top: 0;
   }
 
-  .charter--pinned .charter__frame {
-    flex: 1;
-    min-height: 0;
-    aspect-ratio: auto;
+  .ch-row__body {
+    max-width: 34ch;
   }
 
-  .charter--pinned .charter__foot {
-    display: flex;
-  }
-
-  .charter--pinned .ch-card__track {
-    display: block;
-  }
-
-  /* ------------------------------------------------------------------------
-     Short screens
-     ------------------------------------------------------------------------
-     A held composition has one hard constraint an ordinary section does not:
-     all of it has to be on the screen at once, because the reader cannot
-     scroll to the part that does not fit - scrolling is what drives it. So
-     below a comfortable height everything gives a little, in the order it
-     can afford to.
-
-     The head goes first: it is read once, and at this size the statement
-     sits on one line rather than three. Then the furniture - padding, gaps -
-     and last the type inside the panels, which is the part actually being
-     read and so the part that gives least.
-     ------------------------------------------------------------------------ */
-  @media (max-height: 940px) {
-    .charter--pinned .charter__pin {
-      padding-block: clamp(34px, 5vh, 62px) clamp(20px, 3vh, 38px);
-    }
-
-    .charter--pinned .charter__inner {
-      gap: clamp(16px, 2.4vh, 30px);
-    }
-
-    .charter--pinned .charter__head-left {
-      gap: 10px;
-    }
-
-    .charter--pinned .charter__title {
-      font-size: clamp(1.75rem, 2.5vw, 2.35rem);
-      /* Wide enough that the statement sets on one line at this size. Three
-         lines of headline is 90px the six principles need more. */
-      max-width: 32ch;
-    }
-
-    .charter--pinned .charter__lead {
-      font-size: var(--t-small);
-      max-width: 40ch;
-    }
-
-    .charter--pinned .charter__list {
-      gap: 8px;
-    }
-
-    .charter--pinned .ch-card__head {
-      --ch-pad-y: 12px;
-    }
-
-    .charter--pinned .ch-card__inner {
-      gap: 9px;
-      padding-bottom: 14px;
-    }
-
-    .charter--pinned .ch-card__body,
-    .charter--pinned .ch-card__proof li {
-      font-size: 0.8125rem;
-      line-height: 1.5;
-    }
-
-    .charter--pinned .ch-card__proof {
-      gap: 7px;
-    }
-  }
-
-  /* At the narrow end of the desktop range the cards, not the photograph,
-     get the extra width. Every line the panel copy loses to wrapping is a
-     line the column does not have to be tall enough to hold. */
-  @media (max-width: 1279px) {
-    .charter--pinned .charter__body {
-      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
-    }
+  .ch-row__more {
+    margin-top: 24px;
   }
 }
 
 /* ==========================================================================
-   Reduced motion
-   --------------------------------------------------------------------------
-   The module never builds the pinned run under it, so this only has to stop
-   the transitions the stylesheet owns. Nothing is hidden: every card is open
-   and every state is its finished one, because a charter a reader cannot
-   read is worse than a charter that does not move.
+   Reduced motion - states still change, nothing travels to get there
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .charter *,
   .charter *::before,
   .charter *::after {
     transition-duration: 1ms !important;
+    transition-delay: 0s !important;
   }
 }

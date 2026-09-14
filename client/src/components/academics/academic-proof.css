@@ -1,0 +1,285 @@
+/* ==========================================================================
+   05 - ACADEMIC PROOF
+   --------------------------------------------------------------------------
+   A statement, two photographs sharing a baseline, and a copy column that
+   ends in the four figures. No cards, no panel, no scoreboard - the figures
+   sit in the column the way a feature list would, at the size of the copy
+   around them rather than the size of a dashboard.
+
+   PROPORTIONS
+
+   Taken off the reference at a 1280px frame and kept as ratios, so the spread
+   holds its shape at any width:
+
+     columns      336 : 342 : 476, gaps 24 and 43
+     near frame   72% of the tall frame's height, sitting on its foot
+     copy         starts ~53px below the top of the tall frame
+     rule         55px under the button, figures 56px under the rule
+
+   The tall frame's height is the row's height - it grows to meet the copy
+   column when four figures make that column longer than the reference's two,
+   and the near frame keeps its 72% of it, so the step between the two
+   photographs is the same proportion at every size.
+   ========================================================================== */
+
+.ac-proof {
+  background: var(--ivory);
+}
+
+/* ==========================================================================
+   The statement
+   ========================================================================== */
+.ac-proof__title {
+  margin: 0 0 clamp(40px, 7.5vw, 104px);
+  max-width: 14ch;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 4.4vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   The spread - phone and tablet first
+   --------------------------------------------------------------------------
+   The two photographs keep their pairing on every screen, side by side and
+   bottom-aligned; only the copy moves under them.
+   ========================================================================== */
+.ac-proof__body {
+  display: grid;
+  grid-template-columns: minmax(0, 336fr) minmax(0, 342fr);
+  grid-template-areas:
+    'near tall'
+    'text text';
+  column-gap: clamp(12px, 1.9vw, 24px);
+  row-gap: clamp(40px, 6vw, 64px);
+  align-items: end;
+}
+
+.ac-proof__shot--near {
+  grid-area: near;
+}
+
+.ac-proof__shot--tall {
+  grid-area: tall;
+}
+
+.ac-proof__text {
+  grid-area: text;
+  min-width: 0;
+}
+
+.ac-proof__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--sand);
+}
+
+.ac-proof__shot--near .ac-proof__frame {
+  aspect-ratio: 336 / 343;
+}
+
+.ac-proof__shot--tall .ac-proof__frame {
+  aspect-ratio: 342 / 474;
+}
+
+.ac-proof__frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   The copy column
+   ========================================================================== */
+.ac-proof__lead {
+  margin: 0;
+  max-width: 48ch;
+  font-size: clamp(1rem, 1.35vw, 1.0625rem);
+  line-height: 1.8;
+  color: var(--ink-3);
+}
+
+.ac-proof__action {
+  margin-top: 24px;
+}
+
+.ac-proof__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 49px;
+  padding-inline: 22px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--ivory);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.3vw, 1.0625rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: background-color var(--d-state) var(--ease-out);
+}
+
+.ac-proof__cta:hover {
+  background: var(--navy-2);
+}
+
+.ac-proof__cta svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.ac-proof__cta:hover svg {
+  transform: translateX(3px);
+}
+
+.ac-proof__rule {
+  display: block;
+  height: 1px;
+  margin-top: clamp(36px, 4.3vw, 55px);
+  background: var(--line);
+}
+
+/* --------------------------------------------------------------------------
+   The figures
+   --------------------------------------------------------------------------
+   Two pairs. The number stands where the reference's icon stands, at about
+   the icon's height, so it leads the item without turning the column into a
+   scoreboard. The markup is term-then-value for a screen reader, and the
+   grid puts the value first for the eye.
+   -------------------------------------------------------------------------- */
+.ac-proof__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: clamp(28px, 3.2vw, 40px);
+  margin: clamp(36px, 4.4vw, 56px) 0 0;
+}
+
+.ac-proof__stat {
+  display: grid;
+  grid-template-areas:
+    'figure'
+    'label'
+    'detail';
+  align-content: start;
+}
+
+.ac-proof__figure {
+  grid-area: figure;
+  margin: 0;
+}
+
+/* Tabular figures, so '68%' does not shuffle sideways while it counts. */
+.ac-proof__num {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(2rem, 2.9vw, 2.625rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.ac-proof__label {
+  grid-area: label;
+  margin-top: 14px;
+  font-size: clamp(1.0625rem, 1.45vw, 1.1875rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ac-proof__detail {
+  grid-area: detail;
+  margin: 6px 0 0;
+  max-width: 30ch;
+  font-size: clamp(0.875rem, 1.1vw, 0.9375rem);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* One figure per line only where two would squeeze the labels to a word. */
+@media (max-width: 359px) {
+  .ac-proof__stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Desktop - the three columns
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .ac-proof__body {
+    grid-template-columns: minmax(0, 336fr) minmax(0, 342fr) minmax(0, 476fr);
+    grid-template-areas: 'near tall text';
+    column-gap: clamp(16px, 1.9vw, 24px);
+    align-items: stretch;
+  }
+
+  /* The tall frame fills the row: its reference proportion is the floor,
+     and it grows if the copy column is the taller of the two.
+
+     Deliberately NOT `aspect-ratio` plus `min-height: 100%`. With a ratio
+     present, Chrome derives the frame's width back out of the stretched
+     height - a 648px-tall frame insists on being 468px wide and runs
+     through its column into the copy. So the proportion is carried by a
+     spacer instead (padding resolves against the column's width, never the
+     row's height), and the photograph is laid over the wrapper, which the
+     grid stretches to the row. The column decides the width; the row
+     decides the height. */
+  .ac-proof__shot {
+    min-width: 0;
+  }
+
+  .ac-proof__shot--tall {
+    position: relative;
+  }
+
+  .ac-proof__shot--tall::before {
+    content: '';
+    display: block;
+    padding-top: calc(474 / 342 * 100%);
+  }
+
+  .ac-proof__shot--tall .ac-proof__frame {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+  }
+
+  /* The near frame sits on the tall one's foot at 72% of its height. */
+  .ac-proof__shot--near {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .ac-proof__shot--near .ac-proof__frame {
+    width: 100%;
+    height: 72.4%;
+    aspect-ratio: auto;
+  }
+
+  /* The wider gap before the copy is the reference's (43px against 24). */
+  .ac-proof__text {
+    padding: clamp(24px, 3.7vw, 53px) 0 clamp(16px, 2.8vw, 40px) clamp(0px, 1.5vw, 19px);
+  }
+
+  /* The scroll offset writes transforms on these three, continuously while
+     the page moves. */
+  .ac-proof__shot,
+  .ac-proof__text {
+    will-change: transform;
+  }
+}

@@ -224,7 +224,11 @@ export function SlBeyond() {
 
         <ol className="strands">
           {ACTIVITY_STRANDS.map((strand, i) => (
-            <li className={`strand strand--${strand.accent}`} key={strand.id}>
+            <li
+              className={`strand strand--${strand.accent}`}
+              key={strand.id}
+              id={`strand-${strand.id}`}
+            >
               <Figure
                 photo={[sportsImages[0], artsImages[0], studentImages[3], galleryImages[5]][i]}
                 width={820}

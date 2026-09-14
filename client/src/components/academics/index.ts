@@ -6,6 +6,6 @@ export {
   AcNext,
   AcBeyond,
   AcRecord,
-  AcProof,
   AcCta,
 } from './sections';
+export { AcProof } from './AcademicProof';

@@ -8,7 +8,7 @@ import {
   HomePrincipal,
   HomeTransition,
   HomeVoices,
-  HomeWall,
+  HomeWeek,
   HomeWhy,
 } from '@/components/home';
 
@@ -42,10 +42,10 @@ export function HomePage() {
       {/* 07 - who is accountable */}
       <HomePrincipal />
 
-      {/* 08 - what an ordinary week looks like */}
-      <HomeWall />
+      {/* 08 - what an ordinary week looks like, as a moving ribbon */}
+      <HomeWeek />
 
-      {/* The second pause, between the wall and the ask. */}
+      {/* The second pause, between the week and the ask. */}
       <HomeBreak />
 
       {/* 09 - the ask, and nothing else */}

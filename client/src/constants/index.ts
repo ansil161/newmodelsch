@@ -53,6 +53,9 @@ export const ROUTES = {
   studentLife: '/student-life',
   admissions: '/admissions',
   contact: '/contact',
+  /** The one page that sits below a chapter: Student Life's photographic
+   *  archive, with a page per academic year and per event beneath it. */
+  gallery: '/student-life/gallery',
 } as const;
 
 /**
@@ -84,7 +87,19 @@ export const NAV_LINKS: NavRoute[] = [
   { label: 'Home', href: ROUTES.home, blurb: 'The school at a glance' },
   { label: 'About', href: ROUTES.about, blurb: 'Story, values, philosophy and leadership' },
   { label: 'Academics', href: ROUTES.academics, blurb: 'What a child learns, Nursery to Class 10' },
-  { label: 'Student Life', href: ROUTES.studentLife, blurb: 'Where the day actually happens' },
+  {
+    label: 'Student Life',
+    href: ROUTES.studentLife,
+    blurb: 'Where the day actually happens',
+    children: [
+      { label: 'A Day at School', href: `${ROUTES.studentLife}#day`, blurb: 'The timetable, bell to bell' },
+      { label: 'Campus Life', href: `${ROUTES.studentLife}#campus`, blurb: 'Four acres around a courtyard' },
+      { label: 'Clubs & Activities', href: `${ROUTES.studentLife}#beyond`, blurb: 'Arts, clubs and competitions' },
+      { label: 'Sports', href: `${ROUTES.studentLife}#strand-sports`, blurb: 'Coaching, fixtures and the field' },
+      { label: 'Safety & Wellbeing', href: `${ROUTES.studentLife}#safety`, blurb: 'The policy behind the day' },
+      { label: 'Gallery', href: ROUTES.gallery, blurb: 'The living yearbook' },
+    ],
+  },
   { label: 'Admissions', href: ROUTES.admissions, blurb: 'Everything needed to join' },
   { label: 'Contact & Visit', href: ROUTES.contact, blurb: 'Visit, call or write to us' },
 ];
@@ -797,6 +812,7 @@ export const FOOTER_NAV: { title: string; links: NavRoute[] }[] = [
       { label: 'About', href: ROUTES.about },
       { label: 'Academics', href: ROUTES.academics },
       { label: 'Student Life', href: ROUTES.studentLife },
+      { label: 'Gallery', href: ROUTES.gallery },
     ],
   },
   {

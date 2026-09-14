@@ -10,6 +10,9 @@
    THE SHAPE OF AN ENTRY
 
      id     the asset key. Today an Unsplash photo id; tomorrow a filename.
+            A root-relative path ('/images/gallery/2025-26/01.jpg') or a full
+            URL is served as written, so the school's own files can replace
+            an entry one at a time without touching `resolve()`.
      alt    what the photograph shows. Written for a person using a screen
             reader, so it describes the scene rather than restating the
             heading beside it.
@@ -43,14 +46,22 @@ export interface Photo {
  * Call it with the rendered width, not the source width.
  */
 export const resolve = (photo: Photo, width: number) =>
-  `https://images.unsplash.com/photo-${photo.id}?auto=format&fit=crop&w=${width}&q=80`;
+  isFile(photo.id)
+    ? photo.id
+    : `https://images.unsplash.com/photo-${photo.id}?auto=format&fit=crop&w=${width}&q=80`;
 
 /**
  * A `srcset` for a slot, so the browser picks against the real device rather
  * than against our guess. Pass the widths the layout can actually produce.
+ * Empty for a local file, which has one size and nothing to pick between.
  */
 export const resolveSet = (photo: Photo, widths: number[]) =>
-  widths.map((w) => `${resolve(photo, w)} ${w}w`).join(', ');
+  isFile(photo.id) ? '' : widths.map((w) => `${resolve(photo, w)} ${w}w`).join(', ');
+
+/** A path or URL rather than an Unsplash id. */
+function isFile(id: string) {
+  return id.startsWith('/') || /^https?:\/\//.test(id);
+}
 
 /* ==========================================================================
    heroImage - the opening frame of the site

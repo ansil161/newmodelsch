@@ -201,17 +201,19 @@ export interface NavRoute {
   href: string;
   /** Short line used in the mobile drawer and footer sitemap. */
   blurb?: string;
+  /** The pages and sections under this one: the desktop dropdown and the
+   *  mobile menu's sub-links. */
+  children?: NavRoute[];
 }
 
 /**
  * One line of the charter.
  *
  * `proof` and `mark` exist because a promise a school makes about itself is
- * worth exactly as much as the thing standing behind it. The charter section
- * opens one principle at a time and gives each of them a moment on its own,
- * and a moment filled with a single sentence of intent is a moment that says
- * nothing - so every principle carries two checkable practices and one
- * figure already reported elsewhere on the site.
+ * worth exactly as much as the thing standing behind it. A principle set as a
+ * single sentence of intent says nothing, so the charter section gives every
+ * one of them two checkable practices, behind its own button, and one figure
+ * already reported elsewhere on the site, set as its photograph's caption.
  */
 export interface ValuePillar {
   id: string;

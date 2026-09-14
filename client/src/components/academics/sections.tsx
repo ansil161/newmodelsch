@@ -1,5 +1,4 @@
 import {
-  ACADEMIC_PROOF,
   ACHIEVEMENTS,
   ADMISSIONS_INTRO,
   ACHIEVEMENT_CATEGORIES,
@@ -10,14 +9,7 @@ import {
   ROUTES,
   TEACHING_PRINCIPLES,
 } from '@/constants';
-import {
-  academicImages,
-  artsImages,
-  campusImages,
-  everydayImages,
-  galleryImages,
-  studentImages,
-} from '@/constants/imagery';
+import { academicImages, artsImages, everydayImages, studentImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { draw, drift, lines, rise, unmask } from '@/lib/motion';
 import {
@@ -29,13 +21,12 @@ import {
   Script,
   PageCover,
   SectionHead,
-  StatReveal,
-  Sticker,
   StickyStory,
 } from '@/components/editorial';
 import type { ArchiveEntry, StoryPanel } from '@/components/editorial';
-import { CurriculumChapters } from './CurriculumChapters';
-import type { Chapter } from './CurriculumChapters';
+import { LEARNING_STAGES } from '@/constants/education';
+import { CurriculumMap } from './CurriculumMap';
+import type { CurriculumStage } from './CurriculumMap';
 import './academics.css';
 
 /* ==========================================================================
@@ -147,162 +138,112 @@ export function AcMethod() {
 }
 
 /* --------------------------------------------------------------------------
-   02 - THE CURRICULUM, AS A SCHOOL ANNUAL
+   02 - THE CURRICULUM MAP
    --------------------------------------------------------------------------
-   Four chapters of a printed publication. Each one is a different paste-up:
-   a different lead photograph, a different number of fragments behind it, a
-   different rhythm, and a different note in the margin.
+   Four stages, held on screen while the reader scrolls through them. The
+   copy is the school's own: stage names, classes, board, subjects and
+   assessment come from `CURRICULUM_ROWS`, and each stage's closing line is
+   the outcome recorded for its final year in `LEARNING_STAGES`.
 
-   THE NUMBERS BELOW ARE THE ART DIRECTION.
-
-   `x`, `y` and `w` are percentages of the plate; `rotate` is the angle the
-   print was pasted down at; `depth` is how far it drifts on scroll. Frames are
-   listed back to front. Moving a photograph is moving a number here, not
-   editing a stylesheet - which is the point of holding a composition as data.
-
-   Three rules the four compositions keep between them:
-     - exactly one `lead`, in colour, and it is the largest thing on the plate
-     - everything behind it is photocopied to grey, so the eye never has two
-       colour photographs competing
-     - no two chapters put the lead in the same place
+   `layout` is the art direction. `x`, `y`, `w` and `h` are percentages of
+   the image plate on a wide screen, and `rotate` is the angle each print
+   sits at. No two stages put the lead photograph in the same place. Phones
+   use one simplified composition from the stylesheet.
    -------------------------------------------------------------------------- */
 
-const CHAPTERS: Chapter[] = [
+const outcome = (id: string) => LEARNING_STAGES.find((stage) => stage.id === id)?.outcome ?? '';
+
+const CURRICULUM_STAGES: CurriculumStage[] = [
   {
-    /* 01 - open on a face, high and left, with the room behind it. The calmest
-       plate of the four: three frames, generous air bottom-right. */
     id: 'pre-primary',
-    index: '01',
-    band: 'Pre-Primary',
-    classes: 'Nursery - UKG',
+    number: '01',
+    title: CURRICULUM_ROWS[0].stage,
+    subtitle: 'Wanting to come back tomorrow.',
+    description:
+      'The first three years are barely a syllabus. They are about what a school day feels like: being part of a group, finishing a thing you started, and learning that a question is rewarded rather than tolerated.',
+    range: CURRICULUM_ROWS[0].classes,
     ages: 'Ages 3-6',
-    focus: 'Wanting to come back tomorrow.',
-    note: 'The first three years are barely a syllabus. They are about what a school day feels like: being part of a group, finishing a thing you started, and learning that a question is rewarded rather than tolerated. A child who separates happily at the gate and talks about their day at home has had the year we intended.',
+    board: CURRICULUM_ROWS[0].board,
     subjects: CURRICULUM_ROWS[0].subjects,
     assessment: CURRICULUM_ROWS[0].assessment,
-    frames: [
-      { photo: campusImages[0], role: 'behind', x: 40, y: 3, w: 52, rotate: 2.4, tone: 'mono', depth: 96 },
-      { photo: studentImages[1], role: 'scrap', x: 58, y: 58, w: 30, rotate: -5, tone: 'mono', depth: 66, torn: true },
-      {
-        photo: studentImages[0],
-        role: 'lead',
-        x: 4,
-        y: 16,
-        w: 56,
-        rotate: -1.6,
-        tone: 'colour',
-        depth: 24,
-        tape: [
-          { at: 'tl', rotate: -8 },
-          { at: 'br', rotate: -5 },
-        ],
-      },
-    ],
-    annotation: { text: 'A strong start.', x: 2, y: 1, rotate: -3.4, arrow: 'down' },
+    detail: outcome('ukg'),
+    image: everydayImages.attentive,
+    secondaryImage: artsImages[0],
+    layout: {
+      // Lead high and left; the small print laid over its lower-right corner.
+      image: { x: 2, y: 4, w: 60, h: 82, rotate: -1.5 },
+      secondary: { x: 56, y: 40, w: 38, h: 50, rotate: 3.5 },
+    },
   },
-
   {
-    /* 02 - the lead drops right and turns landscape; a tall sliver is cropped
-       by the left edge of the plate so the composition runs off the page. */
     id: 'primary',
-    index: '02',
-    band: 'Primary',
-    classes: 'Classes 1-5',
+    number: '02',
+    title: CURRICULUM_ROWS[1].stage,
+    subtitle: 'The years that decide the ones after them.',
+    description:
+      'Reading, writing and number are taught slowly and checked constantly, because a gap opened here is expensive to close later. Subjects separate out and get specialist teachers from Class 3, and children start producing work over weeks rather than over lessons.',
+    range: CURRICULUM_ROWS[1].classes,
     ages: 'Ages 6-11',
-    focus: 'The years that decide the ones after them.',
-    note: 'Reading, writing and number are taught slowly and checked constantly, because a gap opened here is expensive to close later. Subjects separate out and get specialist teachers from Class 3, and children start producing work over weeks rather than over lessons.',
+    board: CURRICULUM_ROWS[1].board,
     subjects: CURRICULUM_ROWS[1].subjects,
     assessment: CURRICULUM_ROWS[1].assessment,
-    frames: [
-      { photo: campusImages[3], role: 'behind', x: 26, y: 2, w: 56, rotate: -2.2, tone: 'mono', depth: 104 },
-      { photo: academicImages[3], role: 'scrap', x: -6, y: 40, w: 26, rotate: -6.5, tone: 'mono', depth: 74 },
-      { photo: galleryImages[6], role: 'scrap', x: 74, y: 62, w: 26, rotate: 4.5, tone: 'mono', depth: 58, torn: true },
-      {
-        photo: studentImages[2],
-        role: 'lead',
-        x: 20,
-        y: 26,
-        w: 58,
-        rotate: 1.4,
-        tone: 'colour',
-        depth: 22,
-        tape: [{ at: 't', rotate: 4 }],
-      },
-    ],
-    annotation: { text: 'Learning by doing.', x: 20, y: 84, rotate: 2.2, arrow: 'right' },
+    detail: outcome('classes-3-5'),
+    image: everydayImages.deskGirls,
+    secondaryImage: everydayImages.reading,
+    layout: {
+      // Lead drops right; the small print tucks in behind its top-left edge.
+      image: { x: 30, y: 12, w: 66, h: 74, rotate: 1.2 },
+      secondary: { x: 0, y: 4, w: 38, h: 48, rotate: -3 },
+    },
   },
-
   {
-    /* 03 - the busiest plate, because these are the widest years. Five frames,
-       the lead smaller than in the other three, fragments at three scales. */
-    id: 'middle',
-    index: '03',
-    band: 'Middle School',
-    classes: 'Classes 6-8',
+    id: 'middle-school',
+    number: '03',
+    title: CURRICULUM_ROWS[2].stage,
+    subtitle: 'The widest years.',
+    description:
+      'Laboratories, the robotics floor, second languages and the stage all open at once, and a student finds out what they are actually drawn to. Practical work is examined rather than optional, and concepts are met physically before they are met on a page.',
+    range: CURRICULUM_ROWS[2].classes,
     ages: 'Ages 11-14',
-    focus: 'The widest years.',
-    note: 'Laboratories, the robotics floor, second languages and the stage all open at once, and a student finds out what they are actually drawn to - with evidence for it. Practical work is examined rather than optional, and concepts are met physically before they are met on a page.',
+    board: CURRICULUM_ROWS[2].board,
     subjects: CURRICULUM_ROWS[2].subjects,
     assessment: CURRICULUM_ROWS[2].assessment,
-    frames: [
-      { photo: academicImages[1], role: 'behind', x: 2, y: 0, w: 50, rotate: -3, tone: 'mono', depth: 110 },
-      { photo: campusImages[2], role: 'behind', x: 54, y: 30, w: 46, rotate: 2.6, tone: 'mono', depth: 88 },
-      { photo: academicImages[7], role: 'scrap', x: 68, y: 2, w: 22, rotate: 6, tone: 'mono', depth: 70, torn: true },
-      { photo: academicImages[4], role: 'scrap', x: 0, y: 70, w: 24, rotate: -4.5, tone: 'mono', depth: 54 },
-      {
-        photo: studentImages[3],
-        role: 'lead',
-        x: 22,
-        y: 34,
-        w: 50,
-        rotate: -0.8,
-        tone: 'colour',
-        depth: 20,
-        tape: [
-          { at: 'tr', rotate: 7 },
-          { at: 'bl', rotate: -9 },
-        ],
-      },
-    ],
-    annotation: { text: 'Curious minds.', x: 62, y: 82, rotate: -4.2, arrow: 'left' },
+    detail: outcome('classes-6-8'),
+    image: academicImages[1],
+    secondaryImage: academicImages[2],
+    layout: {
+      // Lead low and left, landscape; the small print pinned above it, right.
+      image: { x: 4, y: 20, w: 68, h: 66, rotate: -0.8 },
+      secondary: { x: 60, y: 0, w: 36, h: 46, rotate: 4 },
+    },
   },
-
   {
-    /* 04 - quiet again, and the largest lead of the four. One photocopy behind
-       it and one scrap: the chapter is about depth, so the plate is. */
     id: 'secondary',
-    index: '04',
-    band: 'Secondary',
-    classes: 'Classes 9-10',
+    number: '04',
+    title: CURRICULUM_ROWS[3].stage,
+    subtitle: 'Depth first, exam technique second.',
+    description:
+      'Board years taught as two years rather than one long revision. Analytical writing, examined practicals, and an honest conversation about what comes after Class 10 - all of it prepared inside school hours, with no coaching centre in the arrangement.',
+    range: CURRICULUM_ROWS[3].classes,
     ages: 'Ages 14-16',
-    focus: 'Depth first, exam technique second.',
-    note: 'Board years taught as two years rather than one long revision. Analytical writing, examined practicals, and an honest conversation about what comes after Class 10 - all of it prepared inside school hours, with no coaching centre in the arrangement.',
+    board: CURRICULUM_ROWS[3].board,
     subjects: CURRICULUM_ROWS[3].subjects,
     assessment: CURRICULUM_ROWS[3].assessment,
-    frames: [
-      { photo: academicImages[5], role: 'behind', x: 34, y: 0, w: 58, rotate: 2, tone: 'mono', depth: 92 },
-      { photo: studentImages[5], role: 'scrap', x: 2, y: 66, w: 28, rotate: -5.5, tone: 'mono', depth: 60, torn: true },
-      {
-        photo: academicImages[0],
-        role: 'lead',
-        x: 8,
-        y: 14,
-        w: 62,
-        rotate: -1.2,
-        tone: 'colour',
-        depth: 18,
-        tape: [
-          { at: 'tr', rotate: 6 },
-          { at: 'bl', rotate: -7 },
-        ],
-      },
-    ],
-    annotation: { text: 'Small steps. Bigger futures.', x: 68, y: 52, rotate: -2.2, arrow: 'left' },
+    detail: outcome('classes-9-10'),
+    image: academicImages[0],
+    secondaryImage: academicImages[5],
+    layout: {
+      // The largest lead, right; the small print over its lower-left corner,
+      // so the caption hangs from the right edge instead.
+      image: { x: 26, y: 4, w: 70, h: 82, rotate: 0.8 },
+      secondary: { x: 0, y: 44, w: 36, h: 48, rotate: -3.5 },
+      caption: 'end',
+    },
   },
 ];
 
 export function AcCurriculum() {
-  return <CurriculumChapters id="curriculum" chapters={CHAPTERS} colophon={CURRICULUM_NOTE} />;
+  return <CurriculumMap id="curriculum" stages={CURRICULUM_STAGES} colophon={CURRICULUM_NOTE} />;
 }
 
 /* --------------------------------------------------------------------------
@@ -448,48 +389,7 @@ export function AcRecord() {
   );
 }
 
-/* --------------------------------------------------------------------------
-   05 - ACADEMIC PROOF
-   -------------------------------------------------------------------------- */
-
-export function AcProof() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    const head = el.querySelector<HTMLElement>('.proof__title');
-    if (head) lines(head, { trigger: el });
-    draw(el, { trigger: el, delay: 0.5 });
-  }, []);
-
-  return (
-    <section ref={scope} className="section section--navy proof" id="academic-proof">
-      <div className="wrap">
-        <div className="proof__head">
-          <Sticker tone="paper" tilt={-2}>
-            05 · Proof
-          </Sticker>
-          <h2 className="proof__title ed-h1">
-            What the whole sequence <Mark kind="underline">produces.</Mark>
-          </h2>
-        </div>
-
-        <StatReveal
-          items={ACADEMIC_PROOF.map((point) => ({
-            value: point.value,
-            label: point.label,
-            detail: point.detail,
-          }))}
-          layout="grid"
-          large
-          className="proof__stats"
-        />
-
-        <p className="proof__foot meta">
-          Board preparation happens inside school hours. No family is expected to buy an evening
-          class to reach these figures.
-        </p>
-      </div>
-    </section>
-  );
-}
+/* 05 - ACADEMIC PROOF lives in `AcademicProof.tsx`. */
 
 /* --------------------------------------------------------------------------
    The ask.

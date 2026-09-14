@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { NAV_LINKS, ROUTES, SCHOOL } from '@/constants';
-import { studentImages } from '@/constants/imagery';
+import { everydayImages, studentImages } from '@/constants/imagery';
+import type { NavRoute } from '@/types';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { ScrollTrigger, gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
@@ -74,10 +75,12 @@ export function Navbar() {
   }, []);
 
   /* Close on navigation. A menu that survives a route change leaves the
-     reader looking at a list of links to the page they are already on. */
+     reader looking at a list of links to the page they are already on. The
+     hash counts too: Student Life's sub-links are anchors on one page, and a
+     menu left open over the section it just scrolled to hides it. */
   useEffect(() => {
     setOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   /* Everything that has to happen while the menu is open, in one place. */
   useEffect(() => {
@@ -143,16 +146,20 @@ export function Navbar() {
           </Link>
 
           <nav className="nav__links" aria-label="Primary">
-            {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.href}
-                to={link.href}
-                end={link.href === ROUTES.home}
-                className={({ isActive }) => `nav__link${isActive ? ' is-current' : ''}`}
-              >
-                {link.label}
-              </NavLink>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.children?.length ? (
+                <NavDropdown key={link.href} link={link} />
+              ) : (
+                <NavLink
+                  key={link.href}
+                  to={link.href}
+                  end={link.href === ROUTES.home}
+                  className={({ isActive }) => `nav__link${isActive ? ' is-current' : ''}`}
+                >
+                  {link.label}
+                </NavLink>
+              ),
+            )}
           </nav>
 
           <div className="nav__end">
@@ -201,7 +208,10 @@ export function Navbar() {
         <div className="menu__inner wrap">
           <ol className="menu__list">
             {NAV_LINKS.map((link, i) => (
-              <li className="menu__item" key={link.href}>
+              <li
+                className={`menu__item${link.children?.length ? ' menu__item--parent' : ''}`}
+                key={link.href}
+              >
                 <NavLink
                   to={link.href}
                   end={link.href === ROUTES.home}
@@ -211,6 +221,25 @@ export function Navbar() {
                   <span className="menu__label ed-h1">{link.label}</span>
                   {link.blurb ? <span className="menu__blurb">{link.blurb}</span> : null}
                 </NavLink>
+
+                {link.children?.length ? (
+                  <ul className="menu__sub" aria-label={`In ${link.label}`}>
+                    {link.children.map((child) => (
+                      <li key={child.href}>
+                        {/* Closed by hand as well as by the location effect:
+                            tapping the anchor for the section already in the
+                            URL changes nothing the effect can see. */}
+                        <Link
+                          to={child.href}
+                          className={`menu__sub-link${child.href === ROUTES.gallery ? ' menu__sub-link--new' : ''}`}
+                          onClick={() => setOpen(false)}
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           </ol>
@@ -246,5 +275,151 @@ export function Navbar() {
         </div>
       </div>
     </>
+  );
+}
+
+/* ==========================================================================
+   THE DROPDOWN
+   --------------------------------------------------------------------------
+   Two controls, not one, and that is deliberate. "Student Life" stays a link
+   to the chapter, because that is where most people clicking it want to go;
+   the chevron beside it is a real button that owns the panel. A single
+   element that both navigates and toggles has to guess which one a tap meant,
+   and on a touchscreen laptop it guesses wrong.
+
+   A pointer opens it on hover with a short grace period on the way out, so a
+   diagonal move toward the panel does not close it. A keyboard opens it with
+   the button; Escape closes it and hands focus back; tabbing past the last
+   link closes it on the way out.
+   ========================================================================== */
+
+function NavDropdown({ link }: { link: NavRoute }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef(0);
+  const location = useLocation();
+  const panelId = useId();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
+    const onDown = (e: PointerEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
+  }, [open]);
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  const show = () => {
+    window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpen(false), 160);
+  };
+
+  const children = link.children ?? [];
+
+  return (
+    <div
+      ref={wrapRef}
+      className={`nav__drop${open ? ' is-open' : ''}`}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && show()}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && hide()}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
+      <NavLink
+        to={link.href}
+        className={({ isActive }) => `nav__link${isActive ? ' is-current' : ''}`}
+      >
+        {link.label}
+      </NavLink>
+
+      <button
+        ref={buttonRef}
+        type="button"
+        className="nav__drop-btn"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Icon name="chevronDown" size={13} strokeWidth={2} />
+        <span className="sr-only">
+          {open ? 'Hide' : 'Show'} pages in {link.label}
+        </span>
+      </button>
+
+      <div id={panelId} className="nav__panel" inert={!open}>
+        <div className="nav__panel-inner">
+          <div className="nav__panel-list">
+            <Link className="nav__panel-head" to={link.href} onClick={() => setOpen(false)}>
+              <span className="meta">{link.label}</span>
+              <span className="nav__panel-all">
+                Overview
+                <Icon name="arrowRight" size={13} />
+              </span>
+            </Link>
+
+            <ul className="nav__sub">
+              {children.map((child, i) => (
+                <li key={child.href}>
+                  <Link className="nav__sub-link" to={child.href} onClick={() => setOpen(false)}>
+                    <span className="nav__sub-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="nav__sub-label">
+                      {child.label}
+                      {child.href === ROUTES.gallery ? <span className="nav__sub-new">New</span> : null}
+                    </span>
+                    {child.blurb ? <span className="nav__sub-blurb">{child.blurb}</span> : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* The one picture in the panel, and it is the gallery's: the only
+              destination in the list that is itself made of photographs. */}
+          <Link
+            className="nav__feature"
+            to={ROUTES.gallery}
+            onClick={() => setOpen(false)}
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            <Figure
+              photo={everydayImages.waving}
+              width={300}
+              sizes="220px"
+              shape="frame"
+              ratio="free"
+              decorative
+            />
+            <span className="nav__feature-text">
+              <span className="nav__feature-kicker">The living yearbook</span>
+              <span className="nav__feature-title">Four school years, in photographs</span>
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

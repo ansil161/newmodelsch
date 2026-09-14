@@ -6,7 +6,6 @@ import {
   campusImages,
   everydayImages,
   facultyImages,
-  galleryImages,
   heroImage,
   heroInsets,
   studentImages,
@@ -18,7 +17,6 @@ import {
   Collage,
   EditorialHero,
   Figure,
-  HorizontalGallery,
   InviteSection,
   Mark,
   PhotoBreak,
@@ -51,7 +49,7 @@ import './home.css';
      a drawn line          the child's own path
      one enormous quote    what it is like from outside
      a letter              who is accountable
-     a wall                what it looks like
+     a moving ribbon       what a week looks like
      one ask               and nothing else
 
    No two adjacent sections share a shape. That constraint is doing more work
@@ -411,45 +409,14 @@ export function HomePrincipal() {
 }
 
 /* --------------------------------------------------------------------------
-   09 - THE WALL
+   09 - WEEKLY LIFE
+   --------------------------------------------------------------------------
+   A sentence over a ribbon of photographs that drifts on its own, looping
+   without a seam. Its loop, its visibility gating and its reduced-motion
+   fallback live beside this file, like the other self-animating sections.
    -------------------------------------------------------------------------- */
 
-const WALL = galleryImages.map((photo, i) => ({
-  photo,
-  size: (['md', 'tall', 'sm', 'lg', 'md', 'tall', 'sm', 'lg', 'md', 'tall'] as const)[i % 10],
-  shape: (['frame', 'arch', 'round', 'frame', 'blob', 'arch', 'round', 'frame', 'blob', 'arch'] as const)[
-    i % 10
-  ],
-  caption: [
-    'Morning assembly',
-    'State champions',
-    'Chemistry practicals',
-    'Annual day',
-    'Track & field',
-    'Robotics finals',
-    'Reading hour',
-    'Founders week',
-    'The studio',
-    'Between lessons',
-  ][i],
-}));
-
-export function HomeWall() {
-  return (
-    <HorizontalGallery id="gallery" frames={WALL} cue="Drag">
-      <SectionHead
-        sticker="An ordinary week"
-        stickerTilt={2}
-        title={
-          <>
-            Not a single one of these was <Mark>staged.</Mark>
-          </>
-        }
-        lead="Photographs taken on normal school days, by people who work here."
-      />
-    </HorizontalGallery>
-  );
-}
+export { HomeWeek } from './HomeWeek';
 
 /* --------------------------------------------------------------------------
    10 - THE ASK

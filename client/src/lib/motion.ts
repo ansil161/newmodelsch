@@ -216,11 +216,28 @@ export function drift(target: El, amount = 80, opts: { trigger?: Element | null 
    It parses the number out of whatever is written - '10,000+', '4.9', '98%' -
    and preserves the prefix, suffix, separators and decimal places exactly.
    -------------------------------------------------------------------------- */
-export function count(targets: El, opts: Common = {}) {
+export function count(
+  targets: El,
+  opts: Common & {
+    /** Seconds per figure. */
+    duration?: number;
+    ease?: string;
+    /** Extra delay per figure, in order, so a row of them lands in sequence. */
+    stagger?: number;
+    /**
+     * Write the zero into the element as soon as the tween is built, rather
+     * than on its first frame. For figures that are visible before their
+     * trigger fires - without it the finished number shows, then snaps to
+     * zero when the count starts. The caller owns giving assistive
+     * technology the real value, since the visible text is briefly wrong.
+     */
+    fromZero?: boolean;
+  } = {},
+) {
   const els = gsap.utils.toArray<HTMLElement>(targets);
   if (!els.length || reduced()) return;
 
-  els.forEach((el) => {
+  els.forEach((el, i) => {
     const final = el.textContent ?? '';
     const match = final.match(/-?[\d,]*\.?\d+/);
     if (!match) return;
@@ -235,11 +252,13 @@ export function count(targets: El, opts: Common = {}) {
     const grouped = raw.includes(',');
     const box = { n: 0 };
 
+    if (opts.fromZero) el.textContent = prefix + (0).toFixed(decimals) + suffix;
+
     gsap.to(box, {
       n: value,
-      duration: 1.9,
-      ease: 'power2.out',
-      delay: opts.delay ?? 0,
+      duration: opts.duration ?? 1.9,
+      ease: opts.ease ?? 'power2.out',
+      delay: (opts.delay ?? 0) + i * (opts.stagger ?? 0),
       snap: decimals ? { n: 1 / 10 ** decimals } : { n: 1 },
       onUpdate: () => {
         const n = decimals ? box.n.toFixed(decimals) : Math.round(box.n).toString();
