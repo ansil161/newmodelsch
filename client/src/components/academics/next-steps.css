@@ -1,0 +1,627 @@
+/* ==========================================================================
+   02b - NEXT STEPS
+   --------------------------------------------------------------------------
+   An art-directed spread on the page ground: copy top left, one large
+   circular portrait with rings and a yellow badge, four path panels floating
+   around it, soft blobs at the corners and a pencil sprig bottom right.
+
+   From 1180px the stage is a size container and everything on it is placed
+   and sized in `cqi` - 100cqi is the stage's width - so the composition
+   scales as one drawing. Each panel and the portrait are containers too,
+   so what is inside them is sized against them.
+
+   The accents are held slightly desaturated so no one colour wins: lavender,
+   yellow, green and blue for the four paths, coral for the written word.
+   ========================================================================== */
+
+.nx {
+  --nx-lav: #8a7fc2;
+  --nx-lav-soft: #f3f0f8;
+  --nx-lav-ink: #5d519a;
+  --nx-sun: #f2b544;
+  --nx-sun-soft: #fbf3e2;
+  --nx-green: #6f9d73;
+  --nx-green-soft: #edf3ea;
+  --nx-green-ink: #3d6b45;
+  --nx-blue: #6d8fbf;
+  --nx-blue-soft: #edf2f8;
+  --nx-blue-ink: #2f5fa8;
+  --nx-coral: #cf5f3b;
+  --nx-mist: #dde7f1;
+  --nx-hair: rgba(22, 35, 60, 0.16);
+
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  padding-block: clamp(72px, 7vw, 112px) clamp(80px, 8vw, 128px);
+  background: var(--ivory);
+  color: var(--navy);
+}
+
+/* ==========================================================================
+   Background layer - corner blobs and the sprig
+   ========================================================================== */
+.nx__corner {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.nx__corner--tr {
+  top: clamp(-130px, -8vw, -60px);
+  right: clamp(-120px, -6.5vw, -50px);
+  width: clamp(200px, 22vw, 360px);
+  aspect-ratio: 1.15;
+  border-radius: 46% 54% 60% 40% / 42% 38% 62% 58%;
+  background: #e3ebde;
+}
+
+.nx__corner--bl {
+  left: clamp(-150px, -8.5vw, -60px);
+  bottom: clamp(-170px, -10vw, -70px);
+  width: clamp(240px, 27vw, 440px);
+  aspect-ratio: 1;
+  border-radius: 58% 42% 38% 62% / 55% 60% 40% 45%;
+  background: #f5d68f;
+  opacity: 0.72;
+}
+
+.nx__sprig {
+  position: absolute;
+  z-index: -1;
+  right: clamp(10px, 2.2vw, 44px);
+  bottom: 0;
+  width: clamp(80px, 8.5vw, 140px);
+  height: auto;
+  color: var(--ink-4);
+  pointer-events: none;
+}
+
+.nx__sprig path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ==========================================================================
+   The stage - a column first
+   ========================================================================== */
+.nx__stage {
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+}
+
+.nx__counter,
+.nx__rail,
+.nx__foot {
+  display: none;
+}
+
+/* ==========================================================================
+   The copy
+   ========================================================================== */
+.nx__copy {
+  position: relative;
+  z-index: 3;
+  max-width: 36rem;
+}
+
+.nx__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 clamp(14px, 1.6cqi, 22px);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.15cqi, 1.1rem);
+  line-height: 1;
+  color: var(--navy);
+}
+
+.nx__eyebrow::after {
+  content: '';
+  width: clamp(48px, 6cqi, 88px);
+  height: 1px;
+  background: var(--nx-hair);
+}
+
+.nx__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: clamp(2.3rem, 4.1cqi, 3.7rem);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  color: var(--navy);
+}
+
+.nx__script {
+  position: relative;
+  display: inline-block;
+  padding-inline: 0.02em 0.06em;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.24em;
+  line-height: 0.8;
+  letter-spacing: 0;
+  color: var(--nx-coral);
+  rotate: -2deg;
+}
+
+.nx .nx__swash {
+  position: absolute;
+  left: -2%;
+  top: 90%;
+  width: 104%;
+  color: var(--nx-coral);
+  pointer-events: none;
+}
+
+.nx__lead {
+  margin: clamp(18px, 2.2cqi, 30px) 0 0;
+  max-width: 40ch;
+  font-size: clamp(0.95rem, 1.12cqi, 1.0625rem);
+  line-height: 1.7;
+  color: var(--slate);
+}
+
+.nx__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: clamp(26px, 3cqi, 40px);
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.nx__cta-disc {
+  display: grid;
+  place-items: center;
+  width: clamp(44px, 3.9cqi, 54px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow:
+    0 1px 2px rgba(50, 38, 18, 0.06),
+    0 12px 26px -16px rgba(50, 38, 18, 0.4);
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nx__cta:hover .nx__cta-disc {
+  transform: translateX(3px);
+}
+
+.nx__cta-label {
+  font-size: 0.8125rem;
+  font-weight: 560;
+  line-height: 1.3;
+}
+
+.nx__cta:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 6px;
+  border-radius: var(--r-pill);
+}
+
+/* ==========================================================================
+   The portrait
+   ========================================================================== */
+.nx__hero {
+  position: relative;
+  z-index: 2;
+  container-type: inline-size;
+  width: min(76vw, 440px);
+  aspect-ratio: 1;
+  margin: clamp(72px, 16vw, 104px) auto clamp(96px, 20vw, 128px);
+}
+
+.nx__blob {
+  position: absolute;
+  inset: -4% -8% -3% -1%;
+  border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
+  background: var(--nx-mist);
+  rotate: 8deg;
+}
+
+.nx__photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--sand);
+}
+
+.nx__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The frame is a group of students; the portrait is one of them. Zoomed
+     from the top edge, so her face stays in the upper third of the circle
+     instead of being pushed out of it. */
+  transform: scale(1.3);
+  transform-origin: 75% 0%;
+  filter: saturate(0.9);
+}
+
+/* The orbit - thin rings, dots, ticks and two labels. */
+.nx__orbit {
+  position: absolute;
+  inset: -22%;
+  width: 144%;
+  height: 144%;
+  /* The reset caps every svg at its container's width; this one is meant to
+     run past the portrait on all four sides. */
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.nx__ring,
+.nx__tick {
+  fill: none;
+  stroke: var(--nx-hair);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.nx__ring--dash {
+  stroke-dasharray: 2 6;
+  stroke: rgba(22, 35, 60, 0.28);
+}
+
+.nx__ring--arc {
+  stroke: var(--navy);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.nx__tick {
+  stroke: rgba(22, 35, 60, 0.4);
+}
+
+.nx__micro {
+  font-family: var(--font-body);
+  font-size: 2.2px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  fill: var(--ink-3);
+}
+
+.nx__node--lav { fill: var(--nx-lav); }
+.nx__node--sun { fill: var(--nx-sun); }
+.nx__node--green { fill: var(--nx-green-ink); }
+.nx__node--coral { fill: var(--nx-coral); }
+.nx__node--ink { fill: var(--navy); }
+.nx__halo--lav { fill: rgba(138, 127, 194, 0.22); }
+.nx__halo--green { fill: rgba(111, 157, 115, 0.22); }
+
+/* The badge, over the foot of the portrait. */
+.nx__badge {
+  position: absolute;
+  left: -4%;
+  top: 57%;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  width: 27%;
+  aspect-ratio: 1;
+  border-radius: 52% 48% 47% 53% / 50% 54% 46% 50%;
+  background: var(--nx-sun);
+  box-shadow: 0 18px 30px -22px rgba(120, 80, 10, 0.6);
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: 7.2cqi;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--navy);
+}
+
+.nx__badge span {
+  display: block;
+}
+
+.nx__badge-label {
+  position: absolute;
+  left: -4%;
+  top: 87.5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 27%;
+  font-family: var(--font-body);
+  font-size: clamp(0.5625rem, 2cqi, 0.6875rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--navy);
+}
+
+.nx__badge-label::after {
+  content: '';
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nx-sun);
+}
+
+/* ==========================================================================
+   The path panels
+   ========================================================================== */
+.nx__paths {
+  display: grid;
+  gap: clamp(72px, 16vw, 92px) 12%;
+  margin: 0;
+  padding: 0 0 0 14%;
+  list-style: none;
+}
+
+.nx-card {
+  position: relative;
+  z-index: 2;
+  container-type: inline-size;
+  max-width: 460px;
+}
+
+.nx-card--lav { --nx-bg: var(--nx-lav-soft); --nx-accent: var(--nx-lav); --nx-ink: var(--nx-lav-ink); }
+.nx-card--sun { --nx-bg: var(--nx-sun-soft); --nx-accent: var(--nx-sun); --nx-ink: var(--nx-coral); }
+.nx-card--green { --nx-bg: var(--nx-green-soft); --nx-accent: var(--nx-green); --nx-ink: var(--nx-green-ink); }
+.nx-card--blue { --nx-bg: var(--nx-blue-soft); --nx-accent: var(--nx-blue); --nx-ink: var(--nx-blue-ink); }
+
+.nx-card__panel {
+  position: relative;
+  min-height: 46cqi;
+  padding: 6.5cqi 7cqi 6cqi 40cqi;
+  border-radius: clamp(18px, 7cqi, 30px);
+  background: var(--nx-bg);
+  box-shadow:
+    0 1px 2px rgba(50, 38, 18, 0.04),
+    0 24px 46px -32px rgba(50, 38, 18, 0.3);
+}
+
+/* The photograph straddles the panel's left edge and rises above its top. */
+.nx-card__photo {
+  position: absolute;
+  left: -17cqi;
+  top: -10cqi;
+  width: 52cqi;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--sand);
+  box-shadow: 0 18px 32px -24px rgba(40, 30, 10, 0.5);
+}
+
+.nx-card__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The colour bubble, on the photograph's upper-left rim. */
+.nx-card__icon {
+  position: absolute;
+  left: -15cqi;
+  top: -8cqi;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: clamp(30px, 11.5cqi, 44px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--nx-accent);
+  color: var(--white);
+  box-shadow: 0 0 0 4px var(--ivory);
+}
+
+.nx-card--sun .nx-card__icon {
+  color: var(--navy);
+}
+
+.nx-card__icon svg {
+  width: 48%;
+  height: 48%;
+}
+
+.nx-card__num {
+  margin: 0 0 2.2cqi;
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 2.9cqi, 11.5px);
+  letter-spacing: 0.12em;
+  color: var(--nx-ink);
+}
+
+.nx-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: clamp(1.1rem, 5.8cqi, 1.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  color: var(--navy);
+}
+
+.nx-card__kicker {
+  margin: 1.8cqi 0 0;
+  font-size: clamp(0.75rem, 3.5cqi, 0.84rem);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--navy);
+}
+
+.nx-card__text {
+  margin: 1.4cqi 0 0;
+  font-size: clamp(0.75rem, 3.4cqi, 0.84rem);
+  line-height: 1.55;
+  color: var(--slate);
+}
+
+.nx-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3.4cqi;
+  font-size: clamp(0.6875rem, 3.1cqi, 0.78rem);
+  font-weight: 600;
+  color: var(--nx-ink);
+  text-decoration: none;
+}
+
+.nx-card__more svg {
+  width: 1.15em;
+  height: 1.15em;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.nx-card__more:hover svg {
+  transform: translateX(3px);
+}
+
+.nx-card__more:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   Tablet - two columns of panels
+   ========================================================================== */
+@media (min-width: 760px) and (max-width: 1179.98px) {
+  .nx__paths {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-left: 9%;
+  }
+}
+
+/* ==========================================================================
+   Desktop - the composed stage
+   --------------------------------------------------------------------------
+   The stage is 100cqi wide and 81cqi tall. Positions are measured off the
+   reference: portrait centred at (54, 29.5) with a radius of 18; panels at
+   1, 7, 4 and 6 o'clock around it, clear of its rim and of each other.
+   ========================================================================== */
+@media (min-width: 1180px) {
+  .nx__stage {
+    display: block;
+    aspect-ratio: 100 / 81;
+  }
+
+  .nx__copy {
+    position: absolute;
+    left: 0;
+    top: 2.5cqi;
+    width: 37cqi;
+    max-width: none;
+  }
+
+  .nx__hero {
+    position: absolute;
+    left: 36cqi;
+    top: 11.5cqi;
+    width: 36cqi;
+    margin: 0;
+  }
+
+  .nx__paths {
+    display: block;
+    padding: 0;
+  }
+
+  .nx-card {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    max-width: none;
+  }
+
+  .nx-card--s1 { --x: 70cqi; --y: 6.2cqi; --w: 29cqi; }
+  .nx-card--s2 { --x: 10cqi; --y: 46cqi; --w: 29cqi; }
+  .nx-card--s3 { --x: 71cqi; --y: 49cqi; --w: 28.5cqi; }
+  .nx-card--s4 { --x: 44cqi; --y: 63.5cqi; --w: 26cqi; }
+
+  /* Page furniture: the counter, the rail, the foot line. */
+  .nx__counter {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+
+  .nx__counter i {
+    width: 40px;
+    height: 1px;
+    background: var(--nx-hair);
+  }
+
+  .nx__rail {
+    position: absolute;
+    right: -2.8cqi;
+    top: 30cqi;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nx__rail span {
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgba(22, 35, 60, 0.35);
+    border-radius: 50%;
+  }
+
+  .nx__rail span.is-on {
+    border-color: var(--navy);
+    background: var(--navy);
+  }
+
+  .nx__rail b {
+    width: 1px;
+    height: 18px;
+    background: var(--nx-hair);
+  }
+
+  .nx__foot {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .nx__foot i {
+    width: 48px;
+    height: 1px;
+    background: var(--nx-hair);
+  }
+}

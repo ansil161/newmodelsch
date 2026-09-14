@@ -296,6 +296,43 @@ export const academicImages: Photo[] = [
 ];
 
 /* ==========================================================================
+   nextStepImages - the Next Steps spread on Academics
+   --------------------------------------------------------------------------
+   Every one of these is cropped to a circle, so each carries its own focus
+   rather than borrowing the entry it shares a file with. The portrait is a
+   group frame zoomed onto one student; replace it with a single senior
+   student, outdoors and in uniform, when the school's shoot arrives.
+   ========================================================================== */
+
+export const nextStepImages = {
+  hero: {
+    id: '1571260899304-425eee4c7efc',
+    alt: 'A senior student holding her books, looking ahead',
+    focus: '92% 20%',
+  },
+  seniorSecondary: {
+    id: '1659985281435-d8d3ea55b55c',
+    alt: 'A student in uniform turning from his desk in class',
+    focus: '50% 42%',
+  },
+  higherEducation: {
+    id: '1627556704290-2b1f5853ff78',
+    alt: 'Graduates throwing their caps outside a university building',
+    focus: '62% 62%',
+  },
+  careers: {
+    id: '1581092160562-40aa08e78837',
+    alt: 'A student drawing up technical plans at a workbench',
+    focus: '40% 55%',
+  },
+  beyond: {
+    id: '1552674605-db6ffd4facb5',
+    alt: 'Students running together at first light',
+    focus: '48% 50%',
+  },
+} satisfies Record<string, Photo>;
+
+/* ==========================================================================
    admissionImages - the gate, the office, the visit
    ========================================================================== */
 

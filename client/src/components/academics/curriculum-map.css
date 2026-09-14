@@ -771,13 +771,26 @@
   }
 }
 
+/* A phone gets a tighter held frame rather than none. Every block that
+   repeats something already on screen goes first - the stage name is the
+   selected tab, the board is on the page above - and the photographs give up
+   height before the copy does. A phone still too short for this flows
+   instead, where every press works and nothing holds the scroll. */
 @media (max-width: 1023px) {
   .cm--pinned .cm__pin {
-    padding-block: 68px 16px;
+    padding-block: 60px 12px;
+  }
+
+  .cm--pinned .cm__frame {
+    gap: 14px;
+  }
+
+  .cm--pinned .cm__stage {
+    gap: 16px;
   }
 
   .cm--pinned .cm__plates {
-    min-height: clamp(180px, 30svh, 300px);
+    min-height: clamp(150px, 24svh, 260px);
   }
 
   .cm--pinned .cm-panel__facts,
@@ -786,13 +799,30 @@
   }
 
   .cm--pinned .cm-panel__title {
-    margin-block: 10px 12px;
-    font-size: clamp(1.5rem, 6.4vw, 2rem);
+    margin-block: 8px 10px;
+    font-size: clamp(1.375rem, 6vw, 2rem);
+  }
+
+  .cm--pinned .cm-panel__desc {
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
   .cm--pinned .cm__foot {
-    margin-top: 14px;
+    margin-top: 10px;
+    padding-top: 8px;
+  }
+}
+
+@media (max-width: 699px) {
+  .cm--pinned .cm-tab {
     padding-top: 10px;
+    padding-bottom: 2px;
+  }
+
+  .cm--pinned .cm-panel__stage,
+  .cm--pinned .cm-panel__kicker > span:last-child {
+    display: none;
   }
 }
 

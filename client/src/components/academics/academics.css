@@ -12,51 +12,7 @@
   margin-bottom: clamp(48px, 6vw, 90px);
 }
 
-/* ==========================================================================
-   After Class 10
-   ========================================================================== */
-.next__head {
-  margin-bottom: clamp(40px, 5vw, 68px);
-}
-
-.next__rows {
-  display: grid;
-  border-top: 1px solid var(--line-strong);
-}
-
-.next__row {
-  display: grid;
-  gap: 8px;
-  padding-block: clamp(24px, 3vw, 38px);
-  border-bottom: 1px solid var(--line);
-}
-
-.next__num {
-  color: var(--sun-deep);
-}
-
-.next__subjects,
-.next__paths {
-  font-size: var(--t-small);
-  color: var(--ink-2);
-  line-height: 1.55;
-}
-
-.next__paths {
-  color: var(--ink-3);
-}
-
-@media (min-width: 860px) {
-  .next__row {
-    grid-template-columns: 4rem minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr);
-    align-items: baseline;
-    column-gap: clamp(20px, 2.6vw, 44px);
-  }
-
-  .next__num {
-    align-self: center;
-  }
-}
+/* After Class 10 lives in `NextSteps.tsx` and `next-steps.css`. */
 
 /* ==========================================================================
    Beyond the syllabus

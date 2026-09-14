@@ -5,7 +5,6 @@ import {
   CURRICULUM_NOTE,
   CURRICULUM_ROWS,
   FUTURE_SKILLS,
-  NEXT_STEPS,
   ROUTES,
   TEACHING_PRINCIPLES,
 } from '@/constants';
@@ -246,47 +245,7 @@ export function AcCurriculum() {
   return <CurriculumMap id="curriculum" stages={CURRICULUM_STAGES} colophon={CURRICULUM_NOTE} />;
 }
 
-/* --------------------------------------------------------------------------
-   02b - AFTER CLASS 10
-   --------------------------------------------------------------------------
-   The school ends at Class 10, so the last thing it owes a family is a clear
-   view of what comes next. Three streams, printed rather than counselled at.
-   -------------------------------------------------------------------------- */
-
-export function AcNext() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    rise(el.querySelectorAll<HTMLElement>('.next__row'), { trigger: el, y: 20, stagger: 0.08 });
-  }, []);
-
-  return (
-    <section ref={scope} className="section section--sand next" id="after-ten">
-      <div className="wrap next__inner">
-        <SectionHead
-          sticker="And then?"
-          title={
-            <>
-              We stop at Class 10. We do not stop{' '}
-              <Mark kind="underline">advising there.</Mark>
-            </>
-          }
-          lead="The three streams a leaver chooses between, and what each one opens up. This is the substance of the Class 9 and 10 counselling conversation, written down."
-          className="next__head"
-        />
-
-        <ol className="next__rows">
-          {NEXT_STEPS.map((step, i) => (
-            <li className="next__row" key={step.id}>
-              <span className="next__num meta">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="fn-h3 next__name">{step.name}</h3>
-              <p className="next__subjects">{step.subjects}</p>
-              <p className="next__paths">{step.pathways}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
+/* 02b - AFTER CLASS 10 lives in `NextSteps.tsx`. */
 
 /* --------------------------------------------------------------------------
    03 - BEYOND THE SYLLABUS
