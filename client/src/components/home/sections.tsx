@@ -19,7 +19,6 @@ import {
   Figure,
   InviteSection,
   Mark,
-  PhotoBreak,
   Script,
   SectionHead,
   StatReveal,
@@ -495,12 +494,4 @@ export function HomeAdmissions() {
       }
     />
   );
-}
-
-/* --------------------------------------------------------------------------
-   The pause between the wall and the ask.
-   -------------------------------------------------------------------------- */
-
-export function HomeBreak() {
-  return <PhotoBreak photos={[studentImages[4], campusImages[8], artsImages[1]]} />;
 }

@@ -1,7 +1,6 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
 import {
   HomeAdmissions,
-  HomeBreak,
   HomeCampus,
   HomeHero,
   HomeJourney,
@@ -44,9 +43,6 @@ export function HomePage() {
 
       {/* 08 - what an ordinary week looks like, as a moving ribbon */}
       <HomeWeek />
-
-      {/* The second pause, between the week and the ask. */}
-      <HomeBreak />
 
       {/* 09 - the ask, and nothing else */}
       <HomeAdmissions />

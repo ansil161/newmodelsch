@@ -6,9 +6,7 @@ export {
   AboutPhilosophy,
   AboutPrincipal,
   AboutFaculty,
-  AboutRecognition,
   AboutAlumni,
-  AboutBreak,
   AboutCta,
 } from './sections';
 

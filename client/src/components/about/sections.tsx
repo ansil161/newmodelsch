@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  ACCREDITATIONS,
   ALUMNI,
   ALUMNI_REACH,
   FACULTY_DEPARTMENTS,
@@ -8,7 +7,6 @@ import {
   HERITAGE_CHAPTERS,
   PHILOSOPHY,
   PRINCIPAL,
-  RECOGNITION,
   ROUTES,
   SCHOOL,
   SCHOOL_FILM,
@@ -34,7 +32,6 @@ import {
   Mark,
   Script,
   PageCover,
-  PhotoBreak,
   SectionHead,
   StatReveal,
   Sticker,
@@ -473,63 +470,6 @@ export function AboutFaculty() {
 }
 
 /* --------------------------------------------------------------------------
-   09 - RECOGNITION
-   -------------------------------------------------------------------------- */
-
-export function AboutRecognition() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    const head = el.querySelector<HTMLElement>('.recog__title');
-    if (head) lines(head, { trigger: el });
-    draw(el, { trigger: el, delay: 0.5 });
-    rise(el.querySelectorAll<HTMLElement>('.recog__badge'), { trigger: el, y: 16, stagger: 0.06, delay: 0.4 });
-  }, []);
-
-  return (
-    <section ref={scope} className="section section--navy recog" id="recognition">
-      <div className="wrap">
-        <div className="recog__head">
-          <Sticker tone="paper" tilt={-2}>
-            Results &amp; recognition
-          </Sticker>
-          <h2 className="recog__title ed-h1">
-            The record, stated <Mark kind="underline">plainly.</Mark>
-          </h2>
-          <p className="lead recog__lead">
-            No inflated statistics and no testimonial we did not receive. That is the school&rsquo;s
-            rule and it is this page&rsquo;s.
-          </p>
-        </div>
-
-        <StatReveal
-          items={RECOGNITION.map((point) => ({
-            value: point.value,
-            label: point.label,
-            detail: point.detail,
-          }))}
-          layout="grid"
-          large
-          className="recog__stats"
-        />
-
-        <ul className="recog__badges">
-          {ACCREDITATIONS.map((badge) => (
-            <li className="recog__badge" key={badge}>
-              <Icon name="check" size={15} />
-              {badge}
-            </li>
-          ))}
-        </ul>
-
-        <p className="recog__foot meta">
-          Figures are published annually and are available broken down by cohort on request from
-          the principal&rsquo;s office.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* --------------------------------------------------------------------------
    10 - ALUMNI
    --------------------------------------------------------------------------
    Four people, told as stories rather than as a card grid: a portrait, what
@@ -601,12 +541,8 @@ export function AboutAlumni() {
 }
 
 /* --------------------------------------------------------------------------
-   The pause, and the ask.
+   The ask.
    -------------------------------------------------------------------------- */
-
-export function AboutBreak() {
-  return <PhotoBreak photos={[studentImages[3], campusImages[8], artsImages[2]]} flip />;
-}
 
 /* The quietest of the four, and the widest. One photograph - two children
    walking in - run off the edge of the page, so it reads as a view rather

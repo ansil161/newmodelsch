@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { MouseEvent } from 'react';
 import { VALUES } from '@/constants';
 import { academicImages, resolve, resolveSet, sportsImages, studentImages } from '@/constants/imagery';
@@ -8,7 +7,6 @@ import { ScrollTrigger, gsap } from '@/lib/gsap';
 import { lines, reduced, rise } from '@/lib/motion';
 import { useSmoothScroll } from '@/providers/SmoothScrollProvider';
 import type { ValuePillar } from '@/types';
-import { cx } from '@/utils';
 import './charter.css';
 
 /* ==========================================================================
@@ -210,11 +208,10 @@ export function AboutCharter() {
    ========================================================================== */
 
 function CharterRow({ entry }: { entry: CharterEntry }) {
-  const [open, setOpen] = useState(false);
   const panelId = `charter-panel-${entry.id}`;
 
   return (
-    <li className={cx('ch-row', open && 'is-open')} id={`charter-${entry.id}`}>
+    <li className="ch-row" id={`charter-${entry.id}`}>
       <span className="ch-row__rule" aria-hidden="true" />
 
       <div className="ch-row__lead" data-col>
@@ -256,20 +253,6 @@ function CharterRow({ entry }: { entry: CharterEntry }) {
             </p>
           </div>
         </div>
-
-        <button
-          type="button"
-          className="ch-row__more"
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={() => setOpen((current) => !current)}
-        >
-          <span className="ch-row__more-label">{open ? 'Close' : 'Read more'}</span>
-          <span className="ch-row__arrow" aria-hidden="true">
-            <Arrow />
-            <Arrow />
-          </span>
-        </button>
       </div>
 
       <figure className="ch-row__media" data-col>
@@ -289,13 +272,5 @@ function CharterRow({ entry }: { entry: CharterEntry }) {
         </div>
       </figure>
     </li>
-  );
-}
-
-function Arrow() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M2.5 8h10.5M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-    </svg>
   );
 }

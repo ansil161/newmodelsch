@@ -8,6 +8,5 @@ export {
   HomeVoices,
   HomePrincipal,
   HomeWeek,
-  HomeBreak,
   HomeAdmissions,
 } from './sections';

@@ -161,28 +161,49 @@ function buildMotion(scope: HTMLElement) {
      -------------------------------------------------------------------------- */
   mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
     const slot = scope.querySelector<HTMLElement>('.cm__slot');
+    const inner = scope.querySelector<HTMLElement>('.cm__inner');
     const cols = gsap.utils.toArray<HTMLElement>('.cm-col', scope);
     const panels = gsap.utils.toArray<HTMLElement>('.cm-panel', scope);
-    if (!slot || cols.length !== CHAPTERS.length || panels.length !== CHAPTERS.length) return;
+    if (!slot || !inner || cols.length !== CHAPTERS.length || panels.length !== CHAPTERS.length) {
+      return;
+    }
 
     const frame: Frame = { stack: [], hero: { x: 0, y: 0, scale: 1 } };
 
-    const centre = (el: Element) => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2, h: r.height };
+    /* THE LAYOUT'S GEOMETRY, READ FROM OFFSETS RATHER THAN FROM BOUNDING BOXES.
+
+       `offsetLeft` / `offsetTop` / `offsetWidth` are what the layout put
+       there, and no transform changes them - so the plates can be measured
+       exactly while the timeline is holding them anywhere at all.
+
+       This replaced a version that cleared every transform, read
+       `getBoundingClientRect()`, and relied on the timeline to put the
+       transforms back. It did not: a refresh always lands within a second of
+       the page loading (the provider's settle timer, the route's, each late
+       image), and at the top of the section the timeline has not reached the
+       tweens that hold the opening, so nothing re-applied them. The section
+       opened already split into three columns, then snapped to the hero plate
+       and back behind the anchor as the reader scrolled in.
+
+       Measured relative to `.cm__inner`, the positioned box every plate and
+       the slot share, by walking the offset chain up to it. */
+    const box = (el: HTMLElement) => {
+      let x = 0;
+      let y = 0;
+      for (let n: HTMLElement | null = el; n && n !== inner; n = n.offsetParent as HTMLElement | null) {
+        x += n.offsetLeft;
+        y += n.offsetTop;
+      }
+      return { x, y, w: el.offsetWidth, h: el.offsetHeight };
     };
 
-    /* MEASURED WITH EVERY TRANSFORM CLEARED, AND MEASURED AGAIN ON EVERY
-       REFRESH.
+    const centre = (el: HTMLElement) => {
+      const b = box(el);
+      return { x: b.x + b.w / 2, y: b.y + b.h / 2, h: b.h };
+    };
 
-       A refresh happens while the timeline is halfway through - a resize, a
-       late image, another section re-measuring - and the boxes it would
-       otherwise read are the boxes mid-flight rather than the boxes the
-       layout put there. Clearing first is what makes the reading the layout's
-       answer instead of the animation's. */
+    /* Measured again on every refresh, so a resize re-derives the journey. */
     const measure = () => {
-      gsap.set([...cols, ...panels], { clearProps: 'transform' });
-
       /* MEASURED FROM THE PLATES, NOT FROM THE COLUMNS THEY SIT IN.
 
          The offset is applied to the column, but what has to end up coincident
@@ -198,7 +219,11 @@ function buildMotion(scope: HTMLElement) {
         return { x: plate.x - c.x, y: plate.y - c.y };
       });
 
-      const target = centre(slot);
+      /* The slot is centred on its own `left` / `top` by a CSS translate of
+         -50%, which offsets do not see - so its centre is simply its offset
+         position. */
+      const s = box(slot);
+      const target = { x: s.x, y: s.y, h: s.h };
       frame.hero = {
         x: target.x - plate.x,
         y: target.y - plate.y,
@@ -238,23 +263,37 @@ function buildMotion(scope: HTMLElement) {
       },
     });
 
-    /* THE CLOSING BLOCK'S FROM-STATE IS SET HERE, NOT IN THE STYLESHEET.
+    /* EVERY TWEEN BELOW IS A `fromTo`.
 
-       It shares a grid cell with the heading, so on a desktop one of the two
-       has to start out of the way. Doing it here rather than in CSS keeps the
-       promise the rest of this site makes - that the resting state is the
-       finished state, and that a phone, a printer and a failed script all get
-       a complete section rather than one waiting to be revealed. */
-    gsap.set('.cm__outro .cm__line > span, .cm__outro .cm__mask > *', { yPercent: 110 });
-    gsap.set('.cm__cta', { y: 18, autoAlpha: 0 });
+       The timeline is invalidated on every refresh, and a plain `to` re-reads
+       its starting value the next time it runs - which, after a refresh in
+       the middle of the pin, is its finished value. The closing statement
+       would then start already set, on top of the heading. Writing both ends
+       down makes every state a function of the scroll position alone.
+
+       The closing block's hidden state is therefore set by its own `fromTo`
+       (they render their start immediately), not in the stylesheet, which
+       keeps the promise the rest of this site makes - that the resting state
+       is the finished state, and that a phone, a printer and a failed script
+       all get a complete section rather than one waiting to be revealed. */
 
     /* ---- the heading gives up its place --------------------------------
        It leaves early and it leaves upward, so the corner is empty through
        the middle of the transformation. That emptiness is doing work: it is
        what stops the closing statement reading as a third block of text
        stacked in the same place. */
-    tl.to('.cm__intro', { yPercent: -24, autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0.04);
-    tl.to('.cm__lede', { y: -26, autoAlpha: 0, duration: 0.18, ease: 'power2.in' }, 0.02);
+    tl.fromTo(
+      '.cm__intro',
+      { yPercent: 0, autoAlpha: 1 },
+      { yPercent: -24, autoAlpha: 0, duration: 0.2, ease: 'power2.in' },
+      0.04,
+    );
+    tl.fromTo(
+      '.cm__lede',
+      { y: 0, autoAlpha: 1 },
+      { y: -26, autoAlpha: 0, duration: 0.18, ease: 'power2.in' },
+      0.02,
+    );
 
     /* ---- the plate steps back ------------------------------------------
        One tween, written once and applied to all three plates - because at
@@ -357,21 +396,32 @@ function buildMotion(scope: HTMLElement) {
        property that GSAP composes into the same transform, and starting at
        0.74 means the two never overlap anyway - belt and braces on the one
        element that carries two motions. */
-    tl.to(cols[0], { yPercent: 2.4, duration: 0.26 }, 0.74)
-      .to(cols[1], { yPercent: -3, duration: 0.26 }, 0.74)
-      .to(cols[2], { yPercent: 4, duration: 0.26 }, 0.74);
+    [2.4, -3, 4].forEach((drift, i) => {
+      tl.fromTo(cols[i], { yPercent: 0 }, { yPercent: drift, duration: 0.26 }, 0.74);
+    });
 
     /* ---- the closing block ---------------------------------------------
        Label, then the statement line by line, then the link. Masked rather
        than faded: the lines set themselves from under their own overflow
        boxes, which is how every other headline on this site arrives. */
-    tl.to('.cm__outro .cm__mask > *', { yPercent: 0, duration: 0.16, ease: 'power2.out' }, 0.56)
-      .to(
+    tl.fromTo(
+      '.cm__outro .cm__mask > *',
+      { yPercent: 110 },
+      { yPercent: 0, duration: 0.16, ease: 'power2.out' },
+      0.56,
+    )
+      .fromTo(
         '.cm__outro .cm__line > span',
+        { yPercent: 110 },
         { yPercent: 0, duration: 0.22, stagger: 0.07, ease: 'power3.out' },
         0.6,
       )
-      .to('.cm__cta', { y: 0, autoAlpha: 1, duration: 0.16, ease: 'power2.out' }, 0.76);
+      .fromTo(
+        '.cm__cta',
+        { y: 18, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.16, ease: 'power2.out' },
+        0.76,
+      );
 
     return () => {
       tl.scrollTrigger?.kill();
