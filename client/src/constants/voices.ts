@@ -60,8 +60,8 @@ const staff = (id: string) => need(LEADERSHIP, (p) => p.id === id, `leadership p
 /* --------------------------------------------------------------------------
    01 - Students
 
-   The four who are on film, so the play button on the portrait is real for
-   every one of them rather than for the first.
+   The four who are also on film in the reel on Student Life, which the
+   section's link leads to.
    -------------------------------------------------------------------------- */
 
 const STUDENTS: VoiceStory[] = [
@@ -230,8 +230,6 @@ export const VOICE_SECTION = {
   title: ['Real Voices,', 'True Journeys'],
   cta: { label: 'Watch their stories', to: '/student-life#voices' },
   ctaNote: 'Real people. Real experiences.',
-  /** The handwritten note that points at the play button. */
-  filmNote: 'Watch their story',
   railNote: 'More stories',
 } as const;
 

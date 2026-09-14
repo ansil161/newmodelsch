@@ -277,8 +277,8 @@
 .vx__media {
   grid-area: media;
   position: relative;
-  /* Room above the frame for the play button and the note that points at it,
-     so neither of them has to be placed on a negative offset. */
+  /* Room above the frame for the blobs and the loop thrown round it, so the
+     portrait sits a step lower than the quote beside it. */
   padding-top: clamp(34px, 4.5vw, 78px);
   min-width: 0;
 }
@@ -335,91 +335,6 @@
   width: 126%;
   z-index: 3;
   opacity: 0.92;
-  pointer-events: none;
-}
-
-.vx__play {
-  position: absolute;
-  top: clamp(6px, 1.4vw, 26px);
-  left: -5%;
-  z-index: 5;
-  cursor: pointer;
-}
-
-/* The pale disc the button sits on, so it holds against a busy photograph. */
-.vx__play::before {
-  content: '';
-  position: absolute;
-  inset: -14px -14px -10px -10px;
-  border-radius: 50%;
-  background: var(--vx-wash);
-  opacity: 0.75;
-  z-index: -1;
-}
-
-.vx__play-ring {
-  display: grid;
-  place-items: center;
-  width: clamp(54px, 4.4vw, 66px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--vx-ink);
-  color: var(--white);
-  box-shadow: 0 10px 24px -12px rgba(22, 35, 60, 0.6);
-  transition:
-    transform var(--d-state) var(--ease-out),
-    background var(--d-state) var(--ease-out);
-}
-
-.vx__play-ring svg {
-  margin-left: 2px;
-}
-
-.vx__play:hover .vx__play-ring {
-  transform: scale(1.07);
-  background: var(--vx-pen);
-}
-
-.vx__play:active .vx__play-ring {
-  transform: scale(0.96);
-}
-
-.vx__filmnote {
-  position: absolute;
-  top: 0;
-  right: 1%;
-  z-index: 5;
-  display: flex;
-  align-items: flex-start;
-  gap: 2px;
-  pointer-events: none;
-}
-
-.vx__filmnote-ink {
-  font-family: var(--font-hand);
-  font-size: clamp(1.05rem, 1.25vw, 1.35rem);
-  font-weight: 600;
-  line-height: 1.02;
-  color: var(--vx-ink);
-  rotate: -4deg;
-  max-width: 9ch;
-}
-
-/* Points back down and to the left, at the play button on the far shoulder
-   of the frame. */
-.vx__filmnote-arrow {
-  order: -1;
-  width: clamp(34px, 3vw, 46px);
-  margin-top: 16px;
-  rotate: 152deg;
-}
-
-.vx__sparks {
-  position: absolute;
-  top: clamp(0px, 0.8vw, 14px);
-  left: 16%;
-  width: clamp(26px, 2.2vw, 34px);
-  z-index: 4;
   pointer-events: none;
 }
 
@@ -600,30 +515,69 @@
   border-radius: var(--r-lg);
   box-shadow:
     inset 0 0 0 1px var(--vx-line),
-    0 18px 40px -32px rgba(22, 35, 60, 0.5);
-  opacity: 0.84;
+    0 18px 40px -32px rgba(22, 35, 60, 0.4);
   cursor: pointer;
-  /* `translate` rather than `transform`: the card's parent carries the
-     scrubbed depth and this carries the lift, and two declarations fighting
-     over one `transform` is a fight neither of them wins. */
+  /* `translate` and `scale` rather than `transform`: the card's parent
+     carries the scrubbed depth, GSAP writes `transform` here during a
+     category hand-off, and these carry the lift. Separate properties
+     compose; one property fought over does not.
+
+     NO OPACITY HERE, RESTING OR TRANSITIONED. GSAP owns this element's
+     opacity while cards arrive, and a CSS transition on the same property
+     chases every frame GSAP writes 420ms behind it - which is how the rail
+     used to land looking faded. Emphasis is carried by the edge, the lift
+     and the ink instead, so an inactive card is quieter, never dimmed. */
   translate: 0 0;
+  scale: 1;
   transition:
     translate var(--d-move) var(--ease-out),
-    box-shadow var(--d-move) var(--ease-out),
-    opacity var(--d-move) var(--ease-out);
+    scale var(--d-move) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out);
 }
 
 .vx__card-btn:hover {
-  opacity: 1;
   translate: 0 -4px;
+  box-shadow:
+    inset 0 0 0 1px var(--line-blue-strong),
+    0 22px 46px -32px rgba(22, 35, 60, 0.45);
 }
 
 .vx__card-btn.is-on {
-  opacity: 1;
   translate: 0 -8px;
+  scale: 1.015;
   box-shadow:
     inset 0 0 0 1.5px var(--vx-pen),
-    0 26px 54px -34px rgba(22, 35, 60, 0.55);
+    0 28px 56px -32px rgba(22, 35, 60, 0.5);
+}
+
+/* The autoplay clock, on the card it is counting down: a hairline track with
+   the blue drawn along it by the same tween that advances the section. Only
+   the active card carries one. */
+.vx__card-btn.is-on::before,
+.vx__card-dwell {
+  position: absolute;
+  left: clamp(22px, 2vw, 30px);
+  right: clamp(22px, 2vw, 30px);
+  bottom: 12px;
+  height: 2px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.vx__card-btn.is-on::before {
+  content: '';
+  background: var(--vx-line);
+}
+
+.vx__card-dwell {
+  background: var(--vx-pen);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+}
+
+.vx__card-btn.is-on .vx__card-dwell {
+  opacity: 1;
 }
 
 .vx__card-mark {
@@ -646,6 +600,13 @@
 .vx__card-face {
   width: clamp(64px, 5.6vw, 84px);
   flex: none;
+  filter: saturate(0.6);
+  transition: filter var(--d-move) var(--ease-out);
+}
+
+.vx__card-btn.is-on .vx__card-face,
+.vx__card-btn:hover .vx__card-face {
+  filter: none;
 }
 
 .vx__card-body {
@@ -666,6 +627,13 @@
   padding-right: 26px;
   font-size: clamp(0.875rem, 0.95vw, 0.9375rem);
   line-height: 1.64;
+  /* Slate on the quieter cards (6.4:1, still an easy read), the school blue
+     on the one that is open above. */
+  color: var(--vx-quiet);
+  transition: color var(--d-move) var(--ease-out);
+}
+
+.vx__card-btn.is-on .vx__card-quote {
   color: var(--vx-pen);
 }
 
@@ -748,8 +716,9 @@
   scroll-snap-align: center;
 }
 
-/* On a phone the rail is a thumb rail. No ScrollTrigger is built at this
-   width - see the guard in HomeVoices - so this is the whole behaviour. */
+/* On a phone and a small tablet the rail is its own scroller: a thumb pushes
+   it, and a change of voice scrolls it - the rail, never the page - to the
+   active card. The switch to a transformed track is at 900px, below. */
 .vx__rail {
   margin-inline: calc(var(--gutter) * -1);
   padding-inline: var(--gutter);
@@ -770,10 +739,6 @@
 
 .vx__media {
   max-width: 460px;
-}
-
-.vx__filmnote {
-  right: -2%;
 }
 
 /* ==========================================================================
@@ -842,6 +807,20 @@
 
   .vx__card {
     flex: 0 0 clamp(300px, 42vw, 400px);
+  }
+}
+
+/* From here up the track is a loop that slides one card per voice by a
+   transform, so the rail stops being a native scroller - two things moving
+   one strip is how a card ends up half off the edge. */
+@media (min-width: 900px) {
+  .vx__rail {
+    /* `clip` is not a scroll container, so without this the rail's automatic
+       minimum width is the whole row of cards - and it would stretch the
+       grid above it past the edge of the page. */
+    min-width: 0;
+    overflow: clip;
+    scroll-snap-type: none;
   }
 }
 
@@ -922,114 +901,15 @@
 /* ==========================================================================
    Reduced motion
    --------------------------------------------------------------------------
-   Nothing is built in the section's setup when motion is off, so there is
-   nothing here to switch off. The two lines below are the CSS transitions the
-   stylesheet owns rather than GSAP - the card lift and the smooth scroll of
-   the index strip - which the global reduced-motion block already flattens;
-   `scroll-behavior` on the strip is set in script, and reads the same query.
+   No GSAP is built when motion is off: changes are instantaneous and
+   autoplay does not run, so the clock's track on the active card would be a
+   line that never fills. The CSS transitions the stylesheet owns - the card
+   lift, the ink - are already flattened by the global reduced-motion block.
    ========================================================================== */
 
-/* ==========================================================================
-   THE FILM
-   --------------------------------------------------------------------------
-   The clip, over the page. A native <dialog> in the browser's top layer, so
-   it is not clipped by the section's own `overflow: clip` and it comes with
-   the focus trap, the Escape key and the inert page already done.
-   ========================================================================== */
-
-.vxf {
-  width: min(1040px, calc(100vw - 2 * var(--gutter)));
-  max-width: none;
-  max-height: calc(100vh - 8vh);
-  margin: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--navy);
-  overflow: visible;
-}
-
-.vxf::backdrop {
-  background: rgba(14, 24, 41, 0.72);
-  backdrop-filter: blur(3px);
-}
-
-.vxf__frame {
-  display: grid;
-  gap: clamp(12px, 1.4vw, 18px);
-  padding: clamp(16px, 1.8vw, 24px);
-  background: var(--chalk);
-  border-radius: var(--r-lg);
-  box-shadow: 0 40px 90px -40px rgba(10, 29, 61, 0.55);
-}
-
-.vxf__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.vxf__who {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-.vxf__who b {
-  font-size: clamp(1rem, 1.2vw, 1.125rem);
-  font-weight: 620;
-  letter-spacing: -0.01em;
-}
-
-.vxf__close {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  aspect-ratio: 1;
-  flex: none;
-  border-radius: 50%;
-  color: var(--navy);
-  box-shadow: inset 0 0 0 1.5px rgba(22, 35, 60, 0.14);
-  cursor: pointer;
-  transition:
-    background var(--d-state) var(--ease-out),
-    color var(--d-state) var(--ease-out);
-}
-
-.vxf__close:hover {
-  background: var(--navy);
-  color: var(--white);
-}
-
-.vxf__video {
-  width: 100%;
-  /* The clips are shot portrait for the reel on Student Life, so the frame is
-     a letterbox the film sits inside rather than a crop of it. */
-  max-height: min(66vh, 620px);
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-  background: var(--navy-deep);
-  border-radius: var(--r-frame);
-}
-
-.vxf__error {
-  padding: clamp(28px, 5vw, 56px) clamp(20px, 3vw, 36px);
-  background: var(--mist);
-  border-radius: var(--r-frame);
-  text-align: center;
-  font-size: var(--t-small);
-  line-height: 1.7;
-  color: var(--slate);
-}
-
-.vxf__error code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  color: var(--navy);
-}
-
-.vxf__foot {
-  color: var(--slate);
+@media (prefers-reduced-motion: reduce) {
+  .vx__card-btn.is-on::before,
+  .vx__card-dwell {
+    display: none;
+  }
 }

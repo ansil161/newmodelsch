@@ -1,8 +1,12 @@
+import { useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { JOURNEY_NODES } from '@/constants';
 import { academicImages, resolve, resolveSet, studentImages } from '@/constants/imagery';
 import type { Photo } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
-import { gsap } from '@/lib/gsap';
+import { ScrollTrigger, gsap } from '@/lib/gsap';
+import { rise } from '@/lib/motion';
+import { useSmoothScroll } from '@/providers/SmoothScrollProvider';
 import './journey.css';
 
 /* ==========================================================================
@@ -11,39 +15,40 @@ import './journey.css';
    Thirteen years as five sheets of paper, fed past a statement that does not
    move.
 
-   THE COMPOSITION IS TWO THINGS THAT BEHAVE DIFFERENTLY
+     LEFT   the claim. Set once, the largest thing on the screen, and still
+            for the whole length of the pin. Under it, a five-step indicator.
+     RIGHT  the stack. One sheet on top with its photograph, the next two
+            showing as ledges beneath it, the ones already read lifted away.
 
-     LEFT   the claim. It is set once, it is the largest thing on the screen,
-            and for the whole length of the pin it does not move at all. It
-            is the fixed point the sequence is measured against.
-     RIGHT  the sheets. Each one rises from below the frame, comes to rest in
-            the middle of the right column, and is pushed up out of the top
-            by the one behind it.
+   ONE STAGE AT A TIME
 
-   WHY THE STACKING ORDER IS FORWARDS HERE, AND BACKWARDS ON THE CAMPUS DECK
+   The earlier version scrubbed every sheet on its own overlapping tweens, so
+   mid-scroll two sheets sat in the same place half-transparent and their
+   sentences printed through each other. Now the scroll does not move the
+   sheets at all. It chooses a STAGE, and a change of stage plays one
+   timeline, always in the same order:
 
-   Two sections on this site move cards and they stack in opposite
-   directions, which looks like an inconsistency and is not.
+     1. the old words leave            opacity 0, y -12       0.30s
+     2. the sheets change places       the stack moves        0.80s
+     3. the new photograph arrives
+     4. the new words arrive           opacity 0 -> 1, y 12   0.45s
 
-   The campus section is a DECK: cards are taken off the top, so the one
-   leaving has to pass in FRONT of the one it uncovers, and `z-index` runs
-   backwards.
+   Only the top sheet ever has visible words. Every other sheet is a shell -
+   paper, rule and shadow - so the sheets can overlap freely while no two
+   sentences can.
 
-   This is a FEED: sheets are pushed through from behind, so the one arriving
-   has to pass in FRONT of the one it displaces, and `z-index` runs forwards.
-   The outgoing sheet slips behind its successor and out of the top, which is
-   what "one thing replacing another" looks like when it is paper rather than
-   pixels.
+   THE LOCK
 
-   THE FOUR THINGS THE SCROLL DRIVES
+   While a change is playing, the scroll can keep asking for stages; the
+   latest request is remembered and nothing else happens. When the timeline
+   finishes it goes straight to that stage - never through the ones in
+   between - so a fast scroll is one clean change rather than five flashes.
 
-     1. the sheet   yPercent from below the frame, to rest, to above it
-     2. the weight  scale 0.96 into rest and 0.94 out of it, and a partial
-                    fade on the way out only
-     3. the plate   the photograph behind each sheet, travelling at a
-                    slightly different rate, which is the whole of the depth
-                    in this section
-     4. the left    nothing. It is the fixed point.
+   BELOW 900px, OR UNDER REDUCED MOTION
+
+   No pin and no stack. Five stages down the page, each its photograph with
+   its sheet laid across the foot of it; on a phone the words rise in gently
+   as each sheet reaches the screen.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -87,144 +92,190 @@ const STAGES: Stage[] = JOURNEY_NODES.map((node, i) => ({
 
 const COUNT = STAGES.length;
 
+/** The same questions the stylesheet asks, in the same words. */
+const FEED = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+const COLUMN = '(max-width: 899px) and (prefers-reduced-motion: no-preference)';
+
+/** Screen-heights of scroll per stage while the section is held. */
+const BEAT = 0.85;
+
 /* --------------------------------------------------------------------------
-   Travel
+   The stack
    --------------------------------------------------------------------------
-   Percentages of the sheet's own height, so the composition survives any
-   change to the card size without a number in here moving.
+   Where a sheet rests, by its distance from the top of the stack. Percentages
+   of the sheet's own height, scaled from its foot, so the sheets underneath
+   show as ledges below the one on top however large the sheet is drawn.
 
-   `IN` is far enough below the frame that a sheet is genuinely off-screen
-   before it starts, and `OUT` far enough above it that it is genuinely gone
-   after - the sheet is about three-quarters of the viewport, so a hundred
-   and ten percent of its own height clears the frame in both directions.
+   A sheet already read is lifted up and away and sits ABOVE the stack while
+   it goes, so on the way forward the top sheet is taken off the pile, and on
+   the way back it is laid down onto it.
    -------------------------------------------------------------------------- */
-const IN = 112;
-const OUT = -118;
+interface Pose {
+  yPercent: number;
+  scale: number;
+  autoAlpha: number;
+  zIndex: number;
+}
 
-/** Beats of pin left after the last sheet lands. */
-const TAIL = 0.6;
-
-/** Scroll per beat, as a fraction of the viewport. One screen per stage. */
-const BEAT = 1;
+function pose(offset: number): Pose {
+  if (offset < 0) return { yPercent: -14, scale: 0.97, autoAlpha: 0, zIndex: 50 };
+  if (offset === 0) return { yPercent: 0, scale: 1, autoAlpha: 1, zIndex: 40 };
+  if (offset === 1) return { yPercent: 6, scale: 0.94, autoAlpha: 0.8, zIndex: 30 };
+  if (offset === 2) return { yPercent: 11, scale: 0.88, autoAlpha: 0.4, zIndex: 20 };
+  return { yPercent: 15, scale: 0.84, autoAlpha: 0, zIndex: 10 };
+}
 
 /* ==========================================================================
    Motion
    ========================================================================== */
 
-function buildMotion(scope: HTMLElement) {
+function buildMotion(
+  scope: HTMLElement,
+  onStage: (index: number) => void,
+  run: RefObject<ScrollTrigger | null>,
+) {
   const mm = gsap.matchMedia(scope);
 
-  mm.add(
-    {
-      // The same question the stylesheet asks, in the same words. If the two
-      // ever disagree the section composes itself and then waits for a
-      // timeline that was never built.
-      feed: '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
-    },
-    (context) => {
-      if (!(context.conditions as Record<string, boolean>).feed) return;
+  mm.add(FEED, () => {
+    const cards = gsap.utils.toArray<HTMLElement>('.jr-card', scope);
+    if (cards.length !== COUNT) return;
 
-      const sheets = gsap.utils.toArray<HTMLElement>('.jr-card', scope);
-      if (sheets.length !== COUNT) return;
+    const plates = cards.map((card) => card.querySelector<HTMLElement>('.jr-card__plate'));
+    const copy = cards.map((card) => card.querySelectorAll<HTMLElement>('[data-jr-copy]'));
 
-      const beats = COUNT - 1 + TAIL;
+    /** The stage the stack is resting on, or travelling to. */
+    let shown = 0;
+    /** The stage the scroll is asking for. */
+    let wanted = 0;
+    let travelling: gsap.core.Timeline | null = null;
+
+    /* Put the stack straight onto a stage, with nothing moving. */
+    const place = (index: number) => {
+      cards.forEach((card, i) => {
+        const on = i === index;
+        gsap.set(card, pose(i - index));
+        const plate = plates[i];
+        if (plate) gsap.set(plate, { autoAlpha: on ? 1 : 0, yPercent: 0 });
+        gsap.set(copy[i], { autoAlpha: on ? 1 : 0, y: 0 });
+      });
+      shown = index;
+      wanted = index;
+      onStage(index);
+    };
+
+    /* One change of stage, as one timeline. */
+    const travel = (to: number) => {
+      const from = shown;
+      if (from === to) return;
+
+      const dir = to > from ? 1 : -1;
+      shown = to;
+      onStage(to);
 
       const tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: scope,
-          start: 'top top',
-          end: `+=${Math.round(beats * BEAT * window.innerHeight)}`,
-          // The section, not a descendant. Pinning a child works only while
-          // nothing between it and the viewport establishes a containing
-          // block for a fixed element - a condition a stylesheet can quietly
-          // break later. See the note at the top of `journey.css`.
-          pin: true,
-          pinSpacing: true,
-          scrub: 1,
+        onComplete: () => {
+          travelling = null;
+          if (wanted !== shown) travel(wanted);
         },
       });
+      travelling = tl;
 
-      sheets.forEach((sheet, i) => {
-        const plate = sheet.querySelector<HTMLElement>('.jr-card__plate');
+      // 1. The old words leave, before anything else moves.
+      tl.to(
+        copy[from],
+        { autoAlpha: 0, y: -12 * dir, duration: 0.3, ease: 'power2.in', stagger: 0.03 },
+        0,
+      );
 
-        // The resting state is the finished state: the first sheet is already
-        // where it belongs when the reader arrives, and the rest are waiting
-        // below the frame.
-        if (i === 0) {
-          gsap.set(sheet, { yPercent: 0, scale: 1, opacity: 1 });
-        } else {
-          gsap.set(sheet, { yPercent: IN, scale: 0.96, opacity: 0 });
+      const oldPlate = plates[from];
+      if (oldPlate) {
+        tl.to(oldPlate, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, 0.12);
+      }
 
-          /* Arriving. `power2.out` so the sheet covers most of its distance
-             early and then settles, rather than sliding in at a constant
-             rate - paper fed past a roller decelerates into place. */
-          tl.fromTo(
-            sheet,
-            { yPercent: IN, scale: 0.96 },
-            { yPercent: 0, scale: 1, duration: 1, ease: 'power2.out' },
-            i - 1,
-          );
-
-          /* THE OPACITY IS ITS OWN TWEEN, AND IT FINISHES EARLY.
-
-             Faded across the whole arrival, the incoming sheet is still
-             translucent at the moment it crosses the one it is replacing -
-             so the outgoing statement reads straight through the incoming
-             one and two sentences are legible at once, which is the exact
-             muddle this movement exists to avoid.
-
-             A quarter of a beat, which is comfortably before the two sheets
-             meet: the arrival eases out, so at a quarter of the way through
-             the incoming sheet has only climbed to about a third of the
-             frame and is barely touching its predecessor. By the time they
-             genuinely overlap it is solid paper and simply covers the
-             other. */
-          tl.fromTo(
-            sheet,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.25, ease: 'power2.out' },
-            i - 1,
-          );
-        }
-
-        /* Leaving. Up, a little smaller, and only partly faded - it is
-           passing behind the sheet that replaced it, not dissolving, and a
-           sheet that fades to nothing while still on screen reads as a
-           crossfade. The last stage never leaves; it is what the section
-           comes to rest on. */
-        if (i < COUNT - 1) {
-          tl.to(
-            sheet,
-            { yPercent: OUT, scale: 0.94, opacity: 0.34, duration: 1, ease: 'power2.in' },
-            i,
-          );
-        }
-
-        /* The plate travels at its own rate.
-
-           This is the only depth cue in the section and it is deliberately
-           small: eight percent of the sheet's travel, which at this size is
-           about thirty pixels over a whole screen of scroll. Enough that the
-           photograph and the sheet are visibly two objects rather than one
-           printed panel; not enough that anyone can point at it. */
-        if (plate) {
-          const from = Math.max(i - 1, 0);
-          tl.fromTo(
-            plate,
-            { yPercent: 8 },
-            { yPercent: -8, duration: i + 1 - from },
-            from,
-          );
-        }
+      // 2. The sheets change places. Stacking order changes at once, so a
+      //    sheet lifted off (forward) or laid back on (backward) is in front
+      //    of the one it passes for the whole of its travel.
+      cards.forEach((card, i) => {
+        const { zIndex, ...rest } = pose(i - to);
+        tl.set(card, { zIndex }, 0);
+        tl.to(card, { ...rest, duration: 0.72, ease: 'power3.inOut' }, 0.18);
       });
 
-      return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-      };
-    },
-  );
+      // 3. The new photograph settles in behind the arriving sheet.
+      const newPlate = plates[to];
+      if (newPlate) {
+        tl.fromTo(
+          newPlate,
+          { autoAlpha: 0, yPercent: 5 * dir },
+          { autoAlpha: 1, yPercent: 0, duration: 0.75, ease: 'power3.out' },
+          0.4,
+        );
+      }
+
+      // 4. The new words arrive once their sheet has all but landed.
+      tl.fromTo(
+        copy[to],
+        { autoAlpha: 0, y: 12 * dir },
+        { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', stagger: 0.05 },
+        0.6,
+      );
+    };
+
+    /* Every request goes through here. A running change is never interrupted
+       or stacked on; the latest request waits for it to finish. */
+    const request = (index: number) => {
+      wanted = index;
+      if (!travelling) travel(index);
+    };
+
+    const stageAt = (progress: number) =>
+      gsap.utils.clamp(0, COUNT - 1, Math.floor(progress * COUNT));
+
+    place(0);
+
+    const trigger = ScrollTrigger.create({
+      trigger: scope,
+      start: 'top top',
+      end: () => `+=${Math.round(window.innerHeight * BEAT * COUNT)}`,
+      // The section, not a descendant. See the note at the top of `journey.css`.
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => request(stageAt(self.progress)),
+    });
+
+    run.current = trigger;
+
+    // Arriving mid-section - a reload, a back button - lands on the right
+    // stage without playing the ones before it.
+    const start = stageAt(trigger.progress);
+    if (start !== 0) place(start);
+
+    return () => {
+      travelling?.kill();
+      travelling = null;
+      run.current = null;
+      // Changes of stage run outside the setup, so the context cannot revert
+      // them. Hand the column layout clean elements.
+      [...cards, ...plates, ...copy.flatMap((list) => [...list])].forEach((el) =>
+        el?.removeAttribute('style'),
+      );
+      onStage(0);
+    };
+  });
+
+  // A phone: nothing held, the words on each sheet rise in as it arrives.
+  mm.add(COLUMN, () => {
+    gsap.utils.toArray<HTMLElement>('.jr-card__sheet', scope).forEach((sheet) => {
+      rise(sheet.querySelectorAll('[data-jr-copy]'), {
+        trigger: sheet,
+        start: 'top 88%',
+        y: 12,
+        stagger: 0.05,
+      });
+    });
+  });
 
   return () => mm.revert();
 }
@@ -234,13 +285,27 @@ function buildMotion(scope: HTMLElement) {
    ========================================================================== */
 
 export function HomeJourney() {
-  const scope = useGsapScope<HTMLElement>((_, el) => buildMotion(el), []);
+  const [active, setActive] = useState(0);
+  const run = useRef<ScrollTrigger | null>(null);
+  const { scrollTo } = useSmoothScroll();
+
+  const scope = useGsapScope<HTMLElement>((_, el) => buildMotion(el, setActive, run), []);
+
+  /* A step asks for the middle of its stage's stretch of scroll, so the
+     press and the wheel drive the same run and cannot disagree. */
+  const goTo = (index: number) => {
+    const trigger = run.current;
+    if (!trigger) return;
+    scrollTo(trigger.start + (trigger.end - trigger.start) * ((index + 0.5) / COUNT));
+  };
+
+  const current = STAGES[active];
 
   return (
     <section ref={scope} className="section jr" id="journey">
       <div className="jr__stage">
         <div className="wrap jr__inner">
-          {/* THE FIXED POINT. Nothing in here is animated by the timeline. */}
+          {/* THE FIXED POINT. Nothing in here moves with the stack. */}
           <div className="jr__say">
             <p className="jr__eyebrow">Student journey</p>
 
@@ -255,28 +320,44 @@ export function HomeJourney() {
             </p>
 
             <p className="jr__span">Nursery — Class 10</p>
+
+            {/* Where the reader is. Only drawn while the stack is. */}
+            <nav className="jr-steps" aria-label="Journey stages">
+              <ol className="jr-steps__list">
+                {STAGES.map((stage, i) => (
+                  <li key={stage.id}>
+                    <button
+                      type="button"
+                      className={`jr-step${i === active ? ' is-active' : ''}${i < active ? ' is-past' : ''}`}
+                      aria-current={i === active ? 'step' : undefined}
+                      data-cursor="link"
+                      onClick={() => goTo(i)}
+                    >
+                      <span className="jr-step__bar" aria-hidden="true" />
+                      <span className="jr-step__no">{stage.index}</span>
+                      <span className="sr-only">{stage.category}</span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              <p className="sr-only" aria-live="polite">
+                Stage {active + 1} of {COUNT}: {current.category}, {current.span}.
+              </p>
+            </nav>
           </div>
 
-          {/* THE FEED.
+          {/* THE STACK.
               Every stage is in the document in reading order and stays in the
-              accessibility tree throughout - a stage waiting below the frame
-              is transparent, never removed - so the section is readable in
-              full by someone who never sees a frame of it move.
+              accessibility tree throughout, so the section reads in full for
+              someone who never sees it move.
 
-              THREE LAYERS, EACH OWNING DIFFERENT PROPERTIES, WHICH IS WHY
-              NOTHING HERE NEEDS `overwrite`:
-                .jr-card         the travel.   yPercent / scale / opacity
-                .jr-card__plate  the parallax. yPercent
-                .jr-card__sheet  nothing. It is the paper. */}
+              THREE LAYERS, EACH OWNING DIFFERENT PROPERTIES:
+                .jr-card          the stack.      yPercent / scale / opacity / z
+                .jr-card__plate   the photograph. opacity / yPercent
+                [data-jr-copy]    the words.      opacity / y */}
           <ol className="jr__deck">
             {STAGES.map((stage, i) => (
-              <li
-                className="jr-card"
-                key={stage.id}
-                // Forwards, so an arriving sheet passes in front of the one
-                // it displaces. See the note at the top of this file.
-                style={{ zIndex: i + 1 }}
-              >
+              <li className={`jr-card${i === active ? ' is-active' : ''}`} key={stage.id}>
                 <figure className="jr-card__plate">
                   <img
                     src={resolve(stage.photo, 720)}
@@ -291,10 +372,18 @@ export function HomeJourney() {
 
                 <article className="jr-card__sheet">
                   <span className="jr-card__rule" aria-hidden="true" />
-                  <p className="jr-card__no">{stage.index}</p>
-                  <p className="jr-card__say">{stage.statement}</p>
-                  <p className="jr-card__cat">{stage.category}</p>
-                  <p className="jr-card__when">{stage.span}</p>
+                  <p className="jr-card__no" data-jr-copy>
+                    {stage.index}
+                  </p>
+                  <p className="jr-card__say" data-jr-copy>
+                    {stage.statement}
+                  </p>
+                  <p className="jr-card__cat" data-jr-copy>
+                    {stage.category}
+                  </p>
+                  <p className="jr-card__when" data-jr-copy>
+                    {stage.span}
+                  </p>
                 </article>
               </li>
             ))}

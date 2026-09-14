@@ -1,27 +1,21 @@
-import { useCallback, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import { useRef, useState } from 'react';
+import type { FocusEvent, KeyboardEvent, PointerEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { VOICE_CATEGORIES, VOICE_SECTION } from '@/constants/voices';
-import type { VoiceStory } from '@/types';
+import { resolve, resolveSet } from '@/constants/imagery';
+import type { Photo } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
+import { useMediaQuery, useReducedMotion } from '@/hooks/useMediaQuery';
 import { ScrollTrigger, SplitText, gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import { Figure, Hand, Script } from '@/components/editorial';
-import { VoiceFilm } from './VoiceFilm';
 import './voices.css';
 
 /* ==========================================================================
    07 - COMMUNITY STORIES
    --------------------------------------------------------------------------
-   The one section on this site set in blue on a near-white sheet rather than
-   in the school yellow on ivory. That is deliberate and it happens exactly
-   once: the page turns over from the near-black journey above it into the
-   brightest thing on the homepage, and the change of ink is what tells a
-   reader they have arrived somewhere different rather than at another band of
-   the same document.
-
    THE COMPOSITION
 
    Four columns that are not four equal columns:
@@ -30,169 +24,812 @@ import './voices.css';
               category's own introduction, and the way out to the films.
      QUOTE    one testimonial at display scale, its closing phrase written by
               hand, the person under it, and the position in the set.
-     PORTRAIT the face, tilted a degree and a half, with the play button on
-              its shoulder and a blue line thrown round it.
+     PORTRAIT the face, tilted a degree and a half, with a blue line thrown
+              round it.
      INDEX    Students / Teachers / Alumni / Parents, as a numbered contents
               page rather than as a row of pills.
 
-   Then, underneath, every voice in the category as a rail of cards that
-   travels sideways as the reader scrolls past it.
+   Then, underneath, every voice in the category as a rail of cards. The card
+   for the quote currently open is the active one, and pressing any card opens
+   it above - so the rail is a table of contents for the thing it sits under,
+   not a smaller second testimonial section.
 
-   WHY THE CARDS ARE NOT A SECOND SET OF QUOTES
+   ONE INDEX
 
-   On the reference board the three cards at the foot are a different set of
-   testimonials from the one above them, which means the section shows four
-   quotes and offers no way to read three of them properly. Here the rail is
-   the category's whole cast, the card for the quote currently open is the
-   active one, and pressing any card opens it above. So the rail is a table of
-   contents for the thing it sits under rather than a smaller second
-   testimonial section, and the section has one subject at a time.
+   Every voice in every category sits in one ordered list, and the section
+   holds exactly one number: `activeTestimonialIndex`, a position in it. The
+   category, the quote, the portrait, the name, the counter, the progress
+   line, the active card and the marker behind the index are all read off
+   that number. There is no second "current category" or "current story" to
+   drift out of step with it - pressing Teachers is simply a request for the
+   first teacher's position.
 
-   WHY IT DOES NOT PIN
+   THE MOTION, IN FOUR PARTS
 
-   The brief asked for a pinned horizontal rail. This page already pins three
-   times - the campus deck, the journey, the photo wall - and two of those are
-   the sections immediately before and after this one. A fourth pin here would
-   make three consecutive sections that each take the scroll away, which is
-   the point at which a long page stops reading as a document and starts
-   reading as a series of tolls. So the rail is scrubbed rather than pinned:
-   it travels sideways as the reader passes it, at their speed, and they can
-   leave whenever they like.
+   A. THE ARRIVAL (once). Built as soon as the section mounts - far below the
+      fold, so its hidden from-state is never seen - and played when the
+      section reaches the reader. Any press, and autoplay, finishes it first,
+      so an interrupted arrival cannot leave a heading half faded.
 
-   THE MOTION, IN THREE PARTS
+   B. THE HAND-OFF (every change). Out, then in. The outgoing half animates
+      the voice that is on screen; React only replaces it once that half has
+      finished and the incoming portrait has decoded, so there is never a
+      blank frame between two voices. Exactly one hand-off timeline exists at
+      a time: a press during the outgoing half retargets it, a press during
+      the incoming half completes it and leaves again from a finished state.
 
-   1. THE ARRIVAL (once). Eyebrow, then the headline line by line, then the
-      blue swash drawn under the handwritten line, then the quote, the
-      portrait printing from a clip, the index, and the cards.
+   C. AUTOPLAY. One clock, and it is a tween rather than an interval: it runs
+      only while the section is on screen, stops for a hover over the cards,
+      for keyboard focus inside the section and for a hidden tab, and it is
+      the same tween that draws the progress line on the active card. A press
+      restarts it from nought once the chosen voice has landed.
 
-   2. THE SWAP (on every category or story change). Out, then in - a real
-      hand-off rather than a cross-fade, so the direction of travel says
-      whether the reader went forward or back. About 620ms end to end.
+   D. THE CATEGORY HAND-OFF. When the index crosses into another category,
+      the pieces that belong to a category rather than to one voice - the
+      eyebrow, the introduction, the cards and the marker - travel too.
 
-   3. THE RAIL (scrubbed). Horizontal travel on the track, and a few pixels of
-      counter-movement per card so the row has depth rather than sliding as
-      one sheet.
-
-   With reduced motion none of the three is built. The section is simply
-   already in its finished state and the swap is instantaneous, which is what
-   it should be - a 1ms version of a hand-off is still a hand-off.
+   With reduced motion none of this is built: changes are instantaneous and
+   nothing advances on its own.
    ========================================================================== */
 
-/** The category / story pair the section is currently showing. */
-interface View {
+/** One voice, located: which category it belongs to and where in it. */
+interface Voice {
+  story: (typeof VOICE_CATEGORIES)[number]['stories'][number];
   cat: number;
-  story: number;
+  pos: number;
 }
 
-/** What the entrance timeline needs to know about the swap that caused it. */
+/** What the incoming half needs to know about the change that caused it. */
 interface Swap {
   /** 1 forward, -1 back. Decides which side the new content arrives from. */
   dir: number;
-  /** A category change moves more of the section than a story change does. */
+  /** Whether the category furniture has to come in as well. */
   category: boolean;
 }
 
-/* The outgoing half, in seconds. The incoming half runs about 0.7, so a swap
-   is a little under a second door to door - long enough to read as a
-   deliberate hand-off, short enough that a reader pressing through four
-   categories is never waiting for the section to catch up. */
-const OUT = 0.24;
+type Phase = 'idle' | 'out' | 'in';
 
-/* The pieces a swap moves. Queried rather than held in refs because most of
-   them are replaced by React on every swap, and a ref to a node that has been
-   unmounted is a tween writing to nothing.
+/* Every voice in reading order. Categories are contiguous, so a category's
+   cards are `FIRST_OF[cat] + pos`. */
+const VOICES: Voice[] = VOICE_CATEGORIES.flatMap((category, cat) =>
+  category.stories.map((story, pos) => ({ story, cat, pos })),
+);
+const FIRST_OF = VOICE_CATEGORIES.map((_, cat) =>
+  Math.max(
+    0,
+    VOICES.findIndex((voice) => voice.cat === cat),
+  ),
+);
+const wrap = (i: number) => ((i % VOICES.length) + VOICES.length) % VOICES.length;
+
+/* The outgoing half, in seconds. The incoming half runs about 0.6, so a
+   hand-off is a little under a second door to door. */
+const OUT = 0.3;
+
+/* How long a voice holds once it has fully landed. The hand-off on top of it
+   takes about a second, so the cards slide and the voice changes every three
+   seconds. */
+const DWELL = 2;
+
+/* The rail follows the scroll natively below this width, and is moved by a
+   transform above it. The stylesheet switches at the same point. */
+const NATIVE_RAIL = '(max-width: 899px)';
+const LOOP_RAIL = '(min-width: 900px)';
+
+/* THE RAIL IS A LOOP ON A WIDE SCREEN.
+
+   The cast is rendered several times over, end to end, and the track slides
+   one card per voice: forward is right to left, back is left to right. When
+   the slide runs past the end of one copy it lands on the identical card in
+   the next and is quietly re-based onto the first, so it can keep travelling
+   in the same direction for ever rather than rewinding across the row.
+
+   Enough copies that there are always cards beyond the right-hand edge, even
+   for a two-voice category mid-way through a wrap: at least twelve cards. */
+const copiesFor = (count: number) => Math.max(3, Math.ceil(12 / Math.max(1, count)));
+
+/* The properties a hand-off writes inline, and so the ones it hands back. */
+const MOVED = 'opacity,visibility,transform,clipPath';
+
+/* The portrait's slot. Shared by the <Figure> and by the preloader, so the
+   file the preloader decodes is the file the browser then picks. */
+const PORTRAIT = {
+  width: 720,
+  widths: [420, 720, 1080],
+  sizes: '(max-width: 699px) 74vw, (max-width: 1179px) 40vw, 27vw',
+};
+
+/* --------------------------------------------------------------------------
+   The portrait preloader.
+
+   Each portrait is a fresh <img> (it is keyed by voice), and a fresh lazy,
+   async-decoded image is empty for the frames it takes to arrive. Revealing
+   it in that state prints a blank frame - which is what the old arrival did
+   whenever the reader got there before the photograph did. So the hand-off
+   waits for the incoming file to decode, and never for longer than `limit`.
+   -------------------------------------------------------------------------- */
+/* The small face beside the name. Fetched alongside the portrait but never
+   waited for - it is 66px, and a hand-off should not be held up by it. */
+const FACE = { width: 160, widths: [120, 160, 320], sizes: '66px' };
+
+const warmed = new Set<string>();
+
+function load(photo: Photo, slot: typeof PORTRAIT) {
+  const img = new Image();
+  // `sizes` before `srcset`, so the candidate is chosen against the real slot.
+  img.sizes = slot.sizes;
+  const set = resolveSet(photo, slot.widths);
+  if (set) img.srcset = set;
+  img.src = resolve(photo, slot.width);
+  return img;
+}
+
+function warm(photo: Photo, limit = 700): Promise<void> {
+  if (warmed.has(photo.id) || typeof Image === 'undefined') return Promise.resolve();
+  load(photo, FACE);
+  const img = load(photo, PORTRAIT);
+  const decoded = img.decode().then(
+    () => {
+      warmed.add(photo.id);
+    },
+    () => undefined,
+  );
+  return Promise.race([decoded, new Promise<void>((done) => window.setTimeout(done, limit))]);
+}
+
+/* The pieces a hand-off moves. Queried rather than held in refs because
+   several of them are replaced by React on every change, and a ref to a node
+   that has been unmounted is a tween writing to nothing.
 
    `cards` is the button inside each card rather than the card itself: the
-   card carries the rail's scrubbed parallax, and two timelines writing `y` to
+   card carries the rail's scrubbed depth, and two timelines writing `y` to
    one element is a fight neither of them wins. */
-const parts = (el: HTMLElement) => ({
-  lead: el.querySelector<HTMLElement>('[data-swap="lead"]'),
-  head: el.querySelector<HTMLElement>('[data-swap="head"]'),
-  accent: el.querySelector<HTMLElement>('[data-swap="accent"]'),
-  by: el.querySelector<HTMLElement>('[data-swap="by"]'),
-  portrait: el.querySelector<HTMLElement>('[data-swap="portrait"]'),
-  meter: el.querySelector<HTMLElement>('[data-swap="meter"]'),
-  cards: el.querySelectorAll<HTMLElement>('.vx__card-btn'),
+const parts = (root: HTMLElement) => ({
+  eyebrow: root.querySelector<HTMLElement>('[data-swap="eyebrow"]'),
+  lead: root.querySelector<HTMLElement>('[data-swap="lead"]'),
+  head: root.querySelector<HTMLElement>('[data-swap="head"]'),
+  accent: root.querySelector<HTMLElement>('[data-swap="accent"]'),
+  by: root.querySelector<HTMLElement>('[data-swap="by"]'),
+  portrait: root.querySelector<HTMLElement>('[data-swap="portrait"]'),
+  meter: root.querySelector<HTMLElement>('[data-swap="meter"]'),
+  cards: Array.from(root.querySelectorAll<HTMLElement>('.vx__card-btn')),
 });
 
+type Parts = ReturnType<typeof parts>;
+
+const present = (...nodes: (Element | null | undefined)[]) =>
+  nodes.filter((node): node is HTMLElement => Boolean(node));
+
+function revert(list: { current: SplitText[] }) {
+  list.current.forEach((split) => split.revert());
+  list.current = [];
+}
+
+/* --------------------------------------------------------------------------
+   D. The category hand-off - the half of a change that only happens when the
+   index crosses from one category into another.
+   -------------------------------------------------------------------------- */
+function categoryOut(tl: gsap.core.Timeline, p: Parts, dir: number) {
+  const furniture = present(p.eyebrow, p.lead);
+  if (furniture.length) tl.to(furniture, { x: -18 * dir, autoAlpha: 0 }, 0);
+  if (p.cards.length) tl.to(p.cards, { y: 18, autoAlpha: 0, duration: 0.28, stagger: 0.03 }, 0);
+}
+
+function categoryIn(tl: gsap.core.Timeline, p: Parts, dir: number) {
+  const furniture = present(p.eyebrow, p.lead);
+  if (furniture.length) {
+    tl.fromTo(
+      furniture,
+      { x: 24 * dir, autoAlpha: 0 },
+      { x: 0, autoAlpha: 1, duration: 0.44, stagger: 0.04 },
+      0.04,
+    );
+  }
+  if (p.cards.length) {
+    tl.fromTo(
+      p.cards,
+      { y: 34, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.05 },
+      0.12,
+    );
+  }
+}
+
 export function HomeVoices() {
-  const [view, setView] = useState<View>({ cat: 0, story: 0 });
-  /** The story whose film is open. `null` is the whole closed state. */
-  const [film, setFilm] = useState<VoiceStory | null>(null);
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
+
+  const active = VOICES[activeTestimonialIndex];
+  const category = VOICE_CATEGORIES[active.cat];
+  const stories = category.stories;
+  const current = active.story;
+
+  const wide = useMediaQuery(LOOP_RAIL);
+  const still = useReducedMotion();
+  const loop = wide && !still;
+  const copies = loop ? copiesFor(stories.length) : 1;
 
   const navRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  /** Where focus returns to when the film closes, and whether it has to. */
-  const playRef = useRef<HTMLButtonElement>(null);
-  const wasPlaying = useRef(false);
+  const liveRef = useRef<HTMLSpanElement>(null);
 
-  /** The cards currently in the rail, for the scrubbed depth. Refreshed on
-   *  every category change, because the cast behind them changes with it. */
-  const cardsRef = useRef<HTMLElement[]>([]);
-  const railRef = useRef<ScrollTrigger | null>(null);
+  /* The index as the running animation sees it. `activeRef` is what the DOM
+     is showing; `targetRef` is what was last asked for. They differ only
+     while a hand-off is travelling between them. Everything below reads
+     these rather than state, so no callback can act on a stale index. */
+  const activeRef = useRef(0);
+  const targetRef = useRef(0);
+  const dirRef = useRef(1);
 
-  /** Every SplitText currently holding a piece of this section open.
+  const phase = useRef<Phase>('idle');
+  const transition = useRef<gsap.core.Timeline | null>(null);
+  const pendingIn = useRef<Swap | null>(null);
+  /** Whether the outgoing half took the category furniture with it. */
+  const hidCategory = useRef(false);
+
+  /** Every SplitText a timeline is holding open, per timeline.
    *
-   *  A split replaces the element's own text node with a stack of <div>s, and
-   *  React does not know that: if the quote is re-rendered while a split is
-   *  live, React writes the new sentence into a text node that is no longer
-   *  in the document and the reader keeps looking at the old one. So every
-   *  split is tracked, and reverted before anything is allowed to re-render -
-   *  which is also what puts the quote back to being real text for a screen
-   *  reader and for find-in-page. */
-  const splits = useRef<SplitText[]>([]);
+   *  A split replaces an element's text with a stack of <div>s, so each one is
+   *  reverted before React is allowed to write into that element again - and
+   *  only by the timeline that made it. The old version shared one list and
+   *  reverted all of it from whichever tween finished first, which un-split
+   *  the headline while its own lines were still travelling. */
+  const entrySplits = useRef<SplitText[]>([]);
+  const transitionSplits = useRef<SplitText[]>([]);
 
-  /** Non-null only between the two halves of a swap. */
-  const swap = useRef<Swap | null>(null);
-  const busy = useRef(false);
-  /** The press that arrived while a swap was still running. A reader stepping
-   *  quickly through the four categories should end on the one they last
-   *  pressed, not on whichever one happened to be mid-flight. */
-  const queued = useRef<View | null>(null);
-  const goRef = useRef<((cat: number, story: number) => void) | null>(null);
-  const timeline = useRef<gsap.core.Timeline | null>(null);
-  const mounted = useRef(false);
+  const entry = useRef<gsap.core.Timeline | null>(null);
+  const entryTargets = useRef<Element[]>([]);
+  const entered = useRef(false);
 
-  const category = VOICE_CATEGORIES[view.cat];
-  const stories = category.stories;
-  const current = stories[Math.min(view.story, stories.length - 1)];
+  const dwell = useRef<gsap.core.Tween | null>(null);
+  const dwellBar = useRef<HTMLElement[]>([]);
 
-  const unsplit = useCallback(() => {
-    splits.current.forEach((split) => split.revert());
-    splits.current = [];
-  }, []);
+  /** Whether the rail is currently rendered as a loop, for the functions that
+   *  run outside a render. */
+  const loopRef = useRef(loop);
+  loopRef.current = loop;
+  /** The card position the track is travelling to, so a second request for
+   *  the same place does not restart a slide that is already under way. */
+  const trackGoal = useRef(-1);
+  const inView = useRef(false);
+  const hold = useRef({ hover: false, focus: false, hidden: false });
+
+  /** The GSAP setup has run (it waits for webfonts). Before that, changes
+   *  are applied without animation. */
+  const ready = useRef(false);
+  const alive = useRef(true);
+  const shownCat = useRef(-1);
+  const depthCards = useRef<HTMLElement[]>([]);
 
   /* ------------------------------------------------------------------------
-     Entrance, and the second half of every swap.
-
-     `full` is the once-per-page arrival, which also brings in the furniture
-     that never changes afterwards - the eyebrow, the headline, the index and
-     the decoration.
+     Furniture that follows the index without being part of the hand-off:
+     the marker behind the category, the phone's category strip, the rail's
+     position and the progress line under the quote.
      ------------------------------------------------------------------------ */
-  const enter = useCallback((el: HTMLElement, info: Swap, full: boolean) => {
-    // Anything left split by an interrupted timeline goes back to being text
-    // before this one measures a line box against it.
-    unsplit();
+  const placeMarker = (animate: boolean) => {
+    const nav = navRef.current;
+    const marker = nav?.querySelector<HTMLElement>('.vx__marker');
+    const on = nav?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!nav || !marker || !on) return;
+    const box = nav.getBoundingClientRect();
+    const hit = on.getBoundingClientRect();
+    const to = {
+      x: hit.left - box.left + nav.scrollLeft,
+      y: hit.top - box.top,
+      width: hit.width,
+      height: hit.height,
+      autoAlpha: 1,
+    };
+    gsap.killTweensOf(marker);
+    if (animate) gsap.to(marker, { ...to, duration: 0.55, ease: 'power3.out' });
+    else gsap.set(marker, to);
+  };
 
-    const p = parts(el);
-    const dir = info.dir;
+  /* Moves the rail to the active card.
 
-    /* EVERY TWEEN BELOW IS A `from`, AND A `from` READS THE ELEMENT'S CURRENT
-       STATE AS ITS DESTINATION.
+     WIDE, WITH MOTION   the loop: the active card slides to the left-hand edge
+                         of the rail in the direction of travel - see
+                         `copiesFor` above.
+     WIDE, REDUCED       one copy, and the track is placed rather than slid.
+     NARROW              the rail is its own scroller, so the rail - never the
+                         page, which Lenis owns - is scrolled to the card. */
+  const positionTrack = (pos: number, animate: boolean, dir = 1) => {
+    const rail = railRef.current;
+    const track = trackRef.current;
+    const first = track?.children[0] as HTMLElement | undefined;
+    if (!rail || !track || !first) return;
 
-       React reuses these nodes across a swap - only their text changes - so
-       what they are currently holding is whatever the outgoing half left on
-       them, which is `opacity: 0`. Without this line the incoming content
-       animates from hidden to hidden and the section arrives blank, which is
-       exactly what it did. The inline state has to be cleared before the
-       destination is read, not after. */
-    gsap.set(
-      [p.lead, p.head, p.accent, p.by, p.meter, p.portrait, ...Array.from(p.cards)].filter(Boolean),
-      { clearProps: 'all' },
+    if (window.matchMedia(NATIVE_RAIL).matches) {
+      const card = track.children[pos] as HTMLElement | undefined;
+      gsap.killTweensOf(track, 'x');
+      gsap.set(track, { x: 0 });
+      trackGoal.current = -1;
+      if (!card || rail.scrollWidth <= rail.clientWidth) return;
+      rail.scrollTo({
+        left: Math.max(0, card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2),
+        behavior: animate && !reduced() ? 'smooth' : 'auto',
+      });
+      return;
+    }
+
+    if (rail.scrollLeft) rail.scrollLeft = 0;
+    const second = track.children[1] as HTMLElement | undefined;
+    const slot = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth;
+    if (!slot) return;
+
+    if (!loopRef.current) {
+      const style = getComputedStyle(rail);
+      const inner =
+        rail.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const span = Math.max(0, track.scrollWidth - inner);
+      gsap.killTweensOf(track, 'x');
+      gsap.set(track, { x: -gsap.utils.clamp(0, span, pos * slot) });
+      trackGoal.current = -1;
+      return;
+    }
+
+    // Already sliding there: let the slide finish on its own curve.
+    if (animate && trackGoal.current === pos && gsap.isTweening(track)) return;
+
+    const count = VOICE_CATEGORIES[VOICES[activeRef.current].cat].stories.length;
+    gsap.killTweensOf(track, 'x');
+
+    /* Where the rail is now, in cards, re-based into the first copy - it may
+       be caught mid-slide, or parked past the end of a copy. */
+    let from = -(Number(gsap.getProperty(track, 'x')) || 0) / slot;
+    from = ((from % count) + count) % count;
+    let to = pos;
+    // Forward past the end: carry on into the next copy rather than rewind.
+    if (dir > 0 && to < from - 0.01) to += count;
+    // Back past the start: begin from the same card one copy along.
+    if (dir < 0 && to > from + 0.01) from += count;
+
+    trackGoal.current = pos;
+    gsap.set(track, { x: -from * slot });
+    if (!animate || reduced() || Math.abs(to - from) < 0.01) {
+      gsap.set(track, { x: -pos * slot });
+      return;
+    }
+
+    gsap.to(track, {
+      x: -to * slot,
+      duration: Math.min(1.3, 0.8 + 0.15 * Math.abs(to - from)),
+      ease: 'power3.inOut',
+      // The card it landed on is identical to the one in the first copy.
+      onComplete: () => {
+        gsap.set(track, { x: -pos * slot });
+      },
+    });
+  };
+
+  const syncFurniture = (index: number, animate: boolean) => {
+    const root = scope.current;
+    if (!root) return;
+    const { cat, pos } = VOICES[index];
+    const motion = animate && !reduced();
+    const crossed = shownCat.current !== cat;
+    shownCat.current = cat;
+
+    if (crossed) {
+      depthCards.current = Array.from(root.querySelectorAll<HTMLElement>('.vx__card'));
+      placeMarker(motion);
+
+      // On a phone the index is a scrolling strip. Scroll the strip, never
+      // the page.
+      const nav = navRef.current;
+      const on = nav?.querySelector<HTMLElement>('[aria-selected="true"]');
+      if (nav && on && nav.scrollWidth > nav.clientWidth) {
+        nav.scrollTo({
+          left: on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2,
+          behavior: motion ? 'smooth' : 'auto',
+        });
+      }
+    }
+
+    // A new cast arrives hidden, so its rail is placed rather than travelled.
+    positionTrack(pos, motion && !crossed, dirRef.current);
+
+    const fill = root.querySelector<HTMLElement>('.vx__meter-fill');
+    if (fill) {
+      const to = (pos + 1) / VOICE_CATEGORIES[cat].stories.length;
+      gsap.killTweensOf(fill);
+      if (motion) gsap.to(fill, { scaleX: to, duration: 0.6, ease: 'power3.out' });
+      else gsap.set(fill, { scaleX: to });
+    }
+  };
+
+  /* ------------------------------------------------------------------------
+     C. Autoplay
+     ------------------------------------------------------------------------ */
+  const stopDwell = () => {
+    dwell.current?.kill();
+    dwell.current = null;
+    if (dwellBar.current.length) gsap.set(dwellBar.current, { clearProps: 'transform' });
+    dwellBar.current = [];
+  };
+
+  /* The one place that decides whether the clock runs. Called whenever any of
+     its inputs change; it creates, pauses or resumes the single tween and
+     never makes a second one. */
+  const syncAutoplay = () => {
+    const root = scope.current;
+    if (!root) return;
+    const allowed =
+      ready.current &&
+      entered.current &&
+      inView.current &&
+      !reduced() &&
+      !hold.current.hover &&
+      !hold.current.focus &&
+      !hold.current.hidden;
+
+    if (!allowed) {
+      dwell.current?.pause();
+      return;
+    }
+    if (phase.current !== 'idle') return;
+    if (dwell.current) {
+      dwell.current.resume();
+      return;
+    }
+
+    // Every copy of the active card in the loop counts down together.
+    const bars = Array.from(
+      root.querySelectorAll<HTMLElement>('.vx__card-btn.is-on .vx__card-dwell'),
     );
+    dwellBar.current = bars;
+    dwell.current = gsap.fromTo(
+      bars.length ? bars : {},
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        duration: DWELL,
+        ease: 'none',
+        onComplete: () => {
+          dwell.current = null;
+          request(activeRef.current + 1, { dir: 1 });
+        },
+      },
+    );
+  };
 
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  /** A reader handling the rail directly - a swipe, a wheel, a press - gets a
+   *  full dwell before the rail is moved out from under them. */
+  const restartClock = () => {
+    if (!dwell.current) return;
+    stopDwell();
+    syncAutoplay();
+  };
+
+  /* ------------------------------------------------------------------------
+     A. The arrival
+     ------------------------------------------------------------------------ */
+
+  /* Completes the arrival from wherever it is and hands every element it
+     touched back to the stylesheet. Safe to call at any moment, any number of
+     times: it is what makes an interrupted arrival impossible to strand. */
+  const finishEntry = (resume = true) => {
+    if (entered.current) return;
+    entered.current = true;
+
+    const tl = entry.current;
+    entry.current = null;
+    if (tl) {
+      tl.scrollTrigger?.kill();
+      tl.progress(1, true);
+      tl.kill();
+    }
+    revert(entrySplits);
+    if (entryTargets.current.length) {
+      gsap.set(entryTargets.current, {
+        clearProps: `${MOVED},strokeDasharray,strokeDashoffset`,
+      });
+    }
+    entryTargets.current = [];
+    if (resume) syncAutoplay();
+  };
+
+  const buildEntry = (root: HTMLElement) => {
+    const p = parts(root);
+    const eyebrow = root.querySelector<HTMLElement>('.vx__eyebrow');
+    const title = root.querySelector<HTMLElement>('.vx__title');
+    const cta = root.querySelector<HTMLElement>('.vx__cta');
+    const tabs = Array.from(root.querySelectorAll<HTMLElement>('.vx__tab'));
+    const blobs = Array.from(root.querySelectorAll<HTMLElement>('.vx__blob'));
+
+    /* Every tween is a `fromTo` with its destination written out, except the
+       blobs, whose resting opacity belongs to the stylesheet. A `from` reads
+       whatever the element is holding as its destination, and an element
+       left mid-tween by an earlier timeline is holding the wrong thing. */
+    const tl = gsap.timeline({
+      defaults: { ease: 'power3.out' },
+      onComplete: () => finishEntry(),
+      scrollTrigger: { trigger: root, start: 'top 80%', once: true },
+    });
+
+    // The testimonial first: it is what the reader came down the page for.
+    if (p.portrait) {
+      tl.fromTo(
+        p.portrait,
+        { autoAlpha: 0, scale: 1.045, clipPath: 'inset(0% 0% 12% 0%)' },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          clipPath: 'inset(0% 0% 0% 0%)',
+          duration: 0.85,
+          ease: 'power3.inOut',
+        },
+        0,
+      );
+    }
+    if (p.head) {
+      const split = new SplitText(p.head, {
+        type: 'lines',
+        linesClass: 'vx__line',
+      });
+      entrySplits.current.push(split);
+      tl.fromTo(
+        split.lines,
+        { yPercent: 60, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 0.72, stagger: 0.07 },
+        0.08,
+      );
+    }
+    if (p.accent) {
+      tl.fromTo(
+        p.accent,
+        { clipPath: 'inset(-45% 100% -50% -6%)' },
+        {
+          clipPath: 'inset(-45% -6% -50% -6%)',
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
+        0.34,
+      );
+    }
+    if (p.by) tl.fromTo(p.by, { y: 18, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6 }, 0.4);
+    if (p.meter) tl.fromTo(p.meter, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, 0.48);
+
+    // Then the furniture around it.
+    if (eyebrow)
+      tl.fromTo(eyebrow, { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6 }, 0);
+    if (title) {
+      const split = new SplitText(title, {
+        type: 'lines',
+        linesClass: 'vx__line',
+      });
+      entrySplits.current.push(split);
+      tl.fromTo(
+        split.lines,
+        { yPercent: 55, autoAlpha: 0 },
+        {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 1.05,
+          ease: 'expo.out',
+          stagger: 0.1,
+        },
+        0.1,
+      );
+    }
+    if (p.lead)
+      tl.fromTo(p.lead, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7 }, 0.3);
+    if (cta) tl.fromTo(cta, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7 }, 0.5);
+    if (tabs.length) {
+      tl.fromTo(
+        tabs,
+        { x: 18, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, duration: 0.6, stagger: 0.07 },
+        0.3,
+      );
+    }
+    if (p.cards.length) {
+      tl.fromTo(
+        p.cards,
+        { y: 34, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.75, stagger: 0.07 },
+        0.45,
+      );
+    }
+    if (blobs.length) {
+      tl.from(
+        blobs,
+        {
+          scale: 0.82,
+          autoAlpha: 0,
+          duration: 1.4,
+          ease: 'power2.out',
+          stagger: 0.14,
+        },
+        0,
+      );
+    }
+
+    const strokes: Element[] = [];
+    const draw = (selector: string, at: number) => {
+      const found = Array.from(root.querySelectorAll(selector));
+      if (!found.length) return;
+      strokes.push(...found);
+      tl.fromTo(
+        found,
+        { strokeDasharray: 1, strokeDashoffset: 1 },
+        {
+          strokeDashoffset: 0,
+          duration: 0.85,
+          ease: 'power2.inOut',
+          stagger: 0.12,
+        },
+        at,
+      );
+    };
+    draw('.vx__title [data-stroke]', 0.85);
+    draw('.vx__media [data-stroke]', 0.7);
+    draw('.vx__railnote [data-stroke]', 1);
+
+    entryTargets.current = [
+      ...present(p.portrait, p.accent, p.by, p.meter, p.lead, eyebrow, cta),
+      ...tabs,
+      ...p.cards,
+      ...blobs,
+      ...strokes,
+    ];
+    return tl;
+  };
+
+  /* ------------------------------------------------------------------------
+     B. The hand-off
+     ------------------------------------------------------------------------ */
+
+  /** Asks for a voice. The only way the index ever changes. */
+  const request = (index: number, how: { dir?: number; user?: boolean } = {}) => {
+    const next = wrap(index);
+    // A reader who pressed something is told what happened; a section that
+    // advanced on its own does not talk over whatever they are reading.
+    liveRef.current?.setAttribute('aria-live', how.user ? 'polite' : 'off');
+
+    stopDwell();
+    finishEntry(false);
+    targetRef.current = next;
+    dirRef.current = how.dir ?? (Math.sign(next - activeRef.current) || 1);
+
+    if (!ready.current || reduced()) {
+      commitInstant(next);
+      return;
+    }
+    // The outgoing half commits whatever is latest when it lands.
+    if (phase.current === 'out') return;
+    // Finish landing now; `settleIn` leaves again for the new target.
+    if (phase.current === 'in') {
+      settleIn();
+      return;
+    }
+    if (next === activeRef.current) {
+      syncAutoplay();
+      return;
+    }
+    leave();
+  };
+
+  const commitInstant = (next: number) => {
+    const tl = transition.current;
+    transition.current = null;
+    if (tl) {
+      tl.progress(1, true);
+      tl.kill();
+    }
+    revert(transitionSplits);
+    const root = scope.current;
+    if (root) {
+      const p = parts(root);
+      gsap.set(
+        present(p.eyebrow, p.lead, p.head, p.accent, p.by, p.meter, p.portrait, ...p.cards),
+        {
+          clearProps: MOVED,
+        },
+      );
+    }
+    phase.current = 'idle';
+    pendingIn.current = null;
+
+    if (next === activeRef.current) {
+      syncAutoplay();
+      return;
+    }
+    activeRef.current = next;
+    setActiveTestimonialIndex(next);
+  };
+
+  const leave = () => {
+    const root = scope.current;
+    if (!root) return;
+    const from = activeRef.current;
+    const dir = dirRef.current;
+    const crossing = VOICES[targetRef.current].cat !== VOICES[from].cat;
+    const p = parts(root);
+
+    phase.current = 'out';
+    hidCategory.current = crossing;
+    // Start fetching the incoming portrait while the outgoing one leaves.
+    void warm(VOICES[targetRef.current].story.photo);
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.in', duration: OUT },
+      onComplete: () => commit(from),
+    });
+
+    const voice = present(p.head, p.accent, p.by);
+    if (voice.length) tl.to(voice, { x: -26 * dir, autoAlpha: 0, stagger: 0.04 }, 0);
+    if (p.portrait) tl.to(p.portrait, { scale: 0.97, autoAlpha: 0, duration: OUT + 0.04 }, 0);
+    if (p.meter) tl.to(p.meter, { autoAlpha: 0, duration: 0.24 }, 0);
+    if (crossing) categoryOut(tl, p, dir);
+    // The rail starts sliding as the quote leaves, so the card and the voice
+    // arrive together rather than one after the other.
+    else positionTrack(VOICES[targetRef.current].pos, true, dir);
+    // A change with nothing to move still has to land.
+    tl.to({}, { duration: 0.01 }, OUT + 0.04);
+
+    transition.current = tl;
+  };
+
+  /* Swaps the content once the outgoing half is off screen and the incoming
+     portrait is ready. If the reader asked for something else while this was
+     waiting, it waits for that one instead - bounded by `warm`'s limit, so a
+     slow connection costs a moment, not a stuck section. */
+  const commit = (from: number) => {
+    const decoded = (asked: number): Promise<number> =>
+      warm(VOICES[asked].story.photo).then(() =>
+        targetRef.current === asked ? asked : decoded(targetRef.current),
+      );
+
+    void decoded(targetRef.current).then((to) => {
+      if (!alive.current || phase.current !== 'out') return;
+      transition.current = null;
+      const info: Swap = {
+        dir: dirRef.current,
+        category: hidCategory.current || VOICES[to].cat !== VOICES[from].cat,
+      };
+      // Back where it started: nothing for React to re-render, so bring the
+      // same voice straight back in.
+      if (to === from) {
+        arrive(info);
+        return;
+      }
+      pendingIn.current = info;
+      activeRef.current = to;
+      setActiveTestimonialIndex(to);
+    });
+  };
+
+  const arrive = (info: Swap) => {
+    const root = scope.current;
+    if (!root) return;
+    const p = parts(root);
+
+    /* THE INCOMING STATE IS SET, NOT READ.
+
+       React reuses most of these nodes across a change - only their text is
+       new - so they are still holding what the outgoing half left on them.
+       They are cleared first, and every tween below names both ends, so the
+       destination is always "visible" whatever state the node arrived in. */
+    const every = present(
+      p.eyebrow,
+      p.lead,
+      p.head,
+      p.accent,
+      p.by,
+      p.meter,
+      p.portrait,
+      ...p.cards,
+    );
+    gsap.killTweensOf(every);
+    gsap.set(every, { clearProps: MOVED });
+    phase.current = 'in';
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power3.out' },
+      onComplete: settleIn,
+    });
 
     if (p.portrait) {
       tl.fromTo(
@@ -202,337 +839,191 @@ export function HomeVoices() {
           autoAlpha: 1,
           scale: 1,
           clipPath: 'inset(0% 0% 0% 0%)',
-          duration: full ? 0.85 : 0.58,
+          duration: 0.58,
           ease: 'power3.inOut',
         },
         0,
       );
     }
-
-    /* The quote arrives line by line. Split without a mask and reverted the
-       moment it lands: the handwritten line underneath hangs below its own
-       baseline, and a line mask would clip its tail. Reverting also puts the
-       quote back to being real text - a sentence left as a stack of <div>s is
-       a sentence a screen reader reads as a stack of fragments. */
     if (p.head) {
-      const split = new SplitText(p.head, { type: 'lines', linesClass: 'vx__line' });
-      splits.current.push(split);
-      tl.from(
+      const split = new SplitText(p.head, {
+        type: 'lines',
+        linesClass: 'vx__line',
+      });
+      transitionSplits.current.push(split);
+      tl.fromTo(
         split.lines,
-        {
-          yPercent: 60,
-          autoAlpha: 0,
-          duration: full ? 0.72 : 0.48,
-          stagger: full ? 0.075 : 0.05,
-          onComplete: unsplit,
-        },
+        { yPercent: 60, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 0.48, stagger: 0.05 },
         0.06,
       );
     }
-
-    /* The handwriting is written on left to right rather than faded up, which
-       is the gesture the invitation spreads use for their annotations. */
     if (p.accent) {
       tl.fromTo(
         p.accent,
         { clipPath: 'inset(-45% 100% -50% -6%)' },
-        { clipPath: 'inset(-45% -6% -50% -6%)', duration: full ? 0.62 : 0.42, ease: 'power2.inOut' },
-        full ? 0.32 : 0.2,
-      );
-    }
-
-    if (p.by) tl.from(p.by, { y: 18, autoAlpha: 0, duration: full ? 0.6 : 0.38 }, full ? 0.42 : 0.26);
-    if (p.meter) tl.from(p.meter, { autoAlpha: 0, duration: full ? 0.5 : 0.32 }, full ? 0.5 : 0.3);
-    if (info.category && p.lead) {
-      tl.from(p.lead, { x: 24 * dir, autoAlpha: 0, duration: 0.44 }, 0.04);
-    }
-
-    // The cards only re-enter when the cast behind them has actually changed.
-    if ((info.category || full) && p.cards.length) {
-      tl.from(
-        p.cards,
-        { y: 34, autoAlpha: 0, duration: full ? 0.8 : 0.46, stagger: full ? 0.08 : 0.05 },
-        full ? 0.55 : 0.1,
-      );
-    }
-
-    if (!full) return tl;
-
-    const eyebrow = el.querySelector<HTMLElement>('.vx__eyebrow');
-    const title = el.querySelector<HTMLElement>('.vx__title');
-    const cta = el.querySelector<HTMLElement>('.vx__cta');
-    const tabs = el.querySelectorAll<HTMLElement>('.vx__tab');
-
-    if (eyebrow) tl.from(eyebrow, { y: 14, autoAlpha: 0, duration: 0.6 }, 0);
-    if (title) {
-      const split = new SplitText(title, { type: 'lines', linesClass: 'vx__line' });
-      splits.current.push(split);
-      tl.from(
-        split.lines,
         {
-          yPercent: 55,
-          autoAlpha: 0,
-          duration: 1.05,
-          ease: 'expo.out',
-          stagger: 0.1,
-          onComplete: unsplit,
+          clipPath: 'inset(-45% -6% -50% -6%)',
+          duration: 0.42,
+          ease: 'power2.inOut',
         },
-        0.1,
+        0.2,
       );
-      drawStrokes(tl, title.querySelectorAll('[data-stroke]'), 0.85);
     }
-    if (cta) tl.from(cta, { y: 16, autoAlpha: 0, duration: 0.7 }, 0.62);
-    if (tabs.length) tl.from(tabs, { x: 18, autoAlpha: 0, duration: 0.6, stagger: 0.07 }, 0.4);
+    if (p.by)
+      tl.fromTo(p.by, { y: 18, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.38 }, 0.26);
+    if (p.meter) tl.fromTo(p.meter, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.32 }, 0.3);
+    if (info.category) categoryIn(tl, p, info.dir);
 
-    // The decoration drifts in behind everything rather than with it.
-    tl.from(
-      el.querySelectorAll<HTMLElement>('.vx__blob'),
-      { scale: 0.82, autoAlpha: 0, duration: 1.5, ease: 'power2.out', stagger: 0.14 },
-      0,
-    );
-    drawStrokes(tl, el.querySelectorAll('.vx__media [data-stroke]'), 0.7);
-    drawStrokes(tl, el.querySelectorAll('.vx__railnote [data-stroke]'), 1);
+    transition.current = tl;
+  };
 
-    return tl;
-  }, [unsplit]);
+  /* The incoming half has landed - or has been told to land now. Either way
+     the section ends in its finished state with nothing left inline, and then
+     either leaves again for a newer request or starts the clock. */
+  const settleIn = () => {
+    if (phase.current !== 'in') return;
+    const tl = transition.current;
+    transition.current = null;
+    if (tl) {
+      tl.progress(1, true);
+      tl.kill();
+    }
+    revert(transitionSplits);
+    const root = scope.current;
+    if (root) {
+      const p = parts(root);
+      gsap.set(
+        present(p.eyebrow, p.lead, p.head, p.accent, p.by, p.meter, p.portrait, ...p.cards),
+        {
+          clearProps: MOVED,
+        },
+      );
+    }
+    phase.current = 'idle';
+
+    if (targetRef.current !== activeRef.current) {
+      leave();
+      return;
+    }
+    void warm(VOICES[wrap(activeRef.current + 1)].story.photo);
+    syncAutoplay();
+  };
 
   /* ------------------------------------------------------------------------
-     The section's own setup: the index marker, the rail, and the arrival.
+     The section's own setup. Everything it creates is inside the GSAP
+     context and dies with it; the timelines created later, from presses and
+     from the clock, are killed by hand in the teardown.
+
+     The functions it calls read only refs, so capturing the first render's
+     copies of them is safe.
      ------------------------------------------------------------------------ */
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    /* ---- the block behind the active category.
-       Measured off the button rather than computed from an index, so the same
-       few lines serve the vertical index on a desktop and the horizontal
-       strip on a phone. */
-    const marker = el.querySelector<HTMLElement>('.vx__marker');
-    const place = () => {
-      const nav = navRef.current;
-      const active = nav?.querySelector<HTMLElement>('[aria-selected="true"]');
-      if (!nav || !marker || !active) return;
-      const box = nav.getBoundingClientRect();
-      const hit = active.getBoundingClientRect();
-      gsap.set(marker, {
-        x: hit.left - box.left + nav.scrollLeft,
-        y: hit.top - box.top,
-        width: hit.width,
-        height: hit.height,
-        autoAlpha: 1,
-      });
-    };
+  const scope = useGsapScope<HTMLElement>((_, root) => {
+    alive.current = true;
+    ready.current = true;
+    placeMarker(false);
+    void warm(VOICES[activeRef.current].story.photo, 1500);
+    void warm(VOICES[wrap(activeRef.current + 1)].story.photo);
 
-    place();
-    const onResize = () => place();
-    window.addEventListener('resize', onResize);
+    if (reduced()) entered.current = true;
+    else if (!entered.current) entry.current = buildEntry(root);
 
-    /* ---- the rail.
-       The travel is read on every frame rather than captured once, so a
-       category with a different number of voices needs no re-measure. */
-    const track = trackRef.current;
-    const rail = el.querySelector<HTMLElement>('.vx__rail');
-
-    if (track && rail && !reduced() && !window.matchMedia('(max-width: 899px)').matches) {
-      const span = () => Math.max(0, track.scrollWidth - rail.clientWidth);
-
-      railRef.current = ScrollTrigger.create({
+    /* ---- the rail's depth: a few pixels of counter-movement per card,
+       alternating down the row, so it has depth rather than sliding as one
+       sheet. The rail's horizontal position belongs to the index, not to the
+       scroll, so the active card is always the whole one. */
+    const rail = railRef.current;
+    if (rail && !reduced() && !window.matchMedia(NATIVE_RAIL).matches) {
+      ScrollTrigger.create({
         trigger: rail,
-        /* The rail rests at nought while it is being read and travels as the
-           reader leaves it. Starting the scrub at the point the rail enters
-           the viewport would mean it had already moved a third of its span by
-           the time anybody looked at it, with the open story's own card half
-           off the left edge - which is the one card that has to be whole. */
         start: 'top 40%',
         end: 'bottom top',
         scrub: 0.7,
-        invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const p = self.progress;
-          gsap.set(track, { x: -span() * p });
-          /* A few pixels of counter-movement per card, alternating down the
-             row, so the rail has depth instead of sliding as one sheet. Small
-             enough to be felt before it is seen, which is the test for every
-             parallax on this site. */
-          cardsRef.current.forEach((card, i) => {
-            gsap.set(card, { y: (i % 2 ? 10 : 17) * (1 - p * 2) });
+          depthCards.current.forEach((card, i) => {
+            gsap.set(card, { y: (i % 2 ? 10 : 17) * (1 - self.progress * 2) });
           });
         },
       });
     }
 
-    /* ---- the arrival, on its own one-shot trigger so the section animates
-       when it is reached rather than when the page loads. */
-    if (!reduced()) {
-      ScrollTrigger.create({
-        trigger: el,
-        start: 'top 72%',
-        once: true,
-        onEnter: () => {
-          timeline.current = enter(el, { dir: 1, category: true }, true);
-        },
-      });
-    }
+    /* ---- whether the section is on screen, for the clock. */
+    const presence = ScrollTrigger.create({
+      trigger: root,
+      start: 'top 65%',
+      end: 'bottom 35%',
+      onToggle: (self) => {
+        inView.current = self.isActive;
+        syncAutoplay();
+      },
+    });
+    inView.current = presence.isActive;
+
+    const onResize = () => {
+      placeMarker(false);
+      positionTrack(VOICES[activeRef.current].pos, false);
+    };
+    const onVisibility = () => {
+      hold.current.hidden = document.visibilityState === 'hidden';
+      syncAutoplay();
+    };
+    window.addEventListener('resize', onResize);
+    document.addEventListener('visibilitychange', onVisibility);
+    syncAutoplay();
 
     return () => {
+      alive.current = false;
+      ready.current = false;
       window.removeEventListener('resize', onResize);
-      railRef.current?.kill();
-      railRef.current = null;
-      timeline.current?.kill();
-      unsplit();
+      document.removeEventListener('visibilitychange', onVisibility);
+      stopDwell();
+      transition.current?.kill();
+      transition.current = null;
+      revert(transitionSplits);
+      revert(entrySplits);
+      entry.current = null;
+      entryTargets.current = [];
+      entered.current = false;
+      phase.current = 'idle';
+      pendingIn.current = null;
+      if (trackRef.current) gsap.killTweensOf(trackRef.current);
     };
   }, []);
 
-  /* ------------------------------------------------------------------------
-     The swap. Out on the press, in once React has replaced the content - so
-     the two halves genuinely hand over rather than cross-fading, and the
-     direction of travel tells the reader which way they moved.
-     ------------------------------------------------------------------------ */
-  const go = useCallback(
-    (cat: number, story: number) => {
-      if (cat === view.cat && story === view.story) return;
-      const next = { cat, story };
-      const changed = cat !== view.cat;
-      const dir = changed ? Math.sign(cat - view.cat) || 1 : Math.sign(story - view.story) || 1;
-
-      const el = scope.current;
-      if (!el || reduced()) {
-        setView(next);
-        return;
-      }
-      // One swap at a time. A second press mid-transition would leave the
-      // outgoing half animating against content that had already been
-      // replaced underneath it - so it is remembered and run on the way out.
-      if (busy.current) {
-        queued.current = next;
-        return;
-      }
-
-      busy.current = true;
-      swap.current = { dir, category: changed };
-      // Killing the arrival mid-flight would otherwise strand its split, and
-      // the outgoing half has to animate the real paragraph rather than the
-      // stack of line boxes standing in for it.
-      timeline.current?.kill();
-      unsplit();
-
-      const p = parts(el);
-      const out = gsap.timeline({
-        defaults: { ease: 'power2.in', duration: OUT },
-        onComplete: () => setView(next),
-      });
-
-      const leaving = [p.head, p.accent, p.by].filter(Boolean) as HTMLElement[];
-      if (leaving.length) out.to(leaving, { x: -26 * dir, autoAlpha: 0, stagger: 0.04 }, 0);
-      if (p.portrait) out.to(p.portrait, { scale: 0.97, autoAlpha: 0, duration: OUT + 0.04 }, 0);
-      if (p.meter) out.to(p.meter, { autoAlpha: 0, duration: 0.24 }, 0);
-      if (changed) {
-        if (p.lead) out.to(p.lead, { x: -18 * dir, autoAlpha: 0 }, 0);
-        if (p.cards.length) {
-          out.to(p.cards, { y: 18, autoAlpha: 0, duration: 0.28, stagger: 0.03 }, 0);
-        }
-      }
-      // A swap with nothing to move still has to land, or `busy` never clears.
-      out.to({}, { duration: 0.01 }, OUT + 0.04);
-
-      timeline.current = out;
-    },
-    [enter, scope, unsplit, view.cat, view.story],
-  );
-
-  useIsomorphicLayoutEffect(() => {
-    goRef.current = go;
-  }, [go]);
-
-  /* The second half of the swap, and the housekeeping a new cast needs.
+  /* The incoming half, and the furniture a new index needs.
 
      A layout effect rather than an effect: the incoming content has to be put
-     into its from-state in the same frame React painted it, or the swap
+     into its from-state in the same frame React painted it, or the change
      flashes the finished state before animating it in. */
   useIsomorphicLayoutEffect(() => {
-    const el = scope.current;
-    if (!el) return;
-
-    cardsRef.current = Array.from(el.querySelectorAll<HTMLElement>('.vx__card'));
-    // A different number of cards is a different travel distance.
-    railRef.current?.refresh();
-
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-
-    const info = swap.current;
-    swap.current = null;
-    if (!info) return;
-
-    const tl = enter(el, info, false);
-    tl.eventCallback('onComplete', () => {
-      busy.current = false;
-      const next = queued.current;
-      queued.current = null;
-      if (next) goRef.current?.(next.cat, next.story);
-    });
-    timeline.current = tl;
-
-    if (!info.category) return;
-
-    // The marker only has to move when the category did.
-    const marker = el.querySelector<HTMLElement>('.vx__marker');
-    const nav = navRef.current;
-    const active = nav?.querySelector<HTMLElement>('[aria-selected="true"]');
-    if (!marker || !nav || !active) return;
-
-    const box = nav.getBoundingClientRect();
-    const hit = active.getBoundingClientRect();
-    gsap.to(marker, {
-      x: hit.left - box.left + nav.scrollLeft,
-      y: hit.top - box.top,
-      width: hit.width,
-      height: hit.height,
-      duration: 0.55,
-      ease: 'power3.out',
-    });
-
-    // On a phone the index is a scrolling strip. Scroll the strip, never the
-    // page - Lenis owns the page, and a native scroll into view fights it.
-    if (nav.scrollWidth > nav.clientWidth) {
-      nav.scrollTo({
-        left: active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2,
-        behavior: reduced() ? 'auto' : 'smooth',
-      });
-    }
+    const info = pendingIn.current;
+    pendingIn.current = null;
+    syncFurniture(activeTestimonialIndex, Boolean(info));
+    if (info && phase.current === 'out') arrive(info);
+    else syncAutoplay();
+    // Everything this reads besides the index is a ref.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view]);
+  }, [activeTestimonialIndex]);
 
-  /* Focus comes back to the play button once the film has gone, not while it
-     is closing: a <dialog> holds focus inside itself until it is out of the
-     document, so focusing from the close handler is a call the browser
-     quietly drops and the reader lands back on <body>. */
+  /* Crossing the loop breakpoint changes how many cards are rendered, so the
+     rail is re-placed on its new cast without a slide. */
   useIsomorphicLayoutEffect(() => {
-    if (film) {
-      wasPlaying.current = true;
-      return;
-    }
-    if (!wasPlaying.current) return;
-    wasPlaying.current = false;
-    playRef.current?.focus();
-  }, [film]);
-
-  /* The progress line under the quote. Driven here rather than by a class so
-     it moves with the swap instead of ahead of it. */
-  useIsomorphicLayoutEffect(() => {
-    const fill = scope.current?.querySelector<HTMLElement>('.vx__meter-fill');
-    if (!fill) return;
-    const to = (view.story + 1) / stories.length;
-    if (reduced()) gsap.set(fill, { scaleX: to });
-    else gsap.to(fill, { scaleX: to, duration: 0.6, ease: 'power3.out' });
+    const root = scope.current;
+    if (!root) return;
+    depthCards.current = Array.from(root.querySelectorAll<HTMLElement>('.vx__card'));
+    trackGoal.current = -1;
+    positionTrack(VOICES[activeRef.current].pos, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, stories.length]);
+  }, [loop]);
 
   /* ------------------------------------------------------------------------
-     Keyboard. The index is a tablist, so the arrow keys move between
-     categories in whichever direction the reader tries - the strip is
-     vertical on a desktop and horizontal on a phone, and nobody should have
-     to know which one they are looking at to use it.
+     Input
      ------------------------------------------------------------------------ */
+
+  /* The index is a tablist, so the arrow keys move between categories in
+     whichever direction the reader tries - the strip is vertical on a desktop
+     and horizontal on a phone, and nobody should have to know which one they
+     are looking at to use it. */
   const onTabKey = (event: KeyboardEvent<HTMLDivElement>) => {
     const step: Record<string, number> = {
       ArrowDown: 1,
@@ -540,21 +1031,41 @@ export function HomeVoices() {
       ArrowUp: -1,
       ArrowLeft: -1,
     };
+    const from = VOICES[targetRef.current].cat;
+    const total = VOICE_CATEGORIES.length;
     let next: number | null = null;
-    if (event.key in step) {
-      next = (view.cat + step[event.key] + VOICE_CATEGORIES.length) % VOICE_CATEGORIES.length;
-    } else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = VOICE_CATEGORIES.length - 1;
+    if (event.key in step) next = (from + step[event.key] + total) % total;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = total - 1;
     if (next === null) return;
 
     event.preventDefault();
-    go(next, 0);
+    request(FIRST_OF[next], { user: true, dir: Math.sign(next - from) || 1 });
     tabRefs.current[next]?.focus();
   };
 
-  const nudge = (by: number) => {
-    const total = stories.length;
-    go(view.cat, (((view.story + by) % total) + total) % total);
+  const nudge = (by: number) => request(targetRef.current + by, { user: true, dir: by });
+
+  /* Keyboard focus inside the section holds the clock: a reader tabbing
+     through the cards is reading them. A mouse press also focuses a button,
+     but not visibly, and must not stop autoplay for good. */
+  const onFocus = (event: FocusEvent<HTMLElement>) => {
+    if (!(event.target as HTMLElement).matches(':focus-visible')) return;
+    hold.current.focus = true;
+    syncAutoplay();
+  };
+
+  const onBlur = (event: FocusEvent<HTMLElement>) => {
+    const next = event.relatedTarget as Node | null;
+    if (next && event.currentTarget.contains(next)) return;
+    hold.current.focus = false;
+    syncAutoplay();
+  };
+
+  const onRailHover = (on: boolean) => (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'mouse') return;
+    hold.current.hover = on;
+    syncAutoplay();
   };
 
   /* The handwritten tail. It has to be a suffix of the quote, so the sentence
@@ -567,14 +1078,23 @@ export function HomeVoices() {
     : current.quote;
 
   return (
-    <section ref={scope} className="section vx" id="voices" aria-labelledby="vx-title">
+    <section
+      ref={scope}
+      className="section vx"
+      id="voices"
+      aria-labelledby="vx-title"
+      onFocus={onFocus}
+      onBlur={onBlur}
+    >
       <div className="wrap vx__inner">
         <div className="vx__grid">
           {/* ---------------------------------------------------- the intro */}
           <header className="vx__intro">
             <p className="vx__eyebrow">
               <span className="vx__eyebrow-rule" aria-hidden="true" />
-              <span className="meta">{category.eyebrow}</span>
+              <span className="meta" data-swap="eyebrow">
+                {category.eyebrow}
+              </span>
             </p>
 
             <h2 className="vx__title ed-h1" id="vx-title">
@@ -623,9 +1143,9 @@ export function HomeVoices() {
             <figure className="vx__by" data-swap="by">
               <Figure
                 photo={current.photo}
-                width={160}
-                widths={[120, 160, 320]}
-                sizes="66px"
+                width={FACE.width}
+                widths={FACE.widths}
+                sizes={FACE.sizes}
                 shape="round"
                 ratio="square-ar"
                 className="vx__face"
@@ -639,7 +1159,7 @@ export function HomeVoices() {
 
             <p className="vx__meter" data-swap="meter">
               <span className="vx__meter-count" aria-hidden="true">
-                <b>{String(view.story + 1).padStart(2, '0')}</b>
+                <b>{String(active.pos + 1).padStart(2, '0')}</b>
                 <i>/</i>
                 <span>{String(stories.length).padStart(2, '0')}</span>
               </span>
@@ -648,10 +1168,9 @@ export function HomeVoices() {
               </span>
             </p>
 
-            {/* Announced politely, so a reader who presses Next is told what
-                happened without the page shouting over what it was reading. */}
-            <span className="sr-only" aria-live="polite">
-              {`${category.label}, story ${view.story + 1} of ${stories.length}. ${current.name}, ${current.role}.`}
+            {/* Polite for a press, silent for autoplay - see `request`. */}
+            <span ref={liveRef} className="sr-only" aria-live="off">
+              {`${category.label}, story ${active.pos + 1} of ${stories.length}. ${current.name}, ${current.role}.`}
             </span>
           </div>
 
@@ -665,47 +1184,21 @@ export function HomeVoices() {
               <Figure
                 key={current.id}
                 photo={current.photo}
-                width={720}
-                widths={[420, 720, 1080]}
-                sizes="(max-width: 699px) 74vw, (max-width: 1179px) 40vw, 27vw"
+                width={PORTRAIT.width}
+                widths={PORTRAIT.widths}
+                sizes={PORTRAIT.sizes}
                 shape="frame"
                 ratio="portrait"
                 className="vx__shot"
               />
             </div>
 
-            {current.film ? (
-              <>
-                <button
-                  ref={playRef}
-                  type="button"
-                  className="vx__play"
-                  onClick={() => setFilm(current)}
-                  data-cursor="Play"
-                >
-                  <span className="vx__play-ring" aria-hidden="true">
-                    <Icon name="play" size={17} />
-                  </span>
-                  <span className="sr-only">
-                    {`Play ${current.name}, ${current.role}, ${current.film.runtime}`}
-                  </span>
-                </button>
-
-                <p className="vx__filmnote" aria-hidden="true">
-                  <span className="vx__filmnote-ink">{VOICE_SECTION.filmNote}</span>
-                  <Hand kind="arrow" tone="blue" className="vx__filmnote-arrow" />
-                </p>
-
-                <Hand kind="sparks" tone="blue" className="vx__sparks" />
-              </>
-            ) : null}
-
             <div className="vx__arrows">
               <button
                 type="button"
                 className="vx__arrow"
                 onClick={() => nudge(-1)}
-                aria-label={`Previous story from ${category.label.toLowerCase()}`}
+                aria-label="Previous story"
                 aria-controls="vx-panel"
               >
                 <Icon name="arrowLeft" size={17} />
@@ -714,7 +1207,7 @@ export function HomeVoices() {
                 type="button"
                 className="vx__arrow vx__arrow--solid"
                 onClick={() => nudge(1)}
-                aria-label={`Next story from ${category.label.toLowerCase()}`}
+                aria-label="Next story"
                 aria-controls="vx-panel"
               >
                 <Icon name="arrowRight" size={17} />
@@ -732,7 +1225,7 @@ export function HomeVoices() {
           >
             <span className="vx__marker" aria-hidden="true" />
             {VOICE_CATEGORIES.map((item, i) => {
-              const on = i === view.cat;
+              const on = i === active.cat;
               return (
                 <button
                   key={item.id}
@@ -746,7 +1239,12 @@ export function HomeVoices() {
                   aria-selected={on}
                   aria-controls="vx-panel"
                   tabIndex={on ? 0 : -1}
-                  onClick={() => go(i, 0)}
+                  onClick={() =>
+                    request(FIRST_OF[i], {
+                      user: true,
+                      dir: Math.sign(i - active.cat) || 1,
+                    })
+                  }
                 >
                   <span className="vx__tab-index">{item.index}</span>
                   <span className="vx__tab-label">{item.label}</span>
@@ -757,40 +1255,73 @@ export function HomeVoices() {
         </div>
 
         {/* ------------------------------------------------------- the rail */}
-        <div className="vx__rail">
+        <div
+          ref={railRef}
+          className="vx__rail"
+          onPointerEnter={onRailHover(true)}
+          onPointerLeave={onRailHover(false)}
+          onPointerDown={restartClock}
+          onWheel={restartClock}
+          onTouchStart={restartClock}
+        >
           <ul className="vx__track" ref={trackRef}>
-            {stories.map((story, i) => (
-              <li key={`${category.id}-${story.id}`} className="vx__card">
-                <button
-                  type="button"
-                  className={`vx__card-btn${i === view.story ? ' is-on' : ''}`}
-                  aria-pressed={i === view.story}
-                  aria-controls="vx-panel"
-                  onClick={() => go(view.cat, i)}
-                >
-                  <span className="vx__card-mark" aria-hidden="true">
-                    &rdquo;
-                  </span>
-                  <Figure
-                    photo={story.photo}
-                    width={200}
-                    widths={[140, 200, 400]}
-                    sizes="84px"
-                    shape="round"
-                    ratio="square-ar"
-                    className="vx__card-face"
-                    decorative
-                  />
-                  <span className="vx__card-body">
-                    <span className="vx__card-quote">&ldquo;{story.quote}&rdquo;</span>
-                    <span className="vx__card-who">
-                      <b>{story.name}</b>
-                      <span className="meta">{story.role}</span>
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
+            {Array.from({ length: copies }, (_, copy) =>
+              stories.map((story, i) => {
+                const on = i === active.pos;
+                /* Copies after the first exist only to keep the loop full. They
+                 are still pressable with a pointer, but hidden from assistive
+                 technology and from the tab order, which get the cast once. */
+                const echo = copy > 0;
+                const slot = copy * stories.length + i;
+                return (
+                  <li
+                    key={`${category.id}-${story.id}-${copy}`}
+                    className="vx__card"
+                    aria-hidden={echo || undefined}
+                  >
+                    <button
+                      type="button"
+                      className={`vx__card-btn${on ? ' is-on' : ''}`}
+                      aria-pressed={echo ? undefined : on}
+                      aria-controls={echo ? undefined : 'vx-panel'}
+                      tabIndex={echo ? -1 : undefined}
+                      // A card to the right of the active one slides the rail
+                      // right to left; one to its left, the other way.
+                      onClick={() =>
+                        request(FIRST_OF[active.cat] + i, {
+                          user: true,
+                          dir: slot >= active.pos ? 1 : -1,
+                        })
+                      }
+                    >
+                      <span className="vx__card-mark" aria-hidden="true">
+                        &rdquo;
+                      </span>
+                      <Figure
+                        photo={story.photo}
+                        width={200}
+                        widths={[140, 200, 400]}
+                        sizes="84px"
+                        shape="round"
+                        ratio="square-ar"
+                        className="vx__card-face"
+                        decorative
+                      />
+                      <span className="vx__card-body">
+                        <span className="vx__card-quote">&ldquo;{story.quote}&rdquo;</span>
+                        <span className="vx__card-who">
+                          <b>{story.name}</b>
+                          <span className="meta">{story.role}</span>
+                        </span>
+                      </span>
+                      {/* How long until the next voice. Drawn by the autoplay
+                        clock itself, so it cannot disagree with it. */}
+                      <span className="vx__card-dwell" aria-hidden="true" />
+                    </button>
+                  </li>
+                );
+              }),
+            )}
           </ul>
         </div>
 
@@ -799,28 +1330,6 @@ export function HomeVoices() {
           <Hand kind="arrow" tone="blue" className="vx__railnote-arrow" />
         </p>
       </div>
-
-      {film?.film ? (
-        <VoiceFilm
-          name={film.name}
-          role={film.role}
-          poster={film.photo}
-          film={film.film}
-          onClose={() => setFilm(null)}
-        />
-      ) : null}
     </section>
-  );
-}
-
-/** Runs a set of `pathLength="1"` strokes from undrawn to drawn - the same
- *  helper the invitation spreads use, because it is the same gesture. */
-function drawStrokes(tl: gsap.core.Timeline, strokes: NodeListOf<Element>, at: number) {
-  if (!strokes.length) return;
-  tl.fromTo(
-    strokes,
-    { strokeDasharray: 1, strokeDashoffset: 1 },
-    { strokeDashoffset: 0, duration: 0.85, ease: 'power2.inOut', stagger: 0.12 },
-    at,
   );
 }
