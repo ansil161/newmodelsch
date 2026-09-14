@@ -1,12 +1,9 @@
 /* ==========================================================================
    COMMUNITY STORIES
    --------------------------------------------------------------------------
-   The blue section.
-
-   Everywhere else on this site the accent is the school yellow on a warm
-   ivory sheet. Here it is the school blue on chalk - the same near-white the
-   invitation spreads use, and for the same reason: it is the only ground a
-   white card reads as paper against.
+   The school blue on the site's white sheet, like every other section. The
+   white cards in the rail are held off that sheet by a hairline and a soft
+   cool shadow rather than by a change of ground.
 
    The palette is declared once at the top of the section as four local
    custom properties, so the whole thing can be re-inked by changing four
@@ -26,13 +23,13 @@
   --vx-quiet: var(--slate);
   --vx-pen: var(--blue);
   --vx-wash: var(--blue-soft);
-  --vx-line: rgba(22, 35, 60, 0.12);
+  --vx-line: var(--line-blue);
 
-  background: var(--chalk);
+  background: var(--white);
   color: var(--vx-ink);
-  /* The section either side of this one is dark, then warm. A hairline at the
-     foot keeps chalk from bleeding into the paper of the principal's letter
-     below it, which is two points warmer and otherwise reads as a seam. */
+  /* The principal's letter below sits on the same white. A single blue
+     hairline at the foot is the divider between them - a rule, not a change
+     of ground. */
   border-bottom: 1px solid var(--vx-line);
   /* Every blob, stroke and note in here is placed off the edge of something.
      Clip rather than hidden: nothing in this section is pinned, and clip does
@@ -963,7 +960,7 @@
   padding: clamp(16px, 1.8vw, 24px);
   background: var(--chalk);
   border-radius: var(--r-lg);
-  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 40px 90px -40px rgba(10, 29, 61, 0.55);
 }
 
 .vxf__head {

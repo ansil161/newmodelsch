@@ -14,7 +14,7 @@
    03 - Documents & dates
    ========================================================================== */
 .docs {
-  background: var(--paper);
+  background: var(--white);
 }
 
 .docs__head {
@@ -34,7 +34,7 @@
 
 .docs__group-name {
   padding-bottom: 12px;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid var(--blue);
   margin-bottom: 14px;
 }
 
@@ -61,13 +61,15 @@
   display: grid;
   gap: 0;
   padding: clamp(22px, 2.6vw, 32px);
-  background: var(--ivory);
+  background: var(--white);
+  border: 1px solid var(--line-blue);
   border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
 }
 
 .dates__title {
   padding-bottom: 14px;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid var(--blue);
   margin-bottom: 4px;
 }
 

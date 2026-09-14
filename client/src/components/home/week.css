@@ -12,7 +12,7 @@
 
   position: relative;
   padding-block: var(--section-y-tight);
-  background: var(--ivory);
+  background: var(--white);
   /* The track is several viewports wide; it must never widen the page. */
   overflow: clip;
 }

@@ -14,17 +14,17 @@
    The section's scroll entrance is GSAP, because that is scroll-driven and
    one-shot; this is neither.
 
-   THE DARKEST BAND ON THE SITE, AND THE ONLY ONE.
+   THE GROUND IS THE PAGE'S WHITE; THE PANELS ARE THE DARK.
 
-   Navy-deep rather than the navy used everywhere else. This is the one place
-   on any page with moving pictures in it, and a room you watch something in
-   is darker than a room you read in. It is also what keeps four photographs
-   of four faces from competing with the warm paper the rest of the page is
-   printed on.
+   The section sits on the same white as everything around it. What is dark
+   is the four panels themselves - photographs and films under a scrim - so
+   the reel reads as a row of screens laid on the page rather than as a band
+   of a different colour. The panels re-scope the on-navy tokens back to
+   light values, because the section's `.on-navy` resolves them to ink.
    ========================================================================== */
 
 .reel {
-  background: var(--navy-deep);
+  background: var(--white);
   /* The panels sit flush to their own radius and the posters scale inside
      them; without this a subpixel edge shows on the outer two. */
   overflow: hidden;
@@ -62,6 +62,11 @@
 }
 
 .reel__card {
+  --on-navy: #f7f9fc;
+  --on-navy-2: #c9d4e6;
+  --on-navy-3: #93a3bd;
+  --line-navy: rgba(247, 249, 252, 0.18);
+
   position: relative;
   flex: 1 1 0;
   min-width: 0;
@@ -237,12 +242,12 @@
 .reel__pull p::before {
   content: '\201C';
   margin-left: -0.42em;
-  color: var(--sun);
+  color: var(--blue-bright);
 }
 
 .reel__pull p::after {
   content: '\201D';
-  color: var(--sun);
+  color: var(--blue-bright);
 }
 
 .reel__who {
@@ -292,7 +297,7 @@
 .reel__play:hover .reel__ring,
 .reel__play:focus-visible .reel__ring {
   transform: scale(1.09);
-  box-shadow: 0 0 0 12px var(--sun-wash);
+  box-shadow: 0 0 0 12px rgba(109, 152, 220, 0.24);
 }
 
 .reel__cue {
@@ -327,7 +332,7 @@
   gap: 8px;
   padding: 9px 14px 9px 11px;
   border-radius: var(--r-pill);
-  background: rgba(14, 24, 41, 0.72);
+  background: rgba(10, 29, 61, 0.72);
   backdrop-filter: blur(6px);
   color: var(--on-navy);
   font-family: var(--font-mono);
@@ -339,7 +344,7 @@
 }
 
 .reel__stop:hover {
-  background: rgba(14, 24, 41, 0.92);
+  background: rgba(10, 29, 61, 0.92);
 }
 
 /* ==========================================================================
@@ -348,7 +353,7 @@
 .reel__foot {
   margin-top: clamp(22px, 2.4vw, 34px);
   padding-top: clamp(16px, 1.8vw, 24px);
-  border-top: 1px solid var(--line-navy);
+  border-top: 1px solid var(--line-blue);
 }
 
 /* ==========================================================================

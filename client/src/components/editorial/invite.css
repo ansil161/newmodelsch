@@ -1,10 +1,10 @@
 /* ==========================================================================
    INVITE - the collage spreads that close a page
    --------------------------------------------------------------------------
-   Chalk ground, navy ink, slate copy, one yellow. The spreads are the only
-   place the site goes near-white, and they are allowed to because they are
-   the only place the photographs are laid on the page like prints: a white
-   border reads as paper only when the ground is almost - not quite - white.
+   White ground, navy ink, slate copy, one blue. The same white as every other
+   section, so a spread closes the page without turning it over; the prints'
+   white borders are carried by their contact shadow rather than by a tinted
+   ground.
 
    See InviteSection.tsx for the hierarchy and Collage.tsx for the plate.
    ========================================================================== */
@@ -97,7 +97,7 @@
   margin: 0 0 clamp(22px, 2.4vw, 32px);
   padding: 8px 15px 8px 12px;
   border-radius: var(--r-pill);
-  background: #fff4d6;
+  background: var(--blue-soft);
   font-family: var(--font-body);
   font-size: var(--t-label);
   font-weight: 600;
@@ -114,7 +114,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--sun);
-  box-shadow: 0 0 0 3px rgba(255, 197, 61, 0.3);
+  box-shadow: 0 0 0 3px rgba(36, 86, 166, 0.2);
 }
 
 /* "Open" - the one piece of state on the spread, so it is set apart. */
@@ -135,7 +135,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6fd494;
+  background: var(--blue-bright);
 }
 
 /* The year, as a display line. The label rides above it as the pill. */
@@ -190,8 +190,8 @@
 
 /* The written word. Caveat sits small on its body, so it is set a size up
    to meet the serif's cap height, and tilted a degree or two - enough to
-   read as a hand, not enough to read as a gimmick. Gold-ink, not sun: the
-   sun is 1.6:1 on chalk and cannot be read; gold-ink is 3.9:1 at this size. */
+   read as a hand, not enough to read as a gimmick. `--gold-ink` is a legacy
+   name and now resolves to the accent blue, 7.1:1 on white. */
 .script {
   position: relative;
   display: inline-block;
@@ -207,9 +207,8 @@
   rotate: -2.5deg;
 }
 
-/* The blue ink. Same hand, same rotation, one section. --blue is 5.4:1 on
-   chalk, so unlike --gold-ink it is allowed to carry a phrase rather than
-   only a word. */
+/* The blue ink. Same hand, same rotation, one section. --blue is 7.1:1 on
+   white, so it is allowed to carry a phrase rather than only a word. */
 .script--blue {
   color: var(--blue);
 }
@@ -262,7 +261,7 @@
   min-height: 54px;
   padding: 17px 26px 17px 30px;
   border-radius: var(--r-pill);
-  box-shadow: 0 12px 26px -16px rgba(168, 119, 10, 0.7);
+  box-shadow: 0 12px 26px -16px rgba(36, 86, 166, 0.55);
 }
 
 .invite__cta svg {

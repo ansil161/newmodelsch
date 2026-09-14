@@ -13,8 +13,9 @@
    ========================================================================== */
 
 .ld {
-  --ld-ground: #f8f5ef;
-  --ld-sun: #f5d096;
+  --ld-ground: var(--white);
+  /* The sunburst is a pale blue pen line - decoration, never a type colour. */
+  --ld-sun: var(--sky-line);
   --ld-radius: clamp(12px, 1.45vw, 20px);
   --ld-gap: clamp(12px, 1.8vw, 26px);
   position: relative;

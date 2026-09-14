@@ -8,13 +8,14 @@
    The form's behaviour is unchanged from the version this replaced - four
    steps validated one at a time, a draft kept on the device, the announcements
    - because all of that was right. What changed is that it now sits on the
-   paper the rest of the site is printed on rather than on a card floating over
-   a wash, and the fields look like fields rather than like a component library.
+   same white sheet as the rest of the site, the form a card raised a hair off
+   it by a blue hairline and a soft shadow, and the fields look like fields
+   rather than like a component library.
    ========================================================================== */
 
 .admissions {
   position: relative;
-  background: var(--sand);
+  background: var(--white);
   overflow: clip;
 }
 
@@ -84,13 +85,13 @@
   margin-top: 12px;
   padding: 15px 20px;
   border-radius: var(--r-sm);
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px var(--line);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line-blue);
   transition: box-shadow var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
 }
 
 .admissions__call:hover {
-  box-shadow: inset 0 0 0 1.5px var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--blue), var(--e-1);
   transform: translateY(-2px);
 }
 
@@ -130,7 +131,8 @@
    The form
    -------------------------------------------------------------------------- */
 .admissions__form {
-  background: var(--paper);
+  background: var(--white);
+  border: 1px solid var(--line-blue);
   border-radius: var(--r-lg);
   padding: clamp(24px, 3.4vw, 44px);
   box-shadow: var(--e-2);
@@ -179,8 +181,8 @@
 }
 
 .admissions__step.is-active .admissions__step-index {
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue-ink);
+  color: var(--on-blue);
   box-shadow: none;
 }
 
@@ -258,8 +260,8 @@
 }
 
 .admissions__grade:hover {
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--ink);
+  color: var(--blue-deep);
+  box-shadow: inset 0 0 0 1px var(--blue);
 }
 
 .admissions__grade.is-active {
@@ -284,21 +286,25 @@
   width: 100%;
   padding: 24px 16px 11px;
   border-radius: var(--r-ctl);
-  background: var(--ivory);
-  border: 1px solid var(--line);
+  background: var(--white);
+  border: 1px solid var(--line-blue-strong);
   color: var(--ink);
   font-size: var(--t-body);
-  transition: border-color var(--d-state) var(--ease-out), background var(--d-state) var(--ease-out);
+  transition:
+    border-color var(--d-state) var(--ease-out),
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
 }
 
 .field__input:hover {
-  border-color: var(--line-strong);
+  border-color: var(--blue-bright);
 }
 
 .field__input:focus {
   outline: none;
-  border-color: var(--ink);
-  background: var(--paper);
+  border-color: var(--blue);
+  background: var(--white);
+  box-shadow: 0 0 0 3px var(--sun-wash);
 }
 
 .field__label {

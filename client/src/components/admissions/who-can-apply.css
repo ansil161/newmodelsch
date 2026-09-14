@@ -1,25 +1,27 @@
 /* ==========================================================================
    01 - WHO CAN APPLY
    --------------------------------------------------------------------------
-   Warm white, one soft lavender, thin rules. The copy takes 42% and the film
+   White, one blue, thin rules. The copy takes 42% and the film
    58%, the film runs a little past the grid on the right, and four small
    prints sit around it at unequal sizes and angles. Under that, the ledger:
    five ruled rows across nearly the full width.
+
+   The `--wca-lav*` names are historical; they now resolve to the blue ladder.
    ========================================================================== */
 
 .wca {
-  --wca-lav: #8480c4;
-  --wca-lav-ink: #5b56a3;
-  --wca-lav-soft: #efeef8;
-  --wca-lav-wash: rgba(132, 128, 196, 0.07);
-  --wca-hair: rgba(17, 23, 38, 0.1);
-  --wca-hair-strong: rgba(17, 23, 38, 0.22);
+  --wca-lav: var(--blue);
+  --wca-lav-ink: var(--blue-deep);
+  --wca-lav-soft: var(--blue-soft);
+  --wca-lav-wash: rgba(36, 86, 166, 0.05);
+  --wca-hair: rgba(15, 35, 75, 0.1);
+  --wca-hair-strong: rgba(15, 35, 75, 0.2);
   --wca-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   position: relative;
   overflow: clip;
   padding-block: clamp(80px, 9vw, 148px) clamp(72px, 8vw, 128px);
-  background: var(--paper);
+  background: var(--white);
   color: var(--ink);
 }
 
@@ -117,14 +119,14 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--blue);
+  color: var(--on-blue);
   transition: transform var(--d-move) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .wca__cta:hover {
-    border-color: var(--ink);
+    border-color: var(--blue);
   }
 
   .wca__cta:hover .wca__cta-arrow {
@@ -156,7 +158,7 @@
   aspect-ratio: 1000 / 1080;
   border-radius: clamp(22px, 2.4vw, 34px);
   background: var(--sand);
-  box-shadow: 0 34px 70px -48px rgba(38, 34, 72, 0.45);
+  box-shadow: 0 34px 70px -48px rgba(15, 35, 75, 0.36);
 }
 
 .wca__media {
@@ -184,9 +186,9 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 253, 248, 0.82);
-  color: var(--ink);
-  box-shadow: 0 6px 18px -10px rgba(17, 23, 38, 0.5);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--blue-deep);
+  box-shadow: 0 6px 18px -10px rgba(15, 35, 75, 0.45);
   opacity: 0.72;
   cursor: pointer;
   transition:
@@ -226,7 +228,7 @@
 
 .wca__arc path {
   fill: none;
-  stroke: rgba(132, 128, 196, 0.45);
+  stroke: rgba(36, 86, 166, 0.38);
   stroke-width: 1;
   stroke-dasharray: 3 6;
   vector-effect: non-scaling-stroke;
@@ -279,7 +281,7 @@
   border-radius: clamp(12px, 1.3vw, 18px);
   background: var(--sand);
   outline: 1px solid var(--wca-hair);
-  box-shadow: 0 22px 40px -26px rgba(38, 34, 72, 0.5);
+  box-shadow: 0 22px 40px -26px rgba(15, 35, 75, 0.4);
   rotate: var(--tilt, 0deg);
 }
 
@@ -356,7 +358,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid rgba(132, 128, 196, 0.2);
+  border: 1px solid var(--line-blue);
   border-radius: 50%;
   background: var(--wca-lav-soft);
   color: var(--wca-lav-ink);
@@ -468,9 +470,9 @@
 
   .wca-row:hover .wca-row__arrow {
     transform: translateX(5px);
-    border-color: var(--ink);
-    background-color: var(--ink);
-    color: var(--paper);
+    border-color: var(--blue);
+    background-color: var(--blue);
+    color: var(--on-blue);
   }
 }
 

@@ -6,7 +6,7 @@ import {
   SCHOOL,
   VISIT_CAMPUS,
 } from '@/constants';
-import { admissionImages, campusImages, studentImages } from '@/constants/imagery';
+import { admissionImages, campusImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { draw, lines, rise, unmask } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
@@ -15,7 +15,6 @@ import {
   Figure,
   Mark,
   PageCover,
-  PhotoBreak,
   SectionHead,
   Sticker,
 } from '@/components/editorial';
@@ -240,18 +239,5 @@ export function AdVisit() {
         />
       </div>
     </section>
-  );
-}
-
-/* --------------------------------------------------------------------------
-   The pause between the two densest chapters.
-   -------------------------------------------------------------------------- */
-
-export function AdBreak() {
-  return (
-    <PhotoBreak
-      photos={[studentImages[4], admissionImages[2], campusImages[8]]}
-      caption="An ordinary Tuesday, mid-morning"
-    />
   );
 }

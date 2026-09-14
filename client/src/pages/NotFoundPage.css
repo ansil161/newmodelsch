@@ -49,6 +49,7 @@
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--ink);
+  transition: color var(--d-state) var(--ease-out);
 }
 
 .nf__blurb {
@@ -73,6 +74,11 @@
 .nf__link:hover svg {
   opacity: 1;
   transform: none;
+  color: var(--blue);
+}
+
+.nf__link:hover .nf__label {
+  color: var(--blue-deep);
 }
 
 .nf__cta {

@@ -29,17 +29,18 @@
    section can hold both in one viewport - which it cannot do if they are
    allowed to reserve their own space.
 
-   THE GROUND IS THE SITE'S NAVY
+   THE GROUND IS THE SITE'S WHITE
 
-   `--navy-deep`, the same dark this site's other bands use. A section that
-   invented a second near-black would be the one section belonging to a
-   different publication.
+   The same sheet as every other section. The plates carry the depth - a
+   soft cool shadow under each - and the blue carries the emphasis; a band
+   that changed the ground would be the one section belonging to a different
+   publication.
    ========================================================================== */
 
 .cm {
   position: relative;
-  background: var(--navy-deep);
-  color: var(--on-navy);
+  background: var(--white);
+  color: var(--ink);
   isolation: isolate;
   padding-block: clamp(72px, 9vw, 120px);
   /* No `overflow`, `filter`, `transform` or `contain` on this element or on
@@ -73,12 +74,12 @@
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--on-navy-3);
+  color: var(--ink-3);
 }
 
 .cm__label b {
   font-weight: 500;
-  color: var(--sun);
+  color: var(--blue);
 }
 
 /* THE SCALE IS BOUND BY THE VIEWPORT'S HEIGHT AS WELL AS ITS WIDTH.
@@ -97,7 +98,7 @@
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.032em;
-  color: var(--on-navy);
+  color: var(--ink);
 }
 
 /* Each line gets its own overflow box so it can set itself from below without
@@ -115,11 +116,10 @@
   display: block;
 }
 
-/* The second line carries the idea, so it is the one the contrast is spent
-   on. */
+/* The second line carries the idea, so it is the one the blue is spent on. */
 .cm__head .cm__line:last-child > span,
 .cm__statement .cm__line:last-child > span {
-  color: var(--on-navy-2);
+  color: var(--blue-deep);
 }
 
 .cm__lede {
@@ -127,7 +127,7 @@
   max-width: 40ch;
   font-size: var(--t-body);
   line-height: 1.6;
-  color: var(--on-navy-2);
+  color: var(--ink-2);
 }
 
 /* --------------------------------------------------------------------------
@@ -166,9 +166,9 @@
      longest. At 6px it reads as a printed edge at both sizes. At the 14px it
      started life as, the opening plate was a lozenge. */
   border-radius: clamp(3px, 0.4vw, 6px);
-  /* The ground, not a lighter grey: a plate whose photograph has not landed
+  /* A faint blue-white placeholder: a plate whose photograph has not landed
      should read as a plate, not as a missing image. */
-  background: var(--navy);
+  background: var(--sand);
   transform-origin: 50% 50%;
 }
 
@@ -211,13 +211,13 @@
   font-size: var(--t-label);
   font-weight: 500;
   letter-spacing: 0.18em;
-  color: var(--sun);
+  color: var(--blue);
 }
 
 .cm-cap__rule {
   flex: 1;
   height: 1px;
-  background: var(--line-navy);
+  background: var(--line-blue);
 }
 
 .cm-cap__title {
@@ -227,14 +227,14 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--on-navy);
+  color: var(--ink);
 }
 
 .cm-cap__body {
   margin: 0;
   font-size: var(--t-small);
   line-height: 1.55;
-  color: var(--on-navy-2);
+  color: var(--ink-2);
 }
 
 /* --------------------------------------------------------------------------
@@ -249,7 +249,7 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--on-navy);
+  color: var(--blue-deep);
 }
 
 /* The arrow sits in a ring that fills on hover - the one flourish in the
@@ -259,9 +259,9 @@
   place-items: center;
   width: clamp(36px, 3vw, 44px);
   height: clamp(36px, 3vw, 44px);
-  border: 1px solid var(--line-navy);
+  border: 1px solid var(--line-blue-strong);
   border-radius: 50%;
-  color: var(--on-navy);
+  color: var(--blue);
   transition:
     background var(--d-state) var(--ease-out),
     border-color var(--d-state) var(--ease-out),
@@ -519,7 +519,7 @@
      shadows coincide - a shadow tuned for one plate reads as a hole under
      three. */
   .cm-frame {
-    box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 14px 30px -16px rgba(15, 35, 75, 0.3);
   }
 
   .cm-cap {

@@ -422,9 +422,9 @@
 .cover--light .cover__scrim {
   background: linear-gradient(
     to top,
-    rgba(247, 243, 234, 0.94) 0%,
-    rgba(247, 243, 234, 0.6) 34%,
-    rgba(247, 243, 234, 0.1) 68%
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(255, 255, 255, 0.6) 34%,
+    rgba(255, 255, 255, 0.1) 68%
   );
 }
 
@@ -792,7 +792,7 @@
    ========================================================================== */
 .etl {
   position: relative;
-  background: var(--sand);
+  background: var(--white);
   overflow: clip;
 }
 
@@ -853,8 +853,8 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: var(--sand);
-  box-shadow: 0 0 0 2px var(--ink);
+  background: var(--white);
+  box-shadow: 0 0 0 2px var(--blue);
   transform: translateY(50%);
   z-index: 2;
 }
@@ -1177,6 +1177,7 @@
 
 .acc__row.is-open .acc__mark {
   background: var(--sun);
+  color: var(--on-sun);
   box-shadow: none;
 }
 
@@ -1409,12 +1410,18 @@
 
 /* ==========================================================================
    CTA
+   --------------------------------------------------------------------------
+   On the same white as the rest of the page. The photograph is still a band
+   behind the type, but the scrim over it is white rather than navy: solid
+   under the words, thinning to nothing so the picture comes through on the
+   far side. A blue hairline at the top marks the close of the page.
    ========================================================================== */
 .cta {
   position: relative;
   padding-block: clamp(88px, 11vw, 180px);
-  background: var(--navy);
-  color: var(--on-navy);
+  background: var(--white);
+  color: var(--ink);
+  border-top: 1px solid var(--line-blue);
   overflow: clip;
   isolation: isolate;
 }
@@ -1434,12 +1441,22 @@
 .cta__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    115deg,
-    rgba(14, 24, 41, 0.94) 0%,
-    rgba(14, 24, 41, 0.82) 46%,
-    rgba(14, 24, 41, 0.6) 100%
-  );
+  /* A phone stacks the whole column over the picture, so the wash is even and
+     heavy enough to keep body copy at full contrast. */
+  background: rgba(255, 255, 255, 0.9);
+}
+
+@media (min-width: 900px) {
+  .cta__scrim {
+    background: linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #ffffff 40%,
+      rgba(255, 255, 255, 0.86) 54%,
+      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
 }
 
 .cta__inner {
@@ -1450,12 +1467,12 @@
 }
 
 .cta__title {
-  color: var(--on-navy);
+  color: var(--ink);
   max-width: 15ch;
 }
 
 .cta__lead {
-  color: var(--on-navy-2);
+  color: var(--ink-2);
   max-width: 48ch;
 }
 
@@ -1467,7 +1484,7 @@
 }
 
 .cta__foot {
-  color: var(--on-navy-3);
+  color: var(--ink-3);
   margin-top: 4px;
 }
 
@@ -1513,8 +1530,8 @@
 }
 
 .arch__filter.is-on {
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue);
+  color: var(--on-blue);
   box-shadow: none;
 }
 
@@ -1525,7 +1542,7 @@
 }
 
 .arch__filter.is-on .arch__count {
-  color: var(--sun);
+  color: var(--blue-soft);
 }
 
 .arch__year {

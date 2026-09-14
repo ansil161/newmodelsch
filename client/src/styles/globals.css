@@ -16,7 +16,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--ivory);
+  background: var(--white);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--t-body);
@@ -130,17 +130,38 @@ button {
   padding-block: var(--section-y-tight);
 }
 
-.section--navy {
-  background: var(--navy);
-  color: var(--on-navy);
+/* ONE CANVAS. The three ground modifiers survive as class names, and all
+   three are the same white page. A section is separated from its neighbours
+   by space, rules and blue accents - never by the colour under it.
+
+   `.section--navy` and `.on-navy` used to turn the page over. They now stay
+   white and re-point the light-type tokens at ink, so every rule written as
+   `color: var(--on-navy)` inside one of them resolves to readable dark type
+   without being rewritten. Anything that genuinely sits on a photograph or
+   a video inside such a section re-scopes these back to the light values. */
+.section--navy,
+.on-navy {
+  --on-navy: var(--ink);
+  --on-navy-2: var(--ink-2);
+  --on-navy-3: var(--ink-3);
+  --line-navy: var(--line-blue);
 }
 
-.section--sand {
-  background: var(--sand);
-}
-
+.section--navy,
+.section--sand,
 .section--paper {
-  background: var(--paper);
+  background: var(--white);
+  color: var(--ink);
+}
+
+/* A section that follows another is separated by a single blue-tinted
+   hairline held inside the container, rather than by a change of ground. */
+.section-divider {
+  height: 1px;
+  max-width: calc(var(--container) - var(--gutter) * 2);
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent, var(--line-blue) 12%, var(--line-blue) 88%, transparent);
+  border: 0;
 }
 
 /* Legacy container name, kept so an un-rewritten stylesheet still lays out. */
@@ -315,7 +336,7 @@ button {
   white-space: nowrap;
 }
 
-.sticker--blue { background: var(--blue); color: var(--paper); }
+.sticker--blue { background: var(--blue-deep); color: var(--on-blue); }
 .sticker--green { background: var(--green); color: var(--paper); }
 .sticker--coral { background: var(--coral); color: var(--paper); }
 .sticker--ink { background: var(--ink); color: var(--ivory); }
@@ -353,7 +374,7 @@ button {
 .mark {
   display: inline;
   color: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23ffc53d'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23d4e2f6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 62%;
   background-size: calc(var(--mark-scale, 1) * 100%) 0.82em;
@@ -363,15 +384,15 @@ button {
 }
 
 .mark--blue {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dbe6f6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23c3d7f2'/%3E%3C/svg%3E");
 }
 
 .mark--green {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dcebe1'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23e0eff6'/%3E%3C/svg%3E");
 }
 
 .mark--coral {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23fbe1d9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23e5e8f8'/%3E%3C/svg%3E");
 }
 
 /* THE UNDERLINE IS A BACKGROUND, NOT A PSEUDO-ELEMENT.
@@ -389,7 +410,7 @@ button {
    marks use, so all three are driven by one line in `draw()`. */
 .mark-ul {
   display: inline;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%23ffc53d' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%232456a6' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 88%;
   background-size: calc(var(--mark-scale, 1) * 100%) 0.15em;
@@ -415,7 +436,7 @@ button {
 .mark-ring {
   display: inline-block;
   padding-inline: 0.2em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%23ffc53d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%232456a6' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: calc(var(--mark-scale, 1) * 100%) 100%;
@@ -541,43 +562,45 @@ a:hover .fig--hover img {
 }
 
 .btn-primary {
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue);
+  color: var(--on-blue);
+  box-shadow: 0 10px 24px -14px rgba(36, 86, 166, 0.55);
 }
 
 .btn-primary::after {
-  background: var(--sun);
+  background: var(--blue-ink);
 }
 
 .btn-primary:hover {
-  color: var(--on-sun);
+  color: var(--on-blue);
 }
 
 .btn-sun {
-  background: var(--sun);
-  color: var(--on-sun);
+  background: var(--blue);
+  color: var(--on-blue);
+  box-shadow: 0 10px 24px -14px rgba(36, 86, 166, 0.55);
 }
 
 .btn-sun::after {
-  background: var(--ink);
+  background: var(--blue-ink);
 }
 
 .btn-sun:hover {
-  color: var(--ivory);
+  color: var(--on-blue);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  background: var(--white);
+  color: var(--blue-deep);
+  box-shadow: inset 0 0 0 1.5px var(--line-blue-strong);
 }
 
 .btn-secondary::after {
-  background: var(--ink);
+  background: var(--blue);
 }
 
 .btn-secondary:hover {
-  color: var(--ivory);
+  color: var(--on-blue);
 }
 
 .on-navy .btn-secondary,
@@ -614,7 +637,7 @@ a:hover .fig--hover img {
   align-items: center;
   gap: 9px;
   font-weight: 540;
-  color: var(--ink);
+  color: var(--blue-deep);
   cursor: pointer;
   padding-bottom: 3px;
 }
@@ -693,8 +716,8 @@ a:hover .fig--hover img {
   font-size: var(--t-numeral);
   line-height: 0.78;
   letter-spacing: -0.05em;
-  color: var(--ink);
-  opacity: 0.14;
+  color: var(--blue);
+  opacity: 0.12;
   user-select: none;
 }
 
@@ -723,8 +746,8 @@ a:hover .fig--hover img {
   gap: 8px;
   padding: 8px 15px 9px;
   border-radius: var(--r-pill);
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px var(--line);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line-blue);
   font-family: var(--font-mono);
   font-size: var(--t-label);
   font-weight: 500;
@@ -740,7 +763,7 @@ a:hover .fig--hover img {
 }
 
 .chip--ink {
-  background: var(--ink);
+  background: var(--blue-ink);
   box-shadow: none;
   color: var(--ivory);
 }

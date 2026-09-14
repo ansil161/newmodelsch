@@ -7,8 +7,11 @@
    ========================================================================== */
 .foot {
   position: relative;
+  /* The same white as every section above it; the footer is set apart by a
+     blue hairline and its own generous spacing, not by a different ground. */
   background: var(--paper);
   color: var(--ink);
+  border-top: 1px solid var(--line-blue);
   padding-top: clamp(80px, 10vw, 152px);
   overflow: clip;
   isolation: isolate;
@@ -76,11 +79,11 @@
   overflow-wrap: anywhere;
 }
 
-/* The highlighter, drawn under a contact on hover. Same stroke and same
-   yellow as `.mark` in the headlines, so the hover belongs to the page's
-   own vocabulary rather than being a colour change. */
+/* The highlighter, drawn under a contact on hover. The same pale blue sweep
+   as `.mark` in the headlines, so the hover belongs to the page's own
+   vocabulary; the type itself turns blue as the sweep lands. */
 .foot__hl {
-  background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 92% / 0% 0.3em;
+  background: linear-gradient(var(--blue-soft), var(--blue-soft)) no-repeat 0 92% / 0% 0.3em;
   transition:
     background-size 380ms var(--ease-out),
     color var(--d-state) var(--ease-out);
@@ -89,7 +92,7 @@
 .foot__hl:hover,
 .foot__hl:focus-visible {
   background-size: 100% 0.3em;
-  color: var(--ink);
+  color: var(--blue-deep);
 }
 
 .foot__hours {
@@ -125,7 +128,7 @@
 .foot__rule {
   display: block;
   height: 1px;
-  background: var(--line-strong);
+  background: var(--line-blue-strong);
   transform-origin: left center;
 }
 
@@ -200,6 +203,7 @@
   }
 
   .foot__link:hover {
+    color: var(--blue-deep);
     transform: translateX(5px);
   }
 
@@ -299,7 +303,7 @@
   line-height: 0.8;
   letter-spacing: -0.045em;
   white-space: nowrap;
-  color: var(--ink);
+  color: var(--blue-ink);
   user-select: none;
   /* The tracking is applied after the last letter too, which pulls the box
      in behind the final "l" and lets its ink run past the margin. This hands
@@ -324,7 +328,7 @@
   gap: 12px 32px;
   margin-top: clamp(24px, 3vw, 44px);
   padding-block: 18px clamp(20px, 2.4vw, 28px);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--line-blue);
   font-family: var(--font-mono);
   font-size: var(--t-label);
   letter-spacing: 0.08em;
@@ -351,7 +355,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--line-strong);
+  box-shadow: inset 0 0 0 1px var(--line-blue-strong);
   transition:
     background 300ms var(--ease-out),
     box-shadow 300ms var(--ease-out);
@@ -363,12 +367,18 @@
 }
 
 .foot__up:hover {
-  color: var(--ink);
+  color: var(--blue-deep);
 }
 
 .foot__up:hover .foot__up-ring {
   background: var(--sun);
   box-shadow: none;
+}
+
+/* The glyph on the filled ring is white; blue on blue would disappear. */
+.foot__up:hover .foot__up-ring,
+.foot__up:hover .foot__up-ring svg {
+  color: var(--on-sun);
 }
 
 /* Rotated half a turn, so a positive Y is up on screen. */

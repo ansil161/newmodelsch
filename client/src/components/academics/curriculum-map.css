@@ -1,13 +1,13 @@
 /* ==========================================================================
    02 - THE CURRICULUM MAP
    --------------------------------------------------------------------------
-   An editorial chapter: ivory stock, charcoal ink, a large serif opener,
-   mono micro-labels, hairline rules, overlapping prints at a slight angle,
-   and yellow used only as a marker - the progress rule, the active stage,
-   the stage numeral, one bar on each small print.
+   An editorial chapter: the site's white page, navy ink, a large serif
+   opener, mono micro-labels, hairline rules, overlapping prints at a slight
+   angle, and blue used only as a marker - the progress rule, the active
+   stage, the stage numeral, one bar on each small print.
 
-   THE PALETTE IS SCOPED to `.cm`, so this section can run a warmer ink
-   than the site without adding global colours.
+   THE PALETTE IS SCOPED to `.cm`, but every value resolves to a site token,
+   so the section sits on the same continuous white as the rest of the page.
 
    TWO STATES
      default        a flowing section: head, stage navigation, the current
@@ -18,16 +18,16 @@
    ========================================================================== */
 
 .cm {
-  --cm-ground: #f6f1e7;
-  --cm-stock: #fffdf7;
-  --cm-ink: #24211c;
-  --cm-ink-2: #595347;
-  --cm-ink-3: #8b8475;
-  --cm-rule: rgba(36, 33, 28, 0.16);
-  --cm-rule-soft: rgba(36, 33, 28, 0.09);
-  --cm-sun: var(--sun);
-  /* Yellow that can carry a numeral on ivory. The site's `--sun` cannot. */
-  --cm-sun-ink: #8f6700;
+  --cm-ground: var(--white);
+  --cm-stock: var(--white);
+  --cm-ink: var(--ink);
+  --cm-ink-2: var(--ink-2);
+  --cm-ink-3: var(--ink-3);
+  --cm-rule: var(--line-blue);
+  --cm-rule-soft: var(--line);
+  --cm-sun: var(--blue);
+  /* The marker blue, one step deeper, for a numeral set as type. */
+  --cm-sun-ink: var(--blue-deep);
   --cm-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   position: relative;
@@ -133,159 +133,335 @@
 }
 
 /* ==========================================================================
-   Stage navigation
+   Programme selector
    --------------------------------------------------------------------------
-   A contents line, not a set of buttons. A hairline runs across the top and
-   the yellow rule drawn along it is the reader's progress. The active stage
-   is marked three ways, so colour is never the only signal: a filled marker
-   (hollow when inactive), a drawn underline, and darker type.
+   Four organic buttons on a white ribbon. Each button is a leaf: the corners
+   it leads with (top-left, bottom-right) are deeply curved, the other two
+   are tight, so the row reads as drawn rather than boxed. One pale blue
+   sweep runs behind all four and drifts a little toward the selection; the
+   blue hairline along its crest is the reader's progress through the run.
+
+   The active programme is marked four ways, so colour is never the only
+   signal: a filled badge, a turned arrow, a lifted wider shape, and the
+   small arc drawn beneath it.
    ========================================================================== */
 .cm-nav {
+  --pn-blue: var(--blue, #2456a6);
+  --pn-blue-deep: var(--blue-deep, #183f80);
+  --pn-tint: #f0f5fd;
+  --pn-tint-hover: #f8fbff;
+  --pn-sweep: #e9f0fa;
+  --pn-line: #dde4ee;
+  --pn-badge: #eef1f6;
+  --pn-title: #1f2430;
+  --pn-muted: #7b8496;
+  --pn-shape: 44px 18px 44px 18px / 44px 18px 44px 18px;
+  --pn-t: 460ms;
+  --pn-ease: cubic-bezier(0.23, 1, 0.32, 1);
+
   position: relative;
+  isolation: isolate;
+  padding-block: clamp(22px, 2.6vw, 34px) clamp(26px, 3vw, 40px);
+}
+
+/* --------------------------------------------------------------------------
+   The field
+   -------------------------------------------------------------------------- */
+.cm-nav__field {
+  position: absolute;
+  z-index: -1;
+  top: clamp(-40px, -3vw, -20px);
+  bottom: clamp(-44px, -3.4vw, -22px);
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.cm-nav__field svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cm-nav__ribbon {
+  fill: #ffffff;
+}
+
+/* The sweep drifts a few units per programme - enough to feel the
+   selection travel, never enough to read as movement. */
+.cm-nav__sweep {
+  transform: translateX(calc(var(--i, 0) * -26px));
+  transition: transform 1100ms var(--pn-ease);
+}
+
+/* Filled through a vertical gradient, so the sweep has a crisp crest and
+   dissolves into the page below rather than ending in an edge. The stops
+   resolve colour where the gradient is declared, so it is set on them. */
+.cm-nav__field stop {
+  stop-color: var(--pn-sweep);
+}
+
+.cm-nav__track,
+.cm-nav__fill {
+  fill: none;
+  stroke-linecap: round;
 }
 
 .cm-nav__track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--cm-rule);
+  stroke: var(--sky-line, #a9c1e3);
+  stroke-width: 1;
+  opacity: 0.45;
 }
 
 .cm-nav__fill {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -1px;
-  height: 3px;
-  background: var(--cm-sun);
-  transform-origin: left center;
-  transform: scaleX(var(--fill, 0));
-  transition: transform 700ms var(--cm-ease);
+  stroke: var(--pn-blue);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--fill, 0));
+  transition: stroke-dashoffset 900ms var(--pn-ease);
 }
 
-/* While pinned the rule is written every frame by the scrub, and a CSS
+/* While pinned the hairline is written every frame by the scrub, and a CSS
    transition underneath would drag behind it. */
 .cm--pinned .cm-nav__fill {
   transition: none;
 }
 
+/* --------------------------------------------------------------------------
+   The row
+   -------------------------------------------------------------------------- */
 .cm-nav__list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  position: relative;
+  display: flex;
+  gap: clamp(10px, 1.2vw, 18px);
 }
 
 .cm-tab {
   position: relative;
+  flex: 1 1 0;
+  min-width: 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-content: start;
-  gap: 8px 10px;
-  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(10px, 1vw, 14px);
+  min-height: 80px;
   margin: 0;
-  padding: clamp(14px, 1.6vw, 20px) clamp(10px, 1.4vw, 22px) 6px 0;
-  border: 0;
-  background: none;
+  padding: 12px 14px 12px 12px;
+  border: 1px solid var(--pn-line);
+  border-radius: var(--pn-shape);
+  background: #ffffff;
   font: inherit;
   text-align: left;
-  color: var(--cm-ink-3);
+  color: var(--pn-title);
   cursor: pointer;
-}
-
-.cm-tab + .cm-tab {
-  padding-left: clamp(10px, 1.4vw, 22px);
-  box-shadow: inset 1px 0 0 var(--cm-rule-soft);
-}
-
-.cm-tab__marker {
-  align-self: center;
-  width: 9px;
-  height: 9px;
-  border: 1.5px solid currentColor;
-  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 1px 0 rgba(15, 26, 46, 0.02),
+    0 14px 30px -26px rgba(15, 26, 46, 0.28);
   transition:
-    background-color var(--d-state) var(--cm-ease),
-    border-color var(--d-state) var(--cm-ease),
-    transform var(--d-move) var(--cm-ease);
+    flex-grow 640ms var(--pn-ease),
+    border-color var(--pn-t) var(--pn-ease),
+    background-color var(--pn-t) var(--pn-ease),
+    box-shadow var(--pn-t) var(--pn-ease),
+    transform var(--pn-t) var(--pn-ease);
+}
+
+.cm-tab__badge {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--pn-badge);
+  color: #5b6477;
+  transition:
+    background-color var(--pn-t) var(--pn-ease),
+    color var(--pn-t) var(--pn-ease),
+    box-shadow var(--pn-t) var(--pn-ease),
+    transform var(--pn-t) var(--pn-ease);
 }
 
 .cm-tab__num {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48;
+  font-size: 1.125rem;
+  font-weight: 500;
   line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.cm-tab__text {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
 }
 
 .cm-tab__title {
-  grid-column: 1 / -1;
-  justify-self: start;
-  padding-bottom: 3px;
+  overflow: hidden;
   font-family: var(--font-display);
   font-variation-settings: 'opsz' 48;
-  font-size: clamp(1.0625rem, 1.55vw, 1.5rem);
-  font-weight: 400;
+  font-size: clamp(1rem, 1.3vw, 1.3125rem);
+  font-weight: 450;
   line-height: 1.1;
   letter-spacing: -0.018em;
-  color: var(--cm-ink-2);
-  /* The drawn underline, sized rather than faded in. */
-  background-image: linear-gradient(var(--cm-sun), var(--cm-sun));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% 2px;
-  transition:
-    color var(--d-state) var(--cm-ease),
-    background-size var(--d-move) var(--cm-ease);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--pn-title);
 }
 
 .cm-tab__range {
-  grid-column: 1 / -1;
+  overflow: hidden;
   font-family: var(--font-mono);
   font-size: 0.625rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--pn-muted);
+  transition: color var(--pn-t) var(--pn-ease);
 }
 
-.cm-tab:hover {
-  color: var(--cm-ink-2);
+.cm-tab__arrow {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--pn-line);
+  border-radius: 50%;
+  color: #8e97a8;
+  transition:
+    background-color var(--pn-t) var(--pn-ease),
+    border-color var(--pn-t) var(--pn-ease),
+    color var(--pn-t) var(--pn-ease);
 }
 
-.cm-tab:hover .cm-tab__title {
-  color: var(--cm-ink);
-  background-size: 28% 2px;
+.cm-tab__arrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--pn-t) var(--pn-ease);
+}
+
+/* The arc: a thin curved line hung beneath the selected programme. */
+.cm-tab__arc {
+  position: absolute;
+  left: 44px;
+  width: 30%;
+  bottom: -15px;
+  height: 10px;
+  border-bottom: 2px solid var(--pn-blue);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  opacity: 0;
+  transform: scaleX(0.2);
+  transform-origin: left center;
+  transition:
+    opacity var(--pn-t) var(--pn-ease),
+    transform 700ms var(--pn-ease);
+  pointer-events: none;
+}
+
+/* Hover - pointer devices only, so a tap never leaves a stale hover. */
+@media (hover: hover) {
+  .cm-tab:hover {
+    border-color: color-mix(in srgb, var(--pn-blue) 55%, var(--pn-line));
+    background-color: var(--pn-tint-hover);
+  }
+
+  .cm-tab:hover .cm-tab__badge {
+    background: var(--pn-blue);
+    color: #ffffff;
+  }
+
+  .cm-tab:hover .cm-tab__arrow {
+    border-color: var(--pn-blue);
+    color: var(--pn-blue);
+  }
+
+  .cm-tab:hover .cm-tab__arrow svg {
+    transform: translateX(2px);
+  }
 }
 
 .cm-tab:focus-visible {
-  outline: 2px solid var(--cm-ink);
+  outline: 2px solid var(--pn-blue);
   outline-offset: 4px;
 }
 
-.cm-tab.is-past .cm-tab__marker {
-  background: var(--cm-ink-3);
-  border-color: var(--cm-ink-3);
+.cm-tab.is-past .cm-tab__badge {
+  color: var(--pn-blue);
 }
 
 .cm-tab.is-active {
-  color: var(--cm-ink-2);
+  flex-grow: 1.16;
+  border-color: var(--pn-blue);
+  background-color: var(--pn-tint);
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 4px rgba(36, 86, 166, 0.06),
+    0 22px 42px -26px rgba(24, 63, 128, 0.55);
 }
 
-.cm-tab.is-active .cm-tab__marker {
-  background: var(--cm-sun);
-  border-color: var(--cm-ink);
-  transform: scale(1.2);
+.cm-tab.is-active .cm-tab__badge {
+  background: var(--pn-blue);
+  color: #ffffff;
+  box-shadow: 0 8px 18px -10px rgba(24, 63, 128, 0.7);
+  transform: scale(1.06);
 }
 
-.cm-tab.is-active .cm-tab__num {
-  color: var(--cm-sun-ink);
-  font-weight: 600;
+.cm-tab.is-active .cm-tab__range {
+  color: var(--pn-blue-deep);
 }
 
-.cm-tab.is-active .cm-tab__title {
-  color: var(--cm-ink);
-  background-size: 100% 2px;
+.cm-tab.is-active .cm-tab__arrow {
+  border-color: var(--pn-blue);
+  background: var(--pn-blue);
+  color: #ffffff;
+}
+
+/* Turned toward the content it opens. */
+.cm-tab.is-active .cm-tab__arrow svg {
+  transform: rotate(45deg);
+}
+
+.cm-tab.is-active .cm-tab__arc {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Tablet and down: the row scrolls sideways when it cannot fit, runs to the
+   screen edge, and snaps a programme into place. The block padding keeps
+   the lift, glow and arc inside the scroller's clip. */
+@media (max-width: 1099px) {
+  .cm-nav__list {
+    margin-inline: calc(var(--gutter) * -1);
+    margin-block: -10px -18px;
+    padding: 10px var(--gutter) 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .cm-nav__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cm-tab {
+    flex: 1 0 224px;
+    scroll-snap-align: start;
+  }
+
+  .cm-tab.is-active {
+    flex-grow: 1;
+  }
 }
 
 /* ==========================================================================
@@ -318,17 +494,19 @@
   visibility: visible;
 }
 
-/* A print: ivory border, a soft contact shadow, set down at an angle. The
-   resting angle is the `rotate` property, not `transform`, so the entrance
-   can animate a transform on top of it without wiping it. */
+/* A print: white border, a soft contact shadow, set down at an angle. On a
+   white page the hairline edge is what keeps the border reading as paper.
+   The resting angle is the `rotate` property, not `transform`, so the
+   entrance can animate a transform on top of it without wiping it. */
 .cm-shot {
   position: absolute;
   margin: 0;
   padding: clamp(5px, 0.5vw, 8px);
   background: var(--cm-stock);
   box-shadow:
-    0 1px 1px rgba(36, 33, 28, 0.1),
-    0 26px 44px -30px rgba(36, 33, 28, 0.6);
+    0 0 0 1px var(--line-blue),
+    0 1px 1px rgba(15, 35, 75, 0.06),
+    0 26px 44px -30px rgba(15, 35, 75, 0.4);
 }
 
 .cm-shot__crop {
@@ -354,7 +532,7 @@
   z-index: 2;
 }
 
-/* One small yellow bar on the smaller print's edge, where tape would be. */
+/* One small blue bar on the smaller print's edge, where tape would be. */
 .cm-shot--second::after {
   content: '';
   position: absolute;
@@ -700,24 +878,30 @@
 }
 
 @media (max-width: 699px) {
-  .cm-nav__list {
-    gap: 0;
+  /* A phone shows one programme and the edge of the next, so the row
+     plainly invites a swipe. Still comfortably tall for a thumb. */
+  .cm-tab {
+    flex: 0 0 min(76vw, 262px);
+    min-height: 72px;
+    padding: 10px 12px 10px 10px;
   }
 
-  .cm-tab {
-    gap: 6px 7px;
-    padding-top: 14px;
+  .cm-tab__badge {
+    width: 42px;
+    height: 42px;
+  }
+
+  .cm-tab__num {
+    font-size: 1rem;
   }
 
   .cm-tab__title {
-    font-size: 0.9375rem;
-    letter-spacing: -0.01em;
+    font-size: 1.0625rem;
   }
 
-  /* The class range is in the panel's kicker; on a phone the tab is just a
-     numeral and a name. */
-  .cm-tab__range {
-    display: none;
+  .cm-tab__arrow {
+    width: 30px;
+    height: 30px;
   }
 
   .cm-panel__facts {
@@ -815,9 +999,13 @@
 }
 
 @media (max-width: 699px) {
+  .cm--pinned .cm-nav {
+    padding-block: 14px 18px;
+  }
+
   .cm--pinned .cm-tab {
-    padding-top: 10px;
-    padding-bottom: 2px;
+    min-height: 64px;
+    padding-block: 8px;
   }
 
   .cm--pinned .cm-panel__stage,

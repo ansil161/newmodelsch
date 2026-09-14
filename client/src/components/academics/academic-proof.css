@@ -23,7 +23,7 @@
    ========================================================================== */
 
 .ac-proof {
-  background: var(--ivory);
+  background: var(--white);
 }
 
 /* ==========================================================================
@@ -116,8 +116,8 @@
   min-height: 49px;
   padding-inline: 22px;
   border-radius: 6px;
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue);
+  color: var(--on-blue);
   font-family: var(--font-body);
   font-size: clamp(1rem, 1.3vw, 1.0625rem);
   font-weight: 600;
@@ -127,7 +127,7 @@
 }
 
 .ac-proof__cta:hover {
-  background: var(--navy-2);
+  background: var(--blue-ink);
 }
 
 .ac-proof__cta svg {
@@ -145,7 +145,7 @@
   display: block;
   height: 1px;
   margin-top: clamp(36px, 4.3vw, 55px);
-  background: var(--line);
+  background: var(--line-blue);
 }
 
 /* --------------------------------------------------------------------------
@@ -188,7 +188,7 @@
   line-height: 1;
   letter-spacing: -0.035em;
   white-space: nowrap;
-  color: var(--ink);
+  color: var(--blue-deep);
 }
 
 .ac-proof__label {

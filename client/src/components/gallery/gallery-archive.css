@@ -74,7 +74,7 @@
   padding: 5px;
   overflow-x: auto;
   border-radius: var(--r-pill);
-  background: rgba(255, 253, 248, 0.92);
+  background: rgba(255, 255, 255, 0.92);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: var(--e-2);
@@ -96,13 +96,13 @@
 }
 
 .gal-yhead__year:hover {
-  background: var(--sand);
-  color: var(--ink);
+  background: var(--blue-wash);
+  color: var(--blue-deep);
 }
 
 .gal-yhead__year.is-current {
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue);
+  color: var(--on-blue);
 }
 
 @media (min-width: 900px) {
@@ -194,7 +194,7 @@
   gap: 6px;
   padding: 6px 11px;
   border-radius: var(--r-pill);
-  background: rgba(255, 253, 248, 0.92);
+  background: rgba(255, 255, 255, 0.92);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--ink);

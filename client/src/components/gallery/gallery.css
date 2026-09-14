@@ -8,7 +8,7 @@
    ========================================================================== */
 
 .gal-page {
-  background: var(--ivory);
+  background: var(--white);
 }
 
 /* --------------------------------------------------------------------------
@@ -154,8 +154,8 @@
 
 .gal-back:hover .gal-back__ring,
 .gal-back:focus-visible .gal-back__ring {
-  background: var(--ink);
-  color: var(--ivory);
+  background: var(--blue);
+  color: var(--on-blue);
   transform: translateX(-4px);
 }
 
@@ -204,8 +204,8 @@
   gap: clamp(14px, 1.8vw, 22px);
   padding: 12px 22px 12px 12px;
   border-radius: var(--r-lg);
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px var(--line);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line-blue);
   transition:
     box-shadow var(--d-move) var(--ease-out),
     transform var(--d-move) var(--ease-out);
@@ -221,7 +221,7 @@
 
 .gal-pager__item:hover {
   transform: translateY(-3px);
-  box-shadow: var(--e-2), inset 0 0 0 1px var(--line);
+  box-shadow: var(--e-2), inset 0 0 0 1px var(--line-blue-strong);
 }
 
 .gal-pager__item--prev:hover > svg {
@@ -270,7 +270,7 @@
 /* ==========================================================================
    LIGHTBOX
    --------------------------------------------------------------------------
-   The navy of the site's dark bands, taken almost to black, so a photograph
+   The one dark surface in the gallery: blue-navy taken almost to black, so a photograph
    of any tonality sits on it without a halo. The picture is never cropped:
    it is sized from its own ratio to the largest box the screen allows.
    ========================================================================== */
@@ -325,7 +325,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(244, 241, 232, 0.08);
+  background: rgba(247, 249, 252, 0.08);
   box-shadow: inset 0 0 0 1px var(--line-navy);
   color: var(--on-navy);
   cursor: pointer;
@@ -372,7 +372,7 @@
   aspect-ratio: var(--r, 1.5);
   object-fit: contain;
   border-radius: 12px;
-  background: rgba(244, 241, 232, 0.04);
+  background: rgba(247, 249, 252, 0.04);
   opacity: 0.35;
   transition: opacity 0.5s var(--ease-out);
   user-select: none;
@@ -398,7 +398,8 @@
   font-size: 1.5rem;
   font-weight: 500;
   line-height: 1;
-  color: var(--sun);
+  /* The light blue: the accent itself is too dark to read on the lightbox. */
+  color: var(--blue-bright);
 }
 
 .gal-lb__nav {

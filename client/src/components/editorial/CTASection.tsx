@@ -21,7 +21,8 @@ import { Sticker } from './primitives';
 
    The photograph is a band behind the type rather than a panel beside it,
    because a closing section that splits attention across a grid is a closing
-   section that does not close.
+   section that does not close. It sits under a white wash, so the section is
+   on the same white ground as the rest of the page.
    ========================================================================== */
 
 interface Action {
@@ -37,7 +38,7 @@ interface CTASectionProps {
   title: ReactNode;
   lead?: ReactNode;
   actions: Action[];
-  /** The band behind the type. Omit for the quiet version on plain navy. */
+  /** The band behind the type. Omit for the quiet version on plain white. */
   photo?: Photo;
   /** A short line under the buttons - opening hours, a deadline, a phone. */
   footnote?: ReactNode;

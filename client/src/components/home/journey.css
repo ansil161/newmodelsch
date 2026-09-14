@@ -1,17 +1,15 @@
 /* ==========================================================================
    07 - THE STUDENT JOURNEY
    --------------------------------------------------------------------------
-   A near-black band, a claim set large down the left of it, and five sheets
-   of ivory paper fed up the right.
+   The same white sheet as the rest of the page, a claim set large down the
+   left of it, and five raised cards fed up the right.
 
-   THE GROUND IS NEUTRAL, NOT NAVY, AND THAT IS THE POINT
+   THE GROUND IS WHITE, AND THE CARDS DO THE SEPARATING
 
-   Every other dark band on this site is `--navy-deep`. This one is a warm
-   neutral black, because the section immediately above it (Campus) is navy
-   and the section immediately below it (Voices) is navy too. Three navy
-   bands in a row read as one very long band with the page furniture
-   changing; a neutral black between them reads as a different kind of page -
-   which is what it is. It is the only place on the site this colour appears.
+   No band colour. Each sheet is lifted off the page by a blue hairline and a
+   soft cool shadow, and the photograph behind it gives the composition its
+   weight - so the section reads as its own page without the ground changing
+   under the reader.
 
    THE RESTING STATE IS THE FINISHED STATE
 
@@ -21,13 +19,10 @@
    ========================================================================== */
 
 .jr {
-  /* Warm neutral black. Measured against the reference's #1e1e1e and warmed
-     by two points of red so it belongs to the same light as the ivory it
-     carries. */
-  --jr-ground: #1b1a19;
-  --jr-ink: #f4f1e8;
-  --jr-ink-2: #9d9a94;
-  --jr-ink-3: #6e6b66;
+  --jr-ground: var(--white);
+  --jr-ink: var(--ink);
+  --jr-ink-2: var(--ink-2);
+  --jr-ink-3: var(--ink-3);
 
   position: relative;
   padding-block: 0;
@@ -57,7 +52,7 @@
 
    It is deliberate and it is narrow: the reference for this section is a
    single enormous line of clean sans, and at this size - a quarter of the
-   screen tall, ranged left against a black field - the serif's high contrast
+   screen tall, ranged left against an open field - the serif's high contrast
    starts to sparkle rather than sit. The sheet on the right keeps Fraunces,
    so the publication's own voice is still in the section; it is just on the
    paper rather than on the wall.
@@ -117,16 +112,16 @@
    The plate
    --------------------------------------------------------------------------
    The photograph behind each sheet. Monochrome, because five colour
-   photographs behind five ivory panels is five different colour temperatures
-   arguing with one warm one - and because the picture here is a texture the
-   sheet sits on rather than the subject of the frame.
+   photographs behind five white panels is five different colour temperatures
+   arguing with one - and because the picture here is a texture the sheet
+   sits on rather than the subject of the frame.
    -------------------------------------------------------------------------- */
 .jr-card__plate {
   position: relative;
   margin: 0;
   overflow: hidden;
   border-radius: var(--r-frame);
-  background: #2a2826;
+  background: var(--sand);
 }
 
 .jr-card__plate img {
@@ -143,22 +138,24 @@
 /* --------------------------------------------------------------------------
    The sheet
    --------------------------------------------------------------------------
-   Ivory paper with a dotted rule ruled inside its own edge - the detail that
-   makes it read as a printed card rather than as a rounded div. The rule is
-   a child element rather than a second border on the sheet, because a border
-   and an outline would both have to share the sheet's own radius, and the
-   inset rule needs a tighter one.
+   White card on the white page, held off it by a blue hairline and a soft
+   cool shadow, with a dashed blue rule ruled inside its own edge - the detail
+   that makes it read as a printed card rather than as a rounded div. The rule
+   is a child element rather than a second border on the sheet, because a
+   border and an outline would both have to share the sheet's own radius, and
+   the inset rule needs a tighter one.
    -------------------------------------------------------------------------- */
 .jr-card__sheet {
   position: relative;
   display: grid;
-  background: var(--ivory);
+  background: var(--white);
+  border: 1px solid var(--line-blue);
   color: var(--ink);
 }
 
 .jr-card__rule {
   position: absolute;
-  border: 1px dashed rgba(17, 23, 38, 0.28);
+  border: 1px dashed var(--line-blue-strong);
   pointer-events: none;
 }
 
@@ -179,7 +176,7 @@
 }
 
 .jr-card__cat {
-  color: var(--ink);
+  color: var(--blue);
 }
 
 .jr-card__when {
@@ -247,7 +244,7 @@
     'cat'
     'when';
   gap: clamp(14px, 3vw, 20px);
-  box-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--e-2);
 }
 
 .jr-card__rule {
@@ -363,7 +360,7 @@
     height: 88%;
     padding: clamp(24px, 2.1vw, 34px);
     border-radius: clamp(22px, 2vw, 30px);
-    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.72);
+    box-shadow: var(--e-3);
 
     /* Number top-right, statement dead centre, category and span along the
        foot. Three rows, and the middle one takes all the slack, which is what

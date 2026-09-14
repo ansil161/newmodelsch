@@ -19,10 +19,12 @@
    ========================================================================== */
 .vm {
   --vm-blue: var(--blue);
-  --vm-yellow: var(--sun);
-  /* The paint sits on the lighter of the two grounds, so it reads as ink on a
-     fresh sheet rather than as colour on a tinted one. */
-  background: var(--paper);
+  /* The second stroke. The class still says yellow; the paint is the light
+     end of the blue ladder, which carries ink type at 5.8:1. */
+  --vm-yellow: var(--blue-bright);
+  /* The paint sits on the page's white, so it reads as ink on a fresh sheet
+     rather than as colour on a tinted one. */
+  background: var(--white);
   padding-block: var(--section-y);
   overflow-x: clip;
 }
@@ -414,12 +416,12 @@
   padding: 0.45em 0.75em;
   margin-block: 5px;
   border-radius: var(--r-pill);
-  background: var(--sand);
+  background: var(--blue-soft);
   font-family: var(--font-mono);
   font-size: 0.36em;
   font-weight: 450;
   letter-spacing: 0.14em;
-  color: var(--ink-2);
+  color: var(--blue-deep);
 }
 
 .vm__col-body {
@@ -438,8 +440,8 @@
   aspect-ratio: 1;
   margin-bottom: 12px;
   border-radius: 50%;
-  background: var(--navy);
-  color: var(--paper);
+  background: var(--blue-deep);
+  color: var(--on-blue);
   font-family: var(--font-display);
   font-size: clamp(1rem, 1.6vw, 1.375rem);
   font-weight: 600;

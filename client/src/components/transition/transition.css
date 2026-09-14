@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    Two fixed layers, both inert to the pointer:
 
-     .pt__sheet    the ivory ground the site is introduced on. It is the same
+     .pt__sheet    the white ground the site is introduced on. It is the same
                    colour as the page underneath, so it leaves by fading and
                    what the visitor sees is not a curtain lifting - it is the
                    page arriving.
@@ -75,7 +75,7 @@ html.is-swapping .nav__inner {
 .pt__sheet {
   position: fixed;
   inset: 0;
-  background: var(--ivory);
+  background: var(--white);
   will-change: opacity;
 }
 

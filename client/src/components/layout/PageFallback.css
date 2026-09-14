@@ -2,14 +2,14 @@
   min-height: 100svh;
   display: grid;
   place-items: center;
-  background: var(--ivory);
+  background: var(--white);
 }
 
 .page-fallback__bar {
   width: 140px;
   height: 2px;
   border-radius: 2px;
-  background: var(--line);
+  background: var(--line-blue);
   position: relative;
   overflow: hidden;
 }

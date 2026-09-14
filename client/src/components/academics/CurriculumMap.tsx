@@ -114,6 +114,7 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
   const previous = useRef(0);
   const run = useRef<ScrollTrigger | null>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const list = useRef<HTMLDivElement>(null);
   const { scrollTo } = useSmoothScroll();
 
   /* ------------------------------------------------------------------------
@@ -130,7 +131,7 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
       });
 
       const pin = root.querySelector<HTMLElement>('.cm__pin');
-      const fill = root.querySelector<HTMLElement>('.cm-nav__fill');
+      const fill = root.querySelector<SVGPathElement>('.cm-nav__fill');
       if (!pin || !fill) return;
 
       rise(pin.querySelectorAll<HTMLElement>('[data-enter]'), {
@@ -178,11 +179,16 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
           },
         });
 
-        /* The continuous layer: the progress rule draws across the stage
-           navigation, and the photographs drift a few per cent against the
-           copy, so the held frame is never quite still. */
+        /* The continuous layer: the progress hairline draws along the sweep
+           behind the programme selector, and the photographs drift a few per
+           cent against the copy, so the held frame is never quite still. */
         scrubbed
-          .fromTo(fill, { scaleX: 0 }, { scaleX: 1, ease: 'none', duration: 1 }, 0)
+          .fromTo(
+            fill,
+            { strokeDashoffset: 1 },
+            { strokeDashoffset: 0, ease: 'none', duration: 1 },
+            0,
+          )
           .fromTo(
             root.querySelector('.cm__plates'),
             { yPercent: 1.4 },
@@ -347,6 +353,16 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
     };
   }, [active]);
 
+  /* On a screen where the programme row scrolls sideways, keep the selected
+     programme in view. Only the row moves - never the page. */
+  useIsomorphicLayoutEffect(() => {
+    const row = list.current;
+    const tab = tabs.current[active];
+    if (!row || !tab || row.scrollWidth <= row.clientWidth + 1) return;
+    const left = tab.offsetLeft - (row.clientWidth - tab.offsetWidth) / 2;
+    row.scrollTo({ left, behavior: reduced() ? 'auto' : 'smooth' });
+  }, [active]);
+
   /* ------------------------------------------------------------------------
      Presses and keys
      ------------------------------------------------------------------------ */
@@ -419,15 +435,51 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
           {/* --------------------------------------------------------------
               The stages, as a contents line
               -------------------------------------------------------------- */}
-          <nav className="cm-nav" aria-label="Curriculum stages" data-enter>
-            <span className="cm-nav__track" aria-hidden="true">
-              <span
-                className="cm-nav__fill"
-                style={{ '--fill': (active + 1) / count } as CSSProperties}
-              />
+          <nav
+            className="cm-nav"
+            aria-label="Curriculum stages"
+            data-enter
+            style={{ '--i': active, '--fill': (active + 1) / count } as CSSProperties}
+          >
+            {/* The field: a white ribbon with one pale architectural sweep
+                running behind all four programmes. Its hairline is the
+                reader's progress through the run. */}
+            <span className="cm-nav__field" aria-hidden="true">
+              <svg viewBox="0 0 1440 240" preserveAspectRatio="none" focusable="false">
+                <defs>
+                  <linearGradient id="cm-nav-sweep" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopOpacity="0.95" />
+                    <stop offset="0.55" stopOpacity="0.5" />
+                    <stop offset="1" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  className="cm-nav__ribbon"
+                  d="M0 40C380 8 1060 4 1440 34V206C1060 238 380 236 0 212Z"
+                />
+                <g className="cm-nav__sweep">
+                  <path
+                    className="cm-nav__wave"
+                    fill="url(#cm-nav-sweep)"
+                    d="M-120 150C200 92 520 84 780 116S1240 170 1560 98V206C1240 226 1000 204 780 196S200 196 -120 212Z"
+                  />
+                  <path
+                    className="cm-nav__track"
+                    d="M-120 150C200 92 520 84 780 116S1240 170 1560 98"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <path
+                    className="cm-nav__fill"
+                    d="M-120 150C200 92 520 84 780 116S1240 170 1560 98"
+                    pathLength={1}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </g>
+              </svg>
             </span>
 
             <div
+              ref={list}
               className="cm-nav__list"
               role="tablist"
               aria-label="The four curriculum stages"
@@ -449,10 +501,19 @@ export function CurriculumMap({ stages, colophon, id }: CurriculumMapProps) {
                   data-cursor="link"
                   onClick={() => select(i)}
                 >
-                  <span className="cm-tab__marker" aria-hidden="true" />
-                  <span className="cm-tab__num">{stage.number}</span>
-                  <span className="cm-tab__title">{stage.title}</span>
-                  <span className="cm-tab__range">{stage.range}</span>
+                  <span className="cm-tab__badge">
+                    <span className="cm-tab__num">{stage.number}</span>
+                  </span>
+                  <span className="cm-tab__text">
+                    <span className="cm-tab__title">{stage.title}</span>
+                    <span className="cm-tab__range">{stage.range.replace(/\s*-\s*/, ' – ')}</span>
+                  </span>
+                  <span className="cm-tab__arrow" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" focusable="false">
+                      <path d="M3 8h9.5M8.5 3.5 13 8l-4.5 4.5" />
+                    </svg>
+                  </span>
+                  <span className="cm-tab__arc" aria-hidden="true" />
                 </button>
               ))}
             </div>

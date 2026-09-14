@@ -3,7 +3,6 @@ export {
   AdDocuments,
   AdFaq,
   AdVisit,
-  AdBreak,
 } from './sections';
 export { AdEligibility } from './WhoCanApply';
 export { AdProcess } from './AdmissionJourney';

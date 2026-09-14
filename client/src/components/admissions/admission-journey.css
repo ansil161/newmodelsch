@@ -1,19 +1,18 @@
 /* ==========================================================================
    02 - THE SIX STEPS
    --------------------------------------------------------------------------
-   Warm ivory, two or three oversized cream shapes at the corners, a navy
-   serif, one yellow pen. The copy and its film take 52%, the timeline 48%,
-   and the timeline starts level with the eyebrow rather than centred on the
-   whole spread.
+   White, a deep blue serif, one blue pen. The copy and its film take 52%,
+   the timeline 48%, and the timeline starts level with the eyebrow rather
+   than centred on the whole spread.
    ========================================================================== */
 
 .aj {
-  --aj-ground: #f7f5ef;
-  --aj-cream: #efe8d9;
-  --aj-title: #1b2d4d;
-  --aj-pen: #f2b632;
-  --aj-hair: rgba(17, 23, 38, 0.1);
-  --aj-hair-strong: rgba(17, 23, 38, 0.2);
+  --aj-ground: var(--white);
+  --aj-cream: var(--blue-wash);
+  --aj-title: var(--blue-ink);
+  --aj-pen: var(--blue);
+  --aj-hair: rgba(15, 35, 75, 0.1);
+  --aj-hair-strong: rgba(15, 35, 75, 0.2);
   --aj-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* The timeline's own columns: number, track, icon, text. The rail and the
@@ -40,8 +39,11 @@
   overflow: hidden;
 }
 
-/* ----- the cream shapes. Cut paper under the page, not decoration on it. */
+/* ----- the corner shapes. Retired: a tinted blob clipped at the section edge
+   reads as a second ground colour, and the page is one white sheet. The
+   markup stays so the shapes can come back as outlines if wanted. */
 .aj__shape {
+  display: none;
   position: absolute;
   z-index: -1;
   background: var(--aj-cream);
@@ -183,7 +185,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  filter: drop-shadow(0 24px 28px rgba(50, 38, 18, 0.11)) drop-shadow(0 3px 6px rgba(50, 38, 18, 0.05));
+  filter: drop-shadow(0 24px 28px rgba(15, 35, 75, 0.1)) drop-shadow(0 3px 6px rgba(15, 35, 75, 0.05));
 }
 
 .aj__film {
@@ -228,12 +230,12 @@
   place-items: center;
   width: clamp(46px, 4.2vw, 58px);
   height: clamp(46px, 4.2vw, 58px);
-  border: 1px solid rgba(255, 253, 248, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 50%;
-  background: rgba(255, 253, 248, 0.2);
+  background: rgba(255, 255, 255, 0.2);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  color: #fffdf8;
+  color: var(--white);
   cursor: pointer;
   opacity: 0.8;
   transition:
@@ -250,7 +252,7 @@
 .aj__film:hover .aj__toggle,
 .aj__toggle:focus-visible {
   opacity: 1;
-  background: rgba(255, 253, 248, 0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .aj__toggle:active {
@@ -258,7 +260,7 @@
 }
 
 .aj__toggle:focus-visible {
-  outline: 2px solid #fffdf8;
+  outline: 2px solid var(--white);
   outline-offset: 3px;
 }
 
@@ -269,7 +271,7 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: rgba(255, 253, 248, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 1px 10px rgba(14, 24, 41, 0.35);
 }
 
@@ -444,7 +446,7 @@
 .aj-step.is-active .aj-step__dot {
   border-color: var(--aj-pen);
   background: var(--aj-pen);
-  box-shadow: 0 0 0 4px rgba(242, 182, 50, 0.22);
+  box-shadow: 0 0 0 4px rgba(36, 86, 166, 0.16);
 }
 
 /* ----- the icon */
@@ -456,7 +458,7 @@
   height: var(--aj-icon);
   border: 1px solid var(--aj-hair);
   border-radius: 50%;
-  background: rgba(255, 253, 248, 0.7);
+  background: var(--white);
   color: var(--aj-title);
   transition:
     background-color var(--d-state) var(--ease-out),
@@ -464,7 +466,7 @@
 }
 
 .aj-step.is-active .aj-step__icon {
-  border-color: rgba(242, 182, 50, 0.45);
+  border-color: var(--line-blue-strong);
   background: var(--sun-soft);
 }
 
@@ -483,7 +485,7 @@
   font-size: clamp(1.15rem, 1.45vw, 1.4rem);
   line-height: 1.25;
   letter-spacing: -0.012em;
-  color: #34425c;
+  color: var(--ink-2);
   transition: color var(--d-state) var(--ease-out);
 }
 
@@ -511,7 +513,7 @@
   padding: 4px 9px;
   border: 1px solid var(--aj-hair);
   border-radius: var(--r-ctl);
-  background: rgba(255, 253, 248, 0.6);
+  background: var(--white);
   font-size: 0.75rem;
   line-height: 1.2;
   color: var(--ink-3);

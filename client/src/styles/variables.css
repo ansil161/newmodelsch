@@ -1,115 +1,119 @@
 /* ==========================================================================
    Design tokens - New Model High School
    --------------------------------------------------------------------------
-   EDITORIAL SCHOOLBOOK.
+   ONE WHITE CANVAS, ONE BLUE.
 
-   The site is set as a printed thing: a warm paper ground, a high-contrast
-   serif carrying the statements, a clean grotesque carrying everything a
-   person has to actually use, and one accent that behaves like a highlighter
-   pen rather than like a brand gradient.
+   The whole site is a single continuous sheet of #FFFFFF. Sections are never
+   told apart by changing the ground under them - scrolling from the hero to
+   the footer should feel like moving down one page, not like flipping
+   between cards of different stock. Separation is done with the things a
+   printed prospectus uses instead: space, a hairline rule, a blue heading
+   accent, a photograph, a card raised a hair off the page.
 
    What the palette is, and why:
 
-     GROUND     Ivory, not white. Paper stock has a temperature; a screen
-                that renders pure #fff for a school founded in 1962 reads as
-                a form, not as a prospectus.
+     GROUND     Pure white. `--ivory`, `--paper` and `--chalk` are kept as
+                names because forty stylesheets reference them, and all three
+                are #FFFFFF. `--sand` is the one permitted tint - a white with
+                a breath of blue in it, for an image placeholder or a quiet
+                well inside a card. It is never a section ground.
 
-     INK        Deep navy-black. Warmer than #000, and it belongs to the same
-                family as the dark sections, so a navy band under an ivory
-                one reads as the same publication turned over.
+     INK        Deep navy-black, cool rather than warm, so it sits in the
+                same family as the blue.
 
-     ACCENT     One yellow. It is the highlighter, the sticker, the underline
-                and the fill. It never appears as a gradient and never as a
-                glow. Ink sits on it - the yellow is a ground, never type on
-                paper, because at this chroma it cannot be read.
+     ACCENT     One blue, in a small ladder of values. Buttons, links, active
+                states, icons, rules, markers. `--sun` and its companions are
+                legacy names for the accent and now resolve to the blue
+                ladder, so every stylesheet written for the old accent picks
+                up the new one without being rewritten.
 
-     SECONDARY  Blue, green, coral. Each is muted to roughly the same value
-                so they can sit beside each other without one shouting. They
-                distinguish things that are genuinely different - a band of
-                the curriculum, a strand of activity - and never decorate a
-                section that is already fine.
-
-   Everything downstream - the shapes, the shadows, the motion - follows the
-   same idea: a document, printed warm, that happens to move.
+     SECONDARY  Two blue-family variants (cerulean, indigo) under the old
+                `--green` / `--coral` names. They still distinguish things
+                that are genuinely different - a band of the curriculum, a
+                strand of activity - without introducing an unrelated hue.
    ========================================================================== */
 
 :root {
   /* -------------------------------------------------- ground
-     Three warm sheets. `ivory` is the page, `paper` is anything raised off
-     it, `sand` is a band that separates without changing material. */
-  --ivory: #f7f3ea;
-  --paper: #fffdf8;
-  --sand: #efe8da;
-  --sand-deep: #e5dbc8;
+     White, everywhere. `--sand` is the only tint and is furniture, not
+     ground: image placeholders, the inside of a well, a hover. */
   --white: #ffffff;
+  --ivory: #ffffff;
+  --paper: #ffffff;
+  --sand: #f6f9fd;
+  --sand-deep: #e7eef8;
 
   /* -------------------------------------------------- ink
-     Measured against ivory #f7f3ea:
-       --ink    16.9:1     --ink-2   9.1:1     --ink-3   5.4:1
-     Nothing here carries running text and fails AA. --ink-4 is for hairline
-     furniture only and is never given a sentence. */
-  --ink: #111726;
-  --ink-2: #414a5c;
-  --ink-3: #6b7383;
-  --ink-4: #9aa1ad;
+     Measured against white:
+       --ink    17.6:1     --ink-2   9.4:1     --ink-3   5.2:1
+     --ink-4 is for hairline furniture only and is never given a sentence. */
+  --ink: #0f1a2e;
+  --ink-2: #3c4760;
+  --ink-3: #626d82;
+  --ink-4: #9aa3b3;
 
-  /* -------------------------------------------------- the dark ground
-     Navy, for the two or three bands that turn the page over. Deliberately
-     not black: black under an ivory sheet reads as a hole, navy reads as the
-     reverse of the same paper. */
-  --navy: #16233c;
-  --navy-2: #1d2f4e;
-  --navy-deep: #0e1829;
+  /* -------------------------------------------------- the dark tone
+     No section is set on these any more. They remain for the few surfaces
+     that are genuinely dark by nature - a video letterbox, a lightbox, the
+     scrim over a photograph - and are blue-navy so even those belong to the
+     palette. */
+  --navy: #0f2a55;
+  --navy-2: #173a72;
+  --navy-deep: #0a1d3d;
 
-  /* Type on navy: 14.8:1, 8.9:1, 5.6:1. Real colours rather than opacities,
-     because an alpha over a photograph is not a contrast guarantee. */
-  --on-navy: #f4f1e8;
-  --on-navy-2: #c3cad8;
-  --on-navy-3: #8e99ab;
+  /* Type on the dark tone. Real colours rather than opacities, because an
+     alpha over a photograph is not a contrast guarantee. */
+  --on-navy: #f7f9fc;
+  --on-navy-2: #c9d4e6;
+  --on-navy-3: #93a3bd;
 
-  /* -------------------------------------------------- the accent
-     School yellow. A ground colour, not a type colour.
+  /* -------------------------------------------------- the blue system
+       --blue        the accent: buttons, links, active states. 7.1:1 on white
+       --blue-deep   hover and pressed states, headline accents. 10.2:1
+       --blue-ink    the darkest blue; a filled control's hover. 13:1
+       --blue-bright a light blue for marks on photographs. Never type on white
+       --blue-soft   a pale blue fill: chips, highlights, selected rows
+       --blue-wash   the faintest blue; a hover behind a row
+       --line-blue   a blue hairline for card edges and dividers */
+  --blue: #2456a6;
+  --blue-deep: #183f80;
+  --blue-ink: #10306a;
+  --blue-bright: #6d98dc;
+  --blue-soft: #e3ecf8;
+  --blue-wash: #f2f6fc;
+  --line-blue: rgba(36, 86, 166, 0.18);
+  --line-blue-strong: rgba(36, 86, 166, 0.36);
+  --on-blue: #ffffff;
 
-       --sun       the fill: buttons, stickers, highlights
-       --sun-deep  the pressed state, and the one place it may be type
-       --sun-soft  a wash behind something, at full opacity so it composites
-                   predictably over photography
-
-     Ink on --sun is 7.9:1. --sun as type on ivory is 1.6:1, which is why it
-     is never allowed to be type there. */
-  --sun: #ffc53d;
-  --sun-deep: #9a6c00;
-  --sun-soft: #ffeab5;
-  --sun-wash: rgba(255, 197, 61, 0.22);
-  --on-sun: #111726;
+  /* -------------------------------------------------- the accent (legacy names)
+     These were the yellow. They now point at the blue ladder so every
+     stylesheet written against them follows the new accent. `--on-sun` is
+     white because the fill is dark. */
+  --sun: var(--blue);
+  --sun-deep: var(--blue-deep);
+  --sun-soft: var(--blue-soft);
+  --sun-wash: rgba(36, 86, 166, 0.1);
+  --on-sun: var(--on-blue);
 
   /* -------------------------------------------------- the invitation spreads
-     The four collage spreads that close a page (see InviteSection) are set on
-     chalk rather than ivory: a near-white with just enough warmth that the
-     photographs' own white paper borders still read as paper against it.
-
-       --chalk     the ground. #fcfcfa.
-       --slate     muted blue-grey for running copy. 5.9:1 on chalk.
+       --chalk     the ground. White.
+       --slate     blue-grey for running copy. 6.4:1 on white.
        --mist      the pale blue brush behind a collage. Never a type colour.
        --sky-line  the pale blue secondary pen mark. Furniture only.
-       --gold-ink  the sun, deep enough to be type: 3.9:1 on chalk, which is
-                   AA for large text and nothing else - so it is only ever the
-                   handwritten word in a headline, never a sentence. */
-  --chalk: #fcfcfa;
-  --slate: #56637a;
-  --mist: #e9eff7;
-  --sky-line: #9db4d2;
-  --gold-ink: #a8770a;
+       --gold-ink  legacy name for the handwritten headline word; now blue. */
+  --chalk: #ffffff;
+  --slate: #4f5d75;
+  --mist: #eaf1fa;
+  --sky-line: #a9c1e3;
+  --gold-ink: var(--blue);
 
   /* -------------------------------------------------- secondary accents
-     Three, held at a similar value so no one of them dominates a page they
-     share. Each has a soft companion for use as a ground. */
-  --blue: #2f5fa8;
-  --blue-soft: #dbe6f6;
-  --green: #3d7a58;
-  --green-soft: #dcebe1;
-  --coral: #c8543a;
-  --coral-soft: #fbe1d9;
+     Blue-family variants, held at a similar value so no one of them
+     dominates a page they share. Each has a soft companion. */
+  --green: #1f6f93;
+  --green-soft: #e0eff6;
+  --coral: #3b4fb0;
+  --coral-soft: #e5e8f8;
 
   /* Semantic state keeps its own colour; it is not decoration. */
   --ok: #2f7a52;
@@ -117,12 +121,12 @@
   --err: #b3372b;
 
   /* -------------------------------------------------- rules
-     Hairlines are ink at low alpha rather than grey, so a rule on ivory
-     belongs to the same light as the type it divides. */
-  --line: rgba(17, 23, 38, 0.12);
-  --line-strong: rgba(17, 23, 38, 0.22);
-  --line-soft: rgba(17, 23, 38, 0.07);
-  --line-navy: rgba(244, 241, 232, 0.16);
+     Hairlines are ink at low alpha, cool-tinted, so a rule belongs to the
+     same light as the type it divides. */
+  --line: rgba(15, 35, 75, 0.11);
+  --line-strong: rgba(15, 35, 75, 0.2);
+  --line-soft: rgba(15, 35, 75, 0.06);
+  --line-navy: rgba(247, 249, 252, 0.18);
 
   /* ==========================================================================
      Type
@@ -216,11 +220,12 @@
     clamp(24px, 5vw, 64px);
 
   /* -------------------------------------------------- elevation
-     Warm shadows. A neutral-black shadow on an ivory ground reads as dirt.
-     Used sparingly - most grouping here is done with a rule or with space. */
-  --e-1: 0 1px 2px rgba(50, 38, 18, 0.05), 0 8px 20px -14px rgba(50, 38, 18, 0.24);
-  --e-2: 0 1px 3px rgba(50, 38, 18, 0.06), 0 20px 44px -26px rgba(50, 38, 18, 0.32);
-  --e-3: 0 2px 6px rgba(50, 38, 18, 0.07), 0 38px 78px -44px rgba(50, 38, 18, 0.4);
+     Cool, blue-navy shadows at very low alpha. On a white page these are the
+     main way a card lifts off the sheet, so they stay soft and wide rather
+     than dark and tight. */
+  --e-1: 0 1px 2px rgba(15, 35, 75, 0.04), 0 8px 22px -14px rgba(15, 35, 75, 0.16);
+  --e-2: 0 1px 3px rgba(15, 35, 75, 0.05), 0 22px 46px -26px rgba(15, 35, 75, 0.22);
+  --e-3: 0 2px 6px rgba(15, 35, 75, 0.05), 0 40px 80px -44px rgba(15, 35, 75, 0.3);
 
   /* -------------------------------------------------- z-index
      A documented scale, so nothing has to reach for 9999. */
@@ -280,25 +285,21 @@
   --forest-mid: var(--navy-2);
   --forest-deep: var(--navy-deep);
   --blue-primary: var(--blue);
-  --blue-dark: var(--navy-2);
+  --blue-dark: var(--blue-deep);
   --ink-shadow: var(--navy-deep);
 
   --paper-deep: var(--sand);
   --paper-sunk: var(--sand-deep);
-  --bone: var(--ivory);
+  --bone: var(--white);
   --bone-deep: var(--sand);
   --bone-sunk: var(--sand-deep);
-  --bg-soft: var(--ivory);
-  --bg-warm: var(--sand);
+  --bg-soft: var(--white);
+  --bg-warm: var(--white);
   --cream: var(--sand-deep);
-  --ground-porcelain: var(--ivory);
-  --ground-linen: var(--sand);
+  --ground-porcelain: var(--white);
+  --ground-linen: var(--white);
 
   --blue-text: var(--blue);
-  --blue-deep: #24497f;
-  --blue-bright: #8fb4e8;
-  --blue-wash: var(--blue-soft);
-  --on-blue: #ffffff;
 
   --amber: var(--sun);
   --amber-text: var(--sun-deep);
@@ -338,8 +339,8 @@
   --r-xl: var(--r-lg);
   --r-2xl: var(--r-lg);
   --e-4: var(--e-3);
-  --glass-bg: rgba(244, 241, 232, 0.06);
-  --glass-bg-hi: rgba(244, 241, 232, 0.1);
+  --glass-bg: rgba(247, 249, 252, 0.06);
+  --glass-bg-hi: rgba(247, 249, 252, 0.1);
   --glass-blur: blur(16px) saturate(140%);
   --ac-a: var(--sun);
   --ac-b: var(--sun-deep);

@@ -5,8 +5,9 @@
    admissions form: this is the "I just have a question" route, and every
    extra required field is a parent who closes the tab instead.
 
-   It sits on navy because it is the one panel on the contact page that is
-   asking for something, and the page around it is otherwise entirely quiet.
+   It sits on the same white as the rest of the page. What marks it as the
+   one panel asking for something is the form card itself - a blue hairline
+   and the deepest shadow on the page - not a change of ground.
    ========================================================================== */
 
 .qe__inner {
@@ -26,13 +27,13 @@
 }
 
 .qe__title {
-  color: var(--on-navy);
+  color: var(--ink);
   max-width: 14ch;
 }
 
 .qe__lead {
   font-size: var(--t-lead);
-  color: var(--on-navy-2);
+  color: var(--ink-2);
   line-height: 1.5;
   max-width: 40ch;
 }
@@ -50,13 +51,14 @@
   gap: 14px;
   padding: 15px 20px;
   border-radius: var(--r-sm);
-  box-shadow: inset 0 0 0 1px var(--line-navy);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line-blue);
   width: fit-content;
   transition: box-shadow var(--d-state) var(--ease-out), transform var(--d-state) var(--ease-out);
 }
 
 .qe__phone:hover {
-  box-shadow: inset 0 0 0 1.5px var(--sun);
+  box-shadow: inset 0 0 0 1.5px var(--blue), var(--e-1);
   transform: translateY(-2px);
 }
 
@@ -82,13 +84,13 @@
   font-size: var(--t-label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--on-navy-3);
+  color: var(--ink-3);
 }
 
 .qe__phone-value {
   font-size: var(--t-body);
   font-weight: 560;
-  color: var(--on-navy);
+  color: var(--ink);
 }
 
 .qe__assurances {
@@ -101,7 +103,7 @@
   align-items: center;
   gap: 10px;
   font-size: var(--t-small);
-  color: var(--on-navy-3);
+  color: var(--ink-2);
 }
 
 .qe__assurances svg {
@@ -113,10 +115,11 @@
    The panel
    -------------------------------------------------------------------------- */
 .qe__panel {
-  background: var(--paper);
+  background: var(--white);
+  border: 1px solid var(--line-blue);
   border-radius: var(--r-lg);
   padding: clamp(24px, 3.4vw, 44px);
-  box-shadow: var(--e-3);
+  box-shadow: var(--e-2);
 }
 
 .qe__form {
@@ -150,11 +153,19 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: var(--r-ctl);
-  background: var(--ivory);
-  border: 1px solid var(--line);
+  background: var(--white);
+  border: 1px solid var(--line-blue-strong);
   color: var(--ink);
   font-size: var(--t-body);
-  transition: border-color var(--d-state) var(--ease-out), background var(--d-state) var(--ease-out);
+  transition:
+    border-color var(--d-state) var(--ease-out),
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.qe__field input::placeholder,
+.qe__field textarea::placeholder {
+  color: var(--ink-4);
 }
 
 .qe__field textarea {
@@ -166,15 +177,16 @@
 .qe__field input:hover,
 .qe__field select:hover,
 .qe__field textarea:hover {
-  border-color: var(--line-strong);
+  border-color: var(--blue-bright);
 }
 
 .qe__field input:focus,
 .qe__field select:focus,
 .qe__field textarea:focus {
   outline: none;
-  border-color: var(--ink);
-  background: var(--paper);
+  border-color: var(--blue);
+  background: var(--white);
+  box-shadow: 0 0 0 3px var(--sun-wash);
 }
 
 .qe__field input.has-error,
@@ -196,8 +208,8 @@
   bottom: 17px;
   width: 9px;
   height: 9px;
-  border-right: 1.5px solid var(--ink-3);
-  border-bottom: 1.5px solid var(--ink-3);
+  border-right: 1.5px solid var(--blue);
+  border-bottom: 1.5px solid var(--blue);
   transform: rotate(45deg);
   pointer-events: none;
 }
@@ -259,16 +271,16 @@
 }
 
 .qe__done .btn-secondary {
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--blue-deep);
+  box-shadow: inset 0 0 0 1.5px var(--line-blue-strong);
 }
 
 .qe__done .btn-secondary::after {
-  background: var(--ink);
+  background: var(--blue);
 }
 
 .qe__done .btn-secondary:hover {
-  color: var(--ivory);
+  color: var(--on-blue);
 }
 
 @media (min-width: 700px) {

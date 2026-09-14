@@ -2,13 +2,14 @@
    FLOATING ASSISTANT - Chat
    --------------------------------------------------------------------------
    One white button in the corner and the panel it opens, in the site's own
-   materials: the paper ground, the ink and navy, the hairlines, the warm
-   shadows, Geist for what is read and Fraunces for the greeting. No accent of
-   its own - it is the school's help desk, and it looks like the school.
+   materials: the white ground, the ink and the school blue, the hairlines,
+   the cool shadows, Geist for what is read and Fraunces for the greeting. No
+   accent of its own - it is the school's help desk, and it looks like the
+   school.
    ========================================================================== */
 
 .fa {
-  --fa-accent: var(--navy);
+  --fa-accent: var(--blue);
 
   --fa-right: 24px;
   --fa-bottom: 24px;
@@ -112,20 +113,20 @@
   width: var(--fa-chat);
   height: var(--fa-chat);
   background: var(--white);
-  color: var(--navy);
+  color: var(--blue);
   box-shadow:
-    inset 0 0 0 1px var(--line),
-    0 1px 2px rgba(50, 38, 18, 0.08),
-    0 8px 20px -10px rgba(22, 35, 60, 0.36);
+    inset 0 0 0 1px var(--line-blue),
+    0 1px 2px rgba(15, 35, 75, 0.06),
+    0 8px 20px -10px rgba(15, 35, 75, 0.3);
 }
 
 @media (hover: hover) {
   .fa-chat:hover {
     transform: scale(1.06);
     box-shadow:
-      inset 0 0 0 1px var(--line-strong),
-      0 1px 2px rgba(50, 38, 18, 0.08),
-      0 12px 26px -12px rgba(22, 35, 60, 0.42);
+      inset 0 0 0 1px var(--line-blue-strong),
+      0 1px 2px rgba(15, 35, 75, 0.06),
+      0 12px 26px -12px rgba(15, 35, 75, 0.36);
   }
 }
 
@@ -155,10 +156,10 @@
   border-radius: 24px;
   /* A hairline drawn as a shadow keeps the inner corners exactly round. */
   box-shadow:
-    0 0 0 1px rgba(17, 23, 38, 0.07),
-    0 1px 2px rgba(34, 26, 70, 0.06),
-    0 16px 36px -14px rgba(34, 26, 70, 0.2),
-    0 44px 90px -36px rgba(34, 26, 70, 0.32);
+    0 0 0 1px var(--line-blue),
+    0 1px 2px rgba(15, 35, 75, 0.05),
+    0 16px 36px -14px rgba(15, 35, 75, 0.18),
+    0 44px 90px -36px rgba(15, 35, 75, 0.28);
   /* It grows out of the button, not out of its own middle. */
   transform-origin: calc(100% - 24px) 100%;
 }
@@ -191,8 +192,8 @@
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: var(--navy);
-  color: #fff;
+  background: var(--blue);
+  color: var(--on-blue);
 }
 
 .fa-head__text {
@@ -215,8 +216,8 @@
 .fa-head__tag {
   padding: 3px 7px;
   border-radius: var(--r-pill);
-  background: var(--sand);
-  color: var(--ink-2);
+  background: var(--blue-soft);
+  color: var(--blue-deep);
   font-family: var(--font-mono);
   font-size: 0.625rem;
   font-weight: 500;
@@ -249,8 +250,8 @@
 }
 
 .fa-head__close:hover {
-  background: var(--sand);
-  color: var(--ink);
+  background: var(--blue-wash);
+  color: var(--blue-deep);
 }
 
 .fa-head__close:focus-visible {
@@ -305,9 +306,9 @@
 .fa-chip {
   padding: 8px 13px;
   border-radius: var(--r-pill);
-  background: var(--ivory);
+  background: var(--white);
   color: var(--ink-2);
-  box-shadow: inset 0 0 0 1px var(--line);
+  box-shadow: inset 0 0 0 1px var(--line-blue);
   font-size: 0.8125rem;
   font-weight: 520;
   line-height: 1.2;
@@ -322,8 +323,8 @@
 @media (hover: hover) {
   .fa-chip:hover {
     transform: translateY(-1px);
-    background: var(--sand);
-    color: var(--ink);
+    background: var(--blue-soft);
+    color: var(--blue-ink);
   }
 }
 
@@ -351,8 +352,8 @@
   align-self: flex-end;
   padding: 9px 14px;
   border-radius: 18px 18px 6px 18px;
-  background: var(--navy);
-  color: #fff;
+  background: var(--blue);
+  color: var(--on-blue);
   white-space: pre-wrap;
 }
 
@@ -360,7 +361,8 @@
   align-self: flex-start;
   padding: 11px 14px 12px;
   border-radius: 18px 18px 18px 6px;
-  background: var(--ivory);
+  /* A blue-white bubble, so a reply still reads as a shape on the white panel. */
+  background: var(--blue-wash);
   box-shadow: inset 0 0 0 1px var(--line-soft);
   color: var(--ink);
 }
@@ -417,8 +419,8 @@
 }
 
 .fa-action:hover {
-  box-shadow: inset 0 0 0 1px var(--navy);
-  color: var(--navy);
+  box-shadow: inset 0 0 0 1px var(--blue);
+  color: var(--blue);
 }
 
 .fa-action:focus-visible {
@@ -467,8 +469,8 @@
   margin-inline: 1px;
   padding-inline: 3px;
   border-radius: 4px;
-  background: var(--sand);
-  color: var(--ink-2);
+  background: var(--blue-soft);
+  color: var(--blue-deep);
   font-family: var(--font-mono);
   font-size: 0.68em;
   font-weight: 500;
@@ -512,7 +514,7 @@
 }
 
 .fa-sources a:hover {
-  color: var(--navy);
+  color: var(--blue);
   text-decoration-color: currentColor;
 }
 
@@ -533,7 +535,7 @@
   gap: 4px;
   padding: 13px 15px;
   border-radius: 18px 18px 18px 6px;
-  background: var(--ivory);
+  background: var(--blue-wash);
   box-shadow: inset 0 0 0 1px var(--line-soft);
   animation: fa-in 300ms var(--ease-out-soft) both;
 }
@@ -594,8 +596,8 @@
 
 .fa-field:focus-within {
   box-shadow:
-    inset 0 0 0 1px var(--navy),
-    0 0 0 4px var(--sand);
+    inset 0 0 0 1px var(--blue),
+    0 0 0 4px var(--blue-soft);
 }
 
 .fa-field textarea {
@@ -629,10 +631,10 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--navy);
-  color: #fff;
+  background: var(--blue);
+  color: var(--on-blue);
   cursor: pointer;
-  box-shadow: 0 6px 14px -8px rgba(22, 35, 60, 0.7);
+  box-shadow: 0 6px 14px -8px rgba(36, 86, 166, 0.6);
   transition:
     transform 300ms var(--ease-out-soft),
     background-color var(--d-state) var(--ease-out);

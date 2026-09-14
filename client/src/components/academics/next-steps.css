@@ -2,39 +2,42 @@
    02b - NEXT STEPS
    --------------------------------------------------------------------------
    An art-directed spread on the page ground: copy top left, one large
-   circular portrait with rings and a yellow badge, four path panels floating
-   around it, soft blobs at the corners and a pencil sprig bottom right.
+   circular portrait with rings and a blue badge, four white path panels
+   floating around it, pale blue blobs at the corners and a pencil sprig
+   bottom right.
 
    From 1180px the stage is a size container and everything on it is placed
    and sized in `cqi` - 100cqi is the stage's width - so the composition
    scales as one drawing. Each panel and the portrait are containers too,
    so what is inside them is sized against them.
 
-   The accents are held slightly desaturated so no one colour wins: lavender,
-   yellow, green and blue for the four paths, coral for the written word.
+   The four paths are told apart by accent alone - indigo, blue, cerulean
+   and a light blue - all from the site's blue family; the panels themselves
+   are white, so the section stays on the same continuous page. The written
+   word is the site blue.
    ========================================================================== */
 
 .nx {
-  --nx-lav: #8a7fc2;
-  --nx-lav-soft: #f3f0f8;
-  --nx-lav-ink: #5d519a;
-  --nx-sun: #f2b544;
-  --nx-sun-soft: #fbf3e2;
-  --nx-green: #6f9d73;
-  --nx-green-soft: #edf3ea;
-  --nx-green-ink: #3d6b45;
-  --nx-blue: #6d8fbf;
-  --nx-blue-soft: #edf2f8;
-  --nx-blue-ink: #2f5fa8;
-  --nx-coral: #cf5f3b;
-  --nx-mist: #dde7f1;
-  --nx-hair: rgba(22, 35, 60, 0.16);
+  --nx-lav: var(--coral);
+  --nx-lav-soft: var(--coral-soft);
+  --nx-lav-ink: var(--coral);
+  --nx-sun: var(--blue);
+  --nx-sun-soft: var(--blue-soft);
+  --nx-green: var(--green);
+  --nx-green-soft: var(--green-soft);
+  --nx-green-ink: var(--green);
+  --nx-blue: var(--blue-bright);
+  --nx-blue-soft: var(--blue-wash);
+  --nx-blue-ink: var(--blue-deep);
+  --nx-coral: var(--blue);
+  --nx-mist: var(--mist);
+  --nx-hair: var(--line-blue);
 
   position: relative;
   overflow: clip;
   isolation: isolate;
   padding-block: clamp(72px, 7vw, 112px) clamp(80px, 8vw, 128px);
-  background: var(--ivory);
+  background: var(--white);
   color: var(--navy);
 }
 
@@ -53,7 +56,8 @@
   width: clamp(200px, 22vw, 360px);
   aspect-ratio: 1.15;
   border-radius: 46% 54% 60% 40% / 42% 38% 62% 58%;
-  background: #e3ebde;
+  background: var(--nx-mist);
+  opacity: 0.7;
 }
 
 .nx__corner--bl {
@@ -62,8 +66,8 @@
   width: clamp(240px, 27vw, 440px);
   aspect-ratio: 1;
   border-radius: 58% 42% 38% 62% / 55% 60% 40% 45%;
-  background: #f5d68f;
-  opacity: 0.72;
+  background: var(--blue-soft);
+  opacity: 0.55;
 }
 
 .nx__sprig {
@@ -189,8 +193,10 @@
   border-radius: 50%;
   background: var(--white);
   box-shadow:
-    0 1px 2px rgba(50, 38, 18, 0.06),
-    0 12px 26px -16px rgba(50, 38, 18, 0.4);
+    inset 0 0 0 1px var(--line-blue),
+    0 1px 2px rgba(15, 35, 75, 0.05),
+    0 12px 26px -16px rgba(15, 35, 75, 0.3);
+  color: var(--blue);
   transition: transform var(--d-move) var(--ease-out);
 }
 
@@ -275,18 +281,18 @@
 
 .nx__ring--dash {
   stroke-dasharray: 2 6;
-  stroke: rgba(22, 35, 60, 0.28);
+  stroke: var(--line-blue-strong);
 }
 
 .nx__ring--arc {
-  stroke: var(--navy);
+  stroke: var(--blue);
   stroke-width: 1.4;
   stroke-linecap: round;
   opacity: 0.55;
 }
 
 .nx__tick {
-  stroke: rgba(22, 35, 60, 0.4);
+  stroke: rgba(15, 35, 75, 0.4);
 }
 
 .nx__micro {
@@ -302,8 +308,8 @@
 .nx__node--green { fill: var(--nx-green-ink); }
 .nx__node--coral { fill: var(--nx-coral); }
 .nx__node--ink { fill: var(--navy); }
-.nx__halo--lav { fill: rgba(138, 127, 194, 0.22); }
-.nx__halo--green { fill: rgba(111, 157, 115, 0.22); }
+.nx__halo--lav { fill: rgba(59, 79, 176, 0.18); }
+.nx__halo--green { fill: rgba(31, 111, 147, 0.18); }
 
 /* The badge, over the foot of the portrait. */
 .nx__badge {
@@ -317,7 +323,7 @@
   aspect-ratio: 1;
   border-radius: 52% 48% 47% 53% / 50% 54% 46% 50%;
   background: var(--nx-sun);
-  box-shadow: 0 18px 30px -22px rgba(120, 80, 10, 0.6);
+  box-shadow: 0 18px 30px -22px rgba(15, 35, 75, 0.5);
   font-family: var(--font-display);
   font-variation-settings: 'opsz' 144;
   font-weight: 500;
@@ -325,7 +331,7 @@
   line-height: 0.92;
   letter-spacing: -0.02em;
   text-align: center;
-  color: var(--navy);
+  color: var(--on-sun);
 }
 
 .nx__badge span {
@@ -377,7 +383,7 @@
 }
 
 .nx-card--lav { --nx-bg: var(--nx-lav-soft); --nx-accent: var(--nx-lav); --nx-ink: var(--nx-lav-ink); }
-.nx-card--sun { --nx-bg: var(--nx-sun-soft); --nx-accent: var(--nx-sun); --nx-ink: var(--nx-coral); }
+.nx-card--sun { --nx-bg: var(--nx-sun-soft); --nx-accent: var(--nx-sun); --nx-ink: var(--blue-deep); }
 .nx-card--green { --nx-bg: var(--nx-green-soft); --nx-accent: var(--nx-green); --nx-ink: var(--nx-green-ink); }
 .nx-card--blue { --nx-bg: var(--nx-blue-soft); --nx-accent: var(--nx-blue); --nx-ink: var(--nx-blue-ink); }
 
@@ -386,10 +392,14 @@
   min-height: 46cqi;
   padding: 6.5cqi 7cqi 6cqi 40cqi;
   border-radius: clamp(18px, 7cqi, 30px);
-  background: var(--nx-bg);
+  /* White on the white page: the blue hairline and a soft cool shadow lift
+     it, and the path's own accent (icon, index, link) tells it apart. The
+     tinted `--nx-bg` stays defined for the small accents that use it. */
+  background: var(--white);
   box-shadow:
-    0 1px 2px rgba(50, 38, 18, 0.04),
-    0 24px 46px -32px rgba(50, 38, 18, 0.3);
+    inset 0 0 0 1px var(--line-blue),
+    0 1px 2px rgba(15, 35, 75, 0.04),
+    0 24px 46px -32px rgba(15, 35, 75, 0.24);
 }
 
 /* The photograph straddles the panel's left edge and rises above its top. */
@@ -402,7 +412,7 @@
   overflow: hidden;
   border-radius: 50%;
   background: var(--sand);
-  box-shadow: 0 18px 32px -24px rgba(40, 30, 10, 0.5);
+  box-shadow: 0 18px 32px -24px rgba(15, 35, 75, 0.36);
 }
 
 .nx-card__photo img {
@@ -425,11 +435,12 @@
   border-radius: 50%;
   background: var(--nx-accent);
   color: var(--white);
-  box-shadow: 0 0 0 4px var(--ivory);
+  box-shadow: 0 0 0 4px var(--white);
 }
 
-.nx-card--sun .nx-card__icon {
-  color: var(--navy);
+/* The light-blue accent is too pale to carry a white glyph. */
+.nx-card--blue .nx-card__icon {
+  color: var(--blue-ink);
 }
 
 .nx-card__icon svg {
@@ -589,13 +600,13 @@
   .nx__rail span {
     width: 7px;
     height: 7px;
-    border: 1px solid rgba(22, 35, 60, 0.35);
+    border: 1px solid var(--line-blue-strong);
     border-radius: 50%;
   }
 
   .nx__rail span.is-on {
-    border-color: var(--navy);
-    background: var(--navy);
+    border-color: var(--blue);
+    background: var(--blue);
   }
 
   .nx__rail b {
