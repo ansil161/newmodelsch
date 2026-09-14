@@ -55,7 +55,7 @@
   margin: 0;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  font-weight: 450;
+  font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--cm-ink-3);
@@ -74,11 +74,10 @@
 .cm__title {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
   font-size: clamp(2.875rem, 7.2vw, 7rem);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.042em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: var(--cm-ink);
 }
 
@@ -146,15 +145,15 @@
    small arc drawn beneath it.
    ========================================================================== */
 .cm-nav {
-  --pn-blue: var(--blue, #2456a6);
-  --pn-blue-deep: var(--blue-deep, #183f80);
-  --pn-tint: #f0f5fd;
-  --pn-tint-hover: #f8fbff;
-  --pn-sweep: #e9f0fa;
-  --pn-line: #dde4ee;
-  --pn-badge: #eef1f6;
-  --pn-title: #1f2430;
-  --pn-muted: #7b8496;
+  --pn-blue: var(--blue);
+  --pn-blue-deep: var(--blue-deep);
+  --pn-tint: var(--blue-wash);
+  --pn-tint-hover: color-mix(in srgb, var(--blue-wash) 45%, var(--white));
+  --pn-sweep: var(--blue-soft);
+  --pn-line: var(--color-border-solid);
+  --pn-badge: var(--sand-deep);
+  --pn-title: var(--ink);
+  --pn-muted: var(--ink-3);
   --pn-shape: 44px 18px 44px 18px / 44px 18px 44px 18px;
   --pn-t: 460ms;
   --pn-ease: cubic-bezier(0.23, 1, 0.32, 1);
@@ -258,8 +257,8 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   box-shadow:
-    0 1px 0 rgba(15, 26, 46, 0.02),
-    0 14px 30px -26px rgba(15, 26, 46, 0.28);
+    0 1px 0 rgba(26, 22, 64, 0.02),
+    0 14px 30px -26px rgba(26, 22, 64, 0.28);
   transition:
     flex-grow 640ms var(--pn-ease),
     border-color var(--pn-t) var(--pn-ease),
@@ -275,7 +274,7 @@
   height: 48px;
   border-radius: 50%;
   background: var(--pn-badge);
-  color: #5b6477;
+  color: var(--ink-3);
   transition:
     background-color var(--pn-t) var(--pn-ease),
     color var(--pn-t) var(--pn-ease),
@@ -285,9 +284,8 @@
 
 .cm-tab__num {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 48;
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: lining-nums tabular-nums;
@@ -302,9 +300,8 @@
 .cm-tab__title {
   overflow: hidden;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 48;
   font-size: clamp(1rem, 1.3vw, 1.3125rem);
-  font-weight: 450;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.018em;
   white-space: nowrap;
@@ -331,7 +328,7 @@
   height: 34px;
   border: 1px solid var(--pn-line);
   border-radius: 50%;
-  color: #8e97a8;
+  color: var(--ink-3);
   transition:
     background-color var(--pn-t) var(--pn-ease),
     border-color var(--pn-t) var(--pn-ease),
@@ -404,14 +401,14 @@
   background-color: var(--pn-tint);
   transform: translateY(-3px);
   box-shadow:
-    0 0 0 4px rgba(36, 86, 166, 0.06),
-    0 22px 42px -26px rgba(24, 63, 128, 0.55);
+    0 0 0 4px rgba(70, 53, 149, 0.06),
+    0 22px 42px -26px rgba(58, 44, 128, 0.55);
 }
 
 .cm-tab.is-active .cm-tab__badge {
   background: var(--pn-blue);
   color: #ffffff;
-  box-shadow: 0 8px 18px -10px rgba(24, 63, 128, 0.7);
+  box-shadow: 0 8px 18px -10px rgba(58, 44, 128, 0.7);
   transform: scale(1.06);
 }
 
@@ -505,8 +502,8 @@
   background: var(--cm-stock);
   box-shadow:
     0 0 0 1px var(--line-blue),
-    0 1px 1px rgba(15, 35, 75, 0.06),
-    0 26px 44px -30px rgba(15, 35, 75, 0.4);
+    0 1px 1px rgba(26, 22, 64, 0.06),
+    0 26px 44px -30px rgba(26, 22, 64, 0.4);
 }
 
 .cm-shot__crop {
@@ -632,9 +629,8 @@
   margin: clamp(14px, 2vh, 22px) 0 clamp(14px, 2vh, 22px);
   max-width: 17ch;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 96;
   font-size: clamp(1.75rem, 3.1vw, 3rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.02;
   letter-spacing: -0.03em;
   text-wrap: balance;
@@ -648,7 +644,7 @@
   margin-bottom: 0.55em;
   font-family: var(--font-body);
   font-size: 0.8125rem;
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.01em;
   color: var(--cm-ink-2);
@@ -704,8 +700,8 @@
   margin: 0;
   max-width: 44ch;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 36;
-  font-style: italic;
+  font-weight: 600;
+  font-style: normal;
   font-size: clamp(1rem, 1.25vw, 1.1875rem);
   line-height: 1.4;
   color: var(--cm-ink);
@@ -781,11 +777,10 @@
 .cm-count__now {
   display: inline-block;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
   font-size: clamp(2rem, 3.2vw, 3rem);
-  font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: var(--cm-ink);
 }
 

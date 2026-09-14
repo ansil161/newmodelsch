@@ -3,7 +3,8 @@
    --------------------------------------------------------------------------
    One white button in the corner and the panel it opens, in the site's own
    materials: the white ground, the ink and the school blue, the hairlines,
-   the cool shadows, Geist for what is read and Fraunces for the greeting. No
+   the cool shadows, Inter for what is read and Plus Jakarta Sans for the
+   greeting. No
    accent of its own - it is the school's help desk, and it looks like the
    school.
    ========================================================================== */
@@ -116,8 +117,8 @@
   color: var(--blue);
   box-shadow:
     inset 0 0 0 1px var(--line-blue),
-    0 1px 2px rgba(15, 35, 75, 0.06),
-    0 8px 20px -10px rgba(15, 35, 75, 0.3);
+    0 1px 2px rgba(26, 22, 64, 0.06),
+    0 8px 20px -10px rgba(26, 22, 64, 0.3);
 }
 
 @media (hover: hover) {
@@ -125,8 +126,8 @@
     transform: scale(1.06);
     box-shadow:
       inset 0 0 0 1px var(--line-blue-strong),
-      0 1px 2px rgba(15, 35, 75, 0.06),
-      0 12px 26px -12px rgba(15, 35, 75, 0.36);
+      0 1px 2px rgba(26, 22, 64, 0.06),
+      0 12px 26px -12px rgba(26, 22, 64, 0.36);
   }
 }
 
@@ -157,9 +158,9 @@
   /* A hairline drawn as a shadow keeps the inner corners exactly round. */
   box-shadow:
     0 0 0 1px var(--line-blue),
-    0 1px 2px rgba(15, 35, 75, 0.05),
-    0 16px 36px -14px rgba(15, 35, 75, 0.18),
-    0 44px 90px -36px rgba(15, 35, 75, 0.28);
+    0 1px 2px rgba(26, 22, 64, 0.05),
+    0 16px 36px -14px rgba(26, 22, 64, 0.18),
+    0 44px 90px -36px rgba(26, 22, 64, 0.28);
   /* It grows out of the button, not out of its own middle. */
   transform-origin: calc(100% - 24px) 100%;
 }
@@ -215,7 +216,7 @@
 
 .fa-head__tag {
   padding: 3px 7px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--blue-soft);
   color: var(--blue-deep);
   font-family: var(--font-mono);
@@ -276,13 +277,12 @@
   scrollbar-color: var(--line-strong) transparent;
 }
 
-/* The one serif line in the panel: the greeting is the school speaking, and
-   the school speaks in Fraunces. */
+/* The one heading-face line in the panel: the greeting is the school
+   speaking. */
 .fa-welcome__hi {
   font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: 500;
-  font-variation-settings: 'opsz' 72;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -305,12 +305,12 @@
 
 .fa-chip {
   padding: 8px 13px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--white);
   color: var(--ink-2);
   box-shadow: inset 0 0 0 1px var(--line-blue);
   font-size: 0.8125rem;
-  font-weight: 520;
+  font-weight: 500;
   line-height: 1.2;
   cursor: pointer;
   transition:
@@ -331,7 +331,7 @@
 .fa-chip:focus-visible {
   outline-color: var(--fa-accent);
   outline-offset: 2px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
 }
 
 /* -------------------------------------------------------------- messages */
@@ -406,11 +406,11 @@
   align-items: center;
   gap: 6px;
   padding: 6px 11px 6px 9px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--line);
   font-size: 0.78125rem;
-  font-weight: 550;
+  font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
   transition:
@@ -426,7 +426,7 @@
 .fa-action:focus-visible {
   outline-color: var(--fa-accent);
   outline-offset: 2px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
 }
 
 /* Answers from the knowledge base: numbered lists, headings, citations and
@@ -634,7 +634,7 @@
   background: var(--blue);
   color: var(--on-blue);
   cursor: pointer;
-  box-shadow: 0 6px 14px -8px rgba(36, 86, 166, 0.6);
+  box-shadow: 0 6px 14px -8px rgba(70, 53, 149, 0.6);
   transition:
     transform 300ms var(--ease-out-soft),
     background-color var(--d-state) var(--ease-out);

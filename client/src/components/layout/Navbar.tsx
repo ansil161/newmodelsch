@@ -7,6 +7,7 @@ import { useGsapScope } from '@/hooks/useGsapScope';
 import { ScrollTrigger, gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
+import { Logo } from '@/components/common/Logo';
 import { Figure } from '@/components/editorial';
 import './Navbar.css';
 
@@ -132,17 +133,7 @@ export function Navbar() {
       >
         <div className="nav__inner">
           <Link className="nav__brand" to={ROUTES.home} aria-label={`${SCHOOL.name}, home`}>
-            {/* The mark is drawn, not an image file: two rules and a disc,
-                which is the same vocabulary as the marks in the headlines. */}
-            <span className="nav__mark" aria-hidden="true">
-              <i />
-              <i />
-              <b />
-            </span>
-            <span className="nav__name">
-              <b>New Model</b>
-              <span>High School</span>
-            </span>
+            <Logo className="nav__logo" decorative priority />
           </Link>
 
           <nav className="nav__links" aria-label="Primary">

@@ -147,9 +147,9 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(12, 14, 20, 0.66) 0%,
-    rgba(12, 14, 20, 0.34) 20%,
-    rgba(12, 14, 20, 0) 44%
+    rgba(17, 14, 44, 0.66) 0%,
+    rgba(17, 14, 44, 0.34) 20%,
+    rgba(17, 14, 44, 0) 44%
   );
   pointer-events: none;
 }
@@ -168,7 +168,7 @@
   margin: 0;
   font-family: var(--font-body);
   font-size: clamp(0.9375rem, 1.25vw, 1.1875rem);
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #fff;

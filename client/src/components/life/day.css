@@ -33,7 +33,7 @@
      1.1:1 against white it disappears, and a mark that disappears reads as a
      rendering fault rather than as restraint. A pale blue at about 1.4:1 -
      still quiet, still clearly drawn. */
-  --day-mark: #c6d6ee;
+  --day-mark: var(--brand-200);
 
   position: relative;
   /* The frames hang past their cards, and on a narrow window the outermost
@@ -86,7 +86,7 @@
   font-family: var(--font-display);
   font-size: var(--t-h1);
   font-weight: 600;
-  line-height: 0.94;
+  line-height: 1;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
@@ -96,8 +96,8 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--t-lead);
-  font-style: italic;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 600;
   line-height: 1.45;
   color: var(--ink-2);
 }
@@ -162,7 +162,7 @@
 .day-row__time {
   margin: 0;
   padding: 0.82em 1.5em;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--white);
   box-shadow: var(--e-1);
   font-family: var(--font-body);

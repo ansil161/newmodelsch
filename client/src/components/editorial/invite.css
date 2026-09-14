@@ -30,7 +30,7 @@
   width: var(--arc);
   aspect-ratio: 1;
   border-radius: 50%;
-  border: clamp(22px, 2.6vw, 40px) solid rgba(157, 180, 210, 0.14);
+  border: clamp(22px, 2.6vw, 40px) solid rgba(179, 171, 219, 0.14);
   pointer-events: none;
 }
 
@@ -96,7 +96,7 @@
   gap: 10px;
   margin: 0 0 clamp(22px, 2.4vw, 32px);
   padding: 8px 15px 8px 12px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--blue-soft);
   font-family: var(--font-body);
   font-size: var(--t-label);
@@ -114,7 +114,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--sun);
-  box-shadow: 0 0 0 3px rgba(36, 86, 166, 0.2);
+  box-shadow: 0 0 0 3px rgba(70, 53, 149, 0.2);
 }
 
 /* "Open" - the one piece of state on the spread, so it is set apart. */
@@ -124,7 +124,7 @@
   gap: 6px;
   margin-left: 2px;
   padding: 4px 9px 4px 8px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--navy);
   color: var(--chalk);
   letter-spacing: 0.1em;
@@ -155,12 +155,11 @@
   position: relative;
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(4rem, 9vw, 8.5rem);
   font-feature-settings: 'lnum' 1;
-  line-height: 0.84;
-  letter-spacing: -0.045em;
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: var(--navy);
 }
 
@@ -179,32 +178,28 @@
   margin: 0;
   max-width: 13ch;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 560;
+  font-weight: 600;
   font-size: clamp(2.6rem, 4.9vw, 4.6rem);
-  line-height: 0.98;
+  line-height: 1;
   letter-spacing: -0.03em;
   text-wrap: balance;
   color: var(--navy);
 }
 
-/* The written word. Caveat sits small on its body, so it is set a size up
-   to meet the serif's cap height, and tilted a degree or two - enough to
-   read as a hand, not enough to read as a gimmick. `--gold-ink` is a legacy
-   name and now resolves to the accent blue, 7.1:1 on white. */
+/* The emphasised word: the headline's own face, picked out in the logo
+   colour. `--gold-ink` is a legacy name and resolves to the primary. */
 .script {
   position: relative;
   display: inline-block;
   padding-inline: 0.04em 0.08em;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-style: normal;
-  font-weight: 700;
-  font-size: 1.3em;
-  line-height: 0.7;
-  letter-spacing: 0;
+  font-weight: 600;
+  font-size: 1em;
+  line-height: inherit;
+  letter-spacing: inherit;
   white-space: nowrap;
   color: var(--gold-ink);
-  rotate: -2.5deg;
 }
 
 /* The blue ink. Same hand, same rotation, one section. --blue is 7.1:1 on
@@ -260,8 +255,8 @@
 .invite .invite__cta {
   min-height: 54px;
   padding: 17px 26px 17px 30px;
-  border-radius: var(--r-pill);
-  box-shadow: 0 12px 26px -16px rgba(36, 86, 166, 0.55);
+  border-radius: var(--r-ctl);
+  box-shadow: 0 12px 26px -16px rgba(70, 53, 149, 0.55);
 }
 
 .invite__cta svg {
@@ -278,7 +273,7 @@
   gap: 8px;
   min-height: 44px;
   font-size: 0.9375rem;
-  font-weight: 560;
+  font-weight: 600;
   color: var(--navy);
   background:
     linear-gradient(var(--sun), var(--sun)) left bottom 9px / 0% 2px no-repeat,
@@ -421,8 +416,8 @@
   background: var(--white);
   border-radius: 3px;
   box-shadow:
-    0 1px 2px rgba(22, 35, 60, 0.08),
-    0 16px 30px -18px rgba(22, 35, 60, 0.42);
+    0 1px 2px rgba(26, 22, 64, 0.08),
+    0 16px 30px -18px rgba(26, 22, 64, 0.42);
 }
 
 @media (hover: hover) {
@@ -486,10 +481,10 @@
 
 /* ----- the handwriting */
 .clg__note {
-  font-family: var(--font-hand);
-  font-size: clamp(1.4rem, 1.9vw, 1.85rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.092rem, 1.482vw, 1.443rem);
   font-weight: 600;
-  line-height: 0.95;
+  line-height: 1.15;
   color: var(--navy);
   white-space: nowrap;
 }

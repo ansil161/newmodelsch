@@ -16,8 +16,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Masthead - a copy of the navigation's lockup, so the brand is the same
-   object here as everywhere else
+   Masthead - the same official logo as the navigation, at the same size
    -------------------------------------------------------------------------- */
 .auth__top {
   display: flex;
@@ -30,60 +29,11 @@
 .auth__brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   flex: none;
 }
 
-.auth__mark {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  flex: none;
-}
-
-.auth__mark i {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 2.5px;
-  background: var(--ink);
-  border-radius: 2px;
-}
-
-.auth__mark i:first-child { top: 5px; }
-.auth__mark i:last-child { top: 13px; width: 62%; }
-
-.auth__mark b {
-  position: absolute;
-  left: 0;
-  bottom: 2px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--sun);
-}
-
-.auth__name {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-}
-
-.auth__name b {
-  font-family: var(--font-display);
-  font-variation-settings: 'opsz' 40;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.auth__name span {
-  font-family: var(--font-mono);
-  font-size: 0.5625rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
+.auth__logo {
+  height: var(--logo-h);
 }
 
 .auth__back {

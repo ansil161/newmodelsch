@@ -119,7 +119,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 4px 9px 5px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   white-space: nowrap;
 }
 

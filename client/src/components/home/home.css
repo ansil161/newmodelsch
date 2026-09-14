@@ -77,8 +77,8 @@
 
 .band__line {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 40;
-  font-style: italic;
+  font-weight: 600;
+  font-style: normal;
   font-size: var(--t-lead);
   color: var(--sun-deep);
   line-height: 1.25;
@@ -271,8 +271,8 @@
 
 .principal__name {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 40;
-  font-style: italic;
+  font-weight: 600;
+  font-style: normal;
   font-size: var(--t-h4);
   color: var(--ink);
 }

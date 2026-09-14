@@ -22,8 +22,8 @@
   --bm-card: var(--white);
   --bm-ink: var(--navy);
   --bm-copy: var(--slate);
-  --bm-pen: rgba(15, 35, 75, 0.7);
-  --bm-hair: rgba(15, 35, 75, 0.2);
+  --bm-pen: rgba(26, 22, 64, 0.7);
+  --bm-hair: rgba(26, 22, 64, 0.2);
   --bm-hair-soft: var(--line-blue);
 
   --bm-sun: var(--blue);
@@ -38,7 +38,7 @@
   --bm-r-card: 13px 17px 12px 18px;
   --bm-shadow-card: var(--e-1);
   --bm-shadow-card-on: var(--e-2);
-  --bm-shadow-print: 0 24px 44px -30px rgba(15, 35, 75, 0.4);
+  --bm-shadow-print: 0 24px 44px -30px rgba(26, 22, 64, 0.4);
 
   --bm-space-y: clamp(80px, 8.5vw, 136px);
 
@@ -151,8 +151,7 @@
 .bm__title {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 450;
+  font-weight: 600;
   font-size: clamp(2.3rem, 8.2vw, 3.4rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -242,8 +241,7 @@
   gap: 0.2em;
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 500;
+  font-weight: 600;
   font-size: clamp(0.72rem, 1cqi, 0.9rem);
   line-height: 1;
   letter-spacing: 0.16em;
@@ -348,13 +346,12 @@
   top: 44px;
   left: calc(50% + 24px);
   margin: 0;
-  font-family: var(--font-hand);
-  font-size: 1.25rem;
-  font-weight: 500;
-  line-height: 1;
+  font-family: var(--font-display);
+  font-size: 0.975rem;
+  font-weight: 600;
+  line-height: 1.15;
   white-space: nowrap;
   color: var(--bm-pen);
-  rotate: -3deg;
   pointer-events: none;
 }
 
@@ -493,8 +490,7 @@
 .bm-card__title {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.35rem;
   line-height: 1.1;
   letter-spacing: -0.015em;
@@ -555,7 +551,7 @@
   align-items: center;
   gap: 14px;
   font-size: 0.8125rem;
-  font-weight: 560;
+  font-weight: 600;
   color: var(--bm-ink);
   text-decoration: none;
 }

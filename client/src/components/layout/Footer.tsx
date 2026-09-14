@@ -5,6 +5,7 @@ import { gsap } from '@/lib/gsap';
 import { draw, lines, reduced, rise, settle, stand } from '@/lib/motion';
 import { useSmoothScroll } from '@/providers/SmoothScrollProvider';
 import { Icon } from '@/components/common/Icon';
+import { Logo } from '@/components/common/Logo';
 import './Footer.css';
 
 /* ==========================================================================
@@ -204,12 +205,8 @@ export function Footer() {
         <div className="foot__brand">
           <div className="foot__sign">
             <span className="foot__sign-start">
-              <span className="foot__mark" aria-hidden="true">
-                <i />
-                <i />
-                <b />
-              </span>
-              <span className="meta">High School · Est. {SCHOOL.established}</span>
+              <Logo variant="white" className="foot__logo" />
+              <span className="meta">Est. {SCHOOL.established}</span>
             </span>
             <span className="meta">{SCHOOL.locality}</span>
           </div>

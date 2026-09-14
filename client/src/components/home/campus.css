@@ -14,7 +14,7 @@
    the module never runs.
 
    The opening composition is not authored here or anywhere. It is produced by
-   the module measuring the distance from each column to `.cm__slot` - an
+   the module measuring the distance from each column to `.hc__slot` - an
    invisible marker below carrying the hero plate's geometry - and holding the
    three plates there until the scroll releases them. There is no offset in
    the timeline, so nothing about the opening breaks when the grid, the
@@ -37,7 +37,7 @@
    publication.
    ========================================================================== */
 
-.cm {
+.hc {
   position: relative;
   background: var(--white);
   color: var(--ink);
@@ -47,10 +47,10 @@
      any ancestor of it. ScrollTrigger pins it with `position: fixed`, and any
      of those would make that ancestor the fixed element's containing block,
      which stops a pin holding still against the viewport. The clipping that
-     is needed happens on `.cm__stage`, inside the pin. */
+     is needed happens on `.hc__stage`, inside the pin. */
 }
 
-.cm__inner {
+.hc__inner {
   position: relative;
 }
 
@@ -59,15 +59,15 @@
    composition is described here, beside the layout it has to relate to,
    rather than as a pair of magic numbers in a timeline that cannot see the
    grid. */
-.cm__slot {
+.hc__slot {
   display: none;
 }
 
 /* --------------------------------------------------------------------------
    Type
    -------------------------------------------------------------------------- */
-.cm__eyebrow,
-.cm__label {
+.hc__eyebrow,
+.hc__label {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--t-label);
@@ -77,7 +77,7 @@
   color: var(--ink-3);
 }
 
-.cm__label b {
+.hc__label b {
   font-weight: 500;
   color: var(--blue);
 }
@@ -90,39 +90,39 @@
    only against the width takes a third of a laptop screen and leaves the
    columns overflowing the bottom of it. `min(3.4vw, 4.6vh)` is what makes the
    section fit a 1366x600 window and a 1920x1200 one on the same rules. */
-.cm__head,
-.cm__statement {
+.hc__head,
+.hc__statement {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.9rem, min(3.4vw, 4.6vh), 3.4rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.02;
-  letter-spacing: -0.032em;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
 /* Each line gets its own overflow box so it can set itself from below without
    the block needing to clip anything of its own. The site's own headline
    vocabulary - see `lines()` in `lib/motion.ts`. */
-.cm__line,
-.cm__mask {
+.hc__line,
+.hc__mask {
   display: block;
   overflow: hidden;
   padding-bottom: 0.06em;
 }
 
-.cm__line > span,
-.cm__mask > span {
+.hc__line > span,
+.hc__mask > span {
   display: block;
 }
 
 /* The second line carries the idea, so it is the one the blue is spent on. */
-.cm__head .cm__line:last-child > span,
-.cm__statement .cm__line:last-child > span {
+.hc__head .hc__line:last-child > span,
+.hc__statement .hc__line:last-child > span {
   color: var(--blue-deep);
 }
 
-.cm__lede {
+.hc__lede {
   margin: 0;
   max-width: 40ch;
   font-size: var(--t-body);
@@ -133,30 +133,30 @@
 /* --------------------------------------------------------------------------
    The columns
    -------------------------------------------------------------------------- */
-.cm-cols {
+.hc-cols {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.cm-col {
+.hc-col {
   position: relative;
 }
 
 /* Reserves the plate's height in the layout, so the caption underneath never
    moves while the plate is being transformed above it. */
-.cm-col__media {
+.hc-col__media {
   position: relative;
 }
 
-.cm-panel {
+.hc-panel {
   position: relative;
   /* Scaled about its own centre for the whole of its travel from the hero
      slot, and positioned by that centre. */
   transform-origin: 50% 50%;
 }
 
-.cm-frame {
+.hc-frame {
   position: relative;
   margin: 0;
   overflow: hidden;
@@ -172,7 +172,7 @@
   transform-origin: 50% 50%;
 }
 
-.cm-img {
+.hc-img {
   display: block;
   width: 100%;
   /* Taller than its frame and pulled up by half the surplus, so the parallax
@@ -189,24 +189,24 @@
    panel, no border, no background. The photograph above it is the object;
    this is the label on the wall beside it.
    -------------------------------------------------------------------------- */
-.cm-cap {
+.hc-cap {
   display: flex;
   flex-direction: column;
   gap: clamp(7px, 0.8vw, 11px);
 }
 
-.cm-cap__mask {
+.hc-cap__mask {
   display: block;
   overflow: hidden;
 }
 
-.cm-cap__head {
+.hc-cap__head {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.cm-cap__num {
+.hc-cap__num {
   font-family: var(--font-mono);
   font-size: var(--t-label);
   font-weight: 500;
@@ -214,13 +214,13 @@
   color: var(--blue);
 }
 
-.cm-cap__rule {
+.hc-cap__rule {
   flex: 1;
   height: 1px;
   background: var(--line-blue);
 }
 
-.cm-cap__title {
+.hc-cap__title {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--t-label);
@@ -230,7 +230,7 @@
   color: var(--ink);
 }
 
-.cm-cap__body {
+.hc-cap__body {
   margin: 0;
   font-size: var(--t-small);
   line-height: 1.55;
@@ -240,7 +240,7 @@
 /* --------------------------------------------------------------------------
    The link
    -------------------------------------------------------------------------- */
-.cm__cta {
+.hc__cta {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -254,7 +254,7 @@
 
 /* The arrow sits in a ring that fills on hover - the one flourish in the
    section, and it is on the only thing in it that is interactive. */
-.cm__cta i {
+.hc__cta i {
   display: grid;
   place-items: center;
   width: clamp(36px, 3vw, 44px);
@@ -269,7 +269,7 @@
     transform var(--d-move) var(--ease-out);
 }
 
-.cm__cta:hover i {
+.hc__cta:hover i {
   background: var(--sun);
   border-color: var(--sun);
   color: var(--on-sun);
@@ -288,15 +288,15 @@
    drives the section - each plate is printed as it arrives and parallaxes as
    it passes - but it is never taken away.
    ========================================================================== */
-.cm__eyebrow {
+.hc__eyebrow {
   margin-bottom: 14px;
 }
 
-.cm__head {
+.hc__head {
   margin-bottom: clamp(20px, 4vw, 30px);
 }
 
-.cm-cols {
+.hc-cols {
   display: flex;
   flex-direction: column;
   gap: clamp(48px, 9vw, 80px);
@@ -305,41 +305,41 @@
   max-width: 560px;
 }
 
-.cm-col__media {
+.hc-col__media {
   height: min(62vh, 116vw);
 }
 
 /* Alternating insets. Three plates flush to the same two edges is a list;
    pulled off alternating edges it is a sequence with a rhythm. */
-.cm-col:nth-child(1) .cm-col__media { margin-right: 12%; }
-.cm-col:nth-child(2) .cm-col__media { margin-left: 16%; }
-.cm-col:nth-child(3) .cm-col__media { margin-right: 6%; }
+.hc-col:nth-child(1) .hc-col__media { margin-right: 12%; }
+.hc-col:nth-child(2) .hc-col__media { margin-left: 16%; }
+.hc-col:nth-child(3) .hc-col__media { margin-right: 6%; }
 
-.cm-col:nth-child(2) .cm-cap { margin-left: 16%; }
+.hc-col:nth-child(2) .hc-cap { margin-left: 16%; }
 
-.cm-panel,
-.cm-frame {
+.hc-panel,
+.hc-frame {
   height: 100%;
 }
 
-.cm-cap {
+.hc-cap {
   margin-top: clamp(18px, 4vw, 24px);
 }
 
-.cm-cap__body {
+.hc-cap__body {
   font-size: var(--t-body);
   max-width: 34ch;
 }
 
-.cm__outro {
+.hc__outro {
   margin-top: clamp(56px, 10vw, 96px);
 }
 
-.cm__label {
+.hc__label {
   margin-bottom: 18px;
 }
 
-.cm__cta {
+.hc__cta {
   margin-top: clamp(28px, 5vw, 40px);
 }
 
@@ -351,14 +351,14 @@
    that was never built, and waits.
    ========================================================================== */
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .cm {
+  .hc {
     padding-block: 0;
   }
 
   /* The pinned element: one viewport, and the only thing in the section that
      clips. The plates travel well outside the grid on their way in from the
      hero slot, and this is what keeps that off the page. */
-  .cm__stage {
+  .hc__stage {
     /* THE COLUMN'S SIZE, AND THE OPENING PLATE'S, FROM ONE SET OF NUMBERS.
 
        The width is taken from the viewport's width - a column has to hold
@@ -368,7 +368,7 @@
        shape of the window, which is fine. What must not vary is that the
        opening plate has the SAME proportions as a column, or the uniform
        scale that lands one on the other would distort the photograph.
-       `--cm-zoom` guarantees that by construction. */
+       `--hc-zoom` guarantees that by construction. */
     /* THE HEIGHT LEADS AND THE WIDTH FOLLOWS IT.
 
        The other way round - a width from `vw`, a height capped by `vh` - is
@@ -378,9 +378,9 @@
        holds the plate portrait at every window this section will ever see:
        0.86 of its height wherever the height leads, and narrower still on a
        screen too narrow to give it 19vw. */
-    --cm-col-h: clamp(180px, 30vh, 340px);
-    --cm-col-w: min(19vw, calc(var(--cm-col-h) * 0.86));
-    --cm-zoom: 2.05;
+    --hc-col-h: clamp(180px, 30vh, 340px);
+    --hc-col-w: min(19vw, calc(var(--hc-col-h) * 0.86));
+    --hc-zoom: 2.05;
     position: relative;
     min-height: 100vh;
     overflow: hidden;
@@ -395,7 +395,7 @@
      reason this section is pinned rather than simply tall. Sharing the cell
      also happens to be the right gesture: the statement arrives in the space
      the heading has just left, rather than somewhere else on the screen. */
-  .cm__inner {
+  .hc__inner {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -404,11 +404,10 @@
     /* The masthead is fixed and this section is pinned to the top of the
        viewport, so without clearance the heading opens underneath the
        navigation. */
-    /* 62px, not `--nav-h`. By the time this section is pinned the reader has
-       scrolled, so the masthead is in its compact state - and often gone
-       entirely, since it hides on the way down. Clearing the full 76px would
-       spend fourteen pixels of a laptop screen on a bar that is not there. */
-    padding-top: calc(62px + clamp(6px, 1.4vh, 20px));
+    /* The compact height, not `--nav-h`. By the time this section is pinned
+       the reader has scrolled, so the masthead is in its compact state - and
+       often gone entirely, since it hides on the way down. */
+    padding-top: calc(var(--nav-h-compact) + clamp(6px, 1.4vh, 20px));
     padding-bottom: clamp(20px, 3.6vh, 44px);
   }
 
@@ -416,13 +415,13 @@
      centred in the viewport with a heading beside it is a two-column layout,
      and this has to read as one composition with a heading in its negative
      space. */
-  .cm__slot {
+  .hc__slot {
     position: absolute;
     top: 52%;
     left: 68%;
     display: block;
-    width: calc(var(--cm-col-w) * var(--cm-zoom));
-    height: calc(var(--cm-col-h) * var(--cm-zoom));
+    width: calc(var(--hc-col-w) * var(--hc-zoom));
+    height: calc(var(--hc-col-h) * var(--hc-zoom));
     transform: translate(-50%, -50%);
     visibility: hidden;
     pointer-events: none;
@@ -430,8 +429,8 @@
 
   /* --- the top row ----------------------------------------------------- */
 
-  .cm__intro,
-  .cm__outro {
+  .hc__intro,
+  .hc__outro {
     grid-area: 1 / 1;
     justify-self: start;
     align-self: start;
@@ -445,22 +444,22 @@
      is not: by the time it arrives the plates are three columns in the row
      below. Holding it to the heading's width breaks its first line across
      three, and the third of them runs down into the columns. */
-  .cm__intro {
+  .hc__intro {
     max-width: min(46%, 30rem);
   }
 
-  .cm__outro {
+  .hc__outro {
     max-width: min(78%, 52rem);
   }
 
-  .cm__eyebrow,
-  .cm__label {
+  .hc__eyebrow,
+  .hc__label {
     margin-bottom: clamp(10px, 1.6vh, 18px);
   }
 
   /* --- the columns ---------------------------------------------------- */
 
-  .cm-cols {
+  .hc-cols {
     grid-area: 2 / 1;
     display: flex;
     flex-direction: row;
@@ -472,9 +471,9 @@
     align-self: center;
   }
 
-  .cm-col {
+  .hc-col {
     flex: 0 0 auto;
-    width: var(--cm-col-w);
+    width: var(--hc-col-w);
     margin: 0;
   }
 
@@ -485,26 +484,26 @@
      depth in it - and because the offsets are real layout, the module has
      only to cancel them at the opening and let them resolve, rather than
      animating three columns to three authored resting positions. */
-  .cm-col:nth-child(1) { margin-top: 3vh; }
-  .cm-col:nth-child(2) { margin-top: 0; }
-  .cm-col:nth-child(3) { margin-top: 5.2vh; }
+  .hc-col:nth-child(1) { margin-top: 3vh; }
+  .hc-col:nth-child(2) { margin-top: 0; }
+  .hc-col:nth-child(3) { margin-top: 5.2vh; }
 
   /* The middle plate is the opening plate, so it is the one that has to be on
      top: the other two sit exactly behind it until the scroll pulls them out
      from its edges. Occlusion, not a mask - which is why nothing has to be
      clipped or faded for the split to read. */
-  .cm-col:nth-child(1) { z-index: 1; }
-  .cm-col:nth-child(3) { z-index: 2; }
-  .cm-col:nth-child(2) { z-index: 3; }
+  .hc-col:nth-child(1) { z-index: 1; }
+  .hc-col:nth-child(3) { z-index: 2; }
+  .hc-col:nth-child(2) { z-index: 3; }
 
-  .cm-col__media {
-    height: var(--cm-col-h);
+  .hc-col__media {
+    height: var(--hc-col-h);
     margin: 0;
   }
 
-  .cm-col:nth-child(1) .cm-col__media,
-  .cm-col:nth-child(2) .cm-col__media,
-  .cm-col:nth-child(3) .cm-col__media {
+  .hc-col:nth-child(1) .hc-col__media,
+  .hc-col:nth-child(2) .hc-col__media,
+  .hc-col:nth-child(3) .hc-col__media {
     margin-inline: 0;
   }
 
@@ -518,19 +517,19 @@
      Kept light because at the opening all three plates are stacked and their
      shadows coincide - a shadow tuned for one plate reads as a hole under
      three. */
-  .cm-frame {
-    box-shadow: 0 14px 30px -16px rgba(15, 35, 75, 0.3);
+  .hc-frame {
+    box-shadow: 0 14px 30px -16px rgba(26, 22, 64, 0.3);
   }
 
-  .cm-cap {
+  .hc-cap {
     margin-top: clamp(12px, 1.8vh, 20px);
   }
 
-  .cm-col:nth-child(2) .cm-cap {
+  .hc-col:nth-child(2) .hc-cap {
     margin-left: 0;
   }
 
-  .cm-cap__body {
+  .hc-cap__body {
     max-width: none;
     font-size: clamp(0.75rem, 0.82vw, 0.875rem);
   }
@@ -539,7 +538,7 @@
 
   /* The opening line and the closing link share the bottom row at opposite
      ends of it, so neither has to wait for the other to leave. */
-  .cm__lede {
+  .hc__lede {
     grid-area: 3 / 1;
     justify-self: start;
     align-self: end;
@@ -547,7 +546,7 @@
     font-size: var(--t-small);
   }
 
-  .cm__cta {
+  .hc__cta {
     grid-area: 3 / 1;
     justify-self: end;
     align-self: end;
@@ -563,21 +562,21 @@
    produces a shorter journey without anything being told to.
    -------------------------------------------------------------------------- */
 @media (min-width: 900px) and (max-width: 1199px) and (prefers-reduced-motion: no-preference) {
-  .cm__stage {
-    --cm-col-h: clamp(170px, 28vh, 280px);
-    --cm-col-w: min(20vw, calc(var(--cm-col-h) * 0.86));
-    --cm-zoom: 1.9;
+  .hc__stage {
+    --hc-col-h: clamp(170px, 28vh, 280px);
+    --hc-col-w: min(20vw, calc(var(--hc-col-h) * 0.86));
+    --hc-zoom: 1.9;
   }
 
-  .cm__slot {
+  .hc__slot {
     left: 70%;
   }
 
-  .cm__intro {
+  .hc__intro {
     max-width: min(44%, 24rem);
   }
 
-  .cm__outro {
+  .hc__outro {
     max-width: min(82%, 40rem);
   }
 }

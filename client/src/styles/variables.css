@@ -1,178 +1,204 @@
 /* ==========================================================================
    Design tokens - New Model High School
    --------------------------------------------------------------------------
-   ONE WHITE CANVAS, ONE BLUE.
+   THE PALETTE IS THE LOGO'S.
 
-   The whole site is a single continuous sheet of #FFFFFF. Sections are never
-   told apart by changing the ground under them - scrolling from the hero to
-   the footer should feel like moving down one page, not like flipping
-   between cards of different stock. Separation is done with the things a
-   printed prospectus uses instead: space, a hairline rule, a blue heading
-   accent, a photograph, a card raised a hair off the page.
+   Every colour on the site is derived from the official New Model School
+   logo, whose one ink is a deep royal indigo-blue, #463595 (measured from the
+   artwork). Nothing is picked beside it. The site is built from that ink in
+   a short ladder of values plus white:
 
-   What the palette is, and why:
+     PRIMARY    #463595, the logo ink itself. Buttons, links, active states,
+                icons, rules. 9.5:1 on white, so it carries type as well.
+     NAVY       the same hue taken almost to black. Headings and strong type.
+     LIGHT      the same hue lifted almost to white. Supporting section
+                grounds, fills, highlights, hover washes.
+     WHITE      the canvas. Most of the site is set directly on it.
+     NEUTRAL    cool greys with a trace of the brand hue, for body copy,
+                borders and dividers, so a rule belongs to the same light as
+                the type it divides.
 
-     GROUND     Pure white. `--ivory`, `--paper` and `--chalk` are kept as
-                names because forty stylesheets reference them, and all three
-                are #FFFFFF. `--sand` is the one permitted tint - a white with
-                a breath of blue in it, for an image placeholder or a quiet
-                well inside a card. It is never a section ground.
+   Tints are deliberately desaturated as they approach white. A pale value of
+   an indigo at full chroma reads as lavender; held back, it reads as a cool
+   blue-white that sits under the logo without competing with it.
 
-     INK        Deep navy-black, cool rather than warm, so it sits in the
-                same family as the blue.
+   THE SEMANTIC LAYER (`--color-*`) IS THE API.
 
-     ACCENT     One blue, in a small ladder of values. Buttons, links, active
-                states, icons, rules, markers. `--sun` and its companions are
-                legacy names for the accent and now resolve to the blue
-                ladder, so every stylesheet written for the old accent picks
-                up the new one without being rewritten.
-
-     SECONDARY  Two blue-family variants (cerulean, indigo) under the old
-                `--green` / `--coral` names. They still distinguish things
-                that are genuinely different - a band of the curriculum, a
-                strand of activity - without introducing an unrelated hue.
+   Components should reach for `--color-primary`, `--color-text`,
+   `--color-border` and so on. The older names below them (`--blue`, `--ink`,
+   `--sun`, `--paper` ...) are kept because forty stylesheets reference them,
+   and every one of them now resolves to this palette - so the rebrand is
+   carried by this file rather than by rewriting the site.
    ========================================================================== */
 
 :root {
-  /* -------------------------------------------------- ground
-     White, everywhere. `--sand` is the only tint and is furniture, not
-     ground: image placeholders, the inside of a well, a hover. */
+  /* -------------------------------------------------- brand ladder (raw)
+     One hue (~251deg), measured from the logo. 500 is the logo ink. */
+  --brand-50: #f6f5fb;
+  --brand-100: #eceaf6;
+  --brand-200: #dcd8ee;
+  --brand-300: #b3abdb;
+  --brand-400: #7a6dbd;
+  --brand-500: #463595;
+  --brand-600: #3a2c80;
+  --brand-700: #2e2366;
+  --brand-800: #221b4f;
+  --brand-900: #1a1640;
+  --brand-950: #110e2c;
+
+  /* Neutrals, cool and faintly brand-tinted. Contrast on white:
+       700 9.5:1 (body)   500 5.3:1 (muted, AA)   300 furniture only */
+  --neutral-700: #45425f;
+  --neutral-600: #55526f;
+  --neutral-500: #6b6884;
+  --neutral-300: #a4a2b6;
+  --neutral-200: #e3e0ef;
+
+  /* ==================================================== semantic tokens */
+  --color-primary: var(--brand-500);
+  --color-primary-dark: var(--brand-600);
+  --color-primary-darker: var(--brand-700);
+  --color-primary-light: var(--brand-100);
+  --color-primary-wash: var(--brand-50);
+  --color-on-primary: #ffffff;
+
+  --color-navy: var(--brand-900);
+  --color-navy-deep: var(--brand-950);
+
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  /* The one tinted ground: selected supporting sections, quiet wells. */
+  --color-surface-alt: var(--brand-50);
+
+  --color-text: var(--brand-900);
+  --color-text-body: var(--neutral-700);
+  --color-text-muted: var(--neutral-500);
+  --color-text-subtle: var(--neutral-300);
+
+  --color-border: rgba(26, 22, 64, 0.11);
+  --color-border-strong: rgba(26, 22, 64, 0.2);
+  --color-border-soft: rgba(26, 22, 64, 0.06);
+  --color-border-brand: rgba(70, 53, 149, 0.18);
+  --color-border-solid: var(--neutral-200);
+
+  --color-focus: var(--brand-500);
+
+  /* ==================================================== legacy names
+     Everything below resolves to the semantic layer above. */
+
+  /* ground */
   --white: #ffffff;
   --ivory: #ffffff;
   --paper: #ffffff;
-  --sand: #f6f9fd;
-  --sand-deep: #e7eef8;
+  --sand: var(--color-surface-alt);
+  --sand-deep: var(--brand-100);
 
-  /* -------------------------------------------------- ink
-     Measured against white:
-       --ink    17.6:1     --ink-2   9.4:1     --ink-3   5.2:1
-     --ink-4 is for hairline furniture only and is never given a sentence. */
-  --ink: #0f1a2e;
-  --ink-2: #3c4760;
-  --ink-3: #626d82;
-  --ink-4: #9aa3b3;
+  /* ink */
+  --ink: var(--color-text);
+  --ink-2: var(--color-text-body);
+  --ink-3: var(--color-text-muted);
+  --ink-4: var(--color-text-subtle);
 
-  /* -------------------------------------------------- the dark tone
-     No section is set on these any more. They remain for the few surfaces
-     that are genuinely dark by nature - a video letterbox, a lightbox, the
-     scrim over a photograph - and are blue-navy so even those belong to the
-     palette. */
-  --navy: #0f2a55;
-  --navy-2: #173a72;
-  --navy-deep: #0a1d3d;
+  /* The dark tone: the footer, a lightbox, the scrim over a photograph. */
+  --navy: var(--brand-900);
+  --navy-2: var(--brand-800);
+  --navy-deep: var(--brand-950);
 
   /* Type on the dark tone. Real colours rather than opacities, because an
      alpha over a photograph is not a contrast guarantee. */
-  --on-navy: #f7f9fc;
-  --on-navy-2: #c9d4e6;
-  --on-navy-3: #93a3bd;
+  --on-navy: #f7f6fc;
+  --on-navy-2: #cfcbe6;
+  --on-navy-3: #a19dc2;
 
-  /* -------------------------------------------------- the blue system
-       --blue        the accent: buttons, links, active states. 7.1:1 on white
-       --blue-deep   hover and pressed states, headline accents. 10.2:1
-       --blue-ink    the darkest blue; a filled control's hover. 13:1
-       --blue-bright a light blue for marks on photographs. Never type on white
-       --blue-soft   a pale blue fill: chips, highlights, selected rows
-       --blue-wash   the faintest blue; a hover behind a row
-       --line-blue   a blue hairline for card edges and dividers */
-  --blue: #2456a6;
-  --blue-deep: #183f80;
-  --blue-ink: #10306a;
-  --blue-bright: #6d98dc;
-  --blue-soft: #e3ecf8;
-  --blue-wash: #f2f6fc;
-  --line-blue: rgba(36, 86, 166, 0.18);
-  --line-blue-strong: rgba(36, 86, 166, 0.36);
-  --on-blue: #ffffff;
+  /* the blue system - the logo ladder under its old names */
+  --blue: var(--color-primary);
+  --blue-deep: var(--color-primary-dark);
+  --blue-ink: var(--color-primary-darker);
+  --blue-bright: var(--brand-300); /* marks on photographs; never type on white */
+  --blue-soft: var(--color-primary-light);
+  --blue-wash: var(--color-primary-wash);
+  --line-blue: var(--color-border-brand);
+  --line-blue-strong: rgba(70, 53, 149, 0.36);
+  --on-blue: var(--color-on-primary);
 
-  /* -------------------------------------------------- the accent (legacy names)
-     These were the yellow. They now point at the blue ladder so every
-     stylesheet written against them follows the new accent. `--on-sun` is
-     white because the fill is dark. */
+  /* the accent (legacy names, once a yellow) */
   --sun: var(--blue);
   --sun-deep: var(--blue-deep);
   --sun-soft: var(--blue-soft);
-  --sun-wash: rgba(36, 86, 166, 0.1);
+  --sun-wash: rgba(70, 53, 149, 0.1);
   --on-sun: var(--on-blue);
 
-  /* -------------------------------------------------- the invitation spreads
-       --chalk     the ground. White.
-       --slate     blue-grey for running copy. 6.4:1 on white.
-       --mist      the pale blue brush behind a collage. Never a type colour.
-       --sky-line  the pale blue secondary pen mark. Furniture only.
-       --gold-ink  legacy name for the handwritten headline word; now blue. */
+  /* the invitation spreads */
   --chalk: #ffffff;
-  --slate: #4f5d75;
-  --mist: #eaf1fa;
-  --sky-line: #a9c1e3;
+  --slate: var(--neutral-600);
+  --mist: var(--brand-100);
+  --sky-line: var(--brand-300);
   --gold-ink: var(--blue);
 
-  /* -------------------------------------------------- secondary accents
-     Blue-family variants, held at a similar value so no one of them
-     dominates a page they share. Each has a soft companion. */
-  --green: #1f6f93;
-  --green-soft: #e0eff6;
-  --coral: #3b4fb0;
-  --coral-soft: #e5e8f8;
+  /* Secondary accents. Kept inside the logo's family - a truer blue and a
+     lighter indigo - so things that are genuinely different can still be
+     told apart without introducing an unrelated hue. */
+  --green: #2d4a8a;
+  --green-soft: #e7ebf6;
+  --coral: #5b4bb0;
+  --coral-soft: #eeebf8;
 
   /* Semantic state keeps its own colour; it is not decoration. */
   --ok: #2f7a52;
   --warn: #9a6c00;
   --err: #b3372b;
 
-  /* -------------------------------------------------- rules
-     Hairlines are ink at low alpha, cool-tinted, so a rule belongs to the
-     same light as the type it divides. */
-  --line: rgba(15, 35, 75, 0.11);
-  --line-strong: rgba(15, 35, 75, 0.2);
-  --line-soft: rgba(15, 35, 75, 0.06);
-  --line-navy: rgba(247, 249, 252, 0.18);
+  /* rules */
+  --line: var(--color-border);
+  --line-strong: var(--color-border-strong);
+  --line-soft: var(--color-border-soft);
+  --line-navy: rgba(247, 246, 252, 0.16);
 
   /* ==========================================================================
      Type
      --------------------------------------------------------------------------
-     FRAUNCES carries the statements. A high-contrast display serif with a
-     deliberate wobble in its curves - the reason it is here rather than a
-     Playfair or a Garamond, both of which are correct and both of which read
-     as "premium serif" the instant you use them. A school is warm before it
-     is expensive.
+     PLUS JAKARTA SANS carries the headings: a modern geometric grotesque with
+     open counters and a confident bold, which gives the headlines presence
+     without the decoration of a display serif - the logo already carries the
+     school's traditional serif, and a second serif beside it would compete.
 
-     GEIST carries everything a person operates: navigation, body copy,
-     buttons, form labels, metadata. GEIST MONO carries figures, so a column
-     of statistics lines up and a six-digit number cannot be misread as prose.
+     INTER carries everything read or operated: body copy, navigation, forms,
+     buttons, labels and figures (with tabular numerals where they line up).
 
-     Two families, three faces. The contrast between the serif and the
-     grotesque is the whole typographic idea, so nothing is set in the serif
-     unless it is a statement the page is making.
+     Two families, four weights: 400 regular, 500 medium, 600 semibold,
+     700 bold. Nothing else.
      ========================================================================== */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
-  /* Ink. Annotation only - a note written on a photograph, never a heading and
-     never a label. If it is doing an interface's job it is the wrong face. */
-  --font-hand: 'Caveat', 'Segoe Script', cursive;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Legacy names, repointed rather than renamed. */
+  /* Legacy roles, repointed. Figures and labels are Inter; annotations that
+     used to be handwritten are set in the heading face. */
+  --font-mono: var(--font-body);
+  --font-hand: var(--font-display);
   --font-editorial: var(--font-display);
   --font-serif: var(--font-display);
-  --font-label: var(--font-mono);
-  --font-stats: var(--font-mono);
+  --font-label: var(--font-body);
+  --font-stats: var(--font-body);
 
-  /* Fluid scale. The top of it is genuinely large - this is a site whose
-     headlines are a primary visual element, and a 5rem ceiling is a headline
-     that has been told to be quiet. */
-  --t-mega: clamp(3.25rem, 11vw, 11rem);
-  --t-hero: clamp(2.75rem, 6.8vw, 6.25rem);
-  --t-h1: clamp(2.4rem, 5.6vw, 5rem);
-  --t-h2: clamp(2rem, 4.2vw, 3.5rem);
-  --t-h3: clamp(1.4rem, 2.1vw, 2rem);
-  --t-h4: clamp(1.125rem, 1.45vw, 1.3125rem);
-  --t-lead: clamp(1.0625rem, 1.4vw, 1.28rem);
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Fluid scale. Tuned for a bold sans, which sets wider and heavier than the
+     serif this scale was first drawn for. */
+  --t-mega: clamp(3rem, 9vw, 9rem);
+  --t-hero: clamp(2.5rem, 5.8vw, 5.25rem);
+  --t-h1: clamp(2.25rem, 4.6vw, 4.25rem);
+  --t-h2: clamp(1.875rem, 3.5vw, 3rem);
+  --t-h3: clamp(1.3125rem, 1.8vw, 1.75rem);
+  --t-h4: clamp(1.125rem, 1.35vw, 1.25rem);
+  --t-lead: clamp(1.0625rem, 1.3vw, 1.25rem);
   --t-body: clamp(1rem, 1.05vw, 1.0625rem);
   --t-small: clamp(0.875rem, 0.95vw, 0.9375rem);
   --t-label: clamp(0.6875rem, 0.78vw, 0.75rem);
-  --t-stat: clamp(3rem, 7vw, 6.5rem);
-  --t-numeral: clamp(4rem, 13vw, 13rem);
+  --t-stat: clamp(2.75rem, 6vw, 5.5rem);
+  --t-numeral: clamp(3.5rem, 11vw, 11rem);
 
   /* Measure. Running copy stops at 62 characters. */
   --measure: 62ch;
@@ -185,50 +211,45 @@
   --gutter: clamp(20px, 5vw, 88px);
   --section-y: clamp(88px, 10vw, 172px);
   --section-y-tight: clamp(56px, 6vw, 96px);
-  --nav-h: 76px;
+
+  /* The masthead, sized around the logo: the logo is the anchor and gets its
+     breathing room first. `-compact` is the bar once the reader has scrolled. */
+  --nav-h: 84px;
+  --nav-h-compact: 66px;
+  --logo-h: 56px;
+  --logo-h-compact: 44px;
 
   /* -------------------------------------------------- shape
-     Images are the only thing on this site allowed an unusual shape, and each
-     shape means something:
+     Images are the only thing allowed an unusual shape, and each means
+     something:
 
        --r-arch   a doorway. Portraits, and anything that is a person.
-       --r-blob   an organic squircle. Candid photography, in motion.
-       --r-frame  a plain generous radius. Places, buildings, wide frames.
-       50%        a circle. Thumbnails, and the horizontal strips.
+       --r-blob   a squircle. Candid photography, in motion.
+       --r-frame  a plain radius. Places, buildings, cards.
+       50%        a circle. Thumbnails.
 
-     Controls stay squared, because a pill button inside a ruled editorial
-     grid reads as a widget dropped onto a document. */
-  --r-ctl: 6px;
+     Controls are squared with a refined 8px radius - a pill button reads as a
+     software widget, not as a school. */
+  --r-ctl: 8px;
   --r-sm: 10px;
-  --r-frame: 20px;
-  --r-lg: 28px;
+  --r-frame: 16px;
+  --r-lg: 24px;
   --r-pill: 999px;
   --r-arch: 50% 50% 16px 16px / 42% 42% 16px 16px;
-  /* THE BLOB IS A SQUIRCLE, NOT AN ELLIPSE.
-
-     Percentage radii are the obvious way to write an organic shape and they
-     are the wrong way: once every value is above about 35% on both axes the
-     four corners meet and the result is a plain oval, whatever numbers you
-     put in. The shapes on the reference boards are rounded rectangles with
-     two heavy corners and two light ones - cut paper, not a bubble - so these
-     are absolute lengths with the corners deliberately unequal, and they
-     scale with the viewport so a 300px thumbnail and a 900px frame read as
-     the same shape rather than the small one reading as a pill. */
+  /* Absolute, unequal corners so the shape stays a squircle rather than
+     collapsing to an oval, scaled with the viewport. */
   --r-blob: clamp(24px, 5vw, 64px) clamp(52px, 11vw, 132px) clamp(24px, 5vw, 64px)
     clamp(52px, 11vw, 132px);
   --r-blob-2: clamp(52px, 11vw, 132px) clamp(24px, 5vw, 64px) clamp(52px, 11vw, 132px)
     clamp(24px, 5vw, 64px);
 
   /* -------------------------------------------------- elevation
-     Cool, blue-navy shadows at very low alpha. On a white page these are the
-     main way a card lifts off the sheet, so they stay soft and wide rather
-     than dark and tight. */
-  --e-1: 0 1px 2px rgba(15, 35, 75, 0.04), 0 8px 22px -14px rgba(15, 35, 75, 0.16);
-  --e-2: 0 1px 3px rgba(15, 35, 75, 0.05), 0 22px 46px -26px rgba(15, 35, 75, 0.22);
-  --e-3: 0 2px 6px rgba(15, 35, 75, 0.05), 0 40px 80px -44px rgba(15, 35, 75, 0.3);
+     Soft, wide, brand-navy shadows at low alpha. */
+  --e-1: 0 1px 2px rgba(26, 22, 64, 0.04), 0 8px 22px -14px rgba(26, 22, 64, 0.16);
+  --e-2: 0 1px 3px rgba(26, 22, 64, 0.05), 0 22px 46px -26px rgba(26, 22, 64, 0.22);
+  --e-3: 0 2px 6px rgba(26, 22, 64, 0.05), 0 40px 80px -44px rgba(26, 22, 64, 0.3);
 
-  /* -------------------------------------------------- z-index
-     A documented scale, so nothing has to reach for 9999. */
+  /* -------------------------------------------------- z-index */
   --z-base: 0;
   --z-raised: 10;
   --z-sticky: 20;
@@ -241,12 +262,21 @@
   --z-overlay: 60;
 }
 
+/* A phone gets a shorter bar and a smaller - still clearly legible - logo. */
+@media (max-width: 600px) {
+  :root {
+    --nav-h: 72px;
+    --nav-h-compact: 62px;
+    --logo-h: 46px;
+    --logo-h-compact: 40px;
+  }
+}
+
 /* ==========================================================================
    Motion
    --------------------------------------------------------------------------
-   Durations are chosen against the job, not against a ratio. Anything a user
-   triggers stays under 300ms; anything longer is a first appearance, which
-   happens once and is allowed to be noticed.
+   Anything a user triggers stays under 300ms; anything longer is a first
+   appearance, which happens once and is allowed to be noticed.
    ========================================================================== */
 :root {
   --d-tap: 120ms;
@@ -269,10 +299,8 @@
 /* ==========================================================================
    Legacy aliases
    --------------------------------------------------------------------------
-   The previous palette's names, repointed at the new one. They exist so a
-   stylesheet not yet rewritten renders in the new palette rather than
-   rendering in nothing. Nothing written from here on should reference a name
-   in this block.
+   The previous palette's names, repointed at the new one. Nothing written
+   from here on should reference a name in this block.
    ========================================================================== */
 :root {
   --navy-ink: var(--navy);
@@ -339,8 +367,8 @@
   --r-xl: var(--r-lg);
   --r-2xl: var(--r-lg);
   --e-4: var(--e-3);
-  --glass-bg: rgba(247, 249, 252, 0.06);
-  --glass-bg-hi: rgba(247, 249, 252, 0.1);
+  --glass-bg: rgba(247, 246, 252, 0.06);
+  --glass-bg-hi: rgba(247, 246, 252, 0.1);
   --glass-blur: blur(16px) saturate(140%);
   --ac-a: var(--sun);
   --ac-b: var(--sun-deep);

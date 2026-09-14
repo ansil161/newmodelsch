@@ -72,6 +72,11 @@ html.is-swapping .nav__inner {
   transition: none !important;
 }
 
+html.is-swapping .nav__logo {
+  height: var(--logo-h) !important;
+  transition: none !important;
+}
+
 .pt__sheet {
   position: fixed;
   inset: 0;
@@ -86,7 +91,7 @@ html.is-swapping .nav__inner {
 }
 
 /* --------------------------------------------------------------------------
-   The lockup - `.nav__brand`, at `--k` times the size
+   The lockup - the masthead's logo, at `--k` times its height
    -------------------------------------------------------------------------- */
 .pt__lockup {
   --k: 3;
@@ -94,69 +99,11 @@ html.is-swapping .nav__inner {
   top: 0;
   left: 0;
   transform-origin: 0 0;
-  display: flex;
-  align-items: center;
-  gap: calc(11px * var(--k));
-  white-space: nowrap;
   will-change: transform, opacity;
 }
 
-.pt__mark {
-  position: relative;
-  width: calc(30px * var(--k));
-  height: calc(30px * var(--k));
-  flex: none;
-}
-
-.pt__mark i {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: calc(2.5px * var(--k));
-  background: var(--ink);
-  border-radius: calc(2px * var(--k));
-}
-
-.pt__mark i:nth-of-type(1) {
-  top: calc(5px * var(--k));
-}
-
-.pt__mark i:nth-of-type(2) {
-  top: calc(13px * var(--k));
-  width: 62%;
-}
-
-.pt__mark b {
-  position: absolute;
-  left: 0;
-  bottom: calc(2px * var(--k));
-  width: calc(9px * var(--k));
-  height: calc(9px * var(--k));
-  border-radius: 50%;
-  background: var(--sun);
-}
-
-.pt__name {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-}
-
-.pt__name b {
-  font-family: var(--font-display);
-  font-variation-settings: 'opsz' 40;
-  font-size: calc(1.0625rem * var(--k));
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.pt__name span {
-  font-family: var(--font-mono);
-  font-size: calc(0.5625rem * var(--k));
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
+.pt__lockup .pt__logo {
+  height: calc(var(--logo-h) * var(--k));
 }
 
 /* --------------------------------------------------------------------------

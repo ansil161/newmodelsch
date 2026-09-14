@@ -39,6 +39,16 @@ fieldset {
   margin: 0;
 }
 
+/* Every heading is the heading face unless a rule says otherwise. */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display);
+  color: var(--ink);
+}
+
 fieldset {
   padding: 0;
   border: 0;
@@ -57,6 +67,17 @@ canvas,
 svg {
   display: block;
   max-width: 100%;
+}
+
+/* The official logo. A context sets its `height` only; the width follows
+   from the intrinsic ratio, so it can never be stretched or squashed. */
+.logo {
+  width: auto;
+  max-width: none;
+  height: var(--logo-h);
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 a {
@@ -78,7 +99,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--sun-deep);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -130,9 +151,12 @@ button {
   padding-block: var(--section-y-tight);
 }
 
-/* ONE CANVAS. The three ground modifiers survive as class names, and all
-   three are the same white page. A section is separated from its neighbours
-   by space, rules and blue accents - never by the colour under it.
+/* A CONTROLLED SET OF GROUNDS.
+
+     white         the canvas. Almost every section.
+     --sand        a very light brand tint, for a few selected supporting
+                   sections (questions, explorers) so the page has rhythm.
+     navy          the footer only.
 
    `.section--navy` and `.on-navy` used to turn the page over. They now stay
    white and re-point the light-type tokens at ink, so every rule written as
@@ -148,9 +172,13 @@ button {
 }
 
 .section--navy,
-.section--sand,
 .section--paper {
   background: var(--white);
+  color: var(--ink);
+}
+
+.section--sand {
+  background: var(--color-surface-alt);
   color: var(--ink);
 }
 
@@ -175,9 +203,14 @@ button {
 /* ==========================================================================
    Typography
    --------------------------------------------------------------------------
-   `.ed-*` is the serif: statements the page is making. Everything else -
-   every label, every button, every sentence a parent has to read to get
-   something done - is the grotesque. That division is the design.
+   Headings are Plus Jakarta Sans in the brand navy; everything read or
+   operated is Inter. The hierarchy:
+
+     H1 (.ed-mega/.ed-hero/.ed-h1)  bold, tight tracking, generous size
+     H2 (.ed-h2)                    bold, a clear section heading
+     H3 (.ed-h3/.fn-h3)             semibold, cards and subsections
+     body / lead                    Inter 400, 1.62 / 1.5 leading
+     labels (.meta/.sticker)        Inter 500-600, spaced capitals
    ========================================================================== */
 .ed-mega,
 .ed-hero,
@@ -185,60 +218,62 @@ button {
 .ed-h2,
 .ed-h3 {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 144;
-  line-height: 0.94;
-  letter-spacing: -0.022em;
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  /* Tight tracking closes the gaps between words as well as letters; this
+     hands the word space back so a bold line still reads as separate words. */
+  word-spacing: 0.05em;
   text-wrap: balance;
   color: var(--ink);
 }
 
 .ed-mega {
   font-size: var(--t-mega);
-  line-height: 0.86;
-  letter-spacing: -0.04em;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
 }
 
 .ed-hero {
   font-size: var(--t-hero);
-  line-height: 0.9;
-  letter-spacing: -0.032em;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
 }
 
 .ed-h1 {
   font-size: var(--t-h1);
-  line-height: 0.96;
-  letter-spacing: -0.028em;
+  line-height: 1.05;
+  letter-spacing: -0.022em;
 }
 
 .ed-h2 {
   font-size: var(--t-h2);
-  line-height: 1;
-  letter-spacing: -0.022em;
+  line-height: 1.1;
+  letter-spacing: -0.016em;
 }
 
 .ed-h3 {
   font-size: var(--t-h3);
-  line-height: 1.12;
-  letter-spacing: -0.014em;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
 }
 
-/* The italic of the same face. Emphasis inside a serif headline is this and
-   never a second family - a sans word dropped into a serif line is the move
-   to avoid. */
+/* Emphasis inside a headline is the logo's colour, not a second style of
+   letter - one face, one weight, picked out. */
 .ed-em {
-  font-style: italic;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: inherit;
+  color: var(--color-primary);
 }
 
-/* Functional headings: a card title, a form legend, a table header. These are
-   the grotesque, because they are read to be used rather than to be heard. */
+/* Functional headings: a card title, a form legend, a table header. */
 .fn-h3,
 .fn-h4 {
-  font-family: var(--font-body);
-  font-weight: 560;
-  line-height: 1.18;
-  letter-spacing: -0.014em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 
@@ -267,13 +302,13 @@ button {
   margin-top: 1.1em;
 }
 
-/* Figures. Mono so a column of them aligns on the digit. */
+/* Figures. Tabular numerals so a column of them aligns on the digit. */
 .stat-num {
-  font-family: var(--font-mono);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.04em;
-  line-height: 0.92;
+  letter-spacing: -0.03em;
+  line-height: 1;
   color: var(--ink);
 }
 
@@ -304,44 +339,34 @@ button {
 }
 
 /* ==========================================================================
-   The sticker
+   The section label
    --------------------------------------------------------------------------
-   The section label. It is a torn paper tag, rotated a degree or two, sitting
-   on the line above a headline or overlapping the headline itself.
-
-   It replaced a rule-plus-uppercase-mono eyebrow, which is the correct and
-   invisible solution. This one is the school's voice: the thing a teacher
-   would have stuck on the noticeboard. The rotation is small and the corners
-   are cut rather than rounded, so it reads as cut paper and not as a chip in
-   a design system.
-
-   Rotation is a custom property so a page can alternate the direction down a
-   column and the stickers do not all lean the same way.
+   The eyebrow above a headline: spaced capitals on a quiet brand tint, level
+   and square-cornered, so it reads as an institution labelling its own pages
+   rather than as a playful tag. The `tilt` a component passes is accepted
+   and deliberately not applied.
    ========================================================================== */
 .sticker {
-  --tilt: -2.2deg;
-  display: inline-block;
-  padding: 7px 14px 8px;
-  background: var(--sun);
-  color: var(--on-sun);
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   font-family: var(--font-body);
   font-size: var(--t-label);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  transform: rotate(var(--tilt));
-  /* Cut corners rather than rounded: paper torn off a roll of tape. */
-  clip-path: polygon(0 4px, 4px 0, calc(100% - 3px) 1px, 100% 5px, calc(100% - 1px) calc(100% - 4px), calc(100% - 5px) 100%, 4px calc(100% - 1px), 1px calc(100% - 5px));
   white-space: nowrap;
 }
 
-.sticker--blue { background: var(--blue-deep); color: var(--on-blue); }
-.sticker--green { background: var(--green); color: var(--paper); }
-.sticker--coral { background: var(--coral); color: var(--paper); }
-.sticker--ink { background: var(--ink); color: var(--ivory); }
-.sticker--paper { background: var(--paper); color: var(--ink); }
-.sticker--right { --tilt: 2deg; }
+.sticker--blue { background: var(--color-primary); color: var(--color-on-primary); }
+.sticker--green { background: var(--green-soft); color: var(--green); }
+.sticker--coral { background: var(--coral-soft); color: var(--coral); }
+.sticker--ink { background: var(--brand-900); color: var(--white); }
+.sticker--paper { background: var(--white); color: var(--color-primary); box-shadow: inset 0 0 0 1px var(--line-blue); }
 
 /* ==========================================================================
    The marker
@@ -374,7 +399,7 @@ button {
 .mark {
   display: inline;
   color: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23d4e2f6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dcd8ee'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 62%;
   background-size: calc(var(--mark-scale, 1) * 100%) 0.82em;
@@ -384,15 +409,15 @@ button {
 }
 
 .mark--blue {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23c3d7f2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23cfc9ea'/%3E%3C/svg%3E");
 }
 
 .mark--green {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23e0eff6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23e7ebf6'/%3E%3C/svg%3E");
 }
 
 .mark--coral {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23e5e8f8'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23eeebf8'/%3E%3C/svg%3E");
 }
 
 /* THE UNDERLINE IS A BACKGROUND, NOT A PSEUDO-ELEMENT.
@@ -410,7 +435,7 @@ button {
    marks use, so all three are driven by one line in `draw()`. */
 .mark-ul {
   display: inline;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%232456a6' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%23463595' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 88%;
   background-size: calc(var(--mark-scale, 1) * 100%) 0.15em;
@@ -436,7 +461,7 @@ button {
 .mark-ring {
   display: inline-block;
   padding-inline: 0.2em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%232456a6' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%23463595' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: calc(var(--mark-scale, 1) * 100%) 100%;
@@ -512,8 +537,8 @@ a:hover .fig--hover img {
 /* ==========================================================================
    Buttons
    --------------------------------------------------------------------------
-   Tactile: the fill wipes up from the bottom edge on hover and the whole
-   control drops a hair on press. Squared, per the shape rule.
+   Brand blue, Inter semibold, an 8px radius. The fill wipes up from the
+   bottom edge on hover and the control drops a hair on press.
    ========================================================================== */
 .btn {
   position: relative;
@@ -521,11 +546,11 @@ a:hover .fig--hover img {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 17px 32px;
+  padding: 16px 28px;
   border-radius: var(--r-ctl);
   font-family: var(--font-body);
   font-size: 0.9375rem;
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.005em;
   cursor: pointer;
@@ -561,46 +586,41 @@ a:hover .fig--hover img {
   will-change: transform;
 }
 
-.btn-primary {
-  background: var(--blue);
-  color: var(--on-blue);
-  box-shadow: 0 10px 24px -14px rgba(36, 86, 166, 0.55);
-}
-
-.btn-primary::after {
-  background: var(--blue-ink);
-}
-
-.btn-primary:hover {
-  color: var(--on-blue);
-}
-
+/* `.btn-sun` is the old name for the primary button and renders identically. */
+.btn-primary,
 .btn-sun {
-  background: var(--blue);
-  color: var(--on-blue);
-  box-shadow: 0 10px 24px -14px rgba(36, 86, 166, 0.55);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: 0 10px 22px -16px rgba(70, 53, 149, 0.6);
 }
 
+.btn-primary::after,
 .btn-sun::after {
-  background: var(--blue-ink);
+  background: var(--color-primary-darker);
 }
 
+.btn-primary:hover,
 .btn-sun:hover {
-  color: var(--on-blue);
+  color: var(--color-on-primary);
 }
 
 .btn-secondary {
   background: var(--white);
-  color: var(--blue-deep);
+  color: var(--color-primary);
   box-shadow: inset 0 0 0 1.5px var(--line-blue-strong);
+  transition:
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
+    transform var(--d-tap) var(--ease-out);
 }
 
 .btn-secondary::after {
-  background: var(--blue);
+  background: var(--color-primary-light);
 }
 
 .btn-secondary:hover {
-  color: var(--on-blue);
+  color: var(--color-primary-dark);
+  box-shadow: inset 0 0 0 1.5px var(--color-primary);
 }
 
 .on-navy .btn-secondary,
@@ -636,8 +656,8 @@ a:hover .fig--hover img {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font-weight: 540;
-  color: var(--blue-deep);
+  font-weight: 600;
+  color: var(--color-primary);
   cursor: pointer;
   padding-bottom: 3px;
 }
@@ -695,10 +715,10 @@ a:hover .fig--hover img {
 
 /* The mono metadata line: a date, a location, a count. */
 .meta {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--t-label);
-  font-weight: 450;
-  letter-spacing: 0.1em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
@@ -711,11 +731,10 @@ a:hover .fig--hover img {
 /* The oversized chapter numeral that opens a section or a panel. */
 .numeral {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 400;
+  font-weight: 700;
   font-size: var(--t-numeral);
-  line-height: 0.78;
-  letter-spacing: -0.05em;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   color: var(--blue);
   opacity: 0.12;
   user-select: none;
@@ -739,19 +758,19 @@ a:hover .fig--hover img {
   background: var(--line-navy);
 }
 
-/* The pill that carries a time, a class, an age band. */
+/* The tag that carries a time, a class, an age band. */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 15px 9px;
-  border-radius: var(--r-pill);
+  padding: 7px 12px;
+  border-radius: 6px;
   background: var(--white);
   box-shadow: inset 0 0 0 1px var(--line-blue);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--t-label);
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--ink-2);
   white-space: nowrap;
 }

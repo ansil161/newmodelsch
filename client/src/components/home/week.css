@@ -32,7 +32,7 @@
 .week__title {
   max-width: 24ch;
   font-family: var(--font-body);
-  font-weight: 620;
+  font-weight: 600;
   font-size: clamp(1.5rem, 2.7vw, 2.5rem);
   line-height: 1.14;
   letter-spacing: -0.028em;

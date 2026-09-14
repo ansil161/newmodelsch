@@ -47,15 +47,8 @@
 /* --------------------------------------------------------------------------
    The claim
    --------------------------------------------------------------------------
-   Set in the grotesque rather than in the display serif, which is the one
-   place on the site a statement is not in Fraunces.
-
-   It is deliberate and it is narrow: the reference for this section is a
-   single enormous line of clean sans, and at this size - a quarter of the
-   screen tall, ranged left against an open field - the serif's high contrast
-   starts to sparkle rather than sit. The sheet on the right keeps Fraunces,
-   so the publication's own voice is still in the section; it is just on the
-   paper rather than on the wall.
+   A single enormous line of clean sans, a quarter of the screen tall and
+   ranged left against an open field.
    -------------------------------------------------------------------------- */
 .jr__eyebrow {
   margin: 0;
@@ -198,7 +191,7 @@
 .jr-card__say {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.16;
   letter-spacing: -0.02em;
   text-align: center;

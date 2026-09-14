@@ -27,7 +27,7 @@ import './campus.css';
    and a reader with motion turned off get with no timeline at all.
 
    The opening is derived from it. `measure()` reads the distance from each
-   column to `.cm__slot` - an invisible marker in the stylesheet carrying the
+   column to `.hc__slot` - an invisible marker in the stylesheet carrying the
    hero plate's geometry - and the timeline holds the plates there and lets
    them go. There is not one authored offset in this file, which is why the
    section survives a change to the grid, the gutter, the type scale or the
@@ -35,8 +35,8 @@ import './campus.css';
 
    TWO NESTED TRANSFORMS, WHICH IS WHAT MAKES THE SPLIT ONE MOVEMENT
 
-     .cm-col     the column.  Its place in the row: the spread, and the drift.
-     .cm-panel   the plate.   Its place relative to its column: the travel in
+     .hc-col     the column.  Its place in the row: the spread, and the drift.
+     .hc-panel   the plate.   Its place relative to its column: the travel in
                               from the hero slot, and the scale.
 
    Because they are nested, the two overlap freely: the plates are still
@@ -160,10 +160,10 @@ function buildMotion(scope: HTMLElement) {
      and waits.
      -------------------------------------------------------------------------- */
   mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
-    const slot = scope.querySelector<HTMLElement>('.cm__slot');
-    const inner = scope.querySelector<HTMLElement>('.cm__inner');
-    const cols = gsap.utils.toArray<HTMLElement>('.cm-col', scope);
-    const panels = gsap.utils.toArray<HTMLElement>('.cm-panel', scope);
+    const slot = scope.querySelector<HTMLElement>('.hc__slot');
+    const inner = scope.querySelector<HTMLElement>('.hc__inner');
+    const cols = gsap.utils.toArray<HTMLElement>('.hc-col', scope);
+    const panels = gsap.utils.toArray<HTMLElement>('.hc-panel', scope);
     if (!slot || !inner || cols.length !== CHAPTERS.length || panels.length !== CHAPTERS.length) {
       return;
     }
@@ -185,7 +185,7 @@ function buildMotion(scope: HTMLElement) {
        opened already split into three columns, then snapped to the hero plate
        and back behind the anchor as the reader scrolled in.
 
-       Measured relative to `.cm__inner`, the positioned box every plate and
+       Measured relative to `.hc__inner`, the positioned box every plate and
        the slot share, by walking the offset chain up to it. */
     const box = (el: HTMLElement) => {
       let x = 0;
@@ -283,13 +283,13 @@ function buildMotion(scope: HTMLElement) {
        what stops the closing statement reading as a third block of text
        stacked in the same place. */
     tl.fromTo(
-      '.cm__intro',
+      '.hc__intro',
       { yPercent: 0, autoAlpha: 1 },
       { yPercent: -24, autoAlpha: 0, duration: 0.2, ease: 'power2.in' },
       0.04,
     );
     tl.fromTo(
-      '.cm__lede',
+      '.hc__lede',
       { y: 0, autoAlpha: 1 },
       { y: -26, autoAlpha: 0, duration: 0.18, ease: 'power2.in' },
       0.02,
@@ -317,7 +317,7 @@ function buildMotion(scope: HTMLElement) {
        Six percent across the whole approach. Enough that the opening frame is
        not a still photograph waiting for a scroll; not enough that anybody
        watching would call it a zoom. */
-    tl.fromTo('.cm-frame', { scale: 1.06 }, { scale: 1, duration: 0.52, ease: 'power2.out' }, 0);
+    tl.fromTo('.hc-frame', { scale: 1.06 }, { scale: 1, duration: 0.52, ease: 'power2.out' }, 0);
 
     /* ---- the two outer columns come out from behind it -----------------
        Different starts, different lengths, different eases. This is the
@@ -376,7 +376,7 @@ function buildMotion(scope: HTMLElement) {
        composition from being a still image the reader happens to be holding
        still, and it is the only thing still moving after 0.7. */
     cols.forEach((col, i) => {
-      const img = col.querySelector<HTMLElement>('.cm-img');
+      const img = col.querySelector<HTMLElement>('.hc-img');
       if (!img) return;
       const d = CHAPTERS[i].drift;
       tl.fromTo(img, { yPercent: d }, { yPercent: -d, duration: 0.62 }, 0.38);
@@ -405,19 +405,19 @@ function buildMotion(scope: HTMLElement) {
        than faded: the lines set themselves from under their own overflow
        boxes, which is how every other headline on this site arrives. */
     tl.fromTo(
-      '.cm__outro .cm__mask > *',
+      '.hc__outro .hc__mask > *',
       { yPercent: 110 },
       { yPercent: 0, duration: 0.16, ease: 'power2.out' },
       0.56,
     )
       .fromTo(
-        '.cm__outro .cm__line > span',
+        '.hc__outro .hc__line > span',
         { yPercent: 110 },
         { yPercent: 0, duration: 0.22, stagger: 0.07, ease: 'power3.out' },
         0.6,
       )
       .fromTo(
-        '.cm__cta',
+        '.hc__cta',
         { y: 18, autoAlpha: 0 },
         { y: 0, autoAlpha: 1, duration: 0.16, ease: 'power2.out' },
         0.76,
@@ -437,11 +437,11 @@ function buildMotion(scope: HTMLElement) {
      arrives rather than holding the reader in place while it plays.
      -------------------------------------------------------------------------- */
   mm.add('(max-width: 899px) and (prefers-reduced-motion: no-preference)', () => {
-    const cols = gsap.utils.toArray<HTMLElement>('.cm-col', scope);
+    const cols = gsap.utils.toArray<HTMLElement>('.hc-col', scope);
 
     cols.forEach((col, i) => {
-      const frame = col.querySelector<HTMLElement>('.cm-frame');
-      const img = col.querySelector<HTMLElement>('.cm-img');
+      const frame = col.querySelector<HTMLElement>('.hc-frame');
+      const img = col.querySelector<HTMLElement>('.hc-img');
       const lines = col.querySelectorAll<HTMLElement>('[data-cap]');
 
       /* The plate is printed rather than faded in - the site's own `unmask`
@@ -480,14 +480,14 @@ function buildMotion(scope: HTMLElement) {
       }
     });
 
-    const statement = scope.querySelectorAll<HTMLElement>('.cm__outro .cm__line > span');
+    const statement = scope.querySelectorAll<HTMLElement>('.hc__outro .hc__line > span');
     if (statement.length) {
       gsap.from(statement, {
         yPercent: 115,
         duration: 1,
         stagger: 0.09,
         ease: 'power4.out',
-        scrollTrigger: { trigger: '.cm__outro', start: 'top 84%', once: true },
+        scrollTrigger: { trigger: '.hc__outro', start: 'top 84%', once: true },
       });
     }
   });
@@ -508,26 +508,26 @@ export function HomeCampus() {
   const scope = useGsapScope<HTMLElement>((_, el) => buildMotion(el), []);
 
   return (
-    <section ref={scope} className="section cm" id="campus">
-      <div className="cm__stage">
-        <div className="wrap cm__inner">
+    <section ref={scope} className="section hc" id="campus">
+      <div className="hc__stage">
+        <div className="wrap hc__inner">
           {/* The opening plate's geometry, and nothing else. Never drawn: the
               module measures it and moves the three plates onto it. */}
-          <span className="cm__slot" aria-hidden="true" />
+          <span className="hc__slot" aria-hidden="true" />
 
-          <div className="cm__intro">
-            <p className="cm__eyebrow">The campus</p>
-            <h2 className="cm__head">
-              <span className="cm__line">
+          <div className="hc__intro">
+            <p className="hc__eyebrow">The campus</p>
+            <h2 className="hc__head">
+              <span className="hc__line">
                 <span>Campus.</span>
               </span>
-              <span className="cm__line">
+              <span className="hc__line">
                 <span>Space to grow.</span>
               </span>
             </h2>
           </div>
 
-          <p className="cm__lede">
+          <p className="hc__lede">
             Four acres, one campus, and no corridor that is a dead end.
           </p>
 
@@ -539,18 +539,18 @@ export function HomeCampus() {
 
               FOUR LAYERS, EACH OWNING DIFFERENT PROPERTIES, WHICH IS WHY
               NOTHING HERE NEEDS `overwrite`:
-                .cm-col     the spread and the drift.   x / y
-                .cm-panel   the travel and the scale.   x / y / scale
-                .cm-frame   the settle.                 scale
-                .cm-img     the parallax.               yPercent            */}
-          <ol className="cm-cols">
+                .hc-col     the spread and the drift.   x / y
+                .hc-panel   the travel and the scale.   x / y / scale
+                .hc-frame   the settle.                 scale
+                .hc-img     the parallax.               yPercent            */}
+          <ol className="hc-cols">
             {CHAPTERS.map((chapter, i) => (
-              <li className="cm-col" key={chapter.id}>
-                <div className="cm-col__media">
-                  <div className="cm-panel">
-                    <figure className="cm-frame">
+              <li className="hc-col" key={chapter.id}>
+                <div className="hc-col__media">
+                  <div className="hc-panel">
+                    <figure className="hc-frame">
                       <img
-                        className="cm-img"
+                        className="hc-img"
                         src={resolve(chapter.photo, 900)}
                         srcSet={resolveSet(chapter.photo, [480, 900, 1400])}
                         sizes="(max-width: 899px) 88vw, 28vw"
@@ -565,22 +565,22 @@ export function HomeCampus() {
                   </div>
                 </div>
 
-                <div className="cm-cap">
-                  <span className="cm-cap__mask">
-                    <span className="cm-cap__head" data-cap>
-                      <span className="cm-cap__num">{chapter.index}</span>
-                      <span className="cm-cap__rule" aria-hidden="true" />
+                <div className="hc-cap">
+                  <span className="hc-cap__mask">
+                    <span className="hc-cap__head" data-cap>
+                      <span className="hc-cap__num">{chapter.index}</span>
+                      <span className="hc-cap__rule" aria-hidden="true" />
                     </span>
                   </span>
 
-                  <span className="cm-cap__mask">
-                    <h3 className="cm-cap__title" data-cap>
+                  <span className="hc-cap__mask">
+                    <h3 className="hc-cap__title" data-cap>
                       {chapter.title}
                     </h3>
                   </span>
 
-                  <span className="cm-cap__mask">
-                    <p className="cm-cap__body" data-cap>
+                  <span className="hc-cap__mask">
+                    <p className="hc-cap__body" data-cap>
                       {chapter.body}
                     </p>
                   </span>
@@ -589,25 +589,25 @@ export function HomeCampus() {
             ))}
           </ol>
 
-          <div className="cm__outro">
-            <p className="cm__label">
-              <span className="cm__mask">
+          <div className="hc__outro">
+            <p className="hc__label">
+              <span className="hc__mask">
                 <span>
                   Campus <b>/ 03</b>
                 </span>
               </span>
             </p>
-            <p className="cm__statement">
-              <span className="cm__line">
+            <p className="hc__statement">
+              <span className="hc__line">
                 <span>More than a place to learn.</span>
               </span>
-              <span className="cm__line">
+              <span className="hc__line">
                 <span>A place to become.</span>
               </span>
             </p>
           </div>
 
-          <Link className="cm__cta" to={ROUTES.studentLife}>
+          <Link className="hc__cta" to={ROUTES.studentLife}>
             Explore campus
             <i aria-hidden="true">
               <Icon name="arrowRight" size={16} />

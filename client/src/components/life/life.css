@@ -61,9 +61,8 @@
 
 .campex__name {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 72;
   font-size: var(--t-h3);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.018em;
   line-height: 1.08;
 }

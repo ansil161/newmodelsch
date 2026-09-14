@@ -13,31 +13,22 @@ npm run preview
 
 ## The design
 
-**Editorial schoolbook.** The site is set as a printed thing: a warm paper
-ground, a high-contrast serif carrying the statements, a clean grotesque
-carrying everything a person has to operate, and one accent that behaves like a
-highlighter pen rather than like a brand gradient.
+**The New Model School brand.** The official horizontal logo
+(`public/brand/`, used unmodified through `components/common/Logo.tsx`) is the
+anchor, and the whole palette is derived from its one ink. All tokens live in
+`src/styles/variables.css`; components use the semantic `--color-*` layer.
 
 | | |
 | --- | --- |
-| Ground | Ivory `#f7f3ea`, paper `#fffdf8`, sand `#efe8da` |
-| Ink | `#111726`, with navy `#16233c` for the bands that turn the page over |
-| Accent | School yellow `#ffc53d` — a **ground** colour, never type on paper |
-| Secondary | Muted blue, green and coral, held at one value so none dominates |
-| Display | **Fraunces** — a high-contrast serif with a wobble in its curves |
-| Text | **Geist** for everything operated, **Geist Mono** for every figure |
-| Ink | **Caveat** — annotation only, and only on the curriculum spread |
+| Primary | Logo indigo-blue `#463595` — buttons, links, active states (9.5:1 on white) |
+| Navy | `#1a1640` — headings and strong type; the footer ground (white logo) |
+| Light | `#f6f5fb` / `#eceaf6` — selected supporting sections, fills, highlights |
+| Canvas | White `#ffffff` — almost every section |
+| Neutral | `#45425f` body, `#6b6884` muted, brand-tinted hairlines |
+| Headings | **Plus Jakarta Sans** 600–700 |
+| Text | **Inter** 400–600 for body, navigation, forms, buttons and figures |
 
-Three families, four faces, loaded in one request. That is still one request
-*fewer* than the site used to make: it previously pulled Geist, Geist Mono and
-Cormorant Garamond from Google plus Clash Display from a second CDN — four
-families over two providers, which is a moodboard rather than a typeface.
-
-Caveat earns its place by doing a job the other two cannot: it is ink. The
-curriculum spread carries handwritten notes in the margin beside its
-photographs, and a note somebody wrote on a print is not a thing an italic can
-fake. It is never a heading and never a label — if it is doing an interface's
-job, it is the wrong face.
+Two families, weights 400 / 500 / 600 / 700 only, loaded in one request.
 
 Four decisions do most of the visual work, and each is defined once:
 

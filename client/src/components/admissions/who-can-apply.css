@@ -13,9 +13,9 @@
   --wca-lav: var(--blue);
   --wca-lav-ink: var(--blue-deep);
   --wca-lav-soft: var(--blue-soft);
-  --wca-lav-wash: rgba(36, 86, 166, 0.05);
-  --wca-hair: rgba(15, 35, 75, 0.1);
-  --wca-hair-strong: rgba(15, 35, 75, 0.2);
+  --wca-lav-wash: rgba(70, 53, 149, 0.05);
+  --wca-hair: rgba(26, 22, 64, 0.1);
+  --wca-hair-strong: rgba(26, 22, 64, 0.2);
   --wca-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   position: relative;
@@ -61,11 +61,10 @@
 .wca__heading {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 500;
+  font-weight: 600;
   font-size: clamp(3rem, 6vw, 5.75rem);
-  line-height: 0.96;
-  letter-spacing: -0.034em;
+  line-height: 1;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
@@ -79,8 +78,7 @@
   margin: clamp(16px, 1.8vw, 24px) 0 0;
   max-width: 22ch;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 72;
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(1.35rem, 2vw, 1.8rem);
   line-height: 1.25;
   letter-spacing: -0.012em;
@@ -102,9 +100,9 @@
   margin-top: clamp(24px, 2.8vw, 36px);
   padding: 8px 8px 8px 20px;
   border: 1px solid var(--wca-hair-strong);
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   font-size: 0.875rem;
-  font-weight: 560;
+  font-weight: 600;
   color: var(--ink);
   text-decoration: none;
   transition:
@@ -158,7 +156,7 @@
   aspect-ratio: 1000 / 1080;
   border-radius: clamp(22px, 2.4vw, 34px);
   background: var(--sand);
-  box-shadow: 0 34px 70px -48px rgba(15, 35, 75, 0.36);
+  box-shadow: 0 34px 70px -48px rgba(26, 22, 64, 0.36);
 }
 
 .wca__media {
@@ -188,7 +186,7 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.86);
   color: var(--blue-deep);
-  box-shadow: 0 6px 18px -10px rgba(15, 35, 75, 0.45);
+  box-shadow: 0 6px 18px -10px rgba(26, 22, 64, 0.45);
   opacity: 0.72;
   cursor: pointer;
   transition:
@@ -228,7 +226,7 @@
 
 .wca__arc path {
   fill: none;
-  stroke: rgba(36, 86, 166, 0.38);
+  stroke: rgba(70, 53, 149, 0.38);
   stroke-width: 1;
   stroke-dasharray: 3 6;
   vector-effect: non-scaling-stroke;
@@ -281,7 +279,7 @@
   border-radius: clamp(12px, 1.3vw, 18px);
   background: var(--sand);
   outline: 1px solid var(--wca-hair);
-  box-shadow: 0 22px 40px -26px rgba(15, 35, 75, 0.4);
+  box-shadow: 0 22px 40px -26px rgba(26, 22, 64, 0.4);
   rotate: var(--tilt, 0deg);
 }
 
@@ -384,7 +382,7 @@
 
 .wca-row__name {
   font-size: clamp(1.125rem, 1.5vw, 1.375rem);
-  font-weight: 540;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.012em;
   color: var(--ink);
@@ -536,12 +534,11 @@
     z-index: 3;
     display: block;
     margin: 0;
-    font-family: var(--font-hand);
-    font-weight: 700;
-    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
-    line-height: 1;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(0.975rem, 1.326vw, 1.248rem);
+    line-height: 1.15;
     color: var(--wca-lav-ink);
-    rotate: -5deg;
     white-space: nowrap;
   }
 

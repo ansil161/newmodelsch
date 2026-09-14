@@ -135,11 +135,11 @@
   top: 16%;
   left: 0;
   z-index: 3;
-  font-family: var(--font-hand);
-  font-size: clamp(1.3rem, 2vw, 1.9rem);
-  line-height: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.014rem, 1.56vw, 1.482rem);
+  line-height: 1.15;
   color: var(--ink-2);
-  transform: rotate(-9deg);
 }
 
 .gal-hero__stamp {
@@ -183,11 +183,11 @@
 .gal-wall__note {
   width: fit-content;
   margin-left: 12%;
-  font-family: var(--font-hand);
-  font-size: clamp(1.35rem, 2vw, 1.8rem);
-  line-height: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.053rem, 1.56vw, 1.404rem);
+  line-height: 1.15;
   color: var(--ink-2);
-  transform: rotate(-3deg);
 }
 
 .gal-wall__pair,
@@ -262,10 +262,10 @@
   align-items: center;
   gap: 10px;
   padding: 11px 16px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--white);
   box-shadow: inset 0 0 0 1px var(--line-blue);
-  font-weight: 520;
+  font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
   transition:
@@ -310,11 +310,11 @@
 
 .gal-cat__note {
   width: fit-content;
-  font-family: var(--font-hand);
-  font-size: 1.65rem;
-  line-height: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.287rem;
+  line-height: 1.15;
   color: var(--gold-ink);
-  transform: rotate(-3deg);
 }
 
 .gal-cat__grid {
@@ -385,7 +385,7 @@
     border-bottom: 1px solid var(--line);
     font-family: var(--font-display);
     font-size: clamp(1.25rem, 1.7vw, 1.6rem);
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: -0.015em;
     text-align: left;
     color: var(--ink-3);

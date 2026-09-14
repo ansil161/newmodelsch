@@ -125,7 +125,7 @@
 
 .vx__link {
   color: var(--vx-ink);
-  font-weight: 560;
+  font-weight: 600;
 }
 
 .vx .link::before {
@@ -155,7 +155,7 @@
   font-family: var(--font-display);
   font-size: clamp(3.2rem, 4.6vw, 5rem);
   font-weight: 600;
-  line-height: 0.62;
+  line-height: 1;
   color: var(--vx-pen);
   user-select: none;
 }
@@ -182,14 +182,12 @@
    clause. This one is allowed to wrap. */
 .vx__accent {
   margin-top: clamp(10px, 1.1vw, 16px);
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: clamp(1.75rem, 2.5vw, 2.45rem);
-  line-height: 1.02;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.365rem, 1.95vw, 1.911rem);
+  line-height: 1.15;
   letter-spacing: 0.004em;
   color: var(--vx-pen);
-  rotate: -1.6deg;
-  transform-origin: left center;
   max-width: 18ch;
 }
 
@@ -215,7 +213,7 @@
 
 .vx__name {
   font-size: 1rem;
-  font-weight: 620;
+  font-weight: 600;
   letter-spacing: -0.008em;
   color: var(--vx-ink);
 }
@@ -294,7 +292,7 @@
 
 .vx__shot {
   border-radius: var(--r-lg);
-  box-shadow: 0 2px 6px rgba(22, 35, 60, 0.06), 0 34px 70px -40px rgba(22, 35, 60, 0.42);
+  box-shadow: 0 2px 6px rgba(26, 22, 64, 0.06), 0 34px 70px -40px rgba(26, 22, 64, 0.42);
 }
 
 /* The two soft shapes behind the frame. Cut-paper squircles rather than
@@ -468,7 +466,7 @@
 
 .vx__tab.is-on .vx__tab-label {
   color: var(--vx-ink);
-  font-weight: 640;
+  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -515,7 +513,7 @@
   border-radius: var(--r-lg);
   box-shadow:
     inset 0 0 0 1px var(--vx-line),
-    0 18px 40px -32px rgba(22, 35, 60, 0.4);
+    0 18px 40px -32px rgba(26, 22, 64, 0.4);
   cursor: pointer;
   /* `translate` and `scale` rather than `transform`: the card's parent
      carries the scrubbed depth, GSAP writes `transform` here during a
@@ -539,7 +537,7 @@
   translate: 0 -4px;
   box-shadow:
     inset 0 0 0 1px var(--line-blue-strong),
-    0 22px 46px -32px rgba(22, 35, 60, 0.45);
+    0 22px 46px -32px rgba(26, 22, 64, 0.45);
 }
 
 .vx__card-btn.is-on {
@@ -547,7 +545,7 @@
   scale: 1.015;
   box-shadow:
     inset 0 0 0 1.5px var(--vx-pen),
-    0 28px 56px -32px rgba(22, 35, 60, 0.5);
+    0 28px 56px -32px rgba(26, 22, 64, 0.5);
 }
 
 /* The autoplay clock, on the card it is counting down: a hairline track with
@@ -587,7 +585,7 @@
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 2.6vw, 3rem);
   font-weight: 600;
-  line-height: 0.8;
+  line-height: 1;
   color: var(--vx-wash);
   user-select: none;
 }
@@ -645,7 +643,7 @@
 
 .vx__card-who b {
   font-size: 0.9375rem;
-  font-weight: 620;
+  font-weight: 600;
   color: var(--vx-ink);
 }
 
@@ -663,12 +661,11 @@
 }
 
 .vx__railnote-ink {
-  font-family: var(--font-hand);
-  font-size: clamp(1.05rem, 1.25vw, 1.35rem);
+  font-family: var(--font-display);
+  font-size: clamp(0.819rem, 0.975vw, 1.053rem);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.15;
   color: var(--vx-ink);
-  rotate: -3deg;
 }
 
 .vx__railnote-arrow {

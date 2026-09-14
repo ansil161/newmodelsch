@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES, SCHOOL } from '@/constants';
 import { Icon } from '@/components/common/Icon';
+import { Logo } from '@/components/common/Logo';
 import './auth.css';
 
 /**
@@ -19,16 +20,7 @@ export function AuthFrame({ children }: { children: ReactNode }) {
 
       <header className="auth__top wrap">
         <Link className="auth__brand" to={ROUTES.home} aria-label={`${SCHOOL.name}, home`}>
-          {/* The masthead's mark, drawn rather than an image: two rules and a disc. */}
-          <span className="auth__mark" aria-hidden="true">
-            <i />
-            <i />
-            <b />
-          </span>
-          <span className="auth__name">
-            <b>New Model</b>
-            <span>High School</span>
-          </span>
+          <Logo className="auth__logo" decorative priority />
         </Link>
 
         <Link className="auth__back" to={ROUTES.home}>

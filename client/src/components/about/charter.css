@@ -60,8 +60,7 @@
 .charter__title {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 500;
+  font-weight: 600;
   font-size: clamp(2rem, 3.4vw, 3.25rem);
   line-height: 1.04;
   letter-spacing: -0.024em;
@@ -184,11 +183,11 @@
   height: 2.2em;
   padding-inline: 0.95em;
   border: 1px solid var(--line);
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--paper);
   font-family: var(--font-body);
   font-size: var(--t-small);
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.005em;
   color: var(--ink);
@@ -212,7 +211,7 @@
 .ch-row__title {
   margin: 20px 0 0;
   font-family: var(--font-body);
-  font-weight: 580;
+  font-weight: 600;
   font-size: clamp(1.3rem, 1.85vw, 1.75rem);
   line-height: 1.24;
   letter-spacing: -0.018em;

@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon } from '@/components/common/Icon';
+import { Logo } from '@/components/common/Logo';
 import { ROUTES } from '@/constants';
 import { CONSOLE_ROUTES, ROLE_LABELS } from '@/constants/console';
 import { useAuth } from '@/hooks/useAuth';
@@ -109,15 +110,8 @@ function ConsoleFrame() {
 function Brand() {
   return (
     <Link className="console__brand" to={CONSOLE_ROUTES.home} aria-label="Admin console, dashboard">
-      <span className="console__mark" aria-hidden="true">
-        <i />
-        <i />
-        <b />
-      </span>
-      <span className="console__name">
-        <b>New Model</b>
-        <span>Admin console</span>
-      </span>
+      <Logo className="console__logo" decorative priority />
+      <span className="console__name">Admin console</span>
     </Link>
   );
 }

@@ -73,7 +73,7 @@
   max-width: calc(100% - 24px);
   padding: 5px;
   overflow-x: auto;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: rgba(255, 255, 255, 0.92);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -84,7 +84,7 @@
 
 .gal-yhead__year {
   padding: 9px 15px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
@@ -193,7 +193,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 11px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: rgba(255, 255, 255, 0.92);
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -232,7 +232,7 @@
 .gal-ev__title {
   font-family: var(--font-display);
   font-size: var(--t-h3);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.018em;
   color: var(--ink);
@@ -256,7 +256,7 @@
   padding-bottom: 3px;
   border-bottom: 1.5px solid var(--sun);
   font-size: var(--t-small);
-  font-weight: 540;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -344,15 +344,16 @@
 
 .gal-ehead__facts dd {
   margin: 0;
-  font-weight: 540;
+  font-weight: 500;
   color: var(--ink);
 }
 
 .gal-ehead__quote {
   max-width: 30ch;
   font-family: var(--font-display);
+  font-weight: 600;
   font-size: var(--t-h3);
-  font-style: italic;
+  font-style: normal;
   line-height: 1.2;
   color: var(--ink);
 }

@@ -11,8 +11,8 @@
   --aj-cream: var(--blue-wash);
   --aj-title: var(--blue-ink);
   --aj-pen: var(--blue);
-  --aj-hair: rgba(15, 35, 75, 0.1);
-  --aj-hair-strong: rgba(15, 35, 75, 0.2);
+  --aj-hair: rgba(26, 22, 64, 0.1);
+  --aj-hair-strong: rgba(26, 22, 64, 0.2);
   --aj-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* The timeline's own columns: number, track, icon, text. The rail and the
@@ -117,8 +117,7 @@
 .aj__title {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 144;
-  font-weight: 420;
+  font-weight: 600;
   font-size: clamp(2.2rem, 4.3vw, 4rem);
   line-height: 1.06;
   letter-spacing: -0.022em;
@@ -132,7 +131,7 @@
 }
 
 .aj__title strong {
-  font-weight: 620;
+  font-weight: 600;
 }
 
 .aj__underline {
@@ -185,7 +184,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  filter: drop-shadow(0 24px 28px rgba(15, 35, 75, 0.1)) drop-shadow(0 3px 6px rgba(15, 35, 75, 0.05));
+  filter: drop-shadow(0 24px 28px rgba(26, 22, 64, 0.1)) drop-shadow(0 3px 6px rgba(26, 22, 64, 0.05));
 }
 
 .aj__film {
@@ -209,8 +208,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to top, rgba(14, 24, 41, 0.42), rgba(14, 24, 41, 0) 58%),
-    rgba(14, 24, 41, 0.06);
+    linear-gradient(to top, rgba(17, 14, 44, 0.42), rgba(17, 14, 44, 0) 58%),
+    rgba(17, 14, 44, 0.06);
   pointer-events: none;
 }
 
@@ -272,7 +271,7 @@
   text-transform: uppercase;
   white-space: nowrap;
   color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 10px rgba(14, 24, 41, 0.35);
+  text-shadow: 0 1px 10px rgba(17, 14, 44, 0.35);
 }
 
 /* ----- two thin arcs, a small ring, and the note */
@@ -321,12 +320,11 @@
   position: relative;
   display: inline-block;
   margin: clamp(18px, 2vw, 26px) 0 0 4%;
-  font-family: var(--font-hand);
-  font-weight: 500;
-  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
-  line-height: 1.1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.819rem, 1.053vw, 1.014rem);
+  line-height: 1.15;
   color: var(--ink-2);
-  rotate: -5deg;
 }
 
 .aj .aj__note-arrow {
@@ -446,7 +444,7 @@
 .aj-step.is-active .aj-step__dot {
   border-color: var(--aj-pen);
   background: var(--aj-pen);
-  box-shadow: 0 0 0 4px rgba(36, 86, 166, 0.16);
+  box-shadow: 0 0 0 4px rgba(70, 53, 149, 0.16);
 }
 
 /* ----- the icon */
@@ -480,8 +478,7 @@
   margin: 0;
   padding-top: calc(var(--aj-node-y) - 0.66em);
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 48;
-  font-weight: 480;
+  font-weight: 600;
   font-size: clamp(1.15rem, 1.45vw, 1.4rem);
   line-height: 1.25;
   letter-spacing: -0.012em;
@@ -529,7 +526,7 @@
   gap: 6px;
   padding-block: 4px;
   font-size: 0.8125rem;
-  font-weight: 560;
+  font-weight: 600;
   color: var(--aj-title);
   text-decoration: none;
 }

@@ -151,10 +151,10 @@ function dims(lockup: HTMLElement) {
  * THIS IS DELIBERATELY RE-READ IMMEDIATELY BEFORE THE TRAVEL RATHER THAN
  * COMPUTED ONCE, and both reasons for that are real bugs it fixes:
  *
- *   THE WEBFONT. On a first visit the lockup is laid out before Fraunces has
- *   arrived, so "New Model" is measured in Georgia and the scale that lands it
- *   on the masthead is wrong by about seven per cent - enough that the
- *   handover pops.
+ *   LATE LAYOUT. Anything that changes the masthead's size between the click
+ *   and the landing - the webfont arriving under the navigation links, the
+ *   logo's compact size being released - moves the target, and a scale
+ *   computed early is wrong by enough that the handover pops.
  *
  *   THE MASTHEAD'S OWN HEIGHT. It is 76px at the top of a page and 62px once
  *   scrolled, and an internal navigation resets the scroll while the sheet is
@@ -305,10 +305,10 @@ export function PageTransition() {
 
     /* THE TIMELINE IS BUILT AFTER THE PRE-ROLL, NOT BEFORE IT.
 
-       Its first frame needs the lockup's real laid-out width, and until the
-       webfont lands that width is Georgia's rather than Fraunces's. Building
-       here would centre the composition against the wrong measurement and
-       then correct it in front of the visitor. */
+       Its first frame needs the lockup's real laid-out size and the masthead
+       settled under the webfont. Building here would centre the composition
+       against the wrong measurement and then correct it in front of the
+       visitor. */
     let tl: gsap.core.Timeline | null = null;
 
     const build = () => {
@@ -392,14 +392,18 @@ export function PageTransition() {
     };
 
     const fonts = document.fonts?.ready ?? Promise.resolve();
-    const hero = new Promise<void>((resolve) => {
-      const img = document.querySelector<HTMLImageElement>('.hero__frame img, .cover__media img');
-      if (!img || img.complete) return resolve();
-      img.addEventListener('load', () => resolve(), { once: true });
-      img.addEventListener('error', () => resolve(), { once: true });
-    });
+    const loaded = (img: HTMLImageElement | null) =>
+      new Promise<void>((resolve) => {
+        if (!img || img.complete) return resolve();
+        img.addEventListener('load', () => resolve(), { once: true });
+        img.addEventListener('error', () => resolve(), { once: true });
+      });
+    const hero = loaded(document.querySelector<HTMLImageElement>('.hero__frame img, .cover__media img'));
+    // The logo itself: a lockup that fades up before its artwork has arrived
+    // fades up as an empty box.
+    const logo = loaded(p.lockup.querySelector('img'));
 
-    Promise.all([fonts, hero]).then(begin).catch(begin);
+    Promise.all([fonts, hero, logo]).then(begin).catch(begin);
     const ceiling = window.setTimeout(begin, PREROLL_CEILING);
 
     return () => {

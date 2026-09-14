@@ -141,8 +141,8 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 8.5vw, 4.75rem);
   font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.035em;
+  line-height: 1;
+  letter-spacing: -0.03em;
   pointer-events: none;
 }
 
@@ -288,12 +288,12 @@
   left: 50%;
   translate: -50% 0;
   padding: 5px 11px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--paper);
   box-shadow: var(--e-1);
   font-family: var(--font-mono);
   font-size: var(--t-label);
-  font-weight: 450;
+  font-weight: 500;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   line-height: 1.4;
@@ -326,11 +326,8 @@
 
 /* Stacked treatment — quiet connectors between shouted claims.
 
-   The claims are set in the display serif in caps rather than in a bold
-   grotesque. The reference's hierarchy is what matters here — small and grey,
-   then large and loud, alternating — and this site's statements are set in
-   Fraunces. A sans claim in the middle of an editorial page would be the one
-   thing on it that came from somewhere else. */
+   The claims are set in the heading face. The hierarchy is what matters
+   here — small and grey, then large and loud, alternating. */
 .vm__stack {
   display: flex;
   flex-direction: column;
@@ -345,7 +342,7 @@
 .vm__stack-line.is-quiet {
   font-family: var(--font-mono);
   font-size: var(--t-small);
-  font-weight: 450;
+  font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   line-height: 1.4;
@@ -401,7 +398,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.375rem, 3.4vw, 2.125rem);
   font-weight: 700;
-  line-height: 0.98;
+  line-height: 1;
   letter-spacing: -0.025em;
   text-transform: uppercase;
   color: var(--vm-blue);
@@ -415,11 +412,11 @@
   min-width: 3.4em;
   padding: 0.45em 0.75em;
   margin-block: 5px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-ctl);
   background: var(--blue-soft);
   font-family: var(--font-mono);
   font-size: 0.36em;
-  font-weight: 450;
+  font-weight: 500;
   letter-spacing: 0.14em;
   color: var(--blue-deep);
 }
