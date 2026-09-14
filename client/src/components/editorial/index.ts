@@ -35,9 +35,6 @@ export type { GalleryFrame } from './HorizontalGallery';
 export { EditorialTimeline } from './EditorialTimeline';
 export type { TimelineEntry } from './EditorialTimeline';
 
-export { ChapterRail } from './ChapterRail';
-export type { RailItem } from './ChapterRail';
-
 export { QuoteSection } from './QuoteSection';
 export type { QuoteEntry } from './QuoteSection';
 

@@ -1,5 +1,4 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { ChapterRail } from '@/components/editorial';
 import {
   AboutAlumni,
   AboutBreak,
@@ -45,22 +44,6 @@ import {
  * has always meant; the charter that used to share that section with them is
  * now its own chapter at `#values`.
  */
-
-/** The running index in the left margin, and the only place it is written. */
-const CHAPTERS = [
-  { id: 'story', index: '01', label: 'The story' },
-  { id: 'film', index: '02', label: 'The film' },
-  { id: 'timeline', index: '03', label: 'The timeline' },
-  { id: 'vision', index: '04', label: 'Vision & mission' },
-  { id: 'values', index: '05', label: 'The charter' },
-  { id: 'philosophy', index: '06', label: 'Philosophy' },
-  { id: 'principal', index: '07', label: 'The principal' },
-  { id: 'leadership', index: '08', label: 'Leadership' },
-  { id: 'faculty', index: '09', label: 'The faculty' },
-  { id: 'recognition', index: '10', label: 'Recognition' },
-  { id: 'alumni', index: '11', label: 'Alumni' },
-];
-
 export function AboutPage() {
   usePageMeta({
     title: 'About - New Model High School',
@@ -70,8 +53,6 @@ export function AboutPage() {
 
   return (
     <div className="about">
-      <ChapterRail items={CHAPTERS} title="About the school" />
-
       <AboutCover />
       <AboutStory />
       <AboutFilm />

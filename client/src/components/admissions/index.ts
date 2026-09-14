@@ -1,5 +1,4 @@
 export {
-  AD_CHAPTERS,
   AdCover,
   AdDocuments,
   AdFaq,

@@ -1,5 +1,4 @@
 export {
-  AC_CHAPTERS,
   AcCover,
   AcMethod,
   AcCurriculum,

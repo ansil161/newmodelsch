@@ -41,13 +41,6 @@ import './academics.css';
    links to two of them and a bookmark outlives a redesign.
    ========================================================================== */
 
-export const AC_CHAPTERS = [
-  { id: 'how-we-teach', index: '01', label: 'Method' },
-  { id: 'curriculum', index: '02', label: 'Curriculum' },
-  { id: 'future-skills', index: '03', label: 'Beyond' },
-  { id: 'academic-proof', index: '04', label: 'Proof' },
-];
-
 /* --------------------------------------------------------------------------
    The cover
    -------------------------------------------------------------------------- */

@@ -13,7 +13,7 @@ import { CoChannels, CoDirections, CoHello, CoVisit, EnquiryShort } from '@/comp
  * It is deliberately the least designed page on the site. Somebody who lands
  * here wants a number, an address and a time; every editorial device between
  * them and those three things is a device working against the page. So there
- * is no cover photograph, no chapter rail, and the phone number is visible in
+ * is no cover photograph, and the phone number is visible in
  * the first screen on every viewport.
  */
 export function ContactPage() {

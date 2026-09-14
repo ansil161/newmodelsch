@@ -1,5 +1,4 @@
 export {
-  SL_CHAPTERS,
   SlCover,
   SlCampus,
   SlBeyond,

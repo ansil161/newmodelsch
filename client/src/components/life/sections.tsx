@@ -49,15 +49,6 @@ import './life.css';
    /student-life/gallery. The wall below links to it.
    ========================================================================== */
 
-export const SL_CHAPTERS = [
-  { id: 'day', index: '01', label: 'A day here' },
-  { id: 'campus', index: '02', label: 'The campus' },
-  { id: 'beyond', index: '03', label: 'Beyond the classroom' },
-  { id: 'voices', index: '04', label: 'In their own words' },
-  { id: 'safety', index: '05', label: 'Safety' },
-  { id: 'visit', index: '06', label: 'Come and see' },
-];
-
 /* --------------------------------------------------------------------------
    The cover
    -------------------------------------------------------------------------- */

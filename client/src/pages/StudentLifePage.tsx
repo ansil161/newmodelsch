@@ -1,7 +1,5 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { ChapterRail } from '@/components/editorial';
 import {
-  SL_CHAPTERS,
   SlBeyond,
   SlCampus,
   SlCover,
@@ -39,8 +37,6 @@ export function StudentLifePage() {
 
   return (
     <div className="student-life">
-      <ChapterRail items={SL_CHAPTERS} title="Where the day happens" />
-
       <SlCover />
       <SlDay />
       <SlCampus />

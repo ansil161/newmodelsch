@@ -1,7 +1,5 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { ChapterRail } from '@/components/editorial';
 import {
-  AC_CHAPTERS,
   AcBeyond,
   AcCover,
   AcCta,
@@ -23,8 +21,6 @@ export function AcademicsPage() {
 
   return (
     <div className="academics">
-      <ChapterRail items={AC_CHAPTERS} title="What a child learns" />
-
       <AcCover />
       <AcMethod />
       <AcCurriculum />

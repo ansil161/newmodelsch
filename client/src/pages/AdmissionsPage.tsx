@@ -1,7 +1,5 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { ChapterRail } from '@/components/editorial';
 import {
-  AD_CHAPTERS,
   AdBreak,
   AdCover,
   AdDocuments,
@@ -43,8 +41,6 @@ export function AdmissionsPage() {
 
   return (
     <div className="admissions-page">
-      <ChapterRail items={AD_CHAPTERS} title="Plan your admission" />
-
       <AdCover />
 
       {/* 01 - who can apply */}

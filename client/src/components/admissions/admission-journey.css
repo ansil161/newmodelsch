@@ -294,8 +294,8 @@
   width: 30%;
 }
 
-/* Kept inside the column's own edge: the page's chapter rail runs down the
-   left margin, and a pen stroke crossing it reads as a collision. */
+/* Kept inside the column's own edge, and off by default: a pen stroke
+   running out into the left margin reads as a collision. */
 .aj__arc--low {
   left: clamp(-14px, -1vw, -6px);
   bottom: 18%;

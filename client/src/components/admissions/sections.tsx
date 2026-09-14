@@ -41,14 +41,6 @@ import './admissions.css';
    file the destination as another stop on the way.
    ========================================================================== */
 
-export const AD_CHAPTERS = [
-  { id: 'admissions-intro', index: '01', label: 'Who can apply' },
-  { id: 'process', index: '02', label: 'The six steps' },
-  { id: 'documents', index: '03', label: 'Documents & dates' },
-  { id: 'faq', index: '04', label: 'Questions' },
-  { id: 'visit', index: '05', label: 'Visit the campus' },
-];
-
 /* --------------------------------------------------------------------------
    The cover
    -------------------------------------------------------------------------- */
