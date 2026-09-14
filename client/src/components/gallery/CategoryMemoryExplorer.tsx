@@ -60,7 +60,11 @@ export function CategoryMemoryExplorer() {
   const running = useRef<gsap.core.Timeline | null>(null);
   const target = useRef(0);
   const shownRef = useRef(0);
-  const mounted = useRef(false);
+  /* The category the spread last animated to. Compared rather than a
+     "has mounted" flag, because StrictMode runs layout effects twice on
+     mount and a flag lets the second run play the entrance over the scroll
+     reveal - leaving both stuck in each other's hidden states. */
+  const played = useRef(0);
 
   const category = GALLERY_CATEGORIES[shown];
 
@@ -107,10 +111,8 @@ export function CategoryMemoryExplorer() {
   /* The second half: runs after React has committed the new category. */
   useIsomorphicLayoutEffect(() => {
     shownRef.current = shown;
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
+    if (played.current === shown) return;
+    played.current = shown;
     if (!reduced()) playIn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown]);
@@ -131,7 +133,10 @@ export function CategoryMemoryExplorer() {
     const tl = gsap.timeline({
       onComplete: () => {
         running.current = null;
-        if (target.current === shownRef.current) playIn();
+        if (target.current === shownRef.current) {
+          played.current = shownRef.current;
+          playIn();
+        }
         else setShown(target.current);
       },
     });

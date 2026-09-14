@@ -57,6 +57,24 @@ export const WHY_CHOOSE = [
   },
 ] as const;
 
+/**
+ * The one film on "Who can apply" - a short, muted loop, not a film anyone is
+ * asked to watch. Served from `client/public/videos/admissions/`, so replacing
+ * the file replaces the footage with no code change.
+ *
+ * Source: Pexels video 35698554, "Two boys in uniform chatting on school
+ * steps" (free to use under the Pexels licence; attribution not required).
+ * Cropped to the two boys, re-encoded to 1000x1080 at 30fps with no audio
+ * track, 8.3 seconds, under half a megabyte.
+ */
+export const WHO_CAN_APPLY_FILM = {
+  src: '/videos/admissions/who-can-apply.mp4',
+  poster: '/videos/admissions/who-can-apply-poster.jpg',
+  description: 'Two boys in school uniform laughing together on the school steps',
+  width: 1000,
+  height: 1080,
+} as const;
+
 export const ELIGIBILITY: EligibilityRow[] = [
   {
     entry: 'Nursery',
@@ -90,60 +108,97 @@ export const ELIGIBILITY: EligibilityRow[] = [
   },
 ];
 
-export const ADMISSION_STAGES: AdmissionStage[] = [
+/**
+ * The one film in "The six steps" - a muted landscape loop of students
+ * crossing the campus forecourt in uniform. Served from
+ * `client/public/videos/admissions/`, so replacing the files replaces the
+ * footage with no code change.
+ *
+ * Source: Pexels video 35724453, "Students walking to school campus" (free to
+ * use under the Pexels licence; attribution not required). Cropped to keep
+ * another school's signage out of frame, re-encoded to 1280x720 with no audio
+ * track, as WebM (VP9) and MP4 (H.264).
+ */
+export const JOURNEY_FILM = {
+  webm: '/videos/admissions/journey-campus.webm',
+  mp4: '/videos/admissions/journey-campus.mp4',
+  poster: '/videos/admissions/journey-campus-poster.jpg',
+  description: 'Students in school uniform walking across the sunlit campus forecourt',
+  width: 1280,
+  height: 720,
+} as const;
+
+/**
+ * The six steps, in order. Each is short on purpose - the detail lives in
+ * the sections the `href` opens (the form, the visit, documents and dates,
+ * the questions), so the timeline stays a timeline.
+ */
+export const ADMISSION_JOURNEY: AdmissionStage[] = [
   {
     id: 's1',
     step: '01',
     title: 'Enquiry',
     description:
-      'Submit the form at the bottom of this page or call the admissions office. You are assigned a named coordinator the same working day.',
-    owner: 'You',
-    duration: 'Same day response',
+      'Call the admissions office or send the form on this page. A named coordinator replies the same working day.',
+    icon: 'message',
+    duration: 'Same day reply',
+    action: 'Start an enquiry',
+    href: '#enquiry',
   },
   {
     id: 's2',
     step: '02',
     title: 'Campus visit',
     description:
-      'Walk the campus during a normal school day, meet the head of your child\'s stage, and ask everything. Nothing is staged for visitors.',
-    owner: 'You and the school',
+      'Walk the campus on an ordinary school day, meet the head of your child’s stage, and ask everything.',
+    icon: 'pin',
     duration: '45 minutes',
+    action: 'Book a visit',
+    href: '#visit',
   },
   {
     id: 's3',
     step: '03',
     title: 'Application',
     description:
-      'Complete the application form and submit the document checklist below.',
-    owner: 'You',
-    duration: '1 week',
+      'Complete the application form and hand in the supporting documents on the checklist.',
+    icon: 'document',
+    duration: 'About a week',
+    action: 'See the checklist',
+    href: '#documents',
   },
   {
     id: 's4',
     step: '04',
-    title: 'Interaction or assessment',
+    title: 'Interaction & assessment',
     description:
-      'Play-based interaction for early years; a written assessment in core subjects from Class 6. Both are diagnostic - they set the starting point, they are not a filter for coaching.',
-    owner: 'Your child',
+      'Play-based for the early years, a short written assessment from Class 6 - it sets a starting point, not a filter.',
+    icon: 'edit',
     duration: '60-90 minutes',
+    action: 'What is assessed',
+    href: '#faq',
   },
   {
     id: 's5',
     step: '05',
     title: 'Parent conversation',
     description:
-      'A conversation with the principal or stage head about your child - what they enjoy, what they find hard, and what you want from a school.',
-    owner: 'You and the school',
+      'Time with the principal or stage head about your child - what they enjoy, what they find hard, what you hope for.',
+    icon: 'users',
     duration: '30 minutes',
+    action: 'Talk to admissions',
+    href: '#enquiry',
   },
   {
     id: 's6',
     step: '06',
-    title: 'Offer & confirmation',
+    title: 'Final confirmation',
     description:
-      'A written offer, sent in writing to the address on your form. The place is held for fourteen days from the offer date.',
-    owner: 'The school',
+      'A written offer arrives, and the place is held for fourteen days while you complete the formalities.',
+    icon: 'check',
     duration: 'Within 2 weeks',
+    action: 'See key dates',
+    href: '#documents',
   },
 ];
 

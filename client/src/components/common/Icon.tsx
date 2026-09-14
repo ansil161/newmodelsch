@@ -195,6 +195,30 @@ const PATHS: Record<string, ReactElement> = {
       <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
     </>
   ),
+  // Added for the admission entry points: a first leaf, a stack of play
+  // blocks, and a mortarboard.
+  sprout: (
+    <>
+      <path d="M12 21v-8.5" />
+      <path d="M12 12.5C12 8.4 9.2 5.5 4.5 5.5c0 4.1 2.8 7 7.5 7Z" />
+      <path d="M12 15c0-3.6 2.5-6.2 6.5-6.2 0 3.6-2.5 6.2-6.5 6.2Z" />
+      <path d="M8 21h8" />
+    </>
+  ),
+  blocks: (
+    <>
+      <rect x="3.5" y="12.5" width="8" height="8" rx="1.2" />
+      <rect x="12.5" y="12.5" width="8" height="8" rx="1.2" />
+      <path d="M12 3.5 16.2 10H7.8L12 3.5Z" />
+    </>
+  ),
+  cap: (
+    <>
+      <path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z" />
+      <path d="M6.5 11v4.6c0 1.4 2.5 2.9 5.5 2.9s5.5-1.5 5.5-2.9V11" />
+      <path d="M21.5 9v5.5" />
+    </>
+  ),
   sparkle: (
     <>
       <path d="M12 3.5c.7 4 1.8 5.1 5.8 5.8-4 .7-5.1 1.8-5.8 5.8-.7-4-1.8-5.1-5.8-5.8 4-.7 5.1-1.8 5.8-5.8Z" />

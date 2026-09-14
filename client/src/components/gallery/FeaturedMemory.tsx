@@ -31,7 +31,10 @@ export function FeaturedMemory() {
   const [active, setActive] = useState(0);
   const [previous, setPrevious] = useState(0);
   const rootRef = useRef<HTMLElement | null>(null);
-  const mounted = useRef(false);
+  /* The story last animated to. A "has mounted" flag is not enough: StrictMode
+     runs layout effects twice on mount, and the second run would play the
+     switch transition on arrival. */
+  const played = useRef(0);
 
   const story = FEATURED_STORIES[active];
 
@@ -46,10 +49,8 @@ export function FeaturedMemory() {
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
+    if (played.current === active) return;
+    played.current = active;
     const el = rootRef.current;
     if (!el || reduced()) return;
 

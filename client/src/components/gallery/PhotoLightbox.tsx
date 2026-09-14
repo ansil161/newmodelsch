@@ -274,7 +274,7 @@ function PhotoLightbox({
             alt={photo.alt}
             onLoad={() => setLoaded(true)}
             draggable={false}
-            style={photo.ratio ? { aspectRatio: photo.ratio } : undefined}
+            style={{ '--r': photo.ratio ?? 1.5 } as React.CSSProperties}
           />
           <figcaption className="gal-lb__caption">
             {photo.caption ? <b>{photo.caption}</b> : null}

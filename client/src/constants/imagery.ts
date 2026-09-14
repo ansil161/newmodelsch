@@ -333,6 +333,39 @@ export const nextStepImages = {
 } satisfies Record<string, Photo>;
 
 /* ==========================================================================
+   beyondImages - the Beyond the Syllabus map on Academics
+   --------------------------------------------------------------------------
+   Keyed by the experience each frame is evidence for, so a reordered map can
+   never hand Creativity the robotics bench. The frames are cropped into
+   uneven rounded prints - two landscape, two portrait - so each `focus` keeps
+   the hands and faces inside that crop. Replace each with a candid frame of
+   the same activity when the school's shoot arrives.
+   ========================================================================== */
+
+export const beyondImages = {
+  collaboration: {
+    id: '1692269725827-699e04a11cdf',
+    alt: 'Two boys in school uniform bent over the same textbook, working a problem out together',
+    focus: '42% 42%',
+  },
+  communication: {
+    id: '1572847748080-bac263fae977',
+    alt: 'A student in school uniform reading aloud to the class',
+    focus: '50% 32%',
+  },
+  problemSolving: {
+    id: '1653566031536-4d1b6a9da15e',
+    alt: 'Three girls wiring up a small robot they are building together',
+    focus: '42% 55%',
+  },
+  creativity: {
+    id: '1708795921259-263a5e973acb',
+    alt: 'A child adding colour to a bright painting of fruit with a fine brush',
+    focus: '68% 45%',
+  },
+} satisfies Record<string, Photo>;
+
+/* ==========================================================================
    admissionImages - the gate, the office, the visit
    ========================================================================== */
 

@@ -20,6 +20,18 @@ const AcademicsPage = lazy(() =>
 const StudentLifePage = lazy(() =>
   import('@/pages/StudentLifePage').then((m) => ({ default: m.StudentLifePage })),
 );
+/* The gallery is three routes in one chunk each: the landing page is heavy
+   with photography and choreography, and a parent reading an event page has
+   no reason to download the landing page's category explorer. */
+const GalleryPage = lazy(() =>
+  import('@/pages/GalleryPage').then((m) => ({ default: m.GalleryPage })),
+);
+const GalleryYearPage = lazy(() =>
+  import('@/pages/GalleryYearPage').then((m) => ({ default: m.GalleryYearPage })),
+);
+const GalleryEventPage = lazy(() =>
+  import('@/pages/GalleryEventPage').then((m) => ({ default: m.GalleryEventPage })),
+);
 const AdmissionsPage = lazy(() =>
   import('@/pages/AdmissionsPage').then((m) => ({ default: m.AdmissionsPage })),
 );
@@ -77,6 +89,9 @@ export const routes: RouteObject[] = [
       { path: ROUTES.about.slice(1), element: <AboutPage /> },
       { path: ROUTES.academics.slice(1), element: <AcademicsPage /> },
       { path: ROUTES.studentLife.slice(1), element: <StudentLifePage /> },
+      { path: ROUTES.gallery.slice(1), element: <GalleryPage /> },
+      { path: `${ROUTES.gallery.slice(1)}/:yearId`, element: <GalleryYearPage /> },
+      { path: `${ROUTES.gallery.slice(1)}/:yearId/:eventId`, element: <GalleryEventPage /> },
       { path: ROUTES.admissions.slice(1), element: <AdmissionsPage /> },
       { path: ROUTES.contact.slice(1), element: <ContactPage /> },
 

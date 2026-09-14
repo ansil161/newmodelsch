@@ -1,0 +1,700 @@
+/* ==========================================================================
+   GALLERY STORIES - the year archive, the moving strip, the featured story
+   and the close
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Every year leaves a mark
+   -------------------------------------------------------------------------- */
+.gal-years {
+  overflow: clip;
+}
+
+.gal-years__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 40px;
+}
+
+.gal-years__total {
+  padding-bottom: 6px;
+}
+
+/* Phones: a row of year stacks the thumb swipes through. */
+.gal-years__track {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(20px, 2.6vw, 40px);
+  margin-top: clamp(40px, 5vw, 80px);
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 30px var(--gutter) 72px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.gal-years__track::-webkit-scrollbar {
+  display: none;
+}
+
+.gal-year {
+  position: relative;
+  flex: none;
+  width: min(72vw, 330px);
+  padding-bottom: var(--lift, 0px);
+  scroll-snap-align: start;
+}
+
+.gal-years__line {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 34px;
+  height: 1px;
+  background: var(--line-navy);
+}
+
+.gal-years__line-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--sun);
+  transform-origin: left center;
+}
+
+.gal-year__node {
+  position: absolute;
+  left: 22px;
+  bottom: calc(-72px + 34px - 6.5px);
+  z-index: 2;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--navy);
+  box-shadow: inset 0 0 0 2px var(--on-navy-3);
+  transition:
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.gal-year:hover .gal-year__node,
+.gal-year:focus-within .gal-year__node,
+.gal-year.is-current .gal-year__node {
+  background: var(--sun);
+  box-shadow: 0 0 0 6px rgba(255, 197, 61, 0.18);
+}
+
+.gal-year__link {
+  display: grid;
+  gap: 18px;
+  border-radius: var(--r-frame);
+  color: var(--on-navy);
+}
+
+.gal-year__link:focus-visible {
+  outline-color: var(--sun);
+  outline-offset: 8px;
+}
+
+.gal-year__visual {
+  position: relative;
+  isolation: isolate;
+}
+
+.gal-year__stack {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+/* The prints under the cover, squared up until the year is hovered. */
+.gal-year__print {
+  position: absolute;
+  inset: 0;
+  padding: 6px;
+  overflow: hidden;
+  border-radius: var(--r-frame);
+  background: var(--paper);
+  box-shadow: 0 24px 44px -24px rgba(0, 0, 0, 0.65);
+  transition: transform 0.9s var(--ease-out);
+}
+
+.gal-year__print img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--r-frame) - 6px);
+}
+
+.gal-year__print--0 {
+  transform: rotate(-3deg) translate(-2%, 1%);
+}
+
+.gal-year__print--1 {
+  transform: rotate(2.5deg) translate(2%, -1%);
+}
+
+.gal-year__link:hover .gal-year__print--0,
+.gal-year__link:focus-visible .gal-year__print--0 {
+  transform: rotate(-11deg) translate(-15%, 5%);
+}
+
+.gal-year__link:hover .gal-year__print--1,
+.gal-year__link:focus-visible .gal-year__print--1 {
+  transform: rotate(9deg) translate(14%, -4%);
+}
+
+.gal-year__cover {
+  transition: transform 0.9s var(--ease-out);
+}
+
+.gal-year__link:hover .gal-year__cover,
+.gal-year__link:focus-visible .gal-year__cover {
+  transform: translateY(-8px);
+}
+
+.gal-year__cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(14, 24, 41, 0) 42%, rgba(14, 24, 41, 0.8) 100%);
+}
+
+.gal-year__over {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: clamp(16px, 1.8vw, 24px);
+}
+
+.gal-year__badge {
+  padding: 5px 10px 4px;
+  border-radius: 3px;
+  background: var(--sun);
+  color: var(--on-sun);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gal-year__sub {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1.8vw, 1.75rem);
+  font-style: italic;
+  line-height: 1.05;
+  color: #fff;
+}
+
+.gal-year__meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.gal-year__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.gal-year__stats {
+  grid-column: 1;
+  grid-row: 2;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-navy-3);
+}
+
+.gal-year__arrow {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-navy);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+}
+
+.gal-year__link:hover .gal-year__arrow,
+.gal-year__link:focus-visible .gal-year__arrow {
+  background: var(--sun);
+  color: var(--on-sun);
+  box-shadow: none;
+  transform: rotate(45deg);
+}
+
+.gal-year.is-current .gal-year__sub {
+  font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+}
+
+.gal-year.is-current .gal-year__title {
+  font-size: clamp(2.3rem, 3.6vw, 3.6rem);
+}
+
+@media (min-width: 1000px) {
+  .gal-years__track {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr));
+    align-items: end;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+
+  .gal-year {
+    width: auto;
+  }
+
+  .gal-year--1 { --lift: 80px; }
+  .gal-year--2 { --lift: 24px; }
+  .gal-year--3 { --lift: 120px; }
+
+  .gal-years__line {
+    left: 0;
+    right: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Small moments. Big memories.
+   -------------------------------------------------------------------------- */
+.gal-strip {
+  overflow: clip;
+}
+
+.gal-strip__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 40px;
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+.gal-strip__hint {
+  padding-bottom: 10px;
+}
+
+.gal-strip__viewport {
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gal-strip__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.gal-strip.is-moving .gal-strip__viewport {
+  padding-inline: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.gal-strip.is-moving .gal-strip__viewport:active {
+  cursor: grabbing;
+}
+
+.gal-strip.is-moving img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gal-strip__track {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(16px, 2vw, 30px);
+  width: max-content;
+  padding-block: 8px 12px;
+  will-change: transform;
+}
+
+.gal-strip.is-moving .gal-strip__track {
+  padding-left: clamp(16px, 2vw, 30px);
+}
+
+.gal-strip__item {
+  flex: none;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.gal-strip__item .gal-tile {
+  width: auto;
+}
+
+.gal-strip__item .gal-tile__fig {
+  width: auto;
+  height: var(--h);
+}
+
+.gal-strip__item--0 {
+  --h: clamp(230px, 26vw, 380px);
+}
+
+.gal-strip__item--1 {
+  --h: clamp(180px, 19vw, 280px);
+  margin-top: clamp(30px, 4vw, 64px);
+}
+
+.gal-strip__item--2 {
+  --h: clamp(200px, 22vw, 330px);
+  margin-top: clamp(12px, 1.6vw, 24px);
+}
+
+.gal-strip__cap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.gal-strip__cap-text {
+  font-family: var(--font-hand);
+  font-size: clamp(1.25rem, 1.6vw, 1.55rem);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   One moment, many stories
+   -------------------------------------------------------------------------- */
+.gal-feat__body {
+  display: grid;
+  gap: clamp(36px, 5vw, 72px);
+  margin-top: clamp(36px, 5vw, 72px);
+}
+
+.gal-feat__visual {
+  position: relative;
+  display: grid;
+  align-self: start;
+}
+
+.gal-feat__main {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+.gal-feat__main.is-previous {
+  z-index: 1;
+  visibility: visible;
+}
+
+.gal-feat__main.is-active {
+  z-index: 2;
+  visibility: visible;
+}
+
+.gal-feat__stamp {
+  position: absolute;
+  top: 7%;
+  right: clamp(-12px, -1vw, 0px);
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  width: clamp(96px, 10vw, 138px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+  text-align: center;
+  box-shadow: var(--e-2);
+  rotate: -8deg;
+}
+
+.gal-feat__stamp b {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 3.4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 0.9;
+}
+
+.gal-feat__stamp span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gal-feat__side {
+  display: grid;
+  gap: clamp(26px, 3vw, 40px);
+  align-content: start;
+  min-width: 0;
+}
+
+.gal-feat__picks {
+  display: flex;
+  gap: 8px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 2px var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gal-feat__picks::-webkit-scrollbar {
+  display: none;
+}
+
+.gal-feat__pick {
+  flex: none;
+}
+
+.gal-feat__pick-btn {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  width: 100%;
+  min-width: 160px;
+  padding: 11px 16px 12px;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.gal-feat__pick-btn:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.gal-feat__pick-num {
+  grid-row: 1 / span 2;
+  padding-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--ink-4);
+}
+
+.gal-feat__pick-title {
+  font-size: 0.9375rem;
+  font-weight: 560;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.gal-feat__pick-year {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+.gal-feat__pick-btn.is-on {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+.gal-feat__pick-btn.is-on .gal-feat__pick-title {
+  color: var(--ivory);
+}
+
+.gal-feat__pick-btn.is-on .gal-feat__pick-num {
+  color: var(--sun);
+}
+
+.gal-feat__pick-btn.is-on .gal-feat__pick-year {
+  color: var(--on-navy-3);
+}
+
+.gal-feat__text {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.gal-feat__title {
+  max-width: 12ch;
+}
+
+.gal-feat__date {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 540;
+  color: var(--ink-2);
+}
+
+.gal-feat__quote {
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.gal-feat__story {
+  max-width: 52ch;
+  color: var(--ink-2);
+}
+
+.gal-feat__actions {
+  margin-top: 8px;
+}
+
+.gal-feat__prints {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 20px);
+  max-width: 520px;
+}
+
+.gal-feat__print {
+  padding: 6px 6px 18px;
+  border-radius: 5px;
+  background: var(--paper);
+  box-shadow: var(--e-2);
+}
+
+.gal-feat__print .fig {
+  border-radius: 3px;
+}
+
+.gal-feat__print--0 { rotate: -3deg; }
+.gal-feat__print--1 { rotate: 2deg; margin-top: 12px; }
+.gal-feat__print--2 { rotate: -1.5deg; }
+
+@media (min-width: 960px) {
+  .gal-feat__body {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    align-items: start;
+  }
+
+  .gal-feat__visual {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+  }
+
+  .gal-feat__picks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   There are more stories to discover
+   -------------------------------------------------------------------------- */
+.gal-cta {
+  position: relative;
+  overflow: clip;
+  padding-block: calc(var(--section-y) * 1.1);
+  background: var(--sand);
+}
+
+.gal-cta__scatter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gal-cta__print {
+  position: absolute;
+  width: clamp(96px, 12vw, 196px);
+  rotate: var(--rot, 0deg);
+}
+
+.gal-cta__print-inner {
+  display: block;
+  padding: 6px 6px 20px;
+  border-radius: 5px;
+  background: var(--paper);
+  box-shadow: var(--e-3);
+}
+
+.gal-cta__print img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.gal-cta__print--0 { top: 9%; left: 4%; --rot: -8deg; }
+.gal-cta__print--1 { top: 5%; right: 6%; --rot: 6deg; }
+.gal-cta__print--2 { bottom: 8%; left: 9%; --rot: 5deg; }
+.gal-cta__print--3 { bottom: 12%; right: 3%; --rot: -6deg; }
+.gal-cta__print--4 { top: 44%; left: -1%; width: clamp(80px, 9vw, 140px); --rot: -3deg; }
+.gal-cta__print--5 { top: 40%; right: -1%; width: clamp(80px, 9vw, 140px); --rot: 4deg; }
+
+.gal-cta__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  max-width: 54rem;
+  text-align: center;
+}
+
+.gal-cta__title {
+  max-width: 14ch;
+}
+
+.gal-cta__lead {
+  max-width: 50ch;
+  margin-inline: auto;
+}
+
+.gal-cta__actions {
+  margin-top: 6px;
+}
+
+.gal-cta__years {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gal-cta__year {
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.gal-cta__year:hover,
+.gal-cta__year:focus-visible {
+  background: var(--sun-soft);
+  color: var(--ink);
+}
+
+/* Phones: two prints in the top corners, clear of the type. */
+@media (max-width: 760px) {
+  .gal-cta {
+    padding-top: calc(var(--section-y) + 90px);
+  }
+
+  .gal-cta__print:nth-child(n + 3) {
+    display: none;
+  }
+
+  .gal-cta__print--0 { top: 24px; left: 6%; width: 92px; }
+  .gal-cta__print--1 { top: 36px; right: 6%; width: 92px; }
+}

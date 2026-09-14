@@ -421,9 +421,13 @@ export interface AdmissionStage {
   step: string;
   title: string;
   description: string;
-  /** Who acts at this step — sets parent expectations. */
-  owner: string;
+  /** A name from the site's `Icon` set. */
+  icon: string;
+  /** How long the step takes — sets parent expectations. */
   duration: string;
+  /** The small link under the step, and the section of the page it opens. */
+  action: string;
+  href: string;
 }
 
 export interface EligibilityRow {

@@ -1,0 +1,489 @@
+/* ==========================================================================
+   GALLERY HOME - hero, the editorial wall, the category explorer
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.gal-hero {
+  position: relative;
+  padding-top: calc(var(--nav-h) + clamp(28px, 5vw, 72px));
+  padding-bottom: var(--section-y-tight);
+  overflow: clip;
+}
+
+.gal-hero__grid {
+  display: grid;
+  gap: clamp(48px, 6vw, 80px);
+  align-items: center;
+}
+
+.gal-hero__tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.gal-hero__title {
+  margin-top: 22px;
+  max-width: 11ch;
+}
+
+.gal-hero__body {
+  display: grid;
+  gap: clamp(22px, 2.4vw, 30px);
+  margin-top: clamp(22px, 2.6vw, 34px);
+}
+
+.gal-hero__lead {
+  max-width: 44ch;
+}
+
+.gal-hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px clamp(24px, 3.4vw, 48px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.gal-hero__facts div,
+.gal-yhead__facts div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+}
+
+.gal-hero__facts dt,
+.gal-yhead__facts dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.gal-hero__facts dd,
+.gal-yhead__facts dd {
+  margin: 0;
+  font-size: clamp(2rem, 3.2vw, 2.9rem);
+}
+
+/* The desk. Every piece is placed in percentages of one square-ish box, so
+   the composition scales as a unit rather than reflowing. */
+.gal-hero__stage {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  aspect-ratio: 1 / 1.02;
+  justify-self: center;
+}
+
+.gal-hero__main {
+  position: absolute;
+  top: 4%;
+  left: 18%;
+  width: 60%;
+}
+
+.gal-hero__print {
+  position: absolute;
+  z-index: 2;
+}
+
+.gal-hero__paper {
+  padding: clamp(6px, 0.7vw, 10px) clamp(6px, 0.7vw, 10px) clamp(18px, 2.2vw, 32px);
+  border-radius: 6px;
+  background: var(--paper);
+  box-shadow: var(--e-3);
+  transform: rotate(var(--rot, 0deg));
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.gal-hero__paper:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.gal-hero__paper .fig {
+  border-radius: 3px;
+}
+
+.gal-hero__print--1 {
+  top: 0;
+  right: 0;
+  width: 35%;
+  --rot: 5deg;
+}
+
+.gal-hero__print--2 {
+  bottom: 12%;
+  left: 0;
+  width: 37%;
+  --rot: -6deg;
+}
+
+.gal-hero__print--3 {
+  right: 5%;
+  bottom: 0;
+  width: 27%;
+  --rot: 3.5deg;
+}
+
+.gal-hero__note {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  z-index: 3;
+  font-family: var(--font-hand);
+  font-size: clamp(1.3rem, 2vw, 1.9rem);
+  line-height: 1;
+  color: var(--ink-2);
+  transform: rotate(-9deg);
+}
+
+.gal-hero__stamp {
+  position: absolute;
+  top: 42%;
+  right: -1%;
+  writing-mode: vertical-rl;
+  color: var(--ink-4);
+}
+
+@media (min-width: 960px) {
+  .gal-hero__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .gal-hero__stamp {
+    display: none;
+  }
+
+  .gal-hero__note {
+    top: 30%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   A glimpse of school life - the editorial wall
+   -------------------------------------------------------------------------- */
+.gal-wall__grid {
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.gal-wall__col {
+  display: grid;
+  gap: clamp(16px, 2vw, 28px);
+  align-content: start;
+}
+
+.gal-wall__note {
+  width: fit-content;
+  margin-left: 12%;
+  font-family: var(--font-hand);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1;
+  color: var(--ink-2);
+  transform: rotate(-3deg);
+}
+
+.gal-wall__pair,
+.gal-wall__row {
+  display: grid;
+  gap: clamp(12px, 1.6vw, 24px);
+  align-items: start;
+}
+
+.gal-wall__pair {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+
+.gal-wall__stack {
+  display: grid;
+  gap: clamp(12px, 1.6vw, 24px);
+  padding-top: 16%;
+}
+
+.gal-wall__row {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+}
+
+.gal-wall__slot--e {
+  margin-top: 24%;
+}
+
+@media (min-width: 900px) {
+  .gal-wall__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+  }
+
+  .gal-wall__col--right {
+    padding-top: clamp(40px, 5vw, 88px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Through different eyes - the category explorer
+   -------------------------------------------------------------------------- */
+.gal-cat__body {
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+  margin-top: clamp(36px, 5vw, 72px);
+}
+
+.gal-cat__side {
+  display: grid;
+  gap: clamp(24px, 3vw, 40px);
+  align-content: start;
+  min-width: 0;
+}
+
+/* Phones and tablets: a row of chips the thumb can scroll. */
+.gal-cat__controls {
+  display: flex;
+  gap: 8px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 4px var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gal-cat__controls::-webkit-scrollbar {
+  display: none;
+}
+
+.gal-cat__ctl {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-weight: 520;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.gal-cat__ctl-num {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+}
+
+.gal-cat__ctl-thumb {
+  display: none;
+}
+
+.gal-cat__ctl.is-on {
+  background: var(--ink);
+  box-shadow: none;
+  color: var(--ivory);
+}
+
+.gal-cat__ctl.is-on .gal-cat__ctl-num {
+  color: var(--sun);
+}
+
+.gal-cat__text {
+  display: grid;
+  gap: 12px;
+}
+
+.gal-cat__title {
+  max-width: 14ch;
+}
+
+.gal-cat__lead {
+  max-width: 40ch;
+  color: var(--ink-2);
+}
+
+.gal-cat__note {
+  width: fit-content;
+  font-family: var(--font-hand);
+  font-size: 1.65rem;
+  line-height: 1;
+  color: var(--gold-ink);
+  transform: rotate(-3deg);
+}
+
+.gal-cat__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'a a'
+    'b c'
+    'd e';
+  gap: clamp(10px, 1.2vw, 16px);
+}
+
+.gal-cat__cell--a { grid-area: a; }
+.gal-cat__cell--b { grid-area: b; }
+.gal-cat__cell--c { grid-area: c; }
+.gal-cat__cell--d { grid-area: d; }
+.gal-cat__cell--e { grid-area: e; }
+
+.gal-cat__cell {
+  min-width: 0;
+  min-height: 0;
+}
+
+.gal-cat__cell .gal-tile,
+.gal-cat__cell .gal-tile__fig {
+  height: 100%;
+}
+
+.gal-cat__cell .gal-tile__fig {
+  aspect-ratio: 1 / 1 !important;
+}
+
+.gal-cat__cell--a .gal-tile__fig {
+  aspect-ratio: 4 / 3 !important;
+}
+
+@media (min-width: 960px) {
+  .gal-cat__body {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: stretch;
+  }
+
+  .gal-cat__side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Desktop: an index, not a row of buttons. */
+  .gal-cat__controls {
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border-top: 1px solid var(--line);
+  }
+
+  .gal-cat__ctl,
+  .gal-cat__ctl.is-on {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 42px;
+    align-items: center;
+    padding: 9px 2px;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    text-align: left;
+    color: var(--ink-3);
+  }
+
+  .gal-cat__ctl-label {
+    width: fit-content;
+    padding-inline: 0.1em;
+    transition:
+      transform var(--d-move) var(--ease-out),
+      color var(--d-state) var(--ease-out),
+      background-size var(--d-move) var(--ease-out);
+    background-image: linear-gradient(var(--sun), var(--sun));
+    background-repeat: no-repeat;
+    background-position: left 78%;
+    background-size: 0% 0.42em;
+  }
+
+  .gal-cat__ctl:hover .gal-cat__ctl-label {
+    transform: translateX(8px);
+    color: var(--ink);
+  }
+
+  .gal-cat__ctl.is-on {
+    color: var(--ink);
+  }
+
+  .gal-cat__ctl.is-on .gal-cat__ctl-num {
+    color: var(--sun-deep);
+  }
+
+  .gal-cat__ctl.is-on .gal-cat__ctl-label {
+    transform: translateX(8px);
+    background-size: 100% 0.42em;
+  }
+
+  .gal-cat__ctl-thumb {
+    display: block;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.5);
+    transition:
+      opacity var(--d-state) var(--ease-out),
+      transform var(--d-move) var(--ease-out);
+  }
+
+  .gal-cat__ctl-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gal-cat__ctl:hover .gal-cat__ctl-thumb,
+  .gal-cat__ctl.is-on .gal-cat__ctl-thumb {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* The spread: twelve columns by six rows inside a fixed proportion, so a
+     change of category can move the large frame without the section
+     changing height. */
+  .gal-cat__grid {
+    aspect-ratio: 16 / 11.5;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    grid-template-areas: none;
+  }
+
+  .gal-cat__cell {
+    grid-area: auto;
+  }
+
+  .gal-cat__cell .gal-tile__fig,
+  .gal-cat__cell--a .gal-tile__fig {
+    aspect-ratio: auto !important;
+  }
+
+  /* v0 - the large frame on the left */
+  .gal-cat__grid--v0 .gal-cat__cell--a { grid-column: 1 / span 6; grid-row: 1 / span 6; }
+  .gal-cat__grid--v0 .gal-cat__cell--b { grid-column: 7 / span 3; grid-row: 1 / span 3; }
+  .gal-cat__grid--v0 .gal-cat__cell--c { grid-column: 10 / span 3; grid-row: 1 / span 4; }
+  .gal-cat__grid--v0 .gal-cat__cell--d { grid-column: 7 / span 3; grid-row: 4 / span 3; }
+  .gal-cat__grid--v0 .gal-cat__cell--e { grid-column: 10 / span 3; grid-row: 5 / span 2; }
+
+  /* v1 - the large frame on the right */
+  .gal-cat__grid--v1 .gal-cat__cell--a { grid-column: 7 / span 6; grid-row: 1 / span 6; }
+  .gal-cat__grid--v1 .gal-cat__cell--b { grid-column: 1 / span 3; grid-row: 1 / span 4; }
+  .gal-cat__grid--v1 .gal-cat__cell--c { grid-column: 4 / span 3; grid-row: 1 / span 3; }
+  .gal-cat__grid--v1 .gal-cat__cell--d { grid-column: 1 / span 3; grid-row: 5 / span 2; }
+  .gal-cat__grid--v1 .gal-cat__cell--e { grid-column: 4 / span 3; grid-row: 4 / span 3; }
+
+  /* v2 - a wide frame across the top, three below */
+  .gal-cat__grid--v2 .gal-cat__cell--a { grid-column: 1 / span 8; grid-row: 1 / span 4; }
+  .gal-cat__grid--v2 .gal-cat__cell--b { grid-column: 9 / span 4; grid-row: 1 / span 3; }
+  .gal-cat__grid--v2 .gal-cat__cell--c { grid-column: 9 / span 4; grid-row: 4 / span 3; }
+  .gal-cat__grid--v2 .gal-cat__cell--d { grid-column: 1 / span 4; grid-row: 5 / span 2; }
+  .gal-cat__grid--v2 .gal-cat__cell--e { grid-column: 5 / span 4; grid-row: 5 / span 2; }
+}

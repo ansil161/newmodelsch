@@ -1,0 +1,959 @@
+/* ==========================================================================
+   03 - BEYOND THE SYLLABUS
+   --------------------------------------------------------------------------
+   A learning map on warm paper. The column is the default; the 2 x 2 board
+   arrives at 760px and the composed stage at 1180px, where everything is
+   placed in `cqi` from the custom properties each item carries:
+
+     --px --py --pw --pr   the print         --ratio --shape its crop
+     --cx --cy --cw --cr   the card
+     --nx --ny --nr        the handwritten note
+     --ax --ay --aw --ar   the note's arrow, relative to the note
+     --dx --dy --dw --dr   a loose pen mark
+
+   The four accents are held at one muted value so no experience wins: yellow
+   for Collaboration, blue for Communication, green for Problem Solving,
+   coral for Creativity. None of them is ever used as text.
+   ========================================================================== */
+
+.bm {
+  --bm-ground: var(--ivory);
+  --bm-card: #fcf8ef;
+  --bm-ink: var(--navy);
+  --bm-copy: var(--slate);
+  --bm-pen: rgba(22, 35, 60, 0.7);
+  --bm-hair: rgba(22, 35, 60, 0.2);
+  --bm-hair-soft: rgba(22, 35, 60, 0.1);
+
+  --bm-sun: #e2ae4a;
+  --bm-sun-soft: #f5e2b5;
+  --bm-blue: #7d99bd;
+  --bm-blue-soft: #dfe7f0;
+  --bm-green: #7fa184;
+  --bm-green-soft: #dfe9db;
+  --bm-coral: #d27d65;
+  --bm-coral-soft: #f4dbd0;
+
+  --bm-r-card: 13px 17px 12px 18px;
+  --bm-shadow-card: 0 1px 2px rgba(50, 38, 18, 0.05), 0 18px 36px -24px rgba(50, 38, 18, 0.34);
+  --bm-shadow-card-on: 0 2px 4px rgba(50, 38, 18, 0.06), 0 28px 50px -26px rgba(50, 38, 18, 0.44);
+  --bm-shadow-print: 0 24px 44px -30px rgba(40, 30, 12, 0.55);
+
+  --bm-space-y: clamp(80px, 8.5vw, 136px);
+
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  padding-block: var(--bm-space-y);
+  background: var(--bm-ground);
+  color: var(--bm-ink);
+}
+
+/* Paper grain: a warm fractal noise at a few percent alpha. */
+.bm::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .25 0 0 0 0 .14 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bm-tone--sun { --tone: var(--bm-sun); --tone-soft: var(--bm-sun-soft); }
+.bm-tone--blue { --tone: var(--bm-blue); --tone-soft: var(--bm-blue-soft); }
+.bm-tone--green { --tone: var(--bm-green); --tone-soft: var(--bm-green-soft); }
+.bm-tone--coral { --tone: var(--bm-coral); --tone-soft: var(--bm-coral-soft); }
+
+/* ==========================================================================
+   The page edge - three soft shapes, none of them in a corner the section
+   before this one already used
+   ========================================================================== */
+.bm__blob {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bm__blob--a {
+  left: clamp(-170px, -9vw, -70px);
+  top: 40%;
+  width: clamp(200px, 21vw, 340px);
+  aspect-ratio: 0.9;
+  border-radius: 42% 58% 55% 45% / 48% 40% 60% 52%;
+  background: var(--bm-blue-soft);
+  opacity: 0.65;
+}
+
+.bm__blob--b {
+  right: clamp(-90px, -5vw, -40px);
+  top: clamp(-90px, -5vw, -36px);
+  width: clamp(150px, 14vw, 230px);
+  aspect-ratio: 1.2;
+  border-radius: 55% 45% 38% 62% / 50% 58% 42% 50%;
+  background: var(--bm-sun-soft);
+  opacity: 0.7;
+}
+
+.bm__blob--c {
+  right: clamp(40px, 14vw, 260px);
+  bottom: clamp(-160px, -9vw, -70px);
+  width: clamp(220px, 22vw, 360px);
+  aspect-ratio: 1.3;
+  border-radius: 48% 52% 40% 60% / 56% 44% 56% 44%;
+  background: var(--bm-coral-soft);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   The stage - a column first
+   ========================================================================== */
+.bm__stage {
+  position: relative;
+  container-type: inline-size;
+}
+
+.bm-map,
+.bm__decor,
+.bm__rail {
+  display: none;
+}
+
+/* ----- copy */
+.bm__copy {
+  position: relative;
+  z-index: 4;
+  max-width: 36rem;
+}
+
+.bm__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.bm__eyebrow::after {
+  content: '';
+  flex: 0 0 clamp(48px, 7vw, 96px);
+  height: 1px;
+  background: var(--bm-hair);
+}
+
+.bm__eyebrow-tab {
+  display: inline-block;
+  padding: 5px 9px 4px;
+  border-radius: 3px 6px 4px 5px;
+  background: var(--bm-sun-soft);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bm-ink);
+  rotate: -1deg;
+}
+
+.bm__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 450;
+  font-size: clamp(2.3rem, 8.2vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--bm-ink);
+}
+
+.bm__line {
+  display: block;
+}
+
+.bm__em {
+  position: relative;
+  display: inline-block;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.bm .bm__swash {
+  position: absolute;
+  left: 3%;
+  top: 86%;
+  width: 96%;
+  color: var(--bm-sun);
+  pointer-events: none;
+}
+
+.bm__lead {
+  margin: 22px 0 0;
+  max-width: 42ch;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--bm-copy);
+}
+
+/* ----- the board */
+.bm__board {
+  position: relative;
+  margin-top: 64px;
+}
+
+/* ----- the node */
+.bm-node {
+  position: relative;
+  z-index: 2;
+  width: 136px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.bm-node__core {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.bm-node__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.bm-node__pass {
+  fill: none;
+  stroke: var(--bm-ink);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0.72;
+  transition: stroke-width var(--d-move) var(--ease-out), opacity var(--d-move) var(--ease-out);
+}
+
+.bm-node__pass--ghost {
+  stroke-width: 0.7;
+  opacity: 0.3;
+}
+
+.bm-node.is-on .bm-node__pass:not(.bm-node__pass--ghost) {
+  stroke-width: 1.5;
+  opacity: 0.9;
+}
+
+.bm-node__words {
+  display: grid;
+  justify-items: center;
+  gap: 0.2em;
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1cqi, 0.9rem);
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bm-ink);
+}
+
+.bm-node__words span:nth-child(2) {
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ink-3);
+}
+
+/* The small cross below the words, like a mark on a map. */
+.bm-node__tick {
+  position: absolute;
+  left: 50%;
+  bottom: 19%;
+  width: 7px;
+  height: 7px;
+  translate: -50% 0;
+}
+
+.bm-node__tick::before,
+.bm-node__tick::after {
+  content: '';
+  position: absolute;
+  inset: 3px 0 auto;
+  height: 1px;
+  background: var(--bm-pen);
+}
+
+.bm-node__tick::after {
+  rotate: 90deg;
+}
+
+.bm-node__spokes {
+  display: none;
+  position: absolute;
+  inset: -40%;
+  width: 180%;
+  height: 180%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.bm-spoke path {
+  fill: none;
+  stroke: var(--bm-hair);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.bm-spoke circle {
+  fill: var(--tone);
+}
+
+/* ----- the list: a story read downwards */
+.bm__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bm-exp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-exp__thread {
+  display: flex;
+  justify-content: center;
+  height: 96px;
+  margin: 10px 0 14px;
+}
+
+.bm-exp__thread svg {
+  width: 40px;
+  height: 96px;
+  overflow: visible;
+}
+
+.bm-exp__thread path {
+  fill: none;
+  stroke: var(--bm-hair);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.bm-exp__knot {
+  fill: var(--tone);
+}
+
+/* ----- the handwritten note */
+.bm-note {
+  position: absolute;
+  top: 44px;
+  left: calc(50% + 24px);
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--bm-pen);
+  rotate: -3deg;
+  pointer-events: none;
+}
+
+.bm-note > span {
+  display: inline-block;
+}
+
+.bm-exp:nth-child(even) .bm-note {
+  left: auto;
+  right: calc(50% + 24px);
+  rotate: 3deg;
+}
+
+.bm .bm-note__arrow {
+  display: none;
+}
+
+/* ----- the print */
+.bm-photo {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  width: min(84%, 440px);
+  margin: 0;
+  rotate: -2deg;
+}
+
+.bm-exp:nth-child(even) .bm-photo {
+  align-self: flex-end;
+  rotate: 2deg;
+}
+
+.bm-photo__body {
+  position: relative;
+}
+
+/* A tinted sheet under the print, offset so it peeks out on two sides. */
+.bm-photo__wash {
+  position: absolute;
+  inset: 8% -5% -6% 7%;
+  border-radius: 28% 18% 32% 16% / 24% 30% 20% 32%;
+  background: var(--tone-soft);
+  rotate: 3deg;
+}
+
+.bm-photo__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: var(--ratio);
+  border-radius: var(--shape);
+  background: var(--sand);
+  box-shadow: var(--bm-shadow-print);
+}
+
+/* One treatment for all four, so they read as one shoot. */
+.bm-photo__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.86) sepia(0.06) contrast(1.02);
+}
+
+/* ----- the card */
+.bm-card {
+  position: relative;
+  z-index: 3;
+  align-self: flex-end;
+  width: min(80%, 360px);
+  margin-top: -56px;
+  rotate: 1.5deg;
+}
+
+.bm-exp:nth-child(even) .bm-card {
+  align-self: flex-start;
+  rotate: -1.5deg;
+}
+
+.bm-card__body {
+  position: relative;
+  padding: 30px 22px 18px;
+  border: 1px solid var(--bm-hair-soft);
+  border-radius: var(--bm-r-card);
+  background: var(--bm-card);
+  box-shadow: var(--bm-shadow-card);
+  transition: box-shadow var(--d-move) var(--ease-out);
+}
+
+.bm-exp.is-active .bm-card__body {
+  box-shadow: var(--bm-shadow-card-on);
+}
+
+/* The icon sits on the card's top edge, half off it, the way a sticker would;
+   the index takes the opposite corner. Neither costs the card a row. */
+.bm-card__top {
+  display: contents;
+}
+
+.bm-card__icon {
+  position: absolute;
+  left: 18px;
+  top: -16px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--tone-soft);
+  box-shadow:
+    inset 0 0 0 1px var(--tone),
+    0 0 0 4px var(--bm-card);
+  color: var(--bm-ink);
+}
+
+.bm-card__icon svg {
+  width: 52%;
+  height: 52%;
+  transition: rotate var(--d-move) var(--ease-out);
+}
+
+.bm-exp.is-card .bm-card__icon svg,
+.bm-card:hover .bm-card__icon svg {
+  rotate: 10deg;
+}
+
+.bm-card__index {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+
+.bm-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: 1.35rem;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--bm-ink);
+}
+
+.bm-card__text {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--bm-copy);
+}
+
+.bm-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid var(--tone);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--bm-ink);
+  text-decoration: none;
+}
+
+.bm-card__more svg {
+  width: 1.1em;
+  height: 1.1em;
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.bm-exp.is-card .bm-card__more svg,
+.bm-card__more:hover svg {
+  transform: translateX(4px);
+}
+
+.bm-card__more:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ----- the foot */
+.bm__foot {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 24px;
+  margin: 72px 0 0;
+}
+
+.bm__foot-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.8125rem;
+  font-weight: 560;
+  color: var(--bm-ink);
+  text-decoration: none;
+}
+
+.bm__foot-disc {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  aspect-ratio: 1;
+  border: 1px solid var(--bm-hair);
+  border-radius: 50%;
+  transition:
+    transform var(--d-move) var(--ease-out),
+    background-color var(--d-state) var(--ease-out);
+}
+
+.bm__foot-link:hover .bm__foot-disc {
+  transform: translateX(3px);
+  background: var(--bm-card);
+}
+
+.bm__foot-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 6px;
+  border-radius: var(--r-pill);
+}
+
+.bm__foot-note {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ==========================================================================
+   Tablet - a 2 x 2 board with the node at its centre
+   ========================================================================== */
+@media (min-width: 760px) and (max-width: 1179.98px) {
+  .bm__copy {
+    max-width: 40rem;
+  }
+
+  .bm__title {
+    font-size: clamp(2.8rem, 6vw, 3.8rem);
+  }
+
+  .bm__board {
+    margin-top: 96px;
+  }
+
+  .bm__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(150px, 19vw, 210px) clamp(40px, 7vw, 88px);
+  }
+
+  .bm-node {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(128px, 15vw, 156px);
+    margin: 0;
+    translate: -50% -50%;
+  }
+
+  .bm-node__spokes {
+    display: block;
+  }
+
+  .bm-exp:nth-child(even) {
+    padding-top: 48px;
+  }
+
+  .bm-exp__thread {
+    display: none;
+  }
+
+  .bm-note,
+  .bm-exp:nth-child(even) .bm-note {
+    position: static;
+    align-self: flex-end;
+    margin: 0 8% 12px 0;
+  }
+
+  .bm-exp:nth-child(even) .bm-note {
+    align-self: flex-start;
+    margin: 0 0 12px 8%;
+  }
+
+  .bm-photo {
+    width: 88%;
+  }
+
+  .bm-card {
+    width: 82%;
+    margin-top: -64px;
+  }
+}
+
+/* ==========================================================================
+   Desktop - the composed map
+   --------------------------------------------------------------------------
+   The stage is 100cqi by 66cqi. The node is centred at (51, 38.5) with a
+   radius of 5.5; everything else reads its place from its own properties.
+   ========================================================================== */
+@media (min-width: 1180px) {
+  .bm__stage {
+    aspect-ratio: 100 / 66;
+  }
+
+  .bm__copy {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40cqi;
+    max-width: none;
+  }
+
+  .bm__eyebrow {
+    margin-bottom: 1.6cqi;
+  }
+
+  .bm__title {
+    font-size: 3.6cqi;
+  }
+
+  .bm__line {
+    white-space: nowrap;
+  }
+
+  .bm__lead {
+    max-width: 34cqi;
+    margin-top: 1.7cqi;
+    font-size: clamp(0.95rem, 1.12cqi, 1.08rem);
+    line-height: 1.65;
+  }
+
+  .bm__board {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .bm-map {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    overflow: visible;
+  }
+
+  .bm__decor {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  .bm-node {
+    position: absolute;
+    left: 45.5cqi;
+    top: 33cqi;
+    width: 11cqi;
+    margin: 0;
+  }
+
+  .bm__list,
+  .bm-exp {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .bm-exp__thread {
+    display: none;
+  }
+
+  .bm-photo,
+  .bm-exp:nth-child(even) .bm-photo {
+    position: absolute;
+    left: calc(var(--px) * 1cqi);
+    top: calc(var(--py) * 1cqi);
+    width: calc(var(--pw) * 1cqi);
+    rotate: var(--pr);
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  .bm-card,
+  .bm-exp:nth-child(even) .bm-card {
+    position: absolute;
+    left: calc(var(--cx) * 1cqi);
+    top: calc(var(--cy) * 1cqi);
+    width: calc(var(--cw) * 1cqi);
+    margin: 0;
+    rotate: var(--cr);
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  .bm-card__body {
+    padding: 2.1cqi 1.55cqi 1.2cqi;
+  }
+
+  .bm-card__icon {
+    left: 1.4cqi;
+    top: -1.25cqi;
+    width: clamp(28px, 2.5cqi, 34px);
+  }
+
+  .bm-card__index {
+    right: 1.3cqi;
+    top: 1cqi;
+  }
+
+  .bm-card__title {
+    font-size: clamp(1.1rem, 1.6cqi, 1.4rem);
+  }
+
+  .bm-card__text {
+    margin-top: 0.45cqi;
+    font-size: clamp(0.78rem, 1cqi, 0.875rem);
+  }
+
+  .bm-card__more {
+    margin-top: 0.85cqi;
+    font-size: clamp(0.7rem, 0.88cqi, 0.78rem);
+  }
+
+  .bm-note,
+  .bm-exp:nth-child(even) .bm-note {
+    position: absolute;
+    left: calc(var(--nx) * 1cqi);
+    right: auto;
+    top: calc(var(--ny) * 1cqi);
+    font-size: clamp(1rem, 1.45cqi, 1.3rem);
+    rotate: var(--nr);
+  }
+
+  .bm .bm-note__arrow {
+    display: block;
+    position: absolute;
+    left: calc(var(--ax) * 1cqi);
+    top: calc(var(--ay) * 1cqi);
+    width: calc(var(--aw) * 1cqi);
+    color: var(--bm-pen);
+    rotate: var(--ar);
+  }
+
+  .bm .bm-mark {
+    position: absolute;
+    left: calc(var(--dx) * 1cqi);
+    top: calc(var(--dy) * 1cqi);
+    width: calc(var(--dw) * 1cqi);
+    rotate: var(--dr);
+  }
+
+  /* ----- the pencil layer. One stage unit is about 13px on a full-width
+     container, so a stroke of 0.1 is a pencil line. */
+  .bm-map__orbit {
+    fill: none;
+    stroke: var(--bm-hair);
+    stroke-width: 0.09;
+    stroke-dasharray: 0.35 0.55;
+    stroke-linecap: round;
+  }
+
+  .bm-map__arc {
+    fill: none;
+    stroke: var(--bm-hair);
+    stroke-width: 0.08;
+    stroke-dasharray: 0.3 0.6;
+    stroke-linecap: round;
+  }
+
+  .bm-link__line,
+  .bm-link__ghost {
+    fill: none;
+    stroke: var(--bm-ink);
+    stroke-linecap: round;
+    transition:
+      stroke var(--d-move) var(--ease-out),
+      stroke-width var(--d-move) var(--ease-out),
+      opacity var(--d-move) var(--ease-out);
+  }
+
+  .bm-link__line {
+    stroke-width: 0.1;
+    opacity: 0.5;
+  }
+
+  .bm-link__ghost {
+    stroke-width: 0.06;
+    opacity: 0.18;
+  }
+
+  .bm-link__mid,
+  .bm-link__end {
+    fill: var(--tone);
+  }
+
+  .bm-link__halo {
+    fill: var(--tone-soft);
+    opacity: 0;
+    transition: opacity var(--d-move) var(--ease-out);
+  }
+
+  .bm-link.is-lit .bm-link__line {
+    opacity: 0.75;
+  }
+
+  .bm-link.is-lit .bm-link__halo {
+    opacity: 0.7;
+  }
+
+  .bm-link.is-on .bm-link__line {
+    stroke: var(--tone);
+    stroke-width: 0.17;
+    opacity: 1;
+  }
+
+  .bm-link.is-on .bm-link__ghost {
+    opacity: 0.32;
+  }
+
+  .bm-link.is-on .bm-link__halo {
+    opacity: 1;
+  }
+
+  .bm-speck {
+    fill: var(--bm-ink);
+    opacity: 0.45;
+  }
+
+  .bm-speck--open {
+    fill: none;
+    stroke: var(--bm-ink);
+    stroke-width: 0.08;
+  }
+
+  .bm-speck--coral {
+    fill: var(--bm-coral);
+    opacity: 1;
+  }
+
+  .bm-speck--sun {
+    fill: var(--bm-sun);
+    opacity: 1;
+  }
+
+  .bm-speck-x {
+    fill: none;
+    stroke: var(--bm-ink);
+    stroke-width: 0.09;
+    stroke-linecap: round;
+    opacity: 0.4;
+  }
+
+  /* ----- page furniture */
+  .bm__rail {
+    position: absolute;
+    right: -2.2cqi;
+    top: 24cqi;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bm__rail-dot {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--bm-hair);
+    border-radius: 50%;
+    transition:
+      background-color var(--d-move) var(--ease-out),
+      border-color var(--d-move) var(--ease-out),
+      scale var(--d-move) var(--ease-out);
+  }
+
+  .bm__rail-dot.is-lit {
+    border-color: var(--tone);
+    background: var(--tone);
+    scale: 1.3;
+  }
+
+  .bm__foot {
+    position: absolute;
+    left: 42cqi;
+    top: 60.5cqi;
+    margin: 0;
+  }
+}

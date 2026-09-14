@@ -14,68 +14,7 @@
 
 /* After Class 10 lives in `NextSteps.tsx` and `next-steps.css`. */
 
-/* ==========================================================================
-   Beyond the syllabus
-   --------------------------------------------------------------------------
-   Four rows, alternating which side the photograph sits on. The type is at
-   h1 scale because the argument of the section is that these four things are
-   worth as much as the examined ones - and a section that says that in 14px
-   is not saying it.
-   ========================================================================== */
-.beyond__head {
-  margin-bottom: clamp(48px, 6vw, 84px);
-}
-
-.beyond__list {
-  display: grid;
-  gap: clamp(48px, 6vw, 96px);
-}
-
-.skill {
-  position: relative;
-  display: grid;
-  gap: clamp(20px, 2.6vw, 40px);
-  align-items: center;
-  padding-top: clamp(24px, 3vw, 40px);
-  border-top: 1px solid var(--line);
-}
-
-.skill__index {
-  position: absolute;
-  right: 0;
-  top: clamp(24px, 3vw, 40px);
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.12em;
-  color: var(--ink-4);
-}
-
-.skill__text {
-  display: grid;
-  gap: 16px;
-}
-
-.skill__title {
-  max-width: 12ch;
-}
-
-.skill__fig {
-  width: 100%;
-}
-
-@media (min-width: 860px) {
-  .skill {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  }
-
-  .skill:nth-child(even) .skill__fig {
-    order: -1;
-  }
-
-  .skill:nth-child(even) {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  }
-}
+/* Beyond the syllabus lives in `BeyondMap.tsx` and `beyond-map.css`. */
 
 /* ==========================================================================
    The record

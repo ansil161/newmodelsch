@@ -1,0 +1,502 @@
+/* ==========================================================================
+   GALLERY - shared pieces
+   --------------------------------------------------------------------------
+   The photo tile, the breadcrumbs, the pagers and the viewer: everything the
+   three gallery pages have in common. Each page's own compositions live in
+   gallery-home.css and gallery-archive.css. Every class is `gal-` prefixed,
+   because the site ships as a single stylesheet.
+   ========================================================================== */
+
+.gal-page {
+  background: var(--ivory);
+}
+
+/* --------------------------------------------------------------------------
+   Photo tile
+   -------------------------------------------------------------------------- */
+.gal-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gal-tile:focus-visible {
+  outline: none;
+}
+
+.gal-tile:focus-visible .gal-tile__fig {
+  outline: 3px solid var(--sun);
+  outline-offset: 4px;
+}
+
+.gal-tile__fig {
+  width: 100%;
+}
+
+/* A soft shade from the foot of the frame, so the label sits on the picture
+   rather than floating over whatever colour happens to be there. */
+.gal-tile__fig::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(14, 24, 41, 0) 55%, rgba(14, 24, 41, 0.42) 100%);
+  opacity: 0;
+  transition: opacity var(--d-move) var(--ease-out);
+  pointer-events: none;
+}
+
+.gal-tile__label,
+.gal-tile__view {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+  pointer-events: none;
+}
+
+.gal-tile__label {
+  left: clamp(10px, 1.2vw, 16px);
+  bottom: clamp(10px, 1.2vw, 16px);
+  padding: 6px 11px 7px;
+  border-radius: var(--r-ctl);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateY(10px);
+}
+
+.gal-tile__view {
+  top: clamp(10px, 1.2vw, 16px);
+  right: clamp(10px, 1.2vw, 16px);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--sun);
+  color: var(--on-sun);
+  transform: scale(0.6) rotate(-45deg);
+}
+
+.gal-tile:hover .gal-tile__fig::after,
+.gal-tile:focus-visible .gal-tile__fig::after {
+  opacity: 1;
+}
+
+.gal-tile:hover .gal-tile__label,
+.gal-tile:focus-visible .gal-tile__label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gal-tile:hover .gal-tile__view,
+.gal-tile:focus-visible .gal-tile__view {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.gal-tile:focus-visible .fig--hover img {
+  transform: scale(1.05);
+}
+
+/* No hover on a touchscreen, so the label is simply there. */
+@media (hover: none) {
+  .gal-tile__label {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Breadcrumbs
+   -------------------------------------------------------------------------- */
+.gal-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding-top: calc(var(--nav-h) + clamp(20px, 3vw, 40px));
+}
+
+.gal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9375rem;
+  font-weight: 540;
+  color: var(--ink);
+}
+
+.gal-back__ring {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+}
+
+.gal-back:hover .gal-back__ring,
+.gal-back:focus-visible .gal-back__ring {
+  background: var(--ink);
+  color: var(--ivory);
+  transform: translateX(-4px);
+}
+
+.gal-crumbs__trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.gal-crumbs__trail li + li::before {
+  content: '/';
+  margin-right: 6px;
+  color: var(--ink-4);
+}
+
+.gal-crumbs__trail a {
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.gal-crumbs__trail a:hover {
+  color: var(--ink);
+}
+
+.gal-crumbs__trail [aria-current] {
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Pagers - neighbouring years and events
+   -------------------------------------------------------------------------- */
+.gal-pager {
+  display: grid;
+  gap: 14px;
+  padding-bottom: var(--section-y-tight);
+}
+
+.gal-pager__item {
+  display: grid;
+  grid-template-columns: clamp(72px, 9vw, 104px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(14px, 1.8vw, 22px);
+  padding: 12px 22px 12px 12px;
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition:
+    box-shadow var(--d-move) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+}
+
+.gal-pager__item .fig {
+  border-radius: 16px;
+}
+
+.gal-pager__item > svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.gal-pager__item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--e-2), inset 0 0 0 1px var(--line);
+}
+
+.gal-pager__item--prev:hover > svg {
+  transform: translateX(-4px);
+}
+
+.gal-pager__item--next:hover > svg {
+  transform: translateX(4px);
+}
+
+.gal-pager__item--empty {
+  display: none;
+}
+
+.gal-pager__text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gal-pager__title {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.gal-pager__sub {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+@media (min-width: 760px) {
+  .gal-pager {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gal-pager__item--empty {
+    display: block;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+/* ==========================================================================
+   LIGHTBOX
+   --------------------------------------------------------------------------
+   The navy of the site's dark bands, taken almost to black, so a photograph
+   of any tonality sits on it without a halo. The picture is never cropped:
+   it is sized from its own ratio to the largest box the screen allows.
+   ========================================================================== */
+.gal-lb {
+  --lb-chrome: 214px;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: rgba(8, 13, 24, 0.97);
+  color: var(--on-navy);
+  outline: none;
+  overscroll-behavior: contain;
+}
+
+.gal-lb__bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px var(--gutter);
+}
+
+.gal-lb__count {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: var(--on-navy-3);
+}
+
+.gal-lb__count b {
+  font-weight: 500;
+  color: var(--on-navy);
+}
+
+.gal-lb__title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  color: var(--on-navy-2);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50vw;
+}
+
+.gal-lb__btn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(244, 241, 232, 0.08);
+  box-shadow: inset 0 0 0 1px var(--line-navy);
+  color: var(--on-navy);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-tap) var(--ease-out);
+}
+
+.gal-lb__btn:hover,
+.gal-lb__btn:focus-visible {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+
+.gal-lb__btn:active {
+  transform: scale(0.94);
+}
+
+.gal-lb__close {
+  justify-self: end;
+}
+
+.gal-lb__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 4px clamp(16px, 8vw, 120px);
+  touch-action: none;
+}
+
+.gal-lb__frame {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 0;
+}
+
+.gal-lb__img {
+  width: min(100%, calc((100svh - var(--lb-chrome)) * var(--r, 1.5)));
+  height: auto;
+  aspect-ratio: var(--r, 1.5);
+  object-fit: contain;
+  border-radius: 12px;
+  background: rgba(244, 241, 232, 0.04);
+  opacity: 0.35;
+  transition: opacity 0.5s var(--ease-out);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gal-lb__img.is-loaded {
+  opacity: 1;
+}
+
+.gal-lb__caption {
+  display: grid;
+  gap: 2px;
+  max-width: 68ch;
+  text-align: center;
+  font-size: var(--t-small);
+  line-height: 1.45;
+  color: var(--on-navy-2);
+}
+
+.gal-lb__caption b {
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--sun);
+}
+
+.gal-lb__nav {
+  position: absolute;
+  top: 50%;
+  margin-top: -24px;
+}
+
+.gal-lb__nav--prev {
+  left: max(12px, calc(var(--gutter) / 2));
+}
+
+.gal-lb__nav--next {
+  right: max(12px, calc(var(--gutter) / 2));
+}
+
+.gal-lb__thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px var(--gutter) 18px;
+  scrollbar-width: none;
+}
+
+.gal-lb__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.gal-lb__thumb {
+  flex: none;
+  width: 68px;
+  height: 50px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  opacity: 0.4;
+  cursor: pointer;
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out);
+}
+
+.gal-lb__thumb:first-child {
+  margin-left: auto;
+}
+
+.gal-lb__thumb:last-child {
+  margin-right: auto;
+}
+
+.gal-lb__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gal-lb__thumb:hover {
+  opacity: 0.8;
+}
+
+.gal-lb__thumb[aria-current='true'] {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--sun);
+}
+
+/* Phones: the arrows move to the foot of the screen, where a thumb reaches
+   them, and the filmstrip gives its height back to the photograph. */
+@media (max-width: 760px) {
+  .gal-lb {
+    --lb-chrome: 250px;
+  }
+
+  .gal-lb__title {
+    display: none;
+  }
+
+  .gal-lb__stage {
+    padding-inline: 12px;
+  }
+
+  .gal-lb__nav {
+    top: auto;
+    bottom: 22px;
+    margin-top: 0;
+    position: fixed;
+  }
+
+  .gal-lb__nav--prev {
+    left: calc(50% - 60px);
+  }
+
+  .gal-lb__nav--next {
+    right: calc(50% - 60px);
+  }
+
+  .gal-lb__thumbs {
+    visibility: hidden;
+    height: 90px;
+    padding: 0;
+  }
+}

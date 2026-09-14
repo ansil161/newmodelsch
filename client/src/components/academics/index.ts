@@ -3,9 +3,8 @@ export {
   AcCover,
   AcMethod,
   AcCurriculum,
-  AcBeyond,
-  AcRecord,
   AcCta,
 } from './sections';
 export { AcNext } from './NextSteps';
+export { AcBeyond } from './BeyondMap';
 export { AcProof } from './AcademicProof';

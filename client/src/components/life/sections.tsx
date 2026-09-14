@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ACTIVITY_STRANDS,
   CAMPUS_INTRO,
@@ -40,13 +41,12 @@ import './life.css';
    This is the page the site spends its photography on. Everything else stays
    ruled and quiet; this one is allowed to be a magazine.
 
-   THERE IS NO GALLERY SECTION, AND THERE IS NONE ANYWHERE ON THE SITE.
+   THERE IS NO GALLERY SECTION ON THIS PAGE.
 
-   A grid of captioned photographs is a room where images go to be looked at
-   instead of understood. Every photograph on this page sits inside the
-   section it is evidence for - the day, the campus, the strands - and when
-   the school's own photography arrives it drops into those sections rather
-   than into a lightbox.
+   Every photograph here sits inside the section it is evidence for - the
+   day, the campus, the strands. The school's archive of photographs, browsed
+   by category, year and event, is its own page under this one:
+   /student-life/gallery. The wall below links to it.
    ========================================================================== */
 
 export const SL_CHAPTERS = [
@@ -290,7 +290,12 @@ export function SlWall() {
             Photographs taken by people who <Mark>work here.</Mark>
           </>
         }
-      />
+      >
+        <Link className="link" to={ROUTES.gallery}>
+          Open the school gallery
+          <Icon name="arrowRight" size={15} />
+        </Link>
+      </SectionHead>
     </HorizontalGallery>
   );
 }

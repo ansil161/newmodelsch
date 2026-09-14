@@ -1,0 +1,665 @@
+/* ==========================================================================
+   02 - THE SIX STEPS
+   --------------------------------------------------------------------------
+   Warm ivory, two or three oversized cream shapes at the corners, a navy
+   serif, one yellow pen. The copy and its film take 52%, the timeline 48%,
+   and the timeline starts level with the eyebrow rather than centred on the
+   whole spread.
+   ========================================================================== */
+
+.aj {
+  --aj-ground: #f7f5ef;
+  --aj-cream: #efe8d9;
+  --aj-title: #1b2d4d;
+  --aj-pen: #f2b632;
+  --aj-hair: rgba(17, 23, 38, 0.1);
+  --aj-hair-strong: rgba(17, 23, 38, 0.2);
+  --aj-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* The timeline's own columns: number, track, icon, text. The rail and the
+     node are positioned from these, so they are declared once. */
+  --aj-num: 1.9rem;
+  --aj-track: 22px;
+  --aj-icon: 40px;
+  --aj-gap: 12px;
+  --aj-node-y: calc(var(--aj-icon) / 2);
+  --aj-rail-x: calc(var(--aj-num) + var(--aj-gap) + var(--aj-track) / 2);
+
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  padding-block: clamp(84px, 9vw, 148px) clamp(80px, 8.5vw, 140px);
+  background: var(--aj-ground);
+  color: var(--ink);
+}
+
+.aj__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ----- the cream shapes. Cut paper under the page, not decoration on it. */
+.aj__shape {
+  position: absolute;
+  z-index: -1;
+  background: var(--aj-cream);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.aj__shape--1 {
+  top: -16vw;
+  right: -12vw;
+  width: 42vw;
+  aspect-ratio: 1.15;
+  border-radius: 46% 54% 62% 38% / 44% 40% 60% 56%;
+}
+
+.aj__shape--2 {
+  bottom: -18vw;
+  left: -14vw;
+  width: 38vw;
+  aspect-ratio: 1;
+  border-radius: 58% 42% 40% 60% / 52% 58% 42% 48%;
+  opacity: 0.45;
+}
+
+.aj__shape--3 {
+  right: -6vw;
+  bottom: 8%;
+  width: 16vw;
+  aspect-ratio: 1.3;
+  border-radius: 60% 40% 48% 52% / 50% 60% 40% 50%;
+  opacity: 0.35;
+}
+
+/* ==========================================================================
+   The spread
+   ========================================================================== */
+.aj__grid {
+  display: grid;
+  gap: clamp(56px, 9vw, 80px);
+  max-width: 1360px;
+  margin-inline: auto;
+}
+
+/* ----- the copy */
+.aj__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.aj__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 clamp(18px, 2vw, 26px);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.aj__eyebrow i {
+  width: 30px;
+  height: 1px;
+  background: var(--aj-pen);
+}
+
+.aj__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 420;
+  font-size: clamp(2.2rem, 4.3vw, 4rem);
+  line-height: 1.06;
+  letter-spacing: -0.022em;
+  color: var(--aj-title);
+}
+
+/* The three lines of the reference, set by hand rather than left to the
+   measure: the break before "happens" is the point of the sentence. */
+.aj__line {
+  display: block;
+}
+
+.aj__title strong {
+  font-weight: 620;
+}
+
+.aj__underline {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.aj .aj__swash {
+  position: absolute;
+  left: -3%;
+  bottom: -0.2em;
+  width: 106%;
+  color: var(--aj-pen);
+  pointer-events: none;
+}
+
+.aj__lead {
+  margin: clamp(18px, 2vw, 26px) 0 0;
+  max-width: 40ch;
+  font-size: var(--t-small);
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+/* ----- the pen, everywhere in this section */
+.aj [data-stroke] {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.aj .aj__swash [data-stroke] {
+  stroke-width: 3.6;
+}
+
+/* ==========================================================================
+   The stage - the film, its frame and the annotations round it
+   ========================================================================== */
+.aj__stage {
+  position: relative;
+  width: 100%;
+  margin-top: clamp(40px, 4.4vw, 60px);
+}
+
+/* The shadow lives on the wrapper, because a clip-path cuts off any shadow
+   drawn by the element it clips. */
+.aj__frame {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  filter: drop-shadow(0 24px 28px rgba(50, 38, 18, 0.11)) drop-shadow(0 3px 6px rgba(50, 38, 18, 0.05));
+}
+
+.aj__film {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--sand);
+  clip-path: url(#aj-frame-clip);
+}
+
+.aj__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 55%;
+}
+
+/* Only as dark as the label needs, and only at the bottom. */
+.aj__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(14, 24, 41, 0.42), rgba(14, 24, 41, 0) 58%),
+    rgba(14, 24, 41, 0.06);
+  pointer-events: none;
+}
+
+.aj__cue {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  translate: -50% -50%;
+}
+
+.aj__toggle {
+  display: grid;
+  place-items: center;
+  width: clamp(46px, 4.2vw, 58px);
+  height: clamp(46px, 4.2vw, 58px);
+  border: 1px solid rgba(255, 253, 248, 0.6);
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.2);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fffdf8;
+  cursor: pointer;
+  opacity: 0.8;
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    background-color var(--d-state) var(--ease-out),
+    transform var(--d-state) var(--ease-out);
+}
+
+.aj__toggle svg {
+  width: 15px;
+  height: 15px;
+}
+
+.aj__film:hover .aj__toggle,
+.aj__toggle:focus-visible {
+  opacity: 1;
+  background: rgba(255, 253, 248, 0.3);
+}
+
+.aj__toggle:active {
+  transform: scale(0.94);
+}
+
+.aj__toggle:focus-visible {
+  outline: 2px solid #fffdf8;
+  outline-offset: 3px;
+}
+
+.aj__cue-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255, 253, 248, 0.88);
+  text-shadow: 0 1px 10px rgba(14, 24, 41, 0.35);
+}
+
+/* ----- two thin arcs, a small ring, and the note */
+.aj__arc {
+  position: absolute;
+  z-index: 0;
+  height: auto;
+  overflow: visible;
+  color: var(--aj-pen);
+  pointer-events: none;
+}
+
+.aj__arc [data-stroke] {
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.aj__arc--top {
+  top: clamp(-36px, -3vw, -18px);
+  right: -4%;
+  width: 30%;
+}
+
+/* Kept inside the column's own edge: the page's chapter rail runs down the
+   left margin, and a pen stroke crossing it reads as a collision. */
+.aj__arc--low {
+  left: clamp(-14px, -1vw, -6px);
+  bottom: 18%;
+  width: 16%;
+  display: none;
+}
+
+.aj__ring {
+  position: absolute;
+  z-index: 2;
+  top: clamp(-10px, -0.6vw, -4px);
+  right: 25%;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--aj-pen);
+  border-radius: 50%;
+  background: var(--aj-ground);
+}
+
+.aj__note {
+  position: relative;
+  display: inline-block;
+  margin: clamp(18px, 2vw, 26px) 0 0 4%;
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  line-height: 1.1;
+  color: var(--ink-2);
+  rotate: -5deg;
+}
+
+.aj .aj__note-arrow {
+  position: absolute;
+  left: calc(100% + 0.3em);
+  bottom: -0.1em;
+  width: 2.2em;
+  color: var(--ink-3);
+  rotate: 8deg;
+}
+
+.aj .aj__note-arrow [data-stroke] {
+  stroke-width: 3;
+}
+
+/* ==========================================================================
+   The timeline
+   ========================================================================== */
+.aj-steps {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+/* A step. Phone first: number, track, icon, text. Spacing between steps is
+   padding, never gap, so the rail segment running from one node to the next
+   is exactly the height of the step it belongs to. */
+.aj-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--aj-num) var(--aj-track) var(--aj-icon) minmax(0, 1fr);
+  column-gap: var(--aj-gap);
+  align-items: start;
+  padding-bottom: clamp(26px, 3vw, 36px);
+  transition: opacity 0.5s var(--aj-ease);
+}
+
+.aj-step:last-child {
+  padding-bottom: 0;
+}
+
+.aj-step__num {
+  grid-column: 1;
+  align-self: start;
+  padding-top: calc(var(--aj-node-y) - 0.5em);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+/* ----- the rail: one segment per step, from this node to the next */
+.aj-step__rail {
+  position: absolute;
+  top: var(--aj-node-y);
+  left: var(--aj-rail-x);
+  width: 1px;
+  height: 100%;
+  translate: -50% 0;
+  background: var(--aj-hair-strong);
+}
+
+.aj-step:last-child .aj-step__rail {
+  display: none;
+}
+
+.aj-step__fill {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  translate: -50% 0;
+  background: var(--aj-pen);
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+/* ----- the node */
+.aj-step__node {
+  position: absolute;
+  z-index: 1;
+  top: var(--aj-node-y);
+  left: var(--aj-rail-x);
+  width: 11px;
+  height: 11px;
+  translate: -50% -50%;
+  transition: transform 0.6s var(--aj-ease);
+}
+
+.aj-step__dot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid var(--aj-hair-strong);
+  border-radius: 50%;
+  background: var(--aj-ground);
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    box-shadow 0.6s var(--aj-ease);
+}
+
+.aj-step.is-done .aj-step__dot {
+  border-color: var(--aj-pen);
+  background: var(--aj-pen);
+}
+
+.aj-step.is-active .aj-step__node {
+  transform: scale(1.55);
+}
+
+.aj-step.is-active .aj-step__dot {
+  border-color: var(--aj-pen);
+  background: var(--aj-pen);
+  box-shadow: 0 0 0 4px rgba(242, 182, 50, 0.22);
+}
+
+/* ----- the icon */
+.aj-step__icon {
+  grid-column: 3;
+  display: grid;
+  place-items: center;
+  width: var(--aj-icon);
+  height: var(--aj-icon);
+  border: 1px solid var(--aj-hair);
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.7);
+  color: var(--aj-title);
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out);
+}
+
+.aj-step.is-active .aj-step__icon {
+  border-color: rgba(242, 182, 50, 0.45);
+  background: var(--sun-soft);
+}
+
+/* ----- the text */
+.aj-step__body {
+  grid-column: 4;
+  min-width: 0;
+}
+
+.aj-step__title {
+  margin: 0;
+  padding-top: calc(var(--aj-node-y) - 0.66em);
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48;
+  font-weight: 480;
+  font-size: clamp(1.15rem, 1.45vw, 1.4rem);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  color: #34425c;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.aj-step__desc {
+  margin: 6px 0 0;
+  max-width: 46ch;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.aj-step__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin: 12px 0 0;
+}
+
+.aj-step__time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--aj-hair);
+  border-radius: var(--r-ctl);
+  background: rgba(255, 253, 248, 0.6);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+.aj-step__time svg {
+  color: var(--sun-deep);
+}
+
+.aj-step__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 4px;
+  font-size: 0.8125rem;
+  font-weight: 560;
+  color: var(--aj-title);
+  text-decoration: none;
+}
+
+.aj-step__action svg {
+  transition: transform 0.45s var(--aj-ease);
+}
+
+.aj-step__action:focus-visible {
+  outline: 2px solid var(--aj-title);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ----- current, hovered or focused: darker, and the node leans forward */
+.aj-step.is-active .aj-step__num,
+.aj-step:hover .aj-step__num,
+.aj-step:focus-within .aj-step__num {
+  color: var(--ink);
+}
+
+.aj-step.is-active .aj-step__title,
+.aj-step:hover .aj-step__title,
+.aj-step:focus-within .aj-step__title {
+  color: var(--ink);
+}
+
+.aj-step.is-active .aj-step__desc,
+.aj-step:hover .aj-step__desc,
+.aj-step:focus-within .aj-step__desc {
+  color: var(--ink-2);
+}
+
+.aj-step:focus-within .aj-step__action svg {
+  transform: translate(4px, -1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aj-steps:hover .aj-step:not(:hover) {
+    opacity: 0.55;
+  }
+
+  .aj-step:hover .aj-step__node {
+    transform: scale(1.55);
+  }
+
+  .aj-step.is-active:hover .aj-step__node {
+    transform: scale(1.75);
+  }
+
+  .aj-step:hover .aj-step__action svg {
+    transform: translate(4px, -1px);
+  }
+}
+
+/* ==========================================================================
+   Wider phones - the note and the lower arc have room
+   ========================================================================== */
+@media (min-width: 600px) {
+  .aj {
+    --aj-num: 2.25rem;
+    --aj-track: 24px;
+    --aj-icon: 46px;
+    --aj-gap: 16px;
+  }
+
+  .aj__arc--low {
+    display: block;
+  }
+}
+
+/* ==========================================================================
+   Tablet - 45 / 55
+   ========================================================================== */
+@media (min-width: 900px) {
+  .aj__grid {
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+    column-gap: clamp(40px, 4.5vw, 72px);
+    align-items: start;
+  }
+
+  .aj__title {
+    font-size: clamp(2.3rem, 3.9vw, 3.3rem);
+  }
+
+  /* The timeline begins level with the eyebrow's line of type. */
+  .aj-steps {
+    padding-top: 2px;
+  }
+}
+
+/* ==========================================================================
+   Desktop - 52 / 48, the film at four-fifths of its column
+   ========================================================================== */
+@media (min-width: 1180px) {
+  .aj {
+    --aj-num: 2.5rem;
+    --aj-track: 26px;
+    --aj-icon: 48px;
+    --aj-gap: clamp(14px, 1.3vw, 20px);
+  }
+
+  .aj__grid {
+    grid-template-columns: minmax(0, 52fr) minmax(0, 48fr);
+    column-gap: clamp(56px, 5vw, 96px);
+  }
+
+  .aj__title {
+    font-size: clamp(3rem, 4.1vw, 4rem);
+  }
+
+  .aj__stage {
+    width: 80%;
+  }
+
+  .aj-step {
+    padding-bottom: clamp(24px, 2vw, 32px);
+  }
+}
+
+/* ==========================================================================
+   Reduced motion - the state stays, the movement goes
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .aj *,
+  .aj *::before,
+  .aj *::after {
+    transition-duration: 1ms !important;
+  }
+
+  /* Without the scrubbed fill, a finished step simply shows its rail filled. */
+  .aj-step.is-done .aj-step__fill {
+    transform: scaleY(1);
+  }
+}

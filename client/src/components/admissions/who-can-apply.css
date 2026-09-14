@@ -1,0 +1,623 @@
+/* ==========================================================================
+   01 - WHO CAN APPLY
+   --------------------------------------------------------------------------
+   Warm white, one soft lavender, thin rules. The copy takes 42% and the film
+   58%, the film runs a little past the grid on the right, and four small
+   prints sit around it at unequal sizes and angles. Under that, the ledger:
+   five ruled rows across nearly the full width.
+   ========================================================================== */
+
+.wca {
+  --wca-lav: #8480c4;
+  --wca-lav-ink: #5b56a3;
+  --wca-lav-soft: #efeef8;
+  --wca-lav-wash: rgba(132, 128, 196, 0.07);
+  --wca-hair: rgba(17, 23, 38, 0.1);
+  --wca-hair-strong: rgba(17, 23, 38, 0.22);
+  --wca-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  overflow: clip;
+  padding-block: clamp(80px, 9vw, 148px) clamp(72px, 8vw, 128px);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   The intro - copy, then the stage
+   ========================================================================== */
+.wca__intro {
+  display: grid;
+  gap: clamp(48px, 10vw, 72px);
+}
+
+.wca__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.wca__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 clamp(18px, 2vw, 26px);
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wca__label i {
+  width: 28px;
+  height: 1px;
+  background: var(--wca-hair-strong);
+}
+
+.wca__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: clamp(3rem, 6vw, 5.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.034em;
+  color: var(--ink);
+}
+
+.wca__heading em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--wca-lav-ink);
+}
+
+.wca__sub {
+  margin: clamp(16px, 1.8vw, 24px) 0 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 72;
+  font-weight: 400;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  color: var(--ink-2);
+}
+
+.wca__lead {
+  margin: clamp(18px, 2vw, 26px) 0 0;
+  max-width: 44ch;
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.wca__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(24px, 2.8vw, 36px);
+  padding: 8px 8px 8px 20px;
+  border: 1px solid var(--wca-hair-strong);
+  border-radius: var(--r-pill);
+  font-size: 0.875rem;
+  font-weight: 560;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.wca__cta-arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wca__cta:hover {
+    border-color: var(--ink);
+  }
+
+  .wca__cta:hover .wca__cta-arrow {
+    transform: translateX(3px);
+  }
+}
+
+.wca__cta:focus-visible {
+  outline: 2px solid var(--wca-lav-ink);
+  outline-offset: 4px;
+}
+
+/* ==========================================================================
+   The stage - the film and its prints
+   ========================================================================== */
+.wca__stage {
+  position: relative;
+}
+
+.wca__drift {
+  position: relative;
+  z-index: 1;
+}
+
+.wca__video {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  aspect-ratio: 1000 / 1080;
+  border-radius: clamp(22px, 2.4vw, 34px);
+  background: var(--sand);
+  box-shadow: 0 34px 70px -48px rgba(38, 34, 72, 0.45);
+}
+
+.wca__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--wca-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wca__video:hover .wca__media {
+    transform: scale(1.01);
+  }
+}
+
+/* The control. Small, round, and quiet until it is wanted. */
+.wca__toggle {
+  position: absolute;
+  right: clamp(12px, 1.4vw, 20px);
+  bottom: clamp(12px, 1.4vw, 20px);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.82);
+  color: var(--ink);
+  box-shadow: 0 6px 18px -10px rgba(17, 23, 38, 0.5);
+  opacity: 0.72;
+  cursor: pointer;
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    transform var(--d-state) var(--ease-out);
+}
+
+.wca__toggle svg {
+  width: 15px;
+  height: 15px;
+}
+
+.wca__video:hover .wca__toggle,
+.wca__toggle:focus-visible {
+  opacity: 1;
+}
+
+.wca__toggle:active {
+  transform: scale(0.94);
+}
+
+.wca__toggle:focus-visible {
+  outline: 2px solid var(--wca-lav-ink);
+  outline-offset: 3px;
+}
+
+/* The thin arc behind everything, and one dot on it. */
+.wca__arc {
+  position: absolute;
+  inset: -5% -4% -2% -6%;
+  width: 110%;
+  height: 107%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.wca__arc path {
+  fill: none;
+  stroke: rgba(132, 128, 196, 0.45);
+  stroke-width: 1;
+  stroke-dasharray: 3 6;
+  vector-effect: non-scaling-stroke;
+}
+
+.wca__dot {
+  position: absolute;
+  top: -2.4%;
+  left: 60%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wca-lav);
+  box-shadow: 0 0 0 5px var(--wca-lav-soft);
+}
+
+/* The handwritten note - hidden where it would crowd a phone. */
+.wca__note {
+  display: none;
+}
+
+/* The prints - a small offset row under the film on a phone. */
+.wca__floats {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: -10%;
+  padding-inline: 2%;
+}
+
+.wca-float {
+  position: relative;
+  width: 34%;
+  margin-inline: -1.5%;
+}
+
+.wca-float--2 {
+  margin-top: 9%;
+}
+
+.wca-float--4 {
+  display: none;
+}
+
+.wca-float__print {
+  overflow: hidden;
+  border: 4px solid var(--white);
+  border-radius: clamp(12px, 1.3vw, 18px);
+  background: var(--sand);
+  outline: 1px solid var(--wca-hair);
+  box-shadow: 0 22px 40px -26px rgba(38, 34, 72, 0.5);
+  rotate: var(--tilt, 0deg);
+}
+
+.wca-float--1 { --tilt: -4deg; }
+.wca-float--2 { --tilt: 3.5deg; }
+.wca-float--3 { --tilt: 2.5deg; }
+.wca-float--4 { --tilt: -2.5deg; }
+
+.wca-float__print img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   The ledger
+   ========================================================================== */
+.wca__ledger {
+  margin-top: clamp(64px, 9vw, 132px);
+}
+
+.wca__list-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wca__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--wca-hair-strong);
+}
+
+/* A row - phone first: number and icon, the stage, the arrow; the note and
+   the places underneath. */
+.wca-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem 2.75rem minmax(0, 1fr) 2.5rem;
+  grid-template-areas:
+    'num icon stage arrow'
+    '.   .    desc  .'
+    '.   .    tag   .';
+  column-gap: 12px;
+  align-items: center;
+  padding: 20px 6px;
+  border-bottom: 1px solid var(--wca-hair);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color var(--d-move) var(--wca-ease),
+    border-color var(--d-move) var(--wca-ease);
+}
+
+.wca-row__num {
+  grid-area: num;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+.wca-row__icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(132, 128, 196, 0.2);
+  border-radius: 50%;
+  background: var(--wca-lav-soft);
+  color: var(--wca-lav-ink);
+}
+
+.wca-row__icon svg {
+  transition: transform 0.6s var(--wca-ease);
+}
+
+.wca-row__stage,
+.wca-row__desc,
+.wca-row__tag {
+  transition: transform 0.6s var(--wca-ease);
+}
+
+.wca-row__stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.wca-row__name {
+  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+  font-weight: 540;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.wca-row__age {
+  font-size: var(--t-small);
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.wca-row__desc {
+  grid-area: desc;
+  margin-top: 10px;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.wca-row__tag {
+  grid-area: tag;
+  justify-self: start;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wca-row.is-main .wca-row__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--wca-lav-ink);
+}
+
+.wca-row.is-main .wca-row__tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--wca-lav);
+}
+
+.wca-row__arrow {
+  grid-area: arrow;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--wca-hair-strong);
+  border-radius: 50%;
+  color: var(--ink);
+  transition:
+    transform 0.6s var(--wca-ease),
+    background-color var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.wca-row:focus-visible {
+  outline: 2px solid var(--wca-lav-ink);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wca-row:hover {
+    background-color: var(--wca-lav-wash);
+    border-bottom-color: var(--wca-hair-strong);
+  }
+
+  .wca-row:hover .wca-row__stage,
+  .wca-row:hover .wca-row__desc,
+  .wca-row:hover .wca-row__tag {
+    transform: translateX(6px);
+  }
+
+  .wca-row:hover .wca-row__icon svg {
+    transform: rotate(-8deg) scale(1.08);
+  }
+
+  .wca-row:hover .wca-row__arrow {
+    transform: translateX(5px);
+    border-color: var(--ink);
+    background-color: var(--ink);
+    color: var(--paper);
+  }
+}
+
+.wca-row:active {
+  background-color: var(--wca-lav-wash);
+}
+
+.wca__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: clamp(22px, 2.6vw, 32px) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.wca__foot svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--wca-lav-ink);
+}
+
+.wca__foot i {
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  margin: 0 12px 0.3em;
+  vertical-align: middle;
+  background: var(--wca-hair-strong);
+}
+
+/* ==========================================================================
+   Tablet and up - the asymmetric spread
+   ========================================================================== */
+@media (min-width: 900px) {
+  .wca__intro {
+    grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+    column-gap: clamp(32px, 4.5vw, 80px);
+    align-items: start;
+  }
+
+  .wca__copy {
+    padding-top: clamp(24px, 5vw, 88px);
+  }
+
+  /* The film is inset inside its stage so the prints have room to overlap
+     its edges, and the stage runs past the grid on the right. */
+  .wca__stage {
+    margin-right: calc(-1 * clamp(0px, 3.5vw, 64px));
+    padding: 6% 8% 10% 12%;
+  }
+
+  .wca__note {
+    position: absolute;
+    top: -1%;
+    left: 30%;
+    z-index: 3;
+    display: block;
+    margin: 0;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+    line-height: 1;
+    color: var(--wca-lav-ink);
+    rotate: -5deg;
+    white-space: nowrap;
+  }
+
+  .wca .wca__note-arrow {
+    position: absolute;
+    left: 100%;
+    top: 30%;
+    width: 2.4em;
+    margin-left: 0.2em;
+    color: var(--wca-lav);
+    rotate: 30deg;
+  }
+
+  .wca__floats {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .wca-float {
+    position: absolute;
+    margin: 0;
+  }
+
+  .wca-float--1 { left: 0; top: 13%; width: 25%; }
+  .wca-float--2 { right: 0; top: 0; width: 19%; margin: 0; }
+  .wca-float--3 { left: 3%; bottom: 3%; width: 21%; }
+  .wca-float--4 { display: block; right: -1%; bottom: 0; width: 28%; }
+}
+
+@media (min-width: 900px) and (max-width: 1179.98px) {
+  .wca-float--1 { width: 22%; }
+  .wca-float--2 { width: 16%; }
+  .wca-float--3 { width: 18%; }
+  .wca-float--4 { width: 24%; }
+}
+
+/* ==========================================================================
+   Desktop - the ledger in its columns
+   ========================================================================== */
+@media (min-width: 900px) {
+  .wca-row {
+    grid-template-columns:
+      3.5rem 3.75rem minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 0.75fr)
+      3rem;
+    grid-template-areas: 'num icon stage desc tag arrow';
+    column-gap: clamp(16px, 2.2vw, 36px);
+    padding: clamp(20px, 2vw, 28px) clamp(10px, 1.2vw, 20px);
+  }
+
+  .wca-row__desc,
+  .wca-row__tag {
+    margin-top: 0;
+  }
+
+  .wca-row__desc {
+    max-width: 52ch;
+  }
+
+  .wca-row__arrow {
+    justify-self: end;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion - complete and still
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .wca *,
+  .wca *::before,
+  .wca *::after {
+    transition-duration: 1ms !important;
+  }
+
+  .wca__video:hover .wca__media {
+    transform: none;
+  }
+}

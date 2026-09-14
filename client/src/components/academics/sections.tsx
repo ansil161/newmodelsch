@@ -1,20 +1,13 @@
 import {
-  ACHIEVEMENTS,
   ADMISSIONS_INTRO,
-  ACHIEVEMENT_CATEGORIES,
   CURRICULUM_NOTE,
   CURRICULUM_ROWS,
-  FUTURE_SKILLS,
   ROUTES,
   TEACHING_PRINCIPLES,
 } from '@/constants';
 import { academicImages, artsImages, everydayImages, studentImages } from '@/constants/imagery';
-import { useGsapScope } from '@/hooks/useGsapScope';
-import { draw, drift, lines, rise, unmask } from '@/lib/motion';
 import {
-  AchievementArchive,
   Collage,
-  Figure,
   InviteSection,
   Mark,
   Script,
@@ -22,7 +15,7 @@ import {
   SectionHead,
   StickyStory,
 } from '@/components/editorial';
-import type { ArchiveEntry, StoryPanel } from '@/components/editorial';
+import type { StoryPanel } from '@/components/editorial';
 import { LEARNING_STAGES } from '@/constants/education';
 import { CurriculumMap } from './CurriculumMap';
 import type { CurriculumStage } from './CurriculumMap';
@@ -42,8 +35,7 @@ import './academics.css';
      01 Method      six practices, each paired with the thing that proves it
      02 Curriculum  thirteen graded years on one axis, drawn to scale
      03 Beyond      the four things the syllabus does not examine
-     04 The record  twelve verified entries, as an archive
-     05 Proof       the four figures the whole sequence produces
+     04 Proof       the four figures the whole sequence produces
 
    The anchors are the ones this page has always carried, because another page
    links to two of them and a bookmark outlives a redesign.
@@ -53,8 +45,7 @@ export const AC_CHAPTERS = [
   { id: 'how-we-teach', index: '01', label: 'Method' },
   { id: 'curriculum', index: '02', label: 'Curriculum' },
   { id: 'future-skills', index: '03', label: 'Beyond' },
-  { id: 'achievements', index: '04', label: 'The record' },
-  { id: 'academic-proof', index: '05', label: 'Proof' },
+  { id: 'academic-proof', index: '04', label: 'Proof' },
 ];
 
 /* --------------------------------------------------------------------------
@@ -247,108 +238,9 @@ export function AcCurriculum() {
 
 /* 02b - AFTER CLASS 10 lives in `NextSteps.tsx`. */
 
-/* --------------------------------------------------------------------------
-   03 - BEYOND THE SYLLABUS
-   --------------------------------------------------------------------------
-   The four things the board does not examine, set as large as the things it
-   does. That equivalence in scale is the argument the section is making, so
-   the type size here is not decoration.
-   -------------------------------------------------------------------------- */
+/* 03 - BEYOND THE SYLLABUS lives in `BeyondMap.tsx`. */
 
-export function AcBeyond() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    const items = el.querySelectorAll<HTMLElement>('.skill');
-    items.forEach((item) => {
-      const title = item.querySelector<HTMLElement>('.skill__title');
-      if (title) lines(title, { trigger: item });
-      rise(item.querySelectorAll<HTMLElement>('[data-lift]'), { trigger: item, delay: 0.2, y: 20 });
-      unmask(item.querySelectorAll<HTMLElement>('.fig'), { trigger: item, from: 'bottom' });
-      drift(item.querySelector('img'), 50, { trigger: item });
-    });
-    draw(el, { trigger: el, delay: 0.4 });
-  }, []);
-
-  return (
-    <section ref={scope} className="section beyond" id="future-skills">
-      <div className="wrap">
-        <SectionHead
-          sticker="03 · Beyond the syllabus"
-          title={
-            <>
-              The four things no board <Mark>examines.</Mark>
-            </>
-          }
-          lead="Each of these has timetabled hours and a named teacher. They are not what is left over after the syllabus."
-          className="beyond__head"
-        />
-
-        <ol className="beyond__list">
-          {FUTURE_SKILLS.map((skill, i) => (
-            <li className="skill" key={skill.id}>
-              <span className="skill__index" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-
-              <div className="skill__text">
-                <h3 className="skill__title ed-h1">{skill.title}</h3>
-                <p className="body-text" data-lift>
-                  {skill.description}
-                </p>
-              </div>
-
-              <Figure
-                photo={[studentImages[2], academicImages[7], artsImages[1], academicImages[2]][i]}
-                width={480}
-                sizes="(max-width: 900px) 60vw, 26vw"
-                shape={i % 2 === 0 ? 'blob' : 'arch'}
-                ratio="landscape"
-                hover
-                className="skill__fig"
-              />
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* --------------------------------------------------------------------------
-   04 - THE RECORD
-   -------------------------------------------------------------------------- */
-
-const RECORD: ArchiveEntry[] = ACHIEVEMENTS.map((achievement, i) => ({
-  id: achievement.id,
-  year: achievement.year,
-  category: achievement.category,
-  title: achievement.title,
-  detail: achievement.detail,
-  photo: academicImages[i % academicImages.length],
-}));
-
-export function AcRecord() {
-  return (
-    <AchievementArchive
-      id="achievements"
-      entries={RECORD}
-      categories={ACHIEVEMENT_CATEGORIES}
-      className="record"
-    >
-      <SectionHead
-        sticker="04 · The record"
-        stickerTilt={2}
-        title={
-          <>
-            The <Mark kind="ring">record.</Mark>
-          </>
-        }
-        lead="Four years, four categories, twelve entries, and every one of them is something a parent could ask to see the paperwork for."
-      />
-    </AchievementArchive>
-  );
-}
-
-/* 05 - ACADEMIC PROOF lives in `AcademicProof.tsx`. */
+/* 04 - ACADEMIC PROOF lives in `AcademicProof.tsx`. */
 
 /* --------------------------------------------------------------------------
    The ask.

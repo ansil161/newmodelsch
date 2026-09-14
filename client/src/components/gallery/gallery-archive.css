@@ -1,0 +1,453 @@
+/* ==========================================================================
+   GALLERY ARCHIVE - the year page and the event page
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Year header
+   -------------------------------------------------------------------------- */
+.gal-yhead {
+  padding-top: clamp(28px, 4vw, 56px);
+}
+
+.gal-yhead__tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.gal-yhead__title {
+  margin-top: 18px;
+  font-size: clamp(4rem, 15vw, 14rem);
+  line-height: 0.84;
+  letter-spacing: -0.05em;
+  font-variant-numeric: lining-nums;
+}
+
+.gal-yhead__sub {
+  margin-top: clamp(6px, 1vw, 14px);
+  color: var(--ink-2);
+}
+
+.gal-yhead__row {
+  display: grid;
+  gap: 28px;
+  margin-top: clamp(28px, 4vw, 56px);
+  padding-top: clamp(22px, 2.5vw, 32px);
+  border-top: 1px solid var(--line);
+}
+
+.gal-yhead__intro {
+  max-width: 52ch;
+}
+
+.gal-yhead__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px clamp(24px, 4vw, 56px);
+}
+
+.gal-yhead__facts small {
+  margin-left: 2px;
+  font-size: 0.42em;
+  letter-spacing: 0;
+  color: var(--ink-4);
+}
+
+.gal-yhead__media {
+  position: relative;
+  margin-top: clamp(32px, 4vw, 64px);
+}
+
+.gal-yhead__media .gal-tile__fig {
+  border-radius: var(--r-lg);
+}
+
+.gal-yhead__years {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(12px, 2vw, 24px);
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+  max-width: calc(100% - 24px);
+  padding: 5px;
+  overflow-x: auto;
+  border-radius: var(--r-pill);
+  background: rgba(255, 253, 248, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--e-2);
+  transform: translateX(-50%);
+  scrollbar-width: none;
+}
+
+.gal-yhead__year {
+  padding: 9px 15px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--ink-2);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.gal-yhead__year:hover {
+  background: var(--sand);
+  color: var(--ink);
+}
+
+.gal-yhead__year.is-current {
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+@media (min-width: 900px) {
+  .gal-yhead__row {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+  }
+
+  .gal-yhead__facts {
+    justify-self: end;
+  }
+}
+
+@media (max-width: 700px) {
+  .gal-yhead__media .gal-tile__fig {
+    aspect-ratio: 4 / 3;
+  }
+
+  .gal-yhead__years {
+    position: static;
+    width: fit-content;
+    margin: 14px auto 0;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Event grid
+   -------------------------------------------------------------------------- */
+.gal-evs__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-bottom: clamp(36px, 5vw, 72px);
+  padding-bottom: clamp(24px, 3vw, 40px);
+  border-bottom: 1px solid var(--line);
+}
+
+.gal-evs__head h2 {
+  max-width: 16ch;
+}
+
+.gal-evs__rows {
+  display: grid;
+  gap: clamp(48px, 6vw, 96px);
+}
+
+.gal-evs__row {
+  display: grid;
+  gap: clamp(40px, 4vw, 56px) clamp(18px, 2.2vw, 40px);
+  align-items: start;
+}
+
+.gal-ev {
+  min-width: 0;
+}
+
+.gal-ev__link {
+  display: grid;
+  gap: 18px;
+  border-radius: var(--r-lg);
+}
+
+.gal-ev__link:focus-visible {
+  outline-offset: 8px;
+}
+
+.gal-ev__media .fig {
+  border-radius: var(--r-lg);
+}
+
+.gal-ev--feature .gal-ev__media .fig {
+  border-radius: var(--r-blob-2);
+}
+
+.gal-ev--tall .gal-ev__media .fig {
+  border-radius: var(--r-arch);
+}
+
+.gal-ev__count {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 253, 248, 0.92);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink);
+}
+
+.gal-ev--tall .gal-ev__count {
+  top: auto;
+  bottom: 16px;
+}
+
+.gal-ev__text {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.gal-ev__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.gal-ev__cat {
+  padding: 4px 9px;
+  border-radius: var(--r-ctl);
+  background: var(--sun-soft);
+  color: var(--sun-deep);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gal-ev__title {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+}
+
+.gal-ev--feature .gal-ev__title,
+.gal-ev--full .gal-ev__title {
+  font-size: var(--t-h2);
+}
+
+.gal-ev__desc {
+  max-width: 46ch;
+  color: var(--ink-2);
+}
+
+.gal-ev__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1.5px solid var(--sun);
+  font-size: var(--t-small);
+  font-weight: 540;
+  color: var(--ink);
+}
+
+.gal-ev__cta svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.gal-ev__link:hover .gal-ev__cta svg {
+  transform: translateX(5px);
+}
+
+@media (min-width: 700px) {
+  .gal-evs__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gal-ev--full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1000px) {
+  .gal-evs__row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .gal-ev {
+    grid-column: span var(--span);
+  }
+
+  .gal-evs__row--3 .gal-ev--drop {
+    margin-top: clamp(40px, 5vw, 88px);
+  }
+
+  .gal-ev--full .gal-ev__link {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+    gap: clamp(28px, 4vw, 64px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Event header
+   -------------------------------------------------------------------------- */
+.gal-ehead {
+  display: grid;
+  gap: clamp(24px, 3vw, 40px);
+  padding-top: clamp(28px, 4vw, 56px);
+}
+
+.gal-ehead__tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.gal-ehead__title {
+  margin-top: 18px;
+  max-width: 12ch;
+}
+
+.gal-ehead__label {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.gal-ehead__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px 24px;
+  padding-block: 18px;
+  border-block: 1px solid var(--line);
+}
+
+.gal-ehead__facts dt {
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.gal-ehead__facts dd {
+  margin: 0;
+  font-weight: 540;
+  color: var(--ink);
+}
+
+.gal-ehead__quote {
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.gal-ehead__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 28px;
+  margin-top: 6px;
+}
+
+.gal-ehead__thumb {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .gal-ehead {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(40px, 5vw, 88px);
+  }
+
+  .gal-ehead__main {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .gal-ehead__thumb {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    width: clamp(120px, 11vw, 170px);
+    transform: rotate(-3deg);
+    box-shadow: var(--e-2);
+  }
+
+  .gal-ehead__label {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The exhibition wall
+   -------------------------------------------------------------------------- */
+.gal-mason {
+  display: grid;
+  gap: clamp(14px, 2vw, 28px);
+  align-items: start;
+}
+
+.gal-mason--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gal-mason--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gal-mason--3 .gal-mason__col:nth-child(2) {
+  padding-top: clamp(40px, 6vw, 96px);
+}
+
+.gal-mason__col {
+  display: grid;
+  gap: clamp(22px, 2.8vw, 44px);
+  align-content: start;
+  min-width: 0;
+}
+
+.gal-mason__item {
+  display: grid;
+  gap: 10px;
+}
+
+.gal-mason__item .fig {
+  border-radius: 14px;
+}
+
+.gal-mason__cap {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.gal-mason__cap .meta {
+  flex: none;
+  color: var(--ink);
+}
+
+@media (max-width: 559px) {
+  .gal-mason__cap span:last-child {
+    display: none;
+  }
+}
