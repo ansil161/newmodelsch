@@ -6,7 +6,6 @@ import {
   FACULTY_STATS,
   HERITAGE_CHAPTERS,
   PHILOSOPHY,
-  PRINCIPAL,
   ROUTES,
   SCHOOL,
   SCHOOL_FILM,
@@ -326,61 +325,12 @@ export function AboutPhilosophy() {
 
 /* --------------------------------------------------------------------------
    06 - THE PRINCIPAL
+   --------------------------------------------------------------------------
+   The shared dark feature, with the whole message. The Charter's call to
+   action scrolls to its `#principal` anchor. See `components/principal`.
    -------------------------------------------------------------------------- */
 
-export function AboutPrincipal() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    const quote = el.querySelector<HTMLElement>('.letter__quote');
-    if (quote) lines(quote, { trigger: el });
-    unmask(el.querySelectorAll<HTMLElement>('.letter__fig'), { trigger: el, from: 'bottom' });
-    draw(el, { trigger: el, delay: 0.6 });
-    rise(el.querySelectorAll<HTMLElement>('.letter__body > *'), { trigger: el, delay: 0.3, stagger: 0.08 });
-  }, []);
-
-  return (
-    <section ref={scope} className="section letter" id="principal">
-      <div className="wrap letter__inner">
-        <div className="letter__media">
-          <Figure
-            photo={facultyImages[0]}
-            width={720}
-            sizes="(max-width: 900px) 78vw, 32vw"
-            shape="arch"
-            ratio="portrait"
-            className="letter__fig"
-          />
-          <p className="letter__plate">
-            <b>{PRINCIPAL.name}</b>
-            <span className="meta">{PRINCIPAL.tenure}</span>
-          </p>
-        </div>
-
-        <div className="letter__text">
-          <Sticker tone="sun" tilt={-2}>
-            The principal&rsquo;s letter
-          </Sticker>
-
-          <blockquote className="letter__quote ed-h1">
-            Parents rarely ask about our board results first. They ask whether their child will be{' '}
-            <Mark kind="underline">known here.</Mark>
-          </blockquote>
-
-          <div className="letter__body">
-            {PRINCIPAL.letter.map((paragraph) => (
-              <p className="body-text" key={paragraph.slice(0, 22)}>
-                {paragraph}
-              </p>
-            ))}
-            <p className="letter__sign">
-              <span className="letter__name">{PRINCIPAL.name}</span>
-              <span className="meta">{PRINCIPAL.title}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+export { AboutPrincipal } from '@/components/principal/PrincipalMessage';
 
 /* --------------------------------------------------------------------------
    08 - THE FACULTY ARCHIVE

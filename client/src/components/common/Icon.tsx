@@ -374,6 +374,29 @@ const PATHS: Record<string, ReactElement> = {
       <path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" />
     </>
   ),
+  // Added for the prospectus: the studio, the field and the stage.
+  palette: (
+    <>
+      <path d="M12 3.5a8.5 8.5 0 0 0 0 17c1.1 0 1.8-.7 1.8-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7h2.1a3.9 3.9 0 0 0 3.9-3.9c0-4.1-3.8-7.4-8.5-7.4Z" />
+      <circle cx="7.6" cy="11.4" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="9.8" cy="7.6" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="14.4" cy="7.6" r="1.1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  ball: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m12 8.2 3.4 2.4-1.3 4H9.9l-1.3-4L12 8.2Z" />
+      <path d="M12 8.2V3M15.4 10.6l5-1.6M14.1 14.6l3.1 4.2M9.9 14.6l-3.1 4.2M8.6 10.6l-5-1.6" />
+    </>
+  ),
+  mic: (
+    <>
+      <rect x="9" y="2.5" width="6" height="11.5" rx="3" />
+      <path d="M5.5 11a6.5 6.5 0 0 0 13 0" />
+      <path d="M12 17.5v4M8.5 21.5h7" />
+    </>
+  ),
   chevronRight: <path d="m9 5 7 7-7 7" />,
   filter: <path d="M4 5h16l-6 7.5V19l-4 1.5v-8L4 5Z" />,
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,

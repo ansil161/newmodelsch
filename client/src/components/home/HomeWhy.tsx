@@ -1,13 +1,14 @@
-import { useMemo, useRef, useState } from 'react';
-import type { CSSProperties, ReactNode, RefObject } from 'react';
-import { ADMISSIONS_INTRO, SCHOOL, STATS, WHY_CHOOSE } from '@/constants';
+import { useMemo, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { ADMISSIONS_INTRO, MILESTONES, SCHOOL, STATS, WHY_CHOOSE } from '@/constants';
 import {
   academicImages,
+  artsImages,
   beyondImages,
-  campusImages,
   everydayImages,
   resolve,
   resolveSet,
+  sportsImages,
   studentImages,
 } from '@/constants/imagery';
 import type { Photo } from '@/constants/imagery';
@@ -16,404 +17,708 @@ import { useMediaQuery, useReducedMotion } from '@/hooks/useMediaQuery';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useSmoothScroll } from '@/providers/SmoothScrollProvider';
 import { Icon } from '@/components/common/Icon';
+import type { IconName } from '@/components/common/Icon';
 import './why-book.css';
 
 /* ==========================================================================
    02 - WHY CHOOSE US - the prospectus
    --------------------------------------------------------------------------
-   The five reasons, bound as a book. The section pins, and the reader's
-   scroll turns the pages: the right-hand leaf lifts from its outer edge,
-   curls over the spine and lands as the next left-hand page, uncovering the
-   next reason underneath it.
+   A navy cloth hardback lying open on the page. The section pins, and the
+   reader's scroll turns its pages: the right-hand leaf lifts off the spine,
+   bends, crosses over and settles as the next left-hand page, uncovering
+   the next spread underneath.
 
-     SPREAD 0   the cover photograph  |  the heading and the contents
-     SPREAD n   the evidence          |  reason n, its words and its figure
+   THE OBJECT, FROM THE DESK UP
 
-   HOW A LEAF IS BUILT
+     .wb-book__contact   two shadows - a tight contact line and a soft pool
+     .wb-cover           two cloth boards, a recessed spine and the boards'
+                         own thickness showing along their front edge
+     .wb-ribbon          a silk bookmark, tucked between the sheets
+     .wb-stack           sixteen real sheets per side, each offset and very
+                         slightly out of true
+     .wb-book__base      the two pages that never move
+     .wb-leaf            the pages that turn
+     .wb-book__grain     paper grain, laid once over the whole block
+     .wb-book__gutter    the crease of the binding
 
-   A leaf is one sheet of paper with two printed sides: its front is the
-   right-hand page of spread n, its back is the left-hand page of spread n+1.
-   Turning it is a rotation about the spine through 180 degrees.
+   WAYFINDING IS ICONS, NOT NUMBERS
 
-   A rigid rotation reads as a card being flipped, so every leaf is cut into
-   three hinged strips (`SEGMENTS`), each nested inside the one nearer the
-   spine and each carrying its own slice of both printed sides. The strips
-   rotate a little further than the one before on the way up - the edge is
-   lifted first - and a little less on the way down - the edge floats down
-   last. Summed, the extra curl never exceeds 57 degrees, which is the bound
-   that keeps the outer edge from passing through the page it lands on.
+   Each chapter has one icon, and it is the same icon everywhere that
+   chapter is referred to - the mark on its page, its line in the contents,
+   and its place in the indicator beside the book:
 
-   Light, depth and the rest are drawn rather than simulated: each strip
-   darkens by the sine of its own angle, the leaf casts a gradient onto the
-   page below it, the stacks of paper either side of the spine thicken and
-   thin as pages move across, and the words on the page being uncovered
-   rise the last few pixels into place as the leaf clears them.
+     Contents              book
+     Academics             cap
+     Pastoral care         users
+     Beyond the syllabus   compass
+     Reporting             document
+     Heritage              history
 
-   STACKING WITHOUT A SHARED 3D CONTEXT
+   An icon that could be misread always travels with its label. Numbers
+   survive only where the number is the information - a result, a ratio,
+   a count, a year.
 
-   Every leaf is its own 3D rendering context - the book itself is flat - so
-   the leaves are ordered by `z-index`, not by depth sorting. Coplanar pages
-   in one shared context z-fight; ordered explicitly they cannot. Leaves on
-   the right are stacked lowest index on top, leaves on the left highest
-   index on top, and the one leaf in motion is above both.
+   HOW A LEAF TURNS
+
+   A leaf is one sheet with two printed sides - its front is the right-hand
+   page of spread n, its back is the left-hand page of spread n+1. Each leaf
+   is cut into hinged strips, nested spine-outward, and each strip carries
+   its own slice of both sides. The first strip carries the turn itself (a
+   rotation about the spine, a lift toward the reader, the faintest roll);
+   every strip after it adds curl on the way up - the edge leads - and gives
+   some back on the way down - the edge floats in last. The outermost strip
+   carries the sheet's edge, a 3px face that only shows when the page is
+   standing up.
+
+   Light is drawn, not simulated: each strip darkens with the sine of its
+   own angle, the leaf throws a gradient shadow onto the page it is leaving
+   or arriving on, and the words of the page being uncovered settle into
+   place as the leaf clears them.
+
+   Every leaf has its own timeline. The section's timeline, scrubbed by the
+   scroll, is those five timelines in sequence with a rest between each.
+
+   STACKING
+
+   The book is flat and each leaf is its own 3D context, so leaves are
+   ordered by z-index rather than depth-sorted. Right-hand leaves stack
+   lowest index on top, left-hand leaves highest index on top, and the leaf
+   in motion is above both.
 
    PHONES, AND READERS WHO ASKED FOR LESS MOVEMENT
 
-   A spread is too small to read on a phone, so below the spread query the
-   book is a single page - photograph and words together - and each leaf
-   turns away over the spine to the left. With reduced motion there is no
-   pin: the spreads are printed flat, one under the other.
+   Below the spread query the book is a single page - its own composition
+   per spread - and each leaf turns away over the spine with fewer strips.
+   With reduced motion there is no pin: the spreads are printed flat.
 
-   The book is decoration for assistive technology (`aria-hidden`): the same
-   content is in the document once, in order, as a list.
+   The book is decoration for assistive technology (`aria-hidden`). The
+   same content is in the document once, in reading order, as a list.
    ========================================================================== */
 
 type Mode = 'spread' | 'single';
+type Side = 'l' | 'r' | 'single';
 
-/** The spread layout needs width and a landscape-ish window. */
 const SPREAD_QUERY = '(min-width: 900px) and (min-aspect-ratio: 11/10)';
 
-/** Page-width fractions of each hinged strip, spine to outer edge. */
-const SEGMENTS = [0.44, 0.31, 0.25];
+/** Page-width fractions of each hinged strip, spine to edge. */
+const SEGMENTS: Record<Mode, number[]> = {
+  spread: [0.44, 0.31, 0.25],
+  single: [0.56, 0.44],
+};
 
-/** Extra rotation each strip adds at the height of the curl, in degrees.
- *  The sum must stay under 57 - see the header. */
-const CURL = [0, 18, 24];
+/** Extra rotation per strip at the height of the curl, in degrees. The sum
+ *  must stay under 57, or the edge passes through the page it lands on. */
+const CURL: Record<Mode, number[]> = {
+  spread: [0, 16, 22],
+  single: [0, 20],
+};
 
-/* Timeline units. One unit of hold at the start, one of turn per page, and a
-   hold after each turn in which the page lies flat and can be read. */
+/** Shear per strip at mid-turn, in degrees: the lower corner leads. */
+const SKEW: Record<Mode, number[]> = {
+  spread: [0, -0.5, -0.9],
+  single: [0, -0.7],
+};
+
+/** Sheets in each side's text block. */
+const SHEETS = 16;
+
+/* Timeline units: a rest before the first turn, then per page one turn and
+   one rest in which the spread lies open and can be read. */
 const H0 = 0.3;
 const TURN = 1;
 const HOLD = 0.55;
 
 /** Viewport heights of scroll per timeline unit. */
-const UNIT = { spread: 0.62, single: 0.5 } as const;
+const UNIT: Record<Mode, number> = { spread: 0.62, single: 0.5 };
 
-/* --------------------------------------------------------------------------
+/* ==========================================================================
    Content
    --------------------------------------------------------------------------
-   The titles and descriptions are the school's own, from `WHY_CHOOSE`. The
-   kickers are the ones the section already used. Every figure below is one
-   the site already publishes elsewhere - nothing here is new information.
-   -------------------------------------------------------------------------- */
-
-interface Figure {
-  value: string;
-  label: string;
-}
-
-interface Reason {
-  id: string;
-  kicker: string;
-  title: string;
-  /** The description as written. */
-  description: string;
-  /** What the page prints as its paragraph. */
-  body: string;
-  /** A second sentence set large, where a reason has no figure to show. */
-  pull?: string;
-  figures: Figure[];
-  photo: Photo;
-}
+   Every title and description is the school's own, from `WHY_CHOOSE`.
+   Every figure, date and milestone is one the site already publishes:
+   board results from `STATS`, the mentor ratio from the education page,
+   laboratories from the campus facts, milestones from `MILESTONES`. The
+   chapter labels are wayfinding, not claims.
+   ========================================================================== */
 
 type ReasonId = (typeof WHY_CHOOSE)[number]['id'];
 
-const board = STATS.find((stat) => stat.suffix === '%');
-
-const DETAIL: Record<ReasonId, { kicker: string; photo: Photo; figures: Figure[]; pull?: true }> = {
-  known: {
-    kicker: 'Curious by design',
-    photo: academicImages[0],
-    // education.ts - the mentor groups
-    figures: [{ value: '1:18', label: 'Mentor group ratio' }],
-  },
-  results: {
-    kicker: 'Rooted in values',
-    photo: everydayImages.reading,
-    figures: board
-      ? [{ value: `${board.value}${board.suffix}`, label: `${board.label} · ${board.detail}` }]
-      : [],
-  },
-  breadth: {
-    kicker: 'Built for every child',
-    photo: beyondImages.problemSolving,
-    // campus-life.ts - the campus facts
-    figures: [{ value: '11', label: 'Laboratories · science, computing, robotics' }],
-  },
-  honesty: {
-    kicker: 'Learning beyond marks',
-    photo: everydayImages.lesson,
-    figures: [],
-    pull: true,
-  },
-  legacy: {
-    kicker: 'A place to come back to',
-    photo: studentImages[5],
-    figures: [
-      { value: '64', label: 'Years' },
-      { value: '10,000+', label: 'Alumni' },
-      { value: '1,000+', label: 'Second-generation families' },
-    ],
-  },
+const reason = (id: ReasonId) => {
+  const found = WHY_CHOOSE.find((item) => item.id === id);
+  return { title: found?.title ?? '', description: found?.description ?? '' };
 };
 
-const REASONS: Reason[] = WHY_CHOOSE.map((item) => {
-  const detail = DETAIL[item.id];
-  const [first, ...rest] = item.description.split(/(?<=\.)\s+/);
-  const pull = detail.pull && rest.length ? rest.join(' ') : undefined;
-  return {
-    id: item.id,
-    kicker: detail.kicker,
-    title: item.title,
-    description: item.description,
-    body: pull ? first : item.description,
-    pull,
-    figures: detail.figures,
-    photo: detail.photo,
-  };
-});
+interface Chapter {
+  id: ReasonId;
+  label: string;
+  icon: IconName;
+}
 
-const INTRO = {
-  photo: campusImages[7],
-  kicker: `${REASONS.length} reasons`,
-  title: 'Reasons you can check for yourself.',
-  lead: 'Five answers, and every one of them is something you can check on a campus visit rather than something we can only assert here.',
-};
+const CHAPTERS: Chapter[] = [
+  { id: 'results', label: 'Academics', icon: 'cap' },
+  { id: 'known', label: 'Pastoral care', icon: 'users' },
+  { id: 'breadth', label: 'Beyond the syllabus', icon: 'compass' },
+  { id: 'honesty', label: 'Reporting', icon: 'document' },
+  { id: 'legacy', label: 'Heritage', icon: 'history' },
+];
 
-/** Spreads in the book: the opening one, then one per reason. */
-const SPREADS = REASONS.length + 1;
-/** Leaves that turn. */
+const chapter = (id: ReasonId) => CHAPTERS.find((item) => item.id === id) ?? CHAPTERS[0];
+
+/** What the indicator beside the book shows for each spread. */
+const INDEX: { label: string; icon: IconName }[] = [
+  { label: 'Contents', icon: 'book' },
+  ...CHAPTERS.map(({ label, icon }) => ({ label, icon })),
+];
+
+const SPREADS = CHAPTERS.length + 1;
 const LEAVES = SPREADS - 1;
 
-const pad = (n: number) => String(n).padStart(2, '0');
+const INTRO_LEAD =
+  'Five answers, and every one of them is something you can check on a campus visit rather than something we can only assert here.';
+
+const board = STATS.find((stat) => stat.suffix === '%');
+const BOARD = board ? `${board.value}${board.suffix}` : '100%';
+
+const [HONESTY_LEAD, ...honestyRest] = reason('honesty').description.split(/(?<=\.)\s+/);
+const HONESTY_QUOTE = honestyRest.join(' ') || HONESTY_LEAD;
+
+const TIMELINE = MILESTONES.filter((m) => ['1962', '1975', '1985', '2000', '2020'].includes(m.year));
+
+const PHOTOS = {
+  opening: everydayImages.deskGirls,
+  results: everydayImages.reading,
+  known: academicImages[0],
+  knownInset: everydayImages.deskBoys,
+  honesty: everydayImages.lesson,
+  legacy: studentImages[5],
+};
+
+/** The four strands the breadth reason names, each with its icon and its evidence. */
+const STRANDS: { label: string; icon: IconName; photo: Photo }[] = [
+  { label: 'Robotics', icon: 'robot', photo: beyondImages.problemSolving },
+  { label: 'Studio', icon: 'palette', photo: artsImages[1] },
+  { label: 'Field', icon: 'ball', photo: sportsImages[0] },
+  { label: 'Stage', icon: 'mic', photo: artsImages[3] },
+];
+
+const LEGACY_FIGURES = [
+  { value: '64', label: 'Years' },
+  { value: '10,000+', label: 'Alumni' },
+  { value: '1,000+', label: 'Second-generation families' },
+];
+
+const est = `Est. ${SCHOOL.established}`;
 
 /* ==========================================================================
-   Pages
+   Printed parts
    ========================================================================== */
 
-function Plate({
-  photo,
-  className,
-  sizes,
-  children,
-}: {
-  photo: Photo;
-  className?: string;
-  sizes: string;
-  children?: ReactNode;
-}) {
+const SIZES = '(max-width: 899px) 90vw, 40vw';
+
+/** An icon at the size of the type around it. */
+function Glyph({ name, className = '' }: { name: IconName; className?: string }) {
   return (
-    <div className={`wb-plate ${className ?? ''}`}>
+    <span className={`wb-ico ${className}`}>
+      <Icon name={name} size={24} />
+    </span>
+  );
+}
+
+function Plate({ photo, className = '', width = 900 }: { photo: Photo; className?: string; width?: number }) {
+  return (
+    <div className={`wb-plate ${className}`}>
       <img
         data-img
-        src={resolve(photo, 900)}
+        src={resolve(photo, width)}
         srcSet={resolveSet(photo, [480, 900, 1300])}
-        sizes={sizes}
+        sizes={SIZES}
         alt=""
         loading="lazy"
         decoding="async"
         draggable={false}
         style={photo.focus ? { objectPosition: photo.focus } : undefined}
       />
-      {children}
     </div>
   );
 }
 
-const SPREAD_SIZES = '(max-width: 1400px) 34vw, 560px';
-const SINGLE_SIZES = '(max-width: 700px) 88vw, 560px';
-
-function RunHead({ left, right }: { left: ReactNode; right: ReactNode }) {
+function Page({ side, variant, children }: { side: Side; variant?: string; children: ReactNode }) {
   return (
-    <div className="wb-page__run">
+    <div className={`wb-page wb-page--${side}${variant ? ` wb-page--${variant}` : ''}`}>
+      <div className="wb-page__inner">{children}</div>
+    </div>
+  );
+}
+
+function Run({ left, right }: { left: ReactNode; right: ReactNode }) {
+  return (
+    <div className="wb-run">
       <span>{left}</span>
       <span>{right}</span>
     </div>
   );
 }
 
-function Figures({ reason }: { reason: Reason }) {
-  if (reason.pull) {
-    return (
-      <p className="wb-page__pull" data-rise>
-        {reason.pull}
-      </p>
-    );
-  }
-  if (!reason.figures.length) return null;
+function Meta({ left, right, light }: { left: ReactNode; right?: ReactNode; light?: boolean }) {
   return (
-    <div className={`wb-page__figs${reason.figures.length > 1 ? ' is-row' : ''}`} data-rise>
-      {reason.figures.map((figure) => (
-        <div className="wb-page__fig" key={figure.label}>
-          <span className="wb-page__fig-v">{figure.value}</span>
-          <span className="wb-page__fig-l">{figure.label}</span>
-        </div>
-      ))}
+    <div className={`wb-meta${light ? ' wb-meta--light' : ''}`}>
+      <span>{left}</span>
+      {right && <span>{right}</span>}
     </div>
+  );
+}
+
+/** A short instruction or fact with its icon, printed inline. */
+function Hint({ icon, label, after }: { icon: IconName; label: string; after?: boolean }) {
+  return (
+    <span className="wb-hint">
+      {!after && <Glyph name={icon} />}
+      {label}
+      {after && <Glyph name={icon} />}
+    </span>
+  );
+}
+
+/** A chapter's mark: its icon in a ring, and its name beside it. */
+function Mark({ id }: { id: ReasonId }) {
+  const { icon, label } = chapter(id);
+  return (
+    <div className="wb-mark" data-rise>
+      <span className="wb-ring">
+        <Icon name={icon} size={24} />
+      </span>
+      <span className="wb-mark__label">{label}</span>
+    </div>
+  );
+}
+
+/** A photograph's caption, marked as one by the camera. */
+function Caption({ photo }: { photo: Photo }) {
+  return (
+    <p className="wb-cap" data-rise>
+      <Glyph name="camera" />
+      <span>{photo.alt}</span>
+    </p>
   );
 }
 
 function Contents() {
   return (
     <ol className="wb-toc" data-rise>
-      {REASONS.map((reason, i) => (
-        <li key={reason.id}>
-          <span className="wb-toc__no">{pad(i + 1)}</span>
-          <span className="wb-toc__t">{reason.title}</span>
-          <span className="wb-toc__dots" />
-          <span className="wb-toc__pg">{pad((i + 1) * 2 + 1)}</span>
+      {CHAPTERS.map((item) => (
+        <li key={item.id}>
+          <Glyph name={item.icon} />
+          <span className="wb-toc__t">{reason(item.id).title}</span>
         </li>
       ))}
     </ol>
   );
 }
 
-/** The left-hand page of a spread: the photograph. */
-function LeftPage({ s }: { s: number }) {
-  if (s === 0) {
-    return (
-      <div className="wb-page wb-page--l wb-page--cover">
-        <div className="wb-page__inner">
-          <Plate photo={INTRO.photo} className="wb-cover__plate" sizes={SPREAD_SIZES} />
-          <span className="wb-cover__scrim" />
-          <div className="wb-cover__top">
-            <span className="wb-cover__crest">{SCHOOL.shortName}</span>
-            <span>Prospectus {ADMISSIONS_INTRO.session}</span>
-          </div>
-          <div className="wb-cover__body">
-            <p className="wb-cover__label" data-rise>
-              Since {SCHOOL.established} · {SCHOOL.locality}
-            </p>
-            <p className="wb-cover__name" data-rise>
-              {SCHOOL.name}
-            </p>
-            <span className="wb-cover__rule" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const reason = REASONS[s - 1];
+function BoardStats() {
   return (
-    <div className="wb-page wb-page--l">
-      <div className="wb-page__inner">
-        <RunHead left={SCHOOL.name} right={`Est. ${SCHOOL.established}`} />
-        <Plate photo={reason.photo} className="wb-page__plate" sizes={SPREAD_SIZES} />
-        <p className="wb-page__caption" data-rise>
-          <b>Fig. {pad(s)}</b>
-          <span>{reason.photo.alt}</span>
-        </p>
-        <p className="wb-page__folio">{pad(s * 2 + 1)}</p>
+    <div className="wb-stats" data-rise>
+      <div className="wb-stat">
+        <span className="wb-stat__v">{BOARD}</span>
+        <span className="wb-stat__l">
+          Board results
+          <br />
+          for 12 years
+        </span>
+      </div>
+      <div className="wb-stat">
+        <span className="wb-ring wb-ring--solid">
+          <Icon name="users" size={24} />
+        </span>
+        <span className="wb-stat__l">
+          Trained &amp; dedicated
+          <br />
+          teachers
+        </span>
       </div>
     </div>
   );
 }
 
-/** The right-hand page of a spread: the words. */
+function Mentors() {
+  return (
+    <div className="wb-fig" data-rise>
+      <span className="wb-fig__v">1:18</span>
+      <span className="wb-fig__l">
+        <b>Mentor group ratio</b>
+        <br />
+        One named adult who calls home
+      </span>
+    </div>
+  );
+}
+
+function Laboratories() {
+  return (
+    <div className="wb-fig" data-rise>
+      <span className="wb-fig__v">11</span>
+      <span className="wb-fig__l">
+        <b>Laboratories</b>
+        <br />
+        Science, computing, robotics
+      </span>
+    </div>
+  );
+}
+
+function Trio() {
+  return (
+    <div className="wb-trio" data-rise>
+      {LEGACY_FIGURES.map((figure) => (
+        <div key={figure.label}>
+          <b>{figure.value}</b>
+          <span>{figure.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StrandGrid() {
+  return (
+    <div className="wb-grid">
+      {STRANDS.map((strand) => (
+        <div className="wb-grid__cell" key={strand.label}>
+          <Plate photo={strand.photo} className="wb-grid__plate" width={600} />
+          <p className="wb-grid__cap" data-rise>
+            <Glyph name={strand.icon} />
+            {strand.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ==========================================================================
+   The spreads - each one composed for its content
+   ========================================================================== */
+
+/** Left-hand page of spread `s`. */
+function LeftPage({ s }: { s: number }) {
+  switch (s) {
+    /* The opening: a photograph, full bleed. */
+    case 0:
+      return (
+        <Page side="l" variant="bleed">
+          <Plate photo={PHOTOS.opening} className="wb-bleed" />
+          <span className="wb-bleed__shade" />
+          <Meta left={SCHOOL.name} right={est} light />
+          <div className="wb-bleed__foot">
+            <p className="wb-bleed__place" data-rise>
+              {SCHOOL.locality}
+            </p>
+            <Meta
+              left={`Prospectus ${ADMISSIONS_INTRO.session}`}
+              right={<Hint icon="arrowRight" label="Turn the page" after />}
+              light
+            />
+          </div>
+        </Page>
+      );
+
+    /* Academics: a framed photograph and its caption. */
+    case 1:
+      return (
+        <Page side="l">
+          <Meta left={SCHOOL.name} right={est} />
+          <Plate photo={PHOTOS.results} className="wb-frame" />
+          <Caption photo={PHOTOS.results} />
+        </Page>
+      );
+
+    /* Pastoral care: words first, and a figure. */
+    case 2:
+      return (
+        <Page side="l">
+          <Run left={SCHOOL.name} right={est} />
+          <Mark id="known" />
+          <p className="wb-h" data-rise>
+            {reason('known').title}
+          </p>
+          <p className="wb-body" data-rise>
+            {reason('known').description}
+          </p>
+          <Mentors />
+        </Page>
+      );
+
+    /* Beyond the syllabus: words, the four strands, a figure. */
+    case 3:
+      return (
+        <Page side="l">
+          <Run left={SCHOOL.name} right={est} />
+          <Mark id="breadth" />
+          <p className="wb-h" data-rise>
+            {reason('breadth').title}
+          </p>
+          <p className="wb-body" data-rise>
+            {reason('breadth').description}
+          </p>
+          <ul className="wb-strands" data-rise>
+            {STRANDS.map((strand) => (
+              <li key={strand.label}>
+                <Glyph name={strand.icon} />
+                {strand.label}
+              </li>
+            ))}
+          </ul>
+          <Laboratories />
+        </Page>
+      );
+
+    /* Reporting: one sentence, set large. */
+    case 4:
+      return (
+        <Page side="l" variant="quote">
+          <Run left={SCHOOL.name} right={est} />
+          <span className="wb-quote__mark" data-rise />
+          <p className="wb-quote" data-rise>
+            {HONESTY_QUOTE}
+          </p>
+          <p className="wb-quote__src" data-rise>
+            <Glyph name={chapter('honesty').icon} />
+            {reason('honesty').title}
+          </p>
+        </Page>
+      );
+
+    /* Heritage: a photograph, full bleed, with the number over it. */
+    default:
+      return (
+        <Page side="l" variant="bleed">
+          <Plate photo={PHOTOS.legacy} className="wb-bleed" />
+          <span className="wb-bleed__shade" />
+          <Meta left={SCHOOL.name} right={est} light />
+          <div className="wb-bleed__foot">
+            <p className="wb-bleed__big" data-rise>
+              64
+            </p>
+            <p className="wb-bleed__label" data-rise>
+              Years on one campus
+            </p>
+            <Meta left={<Hint icon="pin" label={SCHOOL.locality} />} light />
+          </div>
+        </Page>
+      );
+  }
+}
+
+/** Right-hand page of spread `s`. */
 function RightPage({ s }: { s: number }) {
-  if (s === 0) {
-    return (
-      <div className="wb-page wb-page--r wb-page--intro">
-        <div className="wb-page__inner">
-          <RunHead left="Why choose us" right="Contents" />
-          <p className="wb-page__kicker" data-rise>
-            {INTRO.kicker}
+  switch (s) {
+    /* The opening: the heading and the contents. */
+    case 0:
+      return (
+        <Page side="r">
+          <Run left="Why choose us" right="Contents" />
+          <p className="wb-eyebrow" data-rise>
+            Why choose us
           </p>
-          <p className="wb-page__title wb-page__title--xl" data-rise>
-            {INTRO.title}
+          <p className="wb-display" data-rise>
+            What makes this place different?
           </p>
-          <p className="wb-page__body" data-rise>
-            {INTRO.lead}
+          <p className="wb-lead" data-rise>
+            {INTRO_LEAD}
           </p>
           <Contents />
-          <p className="wb-page__folio">02</p>
-        </div>
-      </div>
-    );
-  }
+        </Page>
+      );
 
-  const reason = REASONS[s - 1];
+    /* Academics: the claim, and the evidence under it. */
+    case 1:
+      return (
+        <Page side="r">
+          <Run left="Why choose us" right={est} />
+          <Mark id="results" />
+          <p className="wb-h" data-rise>
+            {reason('results').title}
+          </p>
+          <p className="wb-body" data-rise>
+            {reason('results').description}
+          </p>
+          <BoardStats />
+        </Page>
+      );
+
+    /* Pastoral care: a portrait, with a second print tipped in. */
+    case 2:
+      return (
+        <Page side="r">
+          <Meta left="Why choose us" right={est} />
+          <div className="wb-portrait">
+            <Plate photo={PHOTOS.known} className="wb-portrait__main" />
+            <Plate photo={PHOTOS.knownInset} className="wb-portrait__inset" width={600} />
+          </div>
+          <Caption photo={PHOTOS.known} />
+        </Page>
+      );
+
+    /* Beyond the syllabus: four prints, one per strand. */
+    case 3:
+      return (
+        <Page side="r">
+          <Meta left="Why choose us" right={est} />
+          <StrandGrid />
+        </Page>
+      );
+
+    /* Reporting: a photograph over the reason. */
+    case 4:
+      return (
+        <Page side="r">
+          <Meta left="Why choose us" right={est} />
+          <Plate photo={PHOTOS.honesty} className="wb-frame" />
+          <div className="wb-after">
+            <Mark id="honesty" />
+            <p className="wb-h" data-rise>
+              {reason('honesty').title}
+            </p>
+            <p className="wb-body" data-rise>
+              {HONESTY_LEAD}
+            </p>
+          </div>
+        </Page>
+      );
+
+    /* Heritage: the record, as a timeline and three figures. */
+    default:
+      return (
+        <Page side="r">
+          <Run left="Why choose us" right={est} />
+          <Mark id="legacy" />
+          <p className="wb-h" data-rise>
+            {reason('legacy').title}
+          </p>
+          <p className="wb-body" data-rise>
+            {reason('legacy').description}
+          </p>
+          <ol className="wb-timeline" data-rise>
+            {TIMELINE.map((milestone) => (
+              <li key={milestone.year}>
+                <span className="wb-timeline__y">{milestone.year}</span>
+                <span className="wb-timeline__t">{milestone.title}</span>
+              </li>
+            ))}
+          </ol>
+          <Trio />
+        </Page>
+      );
+  }
+}
+
+/** A phone's chapter heading: the chapter's icon beside the title. */
+function Heading({ id }: { id: ReasonId }) {
   return (
-    <div className="wb-page wb-page--r">
-      <div className="wb-page__inner">
-        <RunHead left="Why choose us" right={`Reason ${pad(s)} / ${pad(REASONS.length)}`} />
-        <div className="wb-page__lead" data-rise>
-          <span className="wb-page__num">{pad(s)}</span>
-          <span className="wb-page__kicker">{reason.kicker}</span>
-        </div>
-        <p className="wb-page__title" data-rise>
-          {reason.title}
-        </p>
-        <p className="wb-page__body" data-rise>
-          {reason.body}
-        </p>
-        <Figures reason={reason} />
-        <p className="wb-page__folio">{pad(s * 2 + 2)}</p>
-      </div>
+    <div className="wb-head" data-rise>
+      <span className="wb-ring">
+        <Icon name={chapter(id).icon} size={24} />
+      </span>
+      <p className="wb-h">{reason(id).title}</p>
     </div>
   );
 }
 
-/** A phone's page: photograph and words on one sheet. */
+/** A phone's page for spread `s`: its own composition, not the spread. */
 function SinglePage({ s }: { s: number }) {
-  if (s === 0) {
-    return (
-      <div className="wb-page wb-page--single wb-page--intro">
-        <div className="wb-page__inner">
-          <RunHead left="Why choose us" right={`Prospectus ${ADMISSIONS_INTRO.session}`} />
-          <Plate photo={INTRO.photo} className="wb-page__plate wb-page__plate--cover" sizes={SINGLE_SIZES}>
-            <span className="wb-cover__scrim" />
-            <span className="wb-cover__mini">
-              <span>Since {SCHOOL.established}</span>
-              <b>{SCHOOL.name}</b>
-            </span>
-          </Plate>
-          <p className="wb-page__kicker" data-rise>
-            {INTRO.kicker}
-          </p>
-          <p className="wb-page__title" data-rise>
-            {INTRO.title}
-          </p>
-          <p className="wb-page__body" data-rise>
-            {INTRO.lead}
-          </p>
-          <p className="wb-page__folio">01</p>
-        </div>
-      </div>
-    );
-  }
-
-  const reason = REASONS[s - 1];
-  return (
-    <div className="wb-page wb-page--single">
-      <div className="wb-page__inner">
-        <RunHead left="Why choose us" right={`${pad(s)} / ${pad(REASONS.length)}`} />
-        <Plate photo={reason.photo} className="wb-page__plate" sizes={SINGLE_SIZES} />
-        <div className="wb-page__lead" data-rise>
-          <span className="wb-page__num">{pad(s)}</span>
-          <span className="wb-page__kicker">{reason.kicker}</span>
-        </div>
-        <p className="wb-page__title" data-rise>
-          {reason.title}
-        </p>
-        <p className="wb-page__body" data-rise>
-          {reason.body}
-        </p>
-        <Figures reason={reason} />
-        <p className="wb-page__folio">{pad(s + 1)}</p>
-      </div>
-    </div>
+  const meta = (id?: ReasonId) => (
+    <Meta
+      left={SCHOOL.name}
+      right={id ? <Hint icon={chapter(id).icon} label={chapter(id).label} /> : est}
+    />
   );
+
+  switch (s) {
+    case 0:
+      return (
+        <Page side="single">
+          {meta()}
+          <Plate photo={PHOTOS.opening} className="wb-frame" />
+          <p className="wb-eyebrow" data-rise>
+            Why choose us
+          </p>
+          <p className="wb-display" data-rise>
+            What makes this place different?
+          </p>
+          <p className="wb-lead" data-rise>
+            {INTRO_LEAD}
+          </p>
+        </Page>
+      );
+    case 1:
+      return (
+        <Page side="single">
+          {meta('results')}
+          <Plate photo={PHOTOS.results} className="wb-frame" />
+          <Heading id="results" />
+          <p className="wb-body" data-rise>
+            {reason('results').description}
+          </p>
+          <BoardStats />
+        </Page>
+      );
+    case 2:
+      return (
+        <Page side="single">
+          {meta('known')}
+          <Plate photo={PHOTOS.known} className="wb-frame" />
+          <Heading id="known" />
+          <p className="wb-body" data-rise>
+            {reason('known').description}
+          </p>
+          <Mentors />
+        </Page>
+      );
+    case 3:
+      return (
+        <Page side="single">
+          {meta('breadth')}
+          <StrandGrid />
+          <Heading id="breadth" />
+          <p className="wb-body" data-rise>
+            {reason('breadth').description}
+          </p>
+        </Page>
+      );
+    case 4:
+      return (
+        <Page side="single" variant="quote">
+          {meta('honesty')}
+          <span className="wb-quote__mark" data-rise />
+          <p className="wb-quote" data-rise>
+            {HONESTY_QUOTE}
+          </p>
+          <Heading id="honesty" />
+          <p className="wb-body" data-rise>
+            {HONESTY_LEAD}
+          </p>
+        </Page>
+      );
+    default:
+      return (
+        <Page side="single">
+          {meta('legacy')}
+          <Plate photo={PHOTOS.legacy} className="wb-frame" />
+          <Heading id="legacy" />
+          <p className="wb-body" data-rise>
+            {reason('legacy').description}
+          </p>
+          <Trio />
+        </Page>
+      );
+  }
 }
 
 /** The reverse of a phone's page, seen only while it turns away. */
 function PaperBack() {
   return (
     <div className="wb-page wb-page--back">
-      <div className="wb-page__inner">
-        <span className="wb-back__mark">{SCHOOL.shortName}</span>
-      </div>
+      <div className="wb-page__inner" />
     </div>
   );
 }
@@ -422,19 +727,39 @@ function PaperBack() {
    The book
    ========================================================================== */
 
-interface LeafFaces {
+/** A side of the text block: real sheets, each a hair out of true. */
+function Stack({ side }: { side: 'l' | 'r' }) {
+  const seed = side === 'l' ? 7 : 3;
+  return (
+    <span className={`wb-stack wb-stack--${side}`}>
+      {Array.from({ length: SHEETS }, (_, n) => {
+        // Deepest sheet first, so each one is painted under the next.
+        const i = SHEETS - 1 - n;
+        const style = {
+          '--i': i,
+          '--jx': (((i * 37 + seed) % 7) - 3) * 0.14,
+          '--jy': (((i * 23 + seed) % 5) - 2) * 0.12,
+          '--jr': (((i * 53 + seed) % 5) - 2) * 0.025,
+        } as CSSProperties;
+        return <span className="wb-sheet" key={i} style={style} />;
+      })}
+    </span>
+  );
+}
+
+interface Faces {
   front: ReactNode;
   back: ReactNode;
 }
 
-/** One leaf: the strips, nested spine-outward, each holding its slice of
- *  both printed sides. */
-function Leaf({ index, faces }: { index: number; faces: LeafFaces }) {
+function Leaf({ index, faces, mode }: { index: number; faces: Faces; mode: Mode }) {
+  const segments = SEGMENTS[mode];
+
   const strip = (j: number, from: number): ReactNode => {
-    if (j === SEGMENTS.length) return null;
-    const to = from + SEGMENTS[j];
+    const to = from + segments[j];
+    const last = j === segments.length - 1;
     return (
-      <div className="wb-seg" style={{ '--seg-w': SEGMENTS[j] } as CSSProperties}>
+      <div className="wb-seg" style={{ '--seg-w': segments[j] } as CSSProperties}>
         <div className="wb-face wb-face--front">
           <div className="wb-face__page" style={{ '--x': from } as CSSProperties}>
             {faces.front}
@@ -447,7 +772,7 @@ function Leaf({ index, faces }: { index: number; faces: LeafFaces }) {
           </div>
           <span className="wb-face__shade" />
         </div>
-        {strip(j + 1, to)}
+        {last ? <span className="wb-leaf__edge" /> : strip(j + 1, to)}
       </div>
     );
   };
@@ -470,12 +795,17 @@ function Book({ mode }: { mode: Mode }) {
 
   return (
     <div className={`wb-book wb-book--${mode}`} aria-hidden="true">
-      <span className="wb-book__shadow" />
-      <span className="wb-book__cover">
-        <span className="wb-book__ribbon" />
+      <span className="wb-book__contact" />
+
+      <span className="wb-cover">
+        {!single && <span className="wb-cover__board wb-cover__board--l" />}
+        <span className="wb-cover__board wb-cover__board--r" />
+        <span className="wb-cover__spine" />
       </span>
-      {!single && <span className="wb-book__stack wb-book__stack--l" />}
-      <span className="wb-book__stack wb-book__stack--r" />
+
+      {!single && <Stack side="l" />}
+      <Stack side="r" />
+      <span className="wb-ribbon" />
 
       {!single && (
         <div className="wb-book__base wb-book__base--l">
@@ -486,12 +816,14 @@ function Book({ mode }: { mode: Mode }) {
         {single ? <SinglePage s={LEAVES} /> : <RightPage s={LEAVES} />}
       </div>
 
-      {/* Reversed, so before the module runs the stylesheet's natural order
+      {/* Reversed, so before the module runs the natural stacking order
           already has the first leaf on top. */}
       {[...leaves].reverse().map(({ k, faces }) => (
-        <Leaf key={k} index={k} faces={faces} />
+        <Leaf key={k} index={k} faces={faces} mode={mode} />
       ))}
 
+      <span className="wb-book__grain" />
+      <span className="wb-book__gutter" />
       <span className="wb-book__cast wb-book__cast--r" />
       {!single && <span className="wb-book__cast wb-book__cast--l" />}
     </div>
@@ -504,7 +836,11 @@ function StaticBooks({ mode }: { mode: Mode }) {
     <div className="wb-static" aria-hidden="true">
       {Array.from({ length: SPREADS }, (_, s) => (
         <div className={`wb-book wb-book--${mode} wb-book--static`} key={s}>
-          <span className="wb-book__cover" />
+          <span className="wb-cover">
+            {mode === 'spread' && <span className="wb-cover__board wb-cover__board--l" />}
+            <span className="wb-cover__board wb-cover__board--r" />
+            <span className="wb-cover__spine" />
+          </span>
           {mode === 'spread' ? (
             <>
               <div className="wb-book__base wb-book__base--l">
@@ -519,6 +855,7 @@ function StaticBooks({ mode }: { mode: Mode }) {
               <SinglePage s={s} />
             </div>
           )}
+          <span className="wb-book__gutter" />
         </div>
       ))}
     </div>
@@ -528,12 +865,6 @@ function StaticBooks({ mode }: { mode: Mode }) {
 /* ==========================================================================
    Motion
    ========================================================================== */
-
-interface Run {
-  trigger: ScrollTrigger;
-  /** Scroll position at which spread `s` lies open and still. */
-  at: (s: number) => number;
-}
 
 interface Surface {
   rise: { el: HTMLElement; i: number }[];
@@ -559,15 +890,16 @@ function buildBook(
   scope: HTMLElement,
   mode: Mode,
   onPage: (s: number) => void,
-  run: RefObject<Run | null>,
   scrollTo: (y: number) => void,
 ) {
   const book = scope.querySelector<HTMLElement>('.wb-book');
   const tilt = scope.querySelector<HTMLElement>('.wb__tilt');
-  const float = scope.querySelector<HTMLElement>('.wb__float');
-  if (!book || !tilt || !float) return;
+  if (!book || !tilt) return;
 
   const single = mode === 'single';
+  const curl = CURL[mode];
+  const skew = SKEW[mode];
+
   const leafEls = gsap.utils
     .toArray<HTMLElement>('.wb-leaf', book)
     .sort((a, b) => Number(a.dataset.leaf) - Number(b.dataset.leaf));
@@ -586,62 +918,67 @@ function buildBook(
     };
   });
 
+  const empty: Surface = { rise: [], img: [] };
   const baseL = book.querySelector('.wb-book__base--l');
   const baseR = book.querySelector('.wb-book__base--r');
-  const castR = book.querySelector<HTMLElement>('.wb-book__cast--r');
-  const castL = book.querySelector<HTMLElement>('.wb-book__cast--l');
-  const stackR = book.querySelector<HTMLElement>('.wb-book__stack--r');
-  const stackL = book.querySelector<HTMLElement>('.wb-book__stack--l');
-  const fill = scope.querySelector<HTMLElement>('.wb-count__fill');
-  const cue = scope.querySelector<HTMLElement>('.wb-cue');
-
-  const empty: Surface = { rise: [], img: [] };
   const baseLS = baseL ? collect([baseL]) : empty;
   const baseRS = baseR ? collect([baseR]) : empty;
+  const castR = book.querySelector<HTMLElement>('.wb-book__cast--r');
+  const castL = book.querySelector<HTMLElement>('.wb-book__cast--l');
+  const cue = scope.querySelector<HTMLElement>('.wb-cue');
 
-  /** The printed surfaces of spread `s`: [left, right] on a spread, or the
-   *  one page on a phone. */
-  const surfaces = (s: number): { left: Surface; right: Surface } => {
+  /** The printed surfaces of spread `s`. */
+  const surfaces = (s: number) => {
     const right = s < L ? leaves[s].front : baseRS;
-    if (single) return { left: empty, right };
-    return { left: s === 0 ? baseLS : leaves[s - 1].back, right };
+    const left = single ? empty : s === 0 ? baseLS : leaves[s - 1].back;
+    return { left, right };
   };
 
-  /** Words settling into place: `r` 0 is lowered and faint, 1 is at rest. */
+  /* Both of these write only when a value actually changes, and only 2D
+     transforms: everything they touch is printed inside a turning strip, so
+     every write repaints that strip, and a 3D transform would promote the
+     element to a layer of its own in every copy of the page. */
+  const written = new WeakMap<HTMLElement, string>();
+  const write = (el: HTMLElement, transform: string, opacity: string) => {
+    const key = `${transform}|${opacity}`;
+    if (written.get(el) === key) return;
+    written.set(el, key);
+    el.style.transform = transform;
+    el.style.opacity = opacity;
+  };
+
   const rise = (surface: Surface, r: number) => {
     surface.rise.forEach(({ el, i }) => {
       const lo = 0.3 + 0.06 * Math.min(i, 6);
       const k = smooth(lo, Math.min(1, lo + 0.42), r);
-      if (k >= 1) {
-        el.style.transform = '';
-        el.style.opacity = '';
-      } else {
-        el.style.transform = `translate3d(0, ${((1 - k) * 16).toFixed(2)}px, 0)`;
-        el.style.opacity = (0.2 + 0.8 * k).toFixed(3);
-      }
+      if (k >= 1) write(el, '', '');
+      else write(el, `translate(0, ${((1 - k) * 14).toFixed(1)}px)`, (0.15 + 0.85 * k).toFixed(2));
     });
   };
 
-  /** A photograph drifting with the reading, and settling as it lands. */
-  const drift = (surface: Surface, t: number, s: number, settle: number) => {
-    const y = gsap.utils.clamp(-1, 1, t - s) * -3;
-    const scale = 1 + 0.1 * (1 - settle);
-    surface.img.forEach((img) => {
-      img.style.transform = `translate3d(0, ${y.toFixed(2)}%, 0) scale(${scale.toFixed(4)})`;
-    });
+  /** A photograph settling as its page lands: 0 slightly enlarged, 1 at rest. */
+  const land = (surface: Surface, k: number) => {
+    const transform = k >= 1 ? '' : `scale(${(1 + 0.08 * (1 - k)).toFixed(3)})`;
+    surface.img.forEach((img) => write(img, transform, ''));
   };
 
-  let perspective = 1600;
+  let perspective = 1800;
   const measure = () => {
-    perspective = Math.max(900, leafEls[0].offsetWidth * 2.8);
+    perspective = Math.max(1000, leafEls[0].offsetWidth * 3);
   };
   measure();
 
+  /* One timeline per leaf, played in sequence by the section's timeline. */
+  const state = leaves.map(() => ({ p: 0 }));
   let shown = -1;
   let lastA = -1;
 
-  const render = (t: number) => {
-    const a = Math.min(Math.floor(t), L - 1);
+  const render = () => {
+    let t = 0;
+    state.forEach((leaf) => {
+      t += leaf.p;
+    });
+    const a = Math.min(Math.floor(t + 1e-6), L - 1);
     const p = gsap.utils.clamp(0, 1, t - a);
 
     /* ---- the leaves ---------------------------------------------------- */
@@ -654,51 +991,52 @@ function buildBook(
       leaf.el.style.zIndex = String(turning ? 100 : prog >= 0.5 ? 10 + 2 * k : 10 + 2 * (L - k));
       if (!visible) return;
 
-      // Lifted at the edge on the way up; the edge floats down last.
+      const lift = Math.sin(prog * Math.PI);
+      // Edge leads on the way up; it floats down last.
       const bend = Math.sin(prog * Math.PI * 2) * (prog < 0.5 ? 1 : 0.55);
       let phi = 180 * prog;
 
       leaf.segs.forEach((seg, j) => {
-        const extra = j === 0 ? 0 : (CURL[j] ?? 0) * bend;
-        phi += extra;
-        seg.style.transform =
-          j === 0
-            ? `perspective(${perspective.toFixed(0)}px) rotateY(${(-180 * prog).toFixed(3)}deg)`
-            : `rotateY(${(-extra).toFixed(3)}deg)`;
+        if (j === 0) {
+          seg.style.transform =
+            `perspective(${perspective.toFixed(0)}px) translate3d(0, 0, ${(lift * 14).toFixed(2)}px) ` +
+            `rotateY(${(-180 * prog).toFixed(3)}deg) rotateX(${(lift * 1.3).toFixed(3)}deg)`;
+        } else {
+          const extra = (curl[j] ?? 0) * bend;
+          phi += extra;
+          seg.style.transform =
+            `rotateY(${(-extra).toFixed(3)}deg) skewY(${((skew[j] ?? 0) * lift).toFixed(3)}deg)`;
+        }
 
-        const light = Math.sin((Math.min(180, Math.max(0, phi)) * Math.PI) / 180);
+        const light = Math.sin((gsap.utils.clamp(0, 180, phi) * Math.PI) / 180);
         const front = leaf.shadeF[j];
         const back = leaf.shadeB[j];
         if (front) front.style.opacity = phi < 90 ? (light * 0.95).toFixed(3) : '1';
         if (back) back.style.opacity = phi > 90 ? (light * 0.95).toFixed(3) : '1';
       });
 
-      // On a phone the page turns away past the spine and is gone.
       leaf.el.style.opacity = single ? String(1 - smooth(0.58, 0.9, prog)) : '';
     });
 
-    /* ---- the shadow the moving leaf throws ----------------------------- */
+    /* ---- the shadow of the moving page --------------------------------- */
     const phiA = 180 * p;
     const rad = (phiA * Math.PI) / 180;
     const moving = p > 0 && p < 1;
     if (castR) {
-      const on = moving && phiA < 90;
-      castR.style.opacity = on ? (smooth(0, 16, phiA) * (0.4 + 0.6 * Math.sin(rad))).toFixed(3) : '0';
-      castR.style.transform = `scaleX(${Math.max(0.06, Math.cos(rad) + 0.24).toFixed(3)})`;
+      castR.style.opacity =
+        moving && phiA < 90 ? (smooth(0, 16, phiA) * (0.4 + 0.6 * Math.sin(rad))).toFixed(3) : '0';
+      castR.style.transform = `scaleX(${Math.max(0.06, Math.cos(rad) + 0.26).toFixed(3)})`;
     }
     if (castL) {
-      const on = moving && phiA > 90;
-      castL.style.opacity = on ? (smooth(180, 164, phiA) * (0.4 + 0.6 * Math.sin(rad))).toFixed(3) : '0';
-      castL.style.transform = `scaleX(${Math.max(0.06, -Math.cos(rad) + 0.24).toFixed(3)})`;
+      castL.style.opacity =
+        moving && phiA > 90 ? (smooth(180, 164, phiA) * (0.4 + 0.6 * Math.sin(rad))).toFixed(3) : '0';
+      castL.style.transform = `scaleX(${Math.max(0.06, -Math.cos(rad) + 0.26).toFixed(3)})`;
     }
 
-    /* ---- the thickness of paper either side of the spine --------------- */
-    if (stackR) stackR.style.transform = `translateX(${((L - t) * 1.3 + 1).toFixed(2)}px)`;
-    if (stackL) stackL.style.transform = `translateX(${(-(t * 1.3) - 1).toFixed(2)}px)`;
-
     /* ---- the pages being read and uncovered ---------------------------- */
-    const from = Math.abs(a - lastA) > 1 ? 0 : Math.max(0, a - 1);
-    const to = Math.abs(a - lastA) > 1 ? L : Math.min(L, a + 2);
+    const jump = Math.abs(a - lastA) > 1;
+    const from = jump ? 0 : Math.max(0, a - 1);
+    const to = jump ? L : Math.min(L, a + 2);
     lastA = a;
 
     for (let s = from; s <= to; s += 1) {
@@ -707,11 +1045,8 @@ function buildBook(
       const r = uncovering ? p : 1;
       rise(right, r);
       rise(left, r);
-      // The new left-hand photograph settles as its page lands; the one it
-      // covers eases back a touch as it disappears under it.
-      const settle = uncovering ? smooth(0.45, 1, p) : s === a ? 1 - 0.6 * smooth(0.5, 1, p) : 1;
-      drift(left, t, s, settle);
-      drift(right, t, s, uncovering ? smooth(0.1, 1, p) : 1);
+      land(left, uncovering ? smooth(0.45, 1, p) : 1);
+      land(right, uncovering ? smooth(0.1, 1, p) : 1);
     }
 
     /* ---- the furniture ------------------------------------------------- */
@@ -720,36 +1055,32 @@ function buildBook(
       shown = page;
       onPage(page);
     }
-    if (fill) fill.style.transform = `scaleX(${(t / L).toFixed(4)})`;
     if (cue) cue.style.opacity = String(1 - smooth(0.02, 0.3, t));
   };
 
   /* ---- the scroll ------------------------------------------------------ */
   const TOTAL = H0 + L * (TURN + HOLD);
-  const proxy = { t: 0 };
   const rest = (s: number) => (s <= 0 ? H0 * 0.5 : H0 + s * (TURN + HOLD) - HOLD * 0.5);
 
   let direction = 1;
   let settleTimer = 0;
   let touching = false;
 
-  const tl = gsap.timeline({
+  const master = gsap.timeline({
     defaults: { ease: 'none' },
-    onUpdate: () => render(proxy.t),
+    onUpdate: render,
     scrollTrigger: {
       trigger: scope,
       start: 'top top',
       end: () => `+=${Math.round(window.innerHeight * UNIT[mode] * TOTAL)}`,
       pin: true,
       pinSpacing: true,
-      // Enough lag to give the paper weight, not so much it feels detached.
       scrub: 0.9,
       anticipatePin: 1,
-      // The first pinned section on the page: measured before the ones below.
       refreshPriority: 1,
       onRefresh: () => {
         measure();
-        render(proxy.t);
+        render();
       },
       onUpdate: (self) => {
         direction = self.direction;
@@ -758,22 +1089,21 @@ function buildBook(
     },
   });
 
-  tl.to({}, { duration: H0 });
-  for (let k = 0; k < L; k += 1) {
-    tl.fromTo(proxy, { t: k }, { t: k + 1, duration: TURN, ease: 'power1.inOut', immediateRender: false });
-    tl.to({}, { duration: HOLD });
-  }
+  master.to({}, { duration: H0 });
+  state.forEach((leaf) => {
+    const turn = gsap.timeline();
+    turn.fromTo(leaf, { p: 0 }, { p: 1, duration: TURN, ease: 'power1.inOut', immediateRender: false });
+    master.add(turn).to({}, { duration: HOLD });
+  });
 
-  const trigger = tl.scrollTrigger;
+  const trigger = master.scrollTrigger;
   if (!trigger) return;
 
   const at = (s: number) =>
     trigger.start + (trigger.end - trigger.start) * (gsap.utils.clamp(0, TOTAL, rest(s)) / TOTAL);
-  run.current = { trigger, at };
 
-  /* A page is never left standing on its edge. Once the scroll comes to
-     rest part-way through a turn, the turn is finished in the direction the
-     reader was going - a small nudge is enough to turn a page. */
+  /* A page is never left standing on its edge: once the scroll rests part
+     way through a turn, the turn completes in the direction of travel. */
   function settle() {
     if (touching || !trigger?.isActive) return;
     const into = trigger.progress * TOTAL - H0;
@@ -804,60 +1134,32 @@ function buildBook(
   window.addEventListener('touchend', onTouchEnd, { passive: true });
   window.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
-  render(proxy.t);
+  render();
 
-  /* ---- arrival: the book is set down on the desk ----------------------- */
+  /* ---- arrival: the book comes up from below and settles --------------- */
   gsap.fromTo(
     tilt,
-    { rotationX: 16, yPercent: 7, scale: 0.93 },
+    { rotationX: 24, yPercent: 12, scale: 0.94 },
     {
-      rotationX: 2.5,
+      rotationX: 7,
       yPercent: 0,
       scale: 1,
       ease: 'none',
-      scrollTrigger: { trigger: scope, start: 'top 92%', end: 'top top', scrub: 1 },
+      scrollTrigger: { trigger: scope, start: 'top 95%', end: 'top top', scrub: 1 },
     },
   );
   gsap.fromTo(
     scope.querySelectorAll('[data-head]'),
-    { y: 28, autoAlpha: 0 },
+    { y: 16, autoAlpha: 0 },
     {
       y: 0,
       autoAlpha: 1,
-      stagger: 0.08,
       ease: 'none',
-      scrollTrigger: { trigger: scope, start: 'top 80%', end: 'top 20%', scrub: 1 },
+      scrollTrigger: { trigger: scope, start: 'top 70%', end: 'top 15%', scrub: 1 },
     },
   );
 
-  /* ---- a hand near the book: it tips very slightly toward the pointer -- */
-  let offPointer: (() => void) | undefined;
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const scene = scope.querySelector<HTMLElement>('.wb__scene');
-    const rx = gsap.quickTo(float, 'rotationX', { duration: 1.4, ease: 'power3.out' });
-    const ry = gsap.quickTo(float, 'rotationY', { duration: 1.4, ease: 'power3.out' });
-    const onMove = (e: PointerEvent) => {
-      if (!scene) return;
-      const box = scene.getBoundingClientRect();
-      const x = (e.clientX - (box.left + box.width / 2)) / box.width;
-      const y = (e.clientY - (box.top + box.height / 2)) / box.height;
-      ry(gsap.utils.clamp(-1, 1, x) * 3.2);
-      rx(gsap.utils.clamp(-1, 1, y) * -2.4);
-    };
-    const onLeave = () => {
-      rx(0);
-      ry(0);
-    };
-    scene?.addEventListener('pointermove', onMove);
-    scene?.addEventListener('pointerleave', onLeave);
-    offPointer = () => {
-      scene?.removeEventListener('pointermove', onMove);
-      scene?.removeEventListener('pointerleave', onLeave);
-    };
-  }
-
-  // A rebuild (a resize across the spread query) creates this pin after the
-  // ones further down the page; re-measure once everything exists.
+  // A rebuild creates this pin after the ones below it; re-measure once.
   const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
 
   return () => {
@@ -866,17 +1168,11 @@ function buildBook(
     window.removeEventListener('touchstart', onTouchStart);
     window.removeEventListener('touchend', onTouchEnd);
     window.removeEventListener('touchcancel', onTouchEnd);
-    offPointer?.();
-    run.current = null;
-    book.querySelectorAll<HTMLElement>('[style]').forEach((el) => {
-      if (el.matches('.wb-seg, .wb-face__page')) {
-        el.style.removeProperty('transform');
-      } else {
-        el.style.removeProperty('transform');
-        el.style.removeProperty('opacity');
-        el.style.removeProperty('visibility');
-        el.style.removeProperty('z-index');
-      }
+    book.querySelectorAll<HTMLElement>('.wb-leaf, .wb-seg, .wb-face__shade, [data-rise], [data-img], .wb-book__cast').forEach((el) => {
+      el.style.removeProperty('transform');
+      el.style.removeProperty('opacity');
+      el.style.removeProperty('visibility');
+      el.style.removeProperty('z-index');
     });
   };
 }
@@ -891,33 +1187,21 @@ export function HomeWhy() {
   const mode: Mode = wide ? 'spread' : 'single';
 
   const [page, setPage] = useState(0);
-  const run = useRef<Run | null>(null);
   const { scrollTo } = useSmoothScroll();
 
   const scope = useGsapScope<HTMLElement>(
-    (_, el) => (reduced ? undefined : buildBook(el, mode, setPage, run, (y) => scrollTo(y))),
+    (_, el) => (reduced ? undefined : buildBook(el, mode, setPage, (y) => scrollTo(y))),
     [mode, reduced],
   );
 
-  /* The book is the expensive part of this tree - thirty-odd printed pages -
-     and a change of page number must not re-render it. */
+  /* Thirty-odd printed pages: a change of page must not re-render them. */
   const book = useMemo(
     () => (reduced ? <StaticBooks mode={mode} /> : <Book mode={mode} />),
     [mode, reduced],
   );
 
-  const goTo = (s: number) => {
-    const current = run.current;
-    if (!current) return;
-    if (s >= SPREADS) {
-      scrollTo(current.trigger.end + window.innerHeight);
-      return;
-    }
-    scrollTo(current.at(gsap.utils.clamp(0, SPREADS - 1, s)));
-  };
-
-  const chapter = page > 0 ? REASONS[page - 1] : null;
-  const last = page >= SPREADS - 1;
+  const current = INDEX[page] ?? INDEX[0];
+  const title = page > 0 ? reason(CHAPTERS[page - 1].id).title : '';
 
   return (
     <section
@@ -928,23 +1212,20 @@ export function HomeWhy() {
     >
       <div className="wb__stage">
         <div className="wrap wb__inner">
-          <header className="wb__head">
-            <p className="wb__eyebrow" data-head>
-              <b>02</b>
-              <span className="wb__eyebrow-rule" aria-hidden="true" />
+          <header className="wb__head" data-head>
+            <p className="wb__eyebrow">
+              <span className="wb__eyebrow-ico" aria-hidden="true">
+                <Icon name="book" size={16} />
+              </span>
               Why choose us
             </p>
-            <h2 className="wb__title" id="why-title" data-head>
-              What makes this place <em>different?</em>
+            <h2 className="sr-only" id="why-title">
+              What makes this place different?
             </h2>
+            <p className="wb__edition">
+              {SCHOOL.name} · Prospectus {ADMISSIONS_INTRO.session}
+            </p>
           </header>
-
-          <p className="wb__meta" data-head>
-            <span>Prospectus {ADMISSIONS_INTRO.session}</span>
-            <span>
-              Est. {SCHOOL.established} · {SCHOOL.locality}
-            </span>
-          </p>
 
           <div className="wb__scene" key={`${mode}-${reduced}`}>
             <div className="wb__float">
@@ -953,82 +1234,55 @@ export function HomeWhy() {
           </div>
 
           {!reduced && (
-            <div className="wb__foot">
-              <div className="wb__status">
-                <p className="wb-cue" aria-hidden="true">
-                  <span className="wb-cue__line" />
-                  Scroll to explore
-                </p>
-                <p className={`wb-chapter${chapter ? ' is-on' : ''}`} aria-hidden="true" key={page}>
-                  {chapter && (
-                    <>
-                      <b>{pad(page)}</b> {chapter.title}
-                    </>
-                  )}
-                </p>
-              </div>
+            <>
+              <p className="wb-cue" aria-hidden="true">
+                <span className="wb-cue__line" />
+                Scroll to turn the page
+              </p>
 
-              <div className="wb-count" aria-hidden="true">
-                <span className="wb-count__roll">
-                  <span className="wb-count__strip" style={{ transform: `translateY(${-page}em)` }}>
-                    {Array.from({ length: SPREADS }, (_, s) => (
-                      <span key={s}>{pad(s + 1)}</span>
-                    ))}
-                  </span>
-                </span>
-                <span className="wb-count__of">/ {pad(SPREADS)}</span>
-                <span className="wb-count__track">
-                  <span className="wb-count__fill" />
-                </span>
-              </div>
-
-              <div className="wb-nav">
-                <button
-                  type="button"
-                  className="wb-nav__btn"
-                  onClick={() => goTo(page - 1)}
-                  disabled={page === 0}
-                  aria-label="Previous page"
-                  data-cursor="link"
-                >
-                  <Icon name="arrowLeft" size={16} />
-                </button>
-                <button
-                  type="button"
-                  className="wb-nav__btn"
-                  onClick={() => goTo(page + 1)}
-                  aria-label={last ? 'Continue past the prospectus' : 'Next page'}
-                  data-cursor="link"
-                >
-                  <Icon name={last ? 'arrowDown' : 'arrowRight'} size={16} />
-                </button>
-              </div>
+              {/* Where the reader is: one icon per spread, the current one
+                  named. Only the current label shows, so the column stays
+                  quiet and the one word on it is the one that matters. */}
+              <ol className="wb-index" aria-hidden="true">
+                {INDEX.map((item, s) => (
+                  <li
+                    key={item.label}
+                    className={s === page ? 'is-on' : s < page ? 'is-past' : undefined}
+                  >
+                    <span className="wb-index__label">{item.label}</span>
+                    <span className="wb-index__ico">
+                      <Icon name={item.icon} size={16} />
+                    </span>
+                  </li>
+                ))}
+              </ol>
 
               <p className="sr-only" aria-live="polite">
-                Page {page + 1} of {SPREADS}
-                {chapter ? `: ${chapter.title}` : ''}
+                {current.label}
+                {title ? `: ${title}` : ''}
               </p>
-            </div>
+            </>
           )}
         </div>
       </div>
 
       {/* The book, in words, once. */}
       <div className="sr-only">
-        <p>{INTRO.lead}</p>
-        <ol>
-          {REASONS.map((reason) => (
-            <li key={reason.id}>
-              <h3>{reason.title}</h3>
-              <p>{reason.description}</p>
-              {reason.figures.map((figure) => (
-                <p key={figure.label}>
-                  {figure.value} - {figure.label}
-                </p>
-              ))}
+        <p>{INTRO_LEAD}</p>
+        <ul>
+          {CHAPTERS.map((item) => (
+            <li key={item.id}>
+              <h3>
+                {item.label}: {reason(item.id).title}
+              </h3>
+              <p>{reason(item.id).description}</p>
             </li>
           ))}
-        </ol>
+        </ul>
+        <p>
+          {BOARD} board results for 12 years. Trained and dedicated teachers. Mentor group ratio
+          1:18. 11 laboratories. 64 years, 10,000+ alumni and 1,000+ second-generation families.
+        </p>
       </div>
     </section>
   );

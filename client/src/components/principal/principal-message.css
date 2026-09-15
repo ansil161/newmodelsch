@@ -1,0 +1,325 @@
+/* ==========================================================================
+   PRINCIPAL MESSAGE - the dark editorial feature
+   --------------------------------------------------------------------------
+   Near-black ground, white type, grey copy, hairline rules, and one accent:
+   the logo's indigo lifted until it holds up on black. The palette is
+   declared once here so the whole section re-inks from five lines.
+
+     --pmsg-bg      near-black with a trace of the brand hue
+     --pmsg-ink     headline, facts, name                  18:1 on the ground
+     --pmsg-quiet   running copy                           8.3:1
+     --pmsg-dim     labels and the role line               5.1:1
+     --pmsg-accent  icons, the eyebrow rule, the link arrow
+
+   No sticky, no pin: the section is ordinary document flow, and its only
+   motion is the one-shot entrance in PrincipalMessage.tsx.
+   ========================================================================== */
+
+.pmsg {
+  --pmsg-bg: #0a0910;
+  --pmsg-ink: #f7f6fc;
+  --pmsg-quiet: #aeacbc;
+  --pmsg-dim: #8a8898;
+  --pmsg-accent: #9a8fe0;
+  --pmsg-line: rgba(247, 246, 252, 0.1);
+  --pmsg-radius: clamp(18px, 1.9vw, 28px);
+
+  position: relative;
+  padding-block: clamp(76px, 9vw, 148px);
+  background: var(--pmsg-bg);
+  color: var(--pmsg-ink);
+}
+
+.pmsg :focus-visible {
+  outline-color: var(--pmsg-accent);
+}
+
+/* The composition is held narrower than the site container, as the reference
+   is: a feature, not a full-width band of content. */
+.pmsg__inner {
+  display: grid;
+  gap: clamp(40px, 6vw, 56px);
+  max-width: calc(1240px + var(--gutter) * 2);
+}
+
+/* ==========================================================================
+   The portrait
+   ========================================================================== */
+
+.pmsg__media {
+  position: relative;
+  border-radius: var(--pmsg-radius);
+  /* On a near-black ground a black shadow is invisible and a wide one reads
+     as a smudge, so the depth is a close contact shadow plus the faintest
+     lift of the brand hue under the lower edge. */
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    0 36px 70px -46px rgba(122, 109, 189, 0.32);
+}
+
+/* The ratio is reserved before the photograph arrives, so nothing below it
+   moves when it loads. */
+.pmsg__fig {
+  width: 100%;
+  aspect-ratio: 4 / 4.4;
+  border-radius: var(--pmsg-radius);
+  background: #16141f;
+}
+
+.pmsg__fig img {
+  position: absolute;
+  inset: 0;
+}
+
+/* A hairline edge inside the frame, so the photograph's light corners do
+   not dissolve into the ground. Inside the clip, so it is revealed with it. */
+.pmsg__fig::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(247, 246, 252, 0.08);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   The text column
+   ========================================================================== */
+
+.pmsg__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.pmsg__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pmsg-dim);
+}
+
+.pmsg__eyebrow-rule {
+  width: 28px;
+  height: 2px;
+  flex: none;
+  background: var(--pmsg-accent);
+}
+
+.pmsg__title {
+  margin-top: clamp(16px, 1.6vw, 22px);
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.125rem, 4vw, 3.625rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+  color: var(--pmsg-ink);
+}
+
+.pmsg__text {
+  display: grid;
+  gap: 1em;
+  margin-top: clamp(20px, 2.2vw, 30px);
+  max-width: 54ch;
+  font-family: var(--font-body);
+  font-size: clamp(0.9688rem, 1.02vw, 1.0625rem);
+  line-height: 1.72;
+  color: var(--pmsg-quiet);
+}
+
+/* ---------------------------------------------------------------- facts */
+
+.pmsg__facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px clamp(20px, 2.4vw, 36px);
+  margin-top: clamp(26px, 2.8vw, 38px);
+  width: 100%;
+  max-width: 560px;
+}
+
+.pmsg__fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pmsg__fact-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 8px;
+  background: rgba(154, 143, 224, 0.12);
+  color: var(--pmsg-accent);
+}
+
+.pmsg__fact-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 1px;
+  min-width: 0;
+}
+
+.pmsg__fact-text b {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: var(--pmsg-ink);
+}
+
+.pmsg__fact-text span {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--pmsg-dim);
+}
+
+/* --------------------------------------------------------- closing strip */
+
+.pmsg__close {
+  width: 100%;
+  margin-top: clamp(30px, 3.2vw, 44px);
+  padding-top: clamp(20px, 2vw, 26px);
+  border-top: 1px solid var(--pmsg-line);
+}
+
+.pmsg__close-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pmsg-dim);
+}
+
+.pmsg__close-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px 40px;
+  margin-top: 16px;
+}
+
+.pmsg__vision {
+  flex: 1 1 280px;
+  max-width: 40ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--pmsg-ink);
+}
+
+.pmsg__sign {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 16px;
+  border-left: 2px solid var(--pmsg-accent);
+}
+
+.pmsg__name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--pmsg-ink);
+  white-space: nowrap;
+}
+
+.pmsg__role {
+  font-size: 0.8125rem;
+  color: var(--pmsg-dim);
+}
+
+.pmsg__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(22px, 2.4vw, 30px);
+  padding-bottom: 4px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--pmsg-ink);
+  border-bottom: 1px solid var(--pmsg-line);
+  transition: border-color var(--d-state) var(--ease-out);
+}
+
+.pmsg__more svg {
+  color: var(--pmsg-accent);
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.pmsg__more:hover {
+  border-bottom-color: var(--pmsg-accent);
+}
+
+.pmsg__more:hover svg {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Phone: the facts pair up once there is room for two. */
+@media (min-width: 460px) and (max-width: 767px) {
+  .pmsg__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Tablet and up: the reference composition, image a little under half. */
+@media (min-width: 768px) {
+  .pmsg__inner {
+    grid-template-columns: minmax(0, 44fr) minmax(0, 56fr);
+    column-gap: clamp(36px, 4.6vw, 72px);
+    align-items: start;
+  }
+
+  .pmsg__fig {
+    aspect-ratio: 4 / 4.9;
+  }
+
+  .pmsg__title {
+    font-size: clamp(2rem, 3.8vw, 3.625rem);
+  }
+}
+
+@media (min-width: 1100px) {
+  .pmsg__inner {
+    grid-template-columns: minmax(0, 48fr) minmax(0, 52fr);
+  }
+
+  .pmsg__fig {
+    aspect-ratio: 4 / 4.6;
+  }
+
+  .pmsg__body {
+    padding-top: clamp(4px, 1vw, 14px);
+  }
+}
+
+@media (min-width: 1180px) {
+  .pmsg__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,488 @@
+/* ==========================================================================
+   05 - THE CHARTER - one card, six principles, moved through by scrolling
+   --------------------------------------------------------------------------
+   Two layouts, one switch.
+
+   WITHOUT `.is-live` (no JavaScript yet, or motion turned off) the section
+   is an ordinary page: the heading, the six principles as a ruled list, and
+   the card beside them showing the first photograph.
+
+   WITH `.is-live` the stage is one viewport tall and pinned. The six
+   principles share one grid cell, the six photographs share the card's
+   frame, and `CharterScrollSection.tsx` moves between them. Sharing a grid
+   cell means the column is exactly as tall as its longest principle, with
+   nothing measured.
+   ========================================================================== */
+
+.charter {
+  --ch-accent: var(--blue);
+  --ch-card-r: 14px;
+  --ch-frame-r: 8px;
+
+  position: relative;
+  background: var(--white);
+  padding-block: clamp(72px, 8vw, 128px);
+  /* No `overflow`, `transform`, `filter` or `contain` on this element: the
+     stage inside it is pinned. */
+}
+
+/* ==========================================================================
+   The grid
+   ========================================================================== */
+.charter__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 56px);
+}
+
+@media (min-width: 700px) {
+  .charter__grid {
+    grid-template-columns: minmax(0, 4.5fr) minmax(0, 5.5fr);
+    align-items: start;
+    column-gap: clamp(32px, 4vw, 56px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .charter__grid {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+    column-gap: clamp(48px, 5.5vw, 104px);
+  }
+}
+
+.charter__content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   The heading
+   ========================================================================== */
+.charter__eyebrow {
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.charter__title {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.charter__lead {
+  margin: clamp(14px, 1.4vw, 20px) 0 0;
+  max-width: 42ch;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+/* ==========================================================================
+   A principle
+   ========================================================================== */
+.charter__steps {
+  margin: clamp(32px, 4vw, 56px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.charter-step {
+  min-width: 0;
+  padding-block: 28px;
+  border-top: 1px solid var(--line);
+}
+
+/* 01 — Pastoral care */
+.charter-step__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.charter-step__label b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ch-accent);
+}
+
+.charter-step__dash {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--line-blue-strong);
+}
+
+.charter-step__title {
+  margin: clamp(12px, 1.6vh, 18px) 0 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.charter-step__body {
+  margin: clamp(10px, 1.6vh, 16px) 0 0;
+  max-width: 42ch;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* The two practices, as a ruled footnote rather than a bulleted list. */
+.charter-step__proof {
+  display: grid;
+  gap: 8px;
+  margin: clamp(14px, 2vh, 22px) 0 0;
+  padding: clamp(12px, 1.6vh, 16px) 0 0;
+  max-width: 44ch;
+  list-style: none;
+  border-top: 1px solid var(--line-soft);
+}
+
+.charter-step__proof li {
+  position: relative;
+  padding-left: 20px;
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+.charter-step__proof li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 10px;
+  height: 1px;
+  background: var(--ch-accent);
+}
+
+/* ==========================================================================
+   The card
+   ========================================================================== */
+.charter__visual {
+  min-width: 0;
+}
+
+.charter-card {
+  padding: clamp(8px, 0.8vw, 12px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--ch-card-r);
+  box-shadow: var(--e-2);
+}
+
+@media (min-width: 700px) {
+  .charter__visual {
+    position: sticky;
+    top: calc(var(--nav-h-compact) + 24px);
+  }
+}
+
+.charter-card__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--ch-frame-r);
+  background: var(--sand);
+  isolation: isolate;
+}
+
+.charter-card__layer {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--sand);
+}
+
+/* Only the first photograph exists until the story does. */
+.charter:not(.is-live) .charter-card__layer:not(:first-child) {
+  display: none;
+}
+
+.charter-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 40%;
+}
+
+/* A white fade up from the foot of every photograph: the figure and the step
+   number are set on it, and it ties the photograph to the white card. */
+.charter-card__layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.72) 14%,
+    rgba(255, 255, 255, 0) 40%
+  );
+  pointer-events: none;
+}
+
+.charter-card__caption {
+  position: absolute;
+  left: clamp(16px, 1.8vw, 28px);
+  bottom: clamp(14px, 1.8vw, 26px);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 60%;
+}
+
+.charter-card__caption b {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.charter-card__caption span {
+  font-size: var(--t-small);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+/* Principle 01 / 06 - above every layer, so it stays put while they change. */
+.charter-card__step {
+  position: absolute;
+  right: clamp(16px, 1.8vw, 28px);
+  bottom: clamp(16px, 1.9vw, 28px);
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.charter-card__num {
+  display: inline-grid;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ch-accent);
+}
+
+.charter-card__num-n {
+  grid-area: 1 / 1;
+}
+
+.charter:not(.is-live) .charter-card__num-n:not(:first-child) {
+  visibility: hidden;
+}
+
+.charter-card__of {
+  color: var(--ink-4);
+}
+
+/* ==========================================================================
+   The progress indicator
+   ========================================================================== */
+.charter-progress {
+  display: none;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(6px, 0.7vw, 10px);
+  margin: 0;
+  padding: clamp(12px, 1.4vw, 18px) 2px 4px;
+  list-style: none;
+}
+
+.charter-progress__seg {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--brand-100);
+}
+
+.charter-progress__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ch-accent);
+  transform-origin: left center;
+}
+
+/* ==========================================================================
+   After the story - the one link out
+   ========================================================================== */
+.charter__after {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+.charter__cta {
+  padding: 14px 22px;
+}
+
+/* ==========================================================================
+   LIVE - the pinned story
+   ========================================================================== */
+.charter.is-live {
+  padding-block: 0 clamp(72px, 8vw, 128px);
+}
+
+.is-live .charter__stage {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  /* The masthead is compact, or gone, by the time the stage is pinned. */
+  padding-top: calc(var(--nav-h-compact) + clamp(8px, 1.6vh, 20px));
+  padding-bottom: clamp(16px, 3vh, 40px);
+  box-sizing: border-box;
+}
+
+.is-live .charter__grid {
+  width: 100%;
+  align-items: center;
+}
+
+.is-live .charter__visual {
+  position: relative;
+  top: auto;
+}
+
+.is-live .charter__title {
+  font-size: clamp(2rem, min(3.4vw, 6vh), 3.25rem);
+}
+
+.is-live .charter__steps {
+  display: grid;
+  margin-top: clamp(24px, 5vh, 56px);
+}
+
+.is-live .charter-step {
+  grid-area: 1 / 1;
+  padding: 0;
+  border: 0;
+}
+
+.is-live .charter-step__title {
+  font-size: clamp(1.4rem, min(2.2vw, 4.4vh), 2.25rem);
+}
+
+.is-live .charter-card__frame {
+  aspect-ratio: auto;
+  height: clamp(240px, calc(100svh - var(--nav-h-compact) - 150px), 700px);
+}
+
+.is-live .charter-progress {
+  display: grid;
+}
+
+.charter.is-live .charter__after {
+  margin-top: 0;
+}
+
+/* Short windows and narrower columns keep the argument and lose the
+   footnote, so the principle never runs into the card's foot. */
+@media (max-height: 780px), (max-width: 1023px) {
+  .is-live .charter-step__proof {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   LIVE on a phone - the story stacked: words above, the card below
+   ========================================================================== */
+@media (max-width: 699px) {
+  .is-live .charter__stage {
+    align-items: flex-start;
+    padding-top: calc(var(--nav-h-compact) + 12px);
+    padding-bottom: 16px;
+  }
+
+  .is-live .charter__grid {
+    gap: 18px;
+    align-items: start;
+  }
+
+  .is-live .charter__title {
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
+  }
+
+  .is-live .charter__lead {
+    margin-top: 10px;
+    font-size: var(--t-small);
+  }
+
+  .is-live .charter__steps {
+    margin-top: 18px;
+  }
+
+  .is-live .charter-step__title {
+    font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+  }
+
+  .is-live .charter-step__body {
+    font-size: var(--t-small);
+    line-height: 1.55;
+  }
+
+  .is-live .charter-card__frame {
+    height: clamp(180px, 30svh, 320px);
+  }
+
+  .charter-card__caption b {
+    font-size: 1.4rem;
+  }
+
+  /* A long figure label runs into the step number at this width: the word
+     goes, the number stays, and the caption stops short of it. */
+  .charter-card__caption {
+    max-width: calc(100% - 96px);
+  }
+
+  .charter-card__word {
+    display: none;
+  }
+}
+
+@media (max-width: 699px) and (max-height: 700px) {
+  .is-live .charter__lead {
+    display: none;
+  }
+
+  .is-live .charter-card__frame {
+    height: clamp(140px, 24svh, 200px);
+  }
+}

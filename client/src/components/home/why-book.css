@@ -1,28 +1,85 @@
 /* ==========================================================================
    02 - WHY CHOOSE US - the prospectus
    --------------------------------------------------------------------------
-   A white stage, a book set on it in the school's deep blue board, and pages
-   of cool white paper. The blue is spent on the cover, the numbers and the
-   one rule under each figure; everything else is ink on paper.
+   A navy cloth hardback lying open on a warm white desk. Paper is warm and
+   grained, the text block is real sheets with real edges, the pages curve
+   down into the binding, and every shadow is a gradient painted once - the
+   only things that change while the scroll runs are transforms and
+   opacities.
+
+   ICONS. One set (the site's own, 24px grid, 1.5px stroke), used at three
+   sizes only, each tied to a job:
+
+     inline   1.15em of the type it sits in - captions, contents, strands,
+              hints, headers. Stroke thickened to hold at small sizes.
+     ring     a chapter's mark: the icon in a thin blue circle.
+     index    16px, in the indicator beside the book.
 
    NOTHING ON AN ANCESTOR OF `.wb` MAY SET `overflow`, `transform`, `filter`
-   OR `contain`. ScrollTrigger pins the section with `position: fixed`, and
-   any of those would become its containing block. The clipping the turning
-   leaves need happens on `.wb__stage`, inside the pin.
+   OR `contain`. ScrollTrigger pins the section with `position: fixed`.
 
-   THE PAGE IS A CONTAINER. Every size printed on a page is in `cqi` - a
-   fraction of the page's own width - so the typography is set once and is
-   correct on a 1920px spread and on a 330px phone page alike.
+   EVERY PAGE IS A SIZE CONTAINER. Everything printed on a page is sized in
+   `cqi` - a fraction of the page's own width.
    ========================================================================== */
 
 .wb {
-  --wb-paper: #fdfdff;
-  --wb-ink-shade: 17, 14, 44;
-  --wb-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .26 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  --wb-ground: #faf9f6;
+  --wb-paper: #fbfaf5;
+  --wb-paper-2: #f3f1e9;
+  --wb-ink: 23, 22, 29;
+  --wb-warm: 38, 30, 18;
+  --wb-cool: 17, 14, 44;
+  --wb-cloth: #1b1745;
+  --wb-cloth-deep: #110e2c;
+  --wb-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .22 0 0 0 0 .18 0 0 0 0 .1 0 0 0 .085 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  --wb-cloth-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23c)'/></svg>");
   position: relative;
-  background: var(--white);
+  background: var(--wb-ground);
   color: var(--ink);
   isolation: isolate;
+}
+
+/* ==========================================================================
+   Icons
+   ========================================================================== */
+.wb-ico {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--blue);
+  vertical-align: -0.18em;
+}
+
+.wb-ico svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.8;
+}
+
+/* The chapter mark: the icon in a ring. The same size on every page. */
+.wb-ring {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: max(26px, 10.5cqi);
+  height: max(26px, 10.5cqi);
+  border: 1.5px solid var(--blue);
+  border-radius: 50%;
+  color: var(--blue);
+}
+
+.wb-ring svg {
+  width: 52%;
+  height: 52%;
+  stroke-width: 1.6;
+}
+
+.wb-ring--solid {
+  background: var(--blue);
+  color: #ffffff;
 }
 
 /* ==========================================================================
@@ -34,100 +91,68 @@
   height: 100svh;
   overflow: clip;
   background:
-    radial-gradient(60% 55% at 50% 58%, var(--brand-50) 0%, rgba(246, 245, 251, 0) 70%),
-    var(--white);
+    radial-gradient(70% 62% at 50% 58%, #ffffff 0%, rgba(255, 255, 255, 0) 72%),
+    var(--wb-ground);
 }
 
 .wb__inner {
+  position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    'head meta'
-    'scene scene'
-    'foot foot';
-  row-gap: clamp(6px, 1.4vh, 18px);
-  /* The masthead is compact (or gone) by the time this section pins. */
-  padding-top: calc(var(--nav-h-compact) + clamp(8px, 1.8vh, 22px));
-  padding-bottom: clamp(12px, 2.4vh, 30px);
+  row-gap: clamp(4px, 1vh, 12px);
+  padding-top: calc(var(--nav-h-compact) + clamp(6px, 1.4vh, 18px));
+  padding-bottom: clamp(10px, 2vh, 24px);
 }
 
 .wb__head {
-  grid-area: head;
-  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wb__eyebrow,
+.wb__edition {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
 .wb__eyebrow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 0 0 clamp(8px, 1.2vh, 14px);
-  font-family: var(--font-body);
-  font-size: var(--t-label);
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.wb__eyebrow b {
+  gap: 10px;
   font-weight: 600;
-  color: var(--blue);
-}
-
-.wb__eyebrow-rule {
-  width: 28px;
-  height: 1px;
-  background: var(--line-blue-strong);
-}
-
-.wb__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.45rem, min(2.5vw, 4.4vh), 2.6rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
-.wb__title em {
-  font-style: normal;
+.wb__eyebrow-ico {
+  display: inline-flex;
   color: var(--blue);
 }
 
-.wb__meta {
-  grid-area: meta;
-  align-self: end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  margin: 0;
-  font-size: var(--t-label);
+.wb__eyebrow-ico svg {
+  stroke-width: 1.8;
+}
+
+.wb__edition {
   font-weight: 500;
   letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: var(--ink-3);
 }
 
-.wb__meta span:first-child {
-  color: var(--blue);
-}
-
-/* --------------------------------------------------------------------------
-   The scene: perspective for the book as a whole, a wrapper the pointer
-   tips, and a wrapper the arrival tips. Two wrappers so the two motions
-   never write the same property.
-   -------------------------------------------------------------------------- */
+/* The camera: perspective for the whole book, and a wrapper the arrival
+   tips. */
 .wb__scene {
-  grid-area: scene;
   min-height: 0;
   display: grid;
   place-items: center;
-  perspective: 2600px;
-  perspective-origin: 50% 30%;
+  perspective: 2300px;
+  perspective-origin: 50% 16%;
 }
 
 .wb__float {
@@ -135,20 +160,29 @@
 }
 
 .wb__tilt {
-  transform-origin: 50% 70%;
+  transform-origin: 50% 85%;
+  transform: rotateX(7deg);
 }
 
 /* ==========================================================================
    The book
    ========================================================================== */
 .wb-book {
-  --ratio: 0.72;
+  --ratio: 0.74;
   --page-h: clamp(
-    260px,
-    min(calc(100svh - 300px), calc((100vw - 2 * var(--gutter) - 64px) / 2 / var(--ratio))),
-    820px
+    250px,
+    min(
+      calc(100svh - 215px),
+      calc(min(80vw, 100vw - 2 * var(--gutter) - 260px) / 2 / var(--ratio))
+    ),
+    900px
   );
   --page-w: calc(var(--page-h) * var(--ratio));
+  --board-x: 26px;
+  --board-top: 14px;
+  --board-bottom: 26px;
+  --dx: 0.58px;
+  --dy: 0.5px;
   position: relative;
   width: calc(var(--page-w) * 2);
   height: var(--page-h);
@@ -156,147 +190,227 @@
 }
 
 .wb-book--single {
-  --ratio: 0.68;
+  --ratio: 0.7;
   --page-h: clamp(
     300px,
-    min(calc(100svh - 230px), calc((100vw - 2 * var(--gutter) - 22px) / var(--ratio))),
-    900px
+    min(calc(100svh - 210px), calc((100vw - 2 * var(--gutter) - 42px) / var(--ratio))),
+    860px
   );
+  --board-x: 24px;
+  --board-top: 12px;
+  --board-bottom: 22px;
   width: var(--page-w);
 }
 
-/* The soft pool of shadow the book sits in. Static, so the blur is paid for
-   once. */
-.wb-book__shadow {
+/* ---- on the desk -------------------------------------------------------- */
+.wb-book__contact {
   position: absolute;
-  z-index: -1;
-  left: 3%;
-  right: 3%;
-  bottom: -44px;
-  height: 70px;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(26, 22, 64, 0.26), rgba(26, 22, 64, 0) 72%);
-  filter: blur(8px);
+  z-index: -2;
+  left: calc(var(--board-x) * -1);
+  right: calc(var(--board-x) * -1);
+  bottom: calc(var(--board-bottom) * -1 - 10px);
+  height: 60px;
   pointer-events: none;
 }
 
-/* The board: a white cloth hardback, a few pixels proud of the paper all
-   round. White on a white stage, so its edge is drawn by light rather than
-   by colour - a hairline, a darker lower lip where the board has thickness,
-   and a layered shadow under it. */
-.wb-book__cover {
+.wb-book__contact::before,
+.wb-book__contact::after {
+  content: '';
   position: absolute;
-  z-index: 0;
-  inset: -10px -13px -13px;
-  border-radius: 9px 9px 11px 11px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 40%),
-    linear-gradient(180deg, #ffffff 0%, #f6f6fa 60%, #ecebf3 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(26, 22, 64, 0.08),
-    inset 0 1px 0 #ffffff,
-    inset 0 -3px 0 rgba(26, 22, 64, 0.07),
-    0 1px 2px rgba(26, 22, 64, 0.1),
-    0 16px 30px -16px rgba(26, 22, 64, 0.28),
-    0 42px 80px -40px rgba(26, 22, 64, 0.34);
+  border-radius: 50%;
 }
 
-/* The spine, where the board folds: a soft crease with a highlight on its
-   ridge. */
-.wb-book__cover::before {
+.wb-book__contact::before {
+  left: 1.5%;
+  right: 1.5%;
+  bottom: 0;
+  height: 26px;
+  background: rgba(12, 10, 30, 0.5);
+  filter: blur(9px);
+}
+
+.wb-book__contact::after {
+  left: -7%;
+  right: -7%;
+  bottom: -46px;
+  height: 110px;
+  background: rgba(26, 22, 64, 0.17);
+  filter: blur(30px);
+}
+
+/* ---- the boards --------------------------------------------------------- */
+.wb-cover {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--board-top) * -1);
+  bottom: calc(var(--board-bottom) * -1);
+  left: calc(var(--board-x) * -1);
+  right: calc(var(--board-x) * -1);
+}
+
+.wb-cover::before {
   content: '';
+  position: absolute;
+  z-index: -1;
+  left: 2px;
+  right: 2px;
+  top: 8px;
+  bottom: -7px;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #0a0820 0%, #15113a 70%, #0c0a24 100%);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.wb-cover__board {
   position: absolute;
   top: 0;
   bottom: 0;
+  width: calc(50% - 10px);
+  background-color: var(--wb-cloth);
+  background-image:
+    var(--wb-cloth-grain),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, rgba(255, 255, 255, 0) 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.07) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+    linear-gradient(170deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.16));
+  background-size: 160px 160px, auto, auto, auto;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.wb-cover__board--l {
+  left: 0;
+  border-radius: 13px 4px 4px 13px;
+}
+
+.wb-cover__board--r {
+  right: 0;
+  border-radius: 4px 13px 13px 4px;
+}
+
+.wb-cover__spine {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
   left: 50%;
-  width: 34px;
+  width: 22px;
   transform: translateX(-50%);
+  border-radius: 3px;
   background: linear-gradient(
     90deg,
-    rgba(26, 22, 64, 0.1),
-    rgba(26, 22, 64, 0.02) 34%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(26, 22, 64, 0.02) 66%,
-    rgba(26, 22, 64, 0.1)
+    var(--wb-cloth-deep),
+    #231e54 32%,
+    #2b2562 50%,
+    #231e54 68%,
+    var(--wb-cloth-deep)
   );
 }
 
-/* The foot of the text block: fine page edges showing under the paper,
-   between the pages and the lip of the board. */
-.wb-book__cover::after {
+.wb-book--single .wb-cover__board--r {
+  left: 12px;
+  width: auto;
+  border-radius: 4px 13px 13px 4px;
+}
+
+.wb-book--single .wb-cover__spine {
+  left: 0;
+  width: 14px;
+  transform: none;
+  border-radius: 10px 2px 2px 10px;
+}
+
+/* ---- the text block: real sheets ---------------------------------------- */
+.wb-stack {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  width: var(--page-w);
+  height: var(--page-h);
+}
+
+.wb-stack--l {
+  left: 0;
+}
+
+.wb-stack--r {
+  left: var(--page-w);
+}
+
+.wb-book--single .wb-stack--r {
+  left: 0;
+}
+
+.wb-sheet {
+  position: absolute;
+  inset: 0;
+  background-color: var(--wb-paper);
+  box-shadow: inset 0 0 0 0.6px rgba(var(--wb-warm), 0.16);
+}
+
+.wb-sheet:nth-child(even) {
+  background-color: var(--wb-paper-2);
+}
+
+.wb-stack--r .wb-sheet {
+  border-radius: 16% 5px 5px 16% / 1.3% 5px 5px 1.3%;
+  transform: translate(
+      calc(var(--i) * var(--dx) + var(--jx) * 1px),
+      calc(var(--i) * var(--dy) + var(--jy) * 1px)
+    )
+    rotate(calc(var(--jr) * 1deg));
+}
+
+.wb-stack--l .wb-sheet {
+  border-radius: 5px 16% 16% 5px / 5px 1.3% 1.3% 5px;
+  transform: translate(
+      calc(var(--i) * var(--dx) * -1 + var(--jx) * 1px),
+      calc(var(--i) * var(--dy) + var(--jy) * 1px)
+    )
+    rotate(calc(var(--jr) * 1deg));
+}
+
+.wb-sheet:first-child {
+  box-shadow:
+    inset 0 0 0 0.6px rgba(var(--wb-warm), 0.22),
+    0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- the bookmark ------------------------------------------------------- */
+.wb-ribbon {
+  position: absolute;
+  z-index: 2;
+  top: 62%;
+  bottom: calc((var(--board-bottom) + 48px) * -1);
+  left: calc(var(--page-w) * 1.1);
+  width: 13px;
+  background: linear-gradient(90deg, #2c2372 0%, var(--brand-500) 38%, #5b4bb3 52%, #3a2c80 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 8px), 0 100%);
+  box-shadow: 0 8px 10px rgba(12, 10, 30, 0.25);
+}
+
+.wb-ribbon::after {
   content: '';
   position: absolute;
-  left: 13px;
-  right: 13px;
-  bottom: 5px;
-  height: 7px;
-  border-radius: 0 0 2px 2px;
-  background: repeating-linear-gradient(180deg, #ffffff 0 1px, #dfdee9 1px 2px);
-  box-shadow: 0 1px 0 rgba(26, 22, 64, 0.08);
-}
-
-.wb-book--single .wb-book__cover::after {
-  left: 16px;
-}
-
-.wb-book--single .wb-book__cover {
-  inset: -10px -13px -13px -16px;
-}
-
-.wb-book--single .wb-book__cover::before {
   left: 0;
-  width: 16px;
-  transform: none;
-  border-radius: 9px 0 0 11px;
+  right: 0;
+  bottom: calc(48px + var(--board-bottom) - 6px);
+  height: calc(var(--board-bottom) + 2px);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.1));
 }
 
-/* A silk bookmark hanging out of the foot of the book. */
-.wb-book__ribbon {
-  position: absolute;
-  z-index: 1;
-  top: 60%;
-  bottom: -44px;
-  left: calc(50% + 26px);
-  width: 12px;
-  background: linear-gradient(90deg, var(--brand-400), var(--brand-300) 50%, var(--brand-400));
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
-  box-shadow: 0 6px 10px rgba(26, 22, 64, 0.2);
+/* On a phone the tail is shorter and central, so it clears the indicator
+   row beneath the book. */
+.wb-book--single .wb-ribbon {
+  left: 50%;
+  bottom: calc((var(--board-bottom) + 26px) * -1);
 }
 
-.wb-book--single .wb-book__ribbon {
-  left: 68%;
+.wb-book--single .wb-ribbon::after {
+  bottom: calc(26px + var(--board-bottom) - 6px);
 }
 
-/* The block of pages under each side, seen only as a sliver of fine lines at
-   the outer edge. The module moves them as pages cross the spine. */
-.wb-book__stack {
-  position: absolute;
-  z-index: 1;
-  top: 1px;
-  height: calc(var(--page-h) - 1px);
-  width: var(--page-w);
-  background: repeating-linear-gradient(90deg, #ffffff 0 1.4px, #d9d8e4 1.4px 2.4px);
-  box-shadow: 0 1px 0 #d9d8e4;
-}
-
-.wb-book__stack--r {
-  left: var(--page-w);
-  border-radius: 0 2px 2px 0;
-  transform: translateX(7px);
-}
-
-.wb-book__stack--l {
-  left: 0;
-  border-radius: 2px 0 0 2px;
-  transform: translateX(-1px);
-}
-
-.wb-book--single .wb-book__stack--r {
-  left: 0;
-}
-
-/* --------------------------------------------------------------------------
-   Pages that do not move: the first left page and the last right page.
-   -------------------------------------------------------------------------- */
+/* ---- pages that never move ---------------------------------------------- */
 .wb-book__base,
 .wb-leaf {
   position: absolute;
@@ -306,34 +420,22 @@
 }
 
 .wb-book__base {
-  z-index: 2;
-  overflow: hidden;
+  z-index: 3;
 }
 
 .wb-book__base--l {
   left: 0;
-  border-radius: 3px 0 0 3px;
 }
 
 .wb-book__base--r {
   left: var(--page-w);
-  border-radius: 0 3px 3px 0;
 }
 
 .wb-book--single .wb-book__base--r {
   left: 0;
 }
 
-/* --------------------------------------------------------------------------
-   Leaves
-   --------------------------------------------------------------------------
-   `.wb-leaf`   position and stacking order. No transform: each leaf is its
-                own 3D context, ordered by z-index.
-   `.wb-seg`    a hinged strip. The first carries the perspective and the
-                turn; each nested one adds its share of the curl.
-   `.wb-face`   one printed side of that strip.
-   `.wb-face__page`  the whole page, slid so the strip shows its own slice.
-   -------------------------------------------------------------------------- */
+/* ---- pages that turn ---------------------------------------------------- */
 .wb-leaf {
   z-index: 10;
   left: var(--page-w);
@@ -358,8 +460,6 @@
   left: 100%;
 }
 
-/* Half a pixel of overlap either side, so the hinges never open a hairline
-   of daylight when the strips bend. */
 .wb-face {
   position: absolute;
   top: 0;
@@ -383,30 +483,64 @@
   height: 100%;
 }
 
-/* The light falling off a strip as it turns from the reader. Darker toward
-   the edge that has travelled further. */
 .wb-face__shade {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 6;
   opacity: 0;
   pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(var(--wb-ink-shade), 0.14),
-    rgba(var(--wb-ink-shade), 0.36)
-  );
+  background: linear-gradient(90deg, rgba(var(--wb-cool), 0.12), rgba(var(--wb-cool), 0.36));
 }
 
 .wb-face--back .wb-face__shade {
+  background: linear-gradient(90deg, rgba(var(--wb-cool), 0.34), rgba(var(--wb-cool), 0.1));
+}
+
+.wb-leaf__edge {
+  position: absolute;
+  top: 0.4%;
+  bottom: 0.4%;
+  left: 100%;
+  width: 3px;
+  transform-origin: 0 50%;
+  transform: rotateY(90deg);
+  background: linear-gradient(180deg, #ece8dc, #d8d3c4);
+}
+
+/* ---- light over everything ---------------------------------------------- */
+.wb-book__grain {
+  position: absolute;
+  z-index: 97;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--wb-grain);
+  background-size: 200px 200px;
+}
+
+.wb-book__gutter {
+  position: absolute;
+  z-index: 98;
+  top: -0.6%;
+  bottom: -0.6%;
+  left: calc(var(--page-w) - 11px);
+  width: 22px;
+  pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(var(--wb-ink-shade), 0.34),
-    rgba(var(--wb-ink-shade), 0.12)
+    rgba(var(--wb-cool), 0) 0%,
+    rgba(var(--wb-cool), 0.12) 34%,
+    rgba(12, 10, 30, 0.34) 50%,
+    rgba(var(--wb-cool), 0.12) 66%,
+    rgba(var(--wb-cool), 0) 100%
   );
 }
 
-/* The shadow a lifted leaf throws onto the page beneath it. */
+.wb-book--single .wb-book__gutter {
+  left: 0;
+  width: 14px;
+  background: linear-gradient(90deg, rgba(12, 10, 30, 0.3), rgba(var(--wb-cool), 0));
+}
+
 .wb-book__cast {
   position: absolute;
   z-index: 99;
@@ -415,6 +549,7 @@
   width: var(--page-w);
   opacity: 0;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .wb-book__cast--r {
@@ -422,9 +557,9 @@
   transform-origin: 0 50%;
   background: linear-gradient(
     90deg,
-    rgba(var(--wb-ink-shade), 0.3),
-    rgba(var(--wb-ink-shade), 0.12) 60%,
-    rgba(var(--wb-ink-shade), 0)
+    rgba(var(--wb-cool), 0.34),
+    rgba(var(--wb-cool), 0.13) 58%,
+    rgba(var(--wb-cool), 0)
   );
 }
 
@@ -437,14 +572,14 @@
   transform-origin: 100% 50%;
   background: linear-gradient(
     270deg,
-    rgba(var(--wb-ink-shade), 0.3),
-    rgba(var(--wb-ink-shade), 0.12) 60%,
-    rgba(var(--wb-ink-shade), 0)
+    rgba(var(--wb-cool), 0.34),
+    rgba(var(--wb-cool), 0.13) 58%,
+    rgba(var(--wb-cool), 0)
   );
 }
 
 /* ==========================================================================
-   The page
+   Paper
    ========================================================================== */
 .wb-page {
   position: absolute;
@@ -452,51 +587,66 @@
   container: wbpage / size;
   overflow: hidden;
   background-color: var(--wb-paper);
-  background-image: var(--wb-grain),
-    linear-gradient(180deg, #ffffff 0%, #fbfbfe 60%, #f6f6fb 100%);
-  background-size: 180px 180px, 100% 100%;
+  background-image: linear-gradient(180deg, #fdfcf8 0%, #f8f6ef 100%);
   color: var(--ink);
 }
 
-/* The gutter: paper curving down into the spine. */
+.wb-page--r {
+  border-radius: 16% 5px 5px 16% / 1.3% 5px 5px 1.3%;
+}
+
+.wb-page--single {
+  border-radius: 9% 5px 5px 9% / 0.9% 5px 5px 0.9%;
+}
+
+.wb-page--l,
+.wb-page--back {
+  border-radius: 5px 16% 16% 5px / 5px 1.3% 1.3% 5px;
+}
+
 .wb-page::after {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 2;
-  width: 16%;
+  inset: 0;
+  z-index: 5;
   pointer-events: none;
 }
 
 .wb-page--r::after {
-  left: 0;
   background: linear-gradient(
     90deg,
-    rgba(var(--wb-ink-shade), 0.17),
-    rgba(var(--wb-ink-shade), 0.05) 26%,
-    rgba(var(--wb-ink-shade), 0)
+    rgba(var(--wb-warm), 0.26) 0%,
+    rgba(var(--wb-warm), 0.08) 2.6%,
+    rgba(255, 255, 255, 0.2) 6.5%,
+    rgba(255, 255, 255, 0) 14%,
+    rgba(var(--wb-warm), 0) 72%,
+    rgba(var(--wb-warm), 0.05) 95%,
+    rgba(var(--wb-warm), 0.1) 100%
+  );
+}
+
+.wb-page--single::after {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-warm), 0.18) 0%,
+    rgba(255, 255, 255, 0.16) 5%,
+    rgba(255, 255, 255, 0) 11%,
+    rgba(var(--wb-warm), 0) 80%,
+    rgba(var(--wb-warm), 0.08) 100%
   );
 }
 
 .wb-page--l::after,
 .wb-page--back::after {
-  right: 0;
   background: linear-gradient(
     270deg,
-    rgba(var(--wb-ink-shade), 0.17),
-    rgba(var(--wb-ink-shade), 0.05) 26%,
-    rgba(var(--wb-ink-shade), 0)
-  );
-}
-
-.wb-page--single::after {
-  left: 0;
-  width: 9%;
-  background: linear-gradient(
-    90deg,
-    rgba(var(--wb-ink-shade), 0.12),
-    rgba(var(--wb-ink-shade), 0)
+    rgba(var(--wb-warm), 0.26) 0%,
+    rgba(var(--wb-warm), 0.08) 2.6%,
+    rgba(255, 255, 255, 0.2) 6.5%,
+    rgba(255, 255, 255, 0) 14%,
+    rgba(var(--wb-warm), 0) 72%,
+    rgba(var(--wb-warm), 0.05) 95%,
+    rgba(var(--wb-warm), 0.1) 100%
   );
 }
 
@@ -506,36 +656,34 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-block: 6.4cqi 5.4cqi;
+  padding-block: 6.6cqi 7cqi;
 }
 
 .wb-page--l .wb-page__inner {
-  padding-inline: 6.8cqi 8.6cqi;
+  padding-inline: 7cqi 9.4cqi;
 }
 
 .wb-page--r .wb-page__inner {
-  padding-inline: 8.6cqi 6.8cqi;
+  padding-inline: 9.4cqi 7cqi;
 }
 
 .wb-page--single .wb-page__inner {
-  padding-inline: 7.4cqi 6.2cqi;
-  padding-block: 6cqi 5cqi;
+  padding: 6.6cqi 6.4cqi 7cqi 8.4cqi;
 }
 
 .wb-page p {
   margin: 0;
 }
 
-/* Running head: the publication on one side, the place in it on the other. */
-.wb-page__run {
+/* ---- furniture printed on every page ------------------------------------ */
+.wb-run,
+.wb-meta {
+  flex: none;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 3cqi;
-  flex: none;
-  padding-bottom: 2.4cqi;
-  margin-bottom: 5cqi;
-  border-bottom: 1px solid var(--line);
-  font-size: clamp(7px, 1.75cqi, 11px);
+  font-size: clamp(7px, 1.7cqi, 11px);
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -543,50 +691,125 @@
   color: var(--ink-3);
 }
 
-.wb-page__run span:last-child {
+.wb-run {
+  padding-bottom: 2.4cqi;
+  margin-bottom: 5.4cqi;
+  border-bottom: 1px solid rgba(var(--wb-ink), 0.12);
+}
+
+/* Direct children only: an icon hint nested inside a label must inherit the
+   label's colour, not pick this one up because it happens to come last. */
+.wb-run > span:last-child,
+.wb-meta > span:last-child {
   color: var(--blue);
 }
 
-.wb-page__folio {
+.wb-meta {
+  margin-bottom: 4cqi;
+}
+
+.wb-meta > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wb-meta > span:only-child {
+  color: inherit;
+}
+
+/* An instruction or a fact, with its icon. */
+.wb-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4cqi;
+}
+
+.wb-hint .wb-ico {
+  color: currentColor;
+}
+
+/* ---- type --------------------------------------------------------------- */
+.wb-eyebrow {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 2.4cqi;
-  margin-top: 4.4cqi !important;
-  font-size: clamp(7.5px, 1.8cqi, 11px);
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
+  gap: 2.2cqi;
+  margin: 2cqi 0 3.6cqi !important;
+  font-size: clamp(7.5px, 1.95cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
 }
 
-.wb-page__folio::before {
+.wb-eyebrow::before {
   content: '';
   width: 6cqi;
   height: 1px;
-  background: var(--line-strong);
+  background: currentColor;
 }
 
-.wb-page--r .wb-page__folio,
-.wb-page--single .wb-page__folio {
-  justify-content: flex-end;
+.wb-display {
+  flex: none;
+  max-width: 11ch;
+  margin-bottom: 4.6cqi !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(20px, 9.8cqi);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  color: var(--ink);
 }
 
-.wb-page--r .wb-page__folio::before,
-.wb-page--single .wb-page__folio::before {
-  order: 1;
+/* A chapter's mark: ring and name, the first thing on its page. */
+.wb-mark {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 3cqi;
+  margin: 0.6cqi 0 4.6cqi;
 }
 
-/* --------------------------------------------------------------------------
-   Photographs
-   -------------------------------------------------------------------------- */
+.wb-mark__label {
+  font-size: clamp(7.5px, 1.95cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.wb-h {
+  flex: none;
+  max-width: 14ch;
+  margin-bottom: 3.8cqi !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(17px, 7.4cqi);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.wb-lead,
+.wb-body {
+  flex: none;
+  max-width: 36ch;
+  font-size: clamp(11px, 3.05cqi, 17px);
+  line-height: 1.62;
+  text-wrap: pretty;
+  color: var(--ink-2);
+}
+
+/* ---- photographs, printed ----------------------------------------------- */
 .wb-plate {
   position: relative;
   overflow: hidden;
-  background: var(--brand-100);
+  background: #e7e3d8;
 }
 
-/* Taller than the frame, so the drift inside it never shows an edge. */
 .wb-plate img {
   position: absolute;
   left: 0;
@@ -598,188 +821,130 @@
   transform-origin: 50% 50%;
 }
 
-.wb-page__plate {
-  flex: 1 1 0;
-  min-height: 16cqh;
-  border-radius: 2px;
-  box-shadow: inset 0 0 0 1px rgba(26, 22, 64, 0.06);
+.wb-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+  pointer-events: none;
 }
 
-.wb-page__caption {
+.wb-frame {
+  flex: 1 1 0;
+  min-height: 20cqh;
+  border-radius: 1px;
+}
+
+/* The caption: a camera, then what the photograph shows. */
+.wb-cap {
   flex: none;
   display: flex;
-  gap: 2.6cqi;
-  margin-top: 3.2cqi !important;
-  font-size: clamp(8.5px, 2.05cqi, 13px);
+  align-items: flex-start;
+  gap: 2.4cqi;
+  margin-top: 3cqi !important;
+  font-size: clamp(8px, 2cqi, 12.5px);
   line-height: 1.45;
   color: var(--ink-3);
 }
 
-.wb-page__caption b {
-  flex: none;
-  padding-top: 0.12em;
-  font-size: 0.86em;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--blue);
+.wb-cap .wb-ico {
+  vertical-align: 0;
+  margin-top: 0.08em;
 }
 
-/* --------------------------------------------------------------------------
-   Words
-   -------------------------------------------------------------------------- */
-.wb-page__lead {
-  flex: none;
-  display: flex;
-  align-items: flex-end;
-  gap: 3.2cqi;
-  margin: 2cqi 0 4.4cqi;
+/* ---- the full-bleed pages ----------------------------------------------- */
+.wb-page--bleed .wb-page__inner {
+  padding: 0;
 }
 
-.wb-page__num {
+.wb-bleed {
+  position: absolute;
+  inset: 0;
+}
+
+.wb-bleed__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(14, 11, 36, 0.55) 0%,
+    rgba(14, 11, 36, 0) 24%,
+    rgba(14, 11, 36, 0) 46%,
+    rgba(14, 11, 36, 0.84) 100%
+  );
+}
+
+.wb-page--bleed .wb-meta {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 6.6cqi 9.4cqi 0 7cqi;
+}
+
+.wb-meta--light,
+.wb-meta--light > span:last-child {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.wb-bleed__foot {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0 9.4cqi 6.6cqi 7cqi;
+  color: #ffffff;
+}
+
+.wb-page--bleed .wb-bleed__foot .wb-meta {
+  padding: 3.4cqi 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.wb-bleed__place {
+  max-width: 12ch;
+  margin-bottom: 5cqi !important;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: max(30px, 15cqi);
-  line-height: 0.8;
-  letter-spacing: -0.06em;
-  color: var(--blue);
+  font-size: max(18px, 7.6cqi);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
 }
 
-.wb-page__kicker {
-  flex: none;
-  padding-bottom: 0.2em;
-  font-size: clamp(7.5px, 1.95cqi, 12px);
+.wb-bleed__big {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(60px, 36cqi);
+  line-height: 0.78;
+  letter-spacing: -0.065em;
+}
+
+.wb-bleed__label {
+  margin: 3cqi 0 5.4cqi !important;
+  font-size: clamp(8px, 2.1cqi, 13px);
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--blue);
+  color: rgba(255, 255, 255, 0.88);
 }
 
-.wb-page--intro .wb-page__kicker {
-  margin: 2cqi 0 3cqi !important;
-}
-
-.wb-page__title {
-  flex: none;
-  max-width: 15ch;
-  margin-bottom: 3.8cqi !important;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: max(16px, 7.2cqi);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-  color: var(--ink);
-}
-
-.wb-page__title--xl {
-  font-size: max(19px, 8.8cqi);
-  max-width: 12ch;
-}
-
-.wb-page__body {
-  flex: none;
-  max-width: 36ch;
-  font-size: clamp(11px, 3cqi, 17px);
-  line-height: 1.62;
-  text-wrap: pretty;
-  color: var(--ink-2);
-}
-
-/* One figure, or a row of them, set off by the only blue rule on the page. */
-.wb-page__figs {
-  flex: none;
-  display: flex;
-  gap: 6cqi;
-  margin-top: auto;
-  padding-top: 4cqi;
-  border-top: 1px solid var(--line-blue);
-}
-
-.wb-page__fig {
-  display: flex;
-  flex-direction: column;
-  gap: 1.6cqi;
-  min-width: 0;
-}
-
-.wb-page__fig-v {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: max(24px, 11.5cqi);
-  line-height: 0.92;
-  letter-spacing: -0.045em;
-  font-variant-numeric: tabular-nums;
-  color: var(--blue-deep);
-}
-
-.wb-page__figs.is-row {
-  gap: 4.5cqi;
-}
-
-.wb-page__figs.is-row .wb-page__fig-v {
-  font-size: max(16px, 6.6cqi);
-}
-
-.wb-page__fig-l {
-  max-width: 24ch;
-  font-size: clamp(7.5px, 1.9cqi, 12px);
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.wb-page__pull {
-  flex: none;
-  margin-top: auto !important;
-  padding: 0.3em 0 0.3em 4cqi;
-  border-left: 2px solid var(--blue);
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: max(14px, 5cqi);
-  line-height: 1.22;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-  color: var(--blue-ink);
-}
-
-/* The contents page. */
+/* ---- the contents: each chapter by its icon ----------------------------- */
 .wb-toc {
   flex: none;
   list-style: none;
   margin: auto 0 0;
   padding: 0;
-  border-top: 1px solid var(--line-blue);
+  border-top: 1.5px solid var(--ink);
 }
 
 .wb-toc li {
   display: flex;
-  align-items: baseline;
-  gap: 2.2cqi;
-  padding: 1.8cqi 0;
-  border-bottom: 1px solid var(--line-soft);
-  font-size: clamp(9px, 2.3cqi, 14px);
+  align-items: center;
+  gap: 2.8cqi;
+  padding: 1.9cqi 0;
+  border-bottom: 1px solid rgba(var(--wb-ink), 0.08);
+  font-size: clamp(9px, 2.35cqi, 14px);
   line-height: 1.3;
   color: var(--ink-strong);
-}
-
-.wb-toc__no,
-.wb-toc__pg {
-  flex: none;
-  font-size: 0.84em;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.wb-toc__no {
-  color: var(--blue);
-}
-
-.wb-toc__pg {
-  color: var(--ink-3);
 }
 
 .wb-toc__t {
@@ -789,231 +954,386 @@
   text-overflow: ellipsis;
 }
 
-.wb-toc__dots {
-  flex: 1 1 2cqi;
-  min-width: 2cqi;
-  border-bottom: 1px dotted var(--line-strong);
-  transform: translateY(-0.28em);
+/* ---- figures - numbers that are the information itself ------------------ */
+.wb-stats {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  margin-top: auto;
+  border-top: 1.5px solid var(--ink);
 }
 
-/* A short page drops the contents before it lets anything overflow. */
-@container wbpage (max-height: 470px) {
-  .wb-page--intro .wb-toc {
+.wb-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3.4cqi;
+  padding: 4.4cqi 4cqi 0 0;
+}
+
+.wb-stat + .wb-stat {
+  align-items: flex-start;
+  padding-left: 4.6cqi;
+  border-left: 1px solid rgba(var(--wb-ink), 0.14);
+}
+
+.wb-stat__v {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(40px, 21cqi);
+  line-height: 0.8;
+  letter-spacing: -0.065em;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue-deep);
+}
+
+.wb-stat__l,
+.wb-fig__l,
+.wb-trio span {
+  font-size: clamp(7px, 1.85cqi, 12px);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wb-fig {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 4.4cqi;
+  margin-top: auto;
+  padding-top: 4.4cqi;
+  border-top: 1.5px solid var(--ink);
+}
+
+.wb-fig__v {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(34px, 17cqi);
+  line-height: 0.8;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue-deep);
+}
+
+.wb-fig__l {
+  padding-bottom: 0.2em;
+  font-weight: 500;
+}
+
+.wb-fig__l b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wb-trio {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-between;
+  gap: 3cqi;
+  margin-top: auto;
+  padding-top: 3.8cqi;
+  border-top: 1.5px solid var(--ink);
+}
+
+.wb-trio div {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqi;
+}
+
+.wb-trio b {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(15px, 7.2cqi);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue-deep);
+}
+
+.wb-trio span {
+  max-width: 15ch;
+  font-size: clamp(6.5px, 1.65cqi, 11px);
+  letter-spacing: 0.12em;
+}
+
+/* ---- the strands, each by its icon -------------------------------------- */
+.wb-strands {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5cqi;
+  list-style: none;
+  margin: 4.4cqi 0 0;
+  padding: 0;
+}
+
+.wb-strands li {
+  display: flex;
+  align-items: center;
+  gap: 2.2cqi;
+  padding: 1.9cqi 0;
+  border-top: 1px solid rgba(var(--wb-ink), 0.1);
+  font-size: clamp(9px, 2.5cqi, 14px);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---- the portrait and the print tipped in beside it --------------------- */
+.wb-portrait {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 30cqh;
+}
+
+.wb-portrait__main {
+  position: absolute;
+  inset: 0 0 9cqi 0;
+}
+
+.wb-portrait__inset {
+  position: absolute;
+  left: -3cqi;
+  bottom: 0;
+  width: 44%;
+  aspect-ratio: 4 / 3;
+  border: 1.6cqi solid #fffefa;
+  box-shadow:
+    0 1px 1px rgba(var(--wb-warm), 0.14),
+    0 8px 16px -8px rgba(var(--wb-warm), 0.42);
+  transform: rotate(-2.2deg);
+}
+
+/* ---- four prints -------------------------------------------------------- */
+.wb-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1.2fr 1fr;
+  gap: 5cqi 3.6cqi;
+}
+
+.wb-grid__cell {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.wb-grid__cell:nth-child(even) {
+  transform: translateY(3.4cqi);
+}
+
+.wb-grid__plate {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.wb-grid__cap {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 1.8cqi;
+  margin-top: 1.8cqi !important;
+  font-size: clamp(7.5px, 1.95cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ---- one sentence, set large -------------------------------------------- */
+.wb-quote__mark {
+  flex: none;
+  display: block;
+  width: 12cqi;
+  height: max(3px, 1.1cqi);
+  margin-top: 8cqi;
+  background: var(--blue);
+}
+
+.wb-quote {
+  flex: none;
+  margin-top: 4cqi !important;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: max(18px, 8.4cqi);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--brand-900);
+}
+
+.wb-quote__src {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 2.2cqi;
+  margin-top: auto !important;
+  padding-top: 4cqi;
+  border-top: 1.5px solid var(--ink);
+  font-size: clamp(7.5px, 1.95cqi, 12.5px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* The words under a photograph. */
+.wb-after {
+  flex: none;
+  margin-top: 5cqi;
+}
+
+/* ---- the record --------------------------------------------------------- */
+.wb-timeline {
+  flex: none;
+  list-style: none;
+  margin: 4.4cqi 0 0;
+  padding: 0;
+}
+
+.wb-timeline li {
+  display: grid;
+  grid-template-columns: 12cqi minmax(0, 1fr);
+  gap: 3cqi;
+  align-items: baseline;
+  padding: 1.6cqi 0;
+  border-top: 1px solid rgba(var(--wb-ink), 0.09);
+  font-size: clamp(8.5px, 2.35cqi, 14px);
+  color: var(--ink);
+}
+
+.wb-timeline__y {
+  font-size: 0.92em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);
+}
+
+/* ---- a phone's page ----------------------------------------------------- */
+.wb-page--single .wb-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 3.4cqi;
+  margin: 4.8cqi 0 2.8cqi;
+}
+
+.wb-page--single .wb-head .wb-ring {
+  width: max(28px, 10cqi);
+  height: max(28px, 10cqi);
+}
+
+.wb-page--single .wb-head .wb-h {
+  margin: 0 !important;
+  max-width: 18ch;
+  font-size: max(16px, 6.6cqi);
+}
+
+.wb-page--single .wb-eyebrow {
+  margin: 4.8cqi 0 2.4cqi !important;
+}
+
+.wb-page--single .wb-display {
+  max-width: 14ch;
+  margin-bottom: 3cqi !important;
+  font-size: max(19px, 8.2cqi);
+}
+
+.wb-page--single .wb-lead,
+.wb-page--single .wb-body {
+  max-width: none;
+  font-size: clamp(11.5px, 3.7cqi, 16px);
+  line-height: 1.5;
+}
+
+.wb-page--single .wb-stats,
+.wb-page--single .wb-fig,
+.wb-page--single .wb-trio {
+  margin-top: 4.4cqi;
+}
+
+.wb-page--single .wb-stat__v {
+  font-size: max(28px, 13cqi);
+}
+
+.wb-page--single .wb-fig__v {
+  font-size: max(26px, 12cqi);
+}
+
+.wb-page--single .wb-frame {
+  min-height: 16cqh;
+}
+
+.wb-page--single .wb-grid {
+  flex: 1.3 1 0;
+  gap: 3.6cqi 3cqi;
+}
+
+.wb-page--single .wb-quote__mark {
+  margin-top: 4cqi;
+}
+
+.wb-page--single .wb-quote {
+  font-size: max(17px, 7.4cqi);
+}
+
+/* ---- a page too short for everything drops the least important first ---- */
+@container wbpage (max-height: 540px) {
+  .wb-toc li:nth-child(n + 4),
+  .wb-timeline li:nth-child(n + 4) {
     display: none;
   }
 }
 
-@container wbpage (max-height: 420px) {
-  .wb-page--single .wb-page__body {
+@container wbpage (max-height: 440px) {
+  .wb-toc li {
+    padding-block: 1.4cqi;
+  }
+
+  .wb-timeline,
+  .wb-strands,
+  .wb-portrait__inset {
+    display: none;
+  }
+
+  .wb-lead,
+  .wb-body {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 }
 
-/* --------------------------------------------------------------------------
-   The cover page - the first left page, full bleed
-   -------------------------------------------------------------------------- */
-.wb-page--cover .wb-page__inner {
-  padding: 0;
-}
-
-.wb-cover__plate {
-  position: absolute;
-  inset: 0;
-}
-
-.wb-cover__scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(26, 22, 64, 0.5) 0%,
-    rgba(26, 22, 64, 0) 26%,
-    rgba(26, 22, 64, 0) 42%,
-    rgba(34, 27, 79, 0.9) 100%
-  );
-}
-
-.wb-cover__top {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6.4cqi 8.6cqi 0 6.8cqi;
-  font-size: clamp(7.5px, 1.8cqi, 11px);
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.88);
-}
-
-.wb-cover__crest {
-  padding: 1.3cqi 2cqi;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  font-weight: 600;
-  letter-spacing: 0.16em;
-}
-
-.wb-cover__body {
-  position: relative;
-  margin-top: auto;
-  padding: 0 8.6cqi 9cqi 6.8cqi;
-  color: #ffffff;
-}
-
-.wb-cover__label {
-  margin-bottom: 3cqi !important;
-  font-size: clamp(7.5px, 1.9cqi, 12px);
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.wb-cover__name {
-  max-width: 9ch;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: max(22px, 11cqi);
-  line-height: 0.96;
-  letter-spacing: -0.045em;
-}
-
-.wb-cover__rule {
-  display: block;
-  width: 14cqi;
-  height: 2px;
-  margin-top: 5cqi;
-  background: var(--brand-300);
-}
-
-/* The phone's opening page carries a small version of the cover. */
-.wb-page__plate--cover {
-  flex-grow: 1.2;
-  margin-bottom: 4.4cqi;
-}
-
-.wb-cover__mini {
-  position: absolute;
-  left: 5cqi;
-  right: 5cqi;
-  bottom: 4.6cqi;
-  display: flex;
-  flex-direction: column;
-  gap: 1.4cqi;
-  color: #ffffff;
-}
-
-.wb-cover__mini span {
-  font-size: clamp(8px, 2.2cqi, 12px);
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.wb-cover__mini b {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: max(18px, 7.6cqi);
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-
-.wb-page--single .wb-page__lead {
-  margin: 4.4cqi 0 3cqi;
-}
-
-.wb-page--single .wb-page__num {
-  font-size: max(24px, 10cqi);
-}
-
-.wb-page--single .wb-page__title {
-  max-width: 18ch;
-  font-size: max(17px, 6.6cqi);
-  margin-bottom: 2.6cqi !important;
-}
-
-.wb-page--single .wb-page__body {
-  max-width: none;
-  font-size: clamp(12px, 3.6cqi, 16px);
-  line-height: 1.55;
-}
-
-.wb-page--single .wb-page__figs,
-.wb-page--single .wb-page__pull {
-  margin-top: 4cqi !important;
-}
-
-.wb-page--single .wb-page__fig-v {
-  font-size: max(20px, 8.4cqi);
-}
-
-.wb-page--single .wb-page__figs.is-row .wb-page__fig-v {
-  font-size: max(15px, 5.6cqi);
-}
-
-.wb-page--single .wb-page__pull {
-  font-size: max(14px, 4.4cqi);
-}
-
-/* The reverse of a phone's page. */
-.wb-page--back .wb-page__inner {
-  align-items: center;
-  justify-content: center;
-}
-
-.wb-back__mark {
-  padding: 3cqi 5cqi;
-  border: 1px solid var(--brand-200);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 6cqi;
-  letter-spacing: 0.32em;
-  color: var(--brand-300);
-}
-
 /* ==========================================================================
-   The furniture around the book
+   Around the book - nearly invisible
    ========================================================================== */
-.wb__foot {
-  grid-area: foot;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+
+/* Bottom left, clear of the bookmark hanging from the middle of the book. */
+.wb-cue {
+  justify-self: start;
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-}
-
-.wb__status {
-  display: grid;
-  min-width: 0;
-}
-
-.wb-cue,
-.wb-chapter {
-  grid-area: 1 / 1;
-  align-self: center;
+  gap: 10px;
   margin: 0;
-  font-size: var(--t-label);
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
 
-.wb-cue {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* A hairline with a blue bead running down it, on a loop. */
 .wb-cue__line {
   position: relative;
   width: 1px;
-  height: 28px;
+  height: 20px;
   overflow: hidden;
   background: var(--line);
 }
@@ -1024,184 +1344,139 @@
   left: 0;
   top: 0;
   width: 1px;
-  height: 10px;
+  height: 8px;
   background: var(--blue);
   animation: wb-cue 1.9s var(--ease-in-out) infinite;
 }
 
 @keyframes wb-cue {
-  0% {
-    transform: translateY(-12px);
-  }
-  100% {
-    transform: translateY(30px);
-  }
-}
-
-.wb-chapter {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  opacity: 0;
-}
-
-.wb-chapter.is-on {
-  animation: wb-chapter var(--d-enter) var(--ease-out) 120ms both;
-}
-
-.wb-chapter b {
-  margin-right: 8px;
-  font-weight: 600;
-  color: var(--blue);
-}
-
-@keyframes wb-chapter {
   from {
-    opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-10px);
   }
   to {
-    opacity: 1;
-    transform: none;
+    transform: translateY(22px);
   }
 }
 
-/* The page counter: a rolling numeral and a hairline that fills. */
-.wb-count {
-  justify-self: center;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--font-body);
-  font-size: var(--t-small);
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-}
-
-.wb-count__roll {
-  display: inline-block;
-  height: 1em;
-  overflow: hidden;
-  color: var(--blue);
-}
-
-.wb-count__strip {
+/* The indicator: one icon per spread down the right edge. Read chapters are
+   tinted, the current one is blue and named, the rest wait in grey. */
+.wb-index {
+  position: absolute;
+  top: 50%;
+  right: var(--gutter);
   display: flex;
   flex-direction: column;
-  transition: transform 700ms var(--ease-out);
+  align-items: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateY(-50%);
 }
 
-.wb-count__strip > span {
-  display: block;
-  height: 1em;
-  line-height: 1;
-}
-
-.wb-count__of {
-  font-weight: 500;
-}
-
-.wb-count__track {
-  position: relative;
-  width: clamp(72px, 11vw, 170px);
-  height: 2px;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--line);
-}
-
-.wb-count__fill {
-  position: absolute;
-  inset: 0;
-  background: var(--blue);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-
-.wb-nav {
-  justify-self: end;
+.wb-index li {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-4);
+  transition: color var(--d-state) var(--ease-out);
 }
 
-.wb-nav__btn {
+.wb-index li.is-past {
+  color: var(--brand-300);
+}
+
+.wb-index li.is-on {
+  color: var(--blue);
+}
+
+.wb-index__ico {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--line-blue-strong);
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
   border-radius: 50%;
-  background: var(--white);
-  color: var(--blue);
-  cursor: pointer;
   transition:
-    background var(--d-state) var(--ease-out),
     border-color var(--d-state) var(--ease-out),
-    color var(--d-state) var(--ease-out),
-    transform var(--d-move) var(--ease-out),
-    opacity var(--d-state) var(--ease-out);
+    background-color var(--d-state) var(--ease-out);
 }
 
-.wb-nav__btn:hover:not(:disabled) {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: var(--on-blue);
+.wb-index__ico svg {
+  stroke-width: 1.7;
 }
 
-.wb-nav__btn:active:not(:disabled) {
-  transform: scale(0.94);
+.wb-index li.is-on .wb-index__ico {
+  border-color: var(--line-blue-strong);
+  background: #ffffff;
 }
 
-.wb-nav__btn:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
+.wb-index__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  transition:
+    opacity var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
 }
 
-.wb-nav__btn:disabled {
-  opacity: 0.35;
-  cursor: default;
+.wb-index li.is-on .wb-index__label {
+  opacity: 1;
+  transform: none;
 }
 
 /* ==========================================================================
-   Phones and portrait tablets - one page at a time
+   Phones and portrait tablets
    ========================================================================== */
-.wb--single .wb__inner {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    'head'
-    'scene'
-    'foot';
-}
-
-.wb--single .wb__meta,
-.wb--single .wb__status {
+.wb--single .wb__edition {
   display: none;
 }
 
-.wb--single .wb__foot {
-  grid-template-columns: minmax(0, 1fr) auto;
+.wb--single .wb-cue {
+  display: none;
 }
 
-.wb--single .wb-count {
-  justify-self: start;
+/* The indicator gets the foot row to itself - in the flow, not floated over
+   the book - with the icons at the right and the current chapter's name at
+   the left, cut short rather than allowed to run into the icons. */
+.wb--single .wb-index {
+  position: relative;
+  top: auto;
+  right: auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  min-height: 30px;
+  transform: none;
 }
 
-@media (max-width: 599px) {
-  .wb__title {
-    font-size: clamp(1.3rem, 6.2vw, 1.75rem);
-  }
+.wb--single .wb-index li {
+  gap: 0;
+}
 
-  .wb__eyebrow {
-    margin-bottom: 6px;
-  }
+.wb--single .wb-index__ico {
+  width: 26px;
+  height: 26px;
+}
 
-  .wb-nav__btn {
-    width: 42px;
-    height: 42px;
-  }
+.wb--single .wb-index__label {
+  display: none;
+}
+
+.wb--single .wb-index li.is-on .wb-index__label {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  max-width: calc(100% - 172px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(-50%);
 }
 
 /* ==========================================================================
@@ -1210,26 +1485,29 @@
 .wb--static .wb__stage {
   height: auto;
   overflow: visible;
-  background: var(--white);
 }
 
 .wb--static .wb__inner {
   height: auto;
   padding-block: var(--section-y);
-  row-gap: clamp(20px, 3vw, 36px);
+  row-gap: clamp(24px, 3vw, 40px);
+}
+
+.wb--static .wb__tilt {
+  transform: none;
 }
 
 .wb-static {
   display: grid;
   justify-items: center;
-  gap: clamp(48px, 7vw, 96px);
-  padding-block: 16px 40px;
+  gap: clamp(64px, 8vw, 110px);
+  padding-block: 20px 50px;
 }
 
 .wb-book--static {
-  --page-h: min(calc((100vw - 2 * var(--gutter) - 64px) / 2 / var(--ratio)), 760px);
+  --page-h: min(calc((100vw - 2 * var(--gutter) - 70px) / 2 / var(--ratio)), 760px);
 }
 
 .wb-book--static.wb-book--single {
-  --page-h: min(calc((100vw - 2 * var(--gutter) - 22px) / var(--ratio)), 820px);
+  --page-h: min(calc((100vw - 2 * var(--gutter) - 42px) / var(--ratio)), 820px);
 }

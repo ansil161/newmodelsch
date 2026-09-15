@@ -11,5 +11,5 @@ export {
 } from './sections';
 
 export { VisionMission as AboutVisionMission } from './VisionMission';
-export { AboutCharter } from './Charter';
+export { CharterScrollSection as AboutCharter } from './CharterScrollSection';
 export { AboutLeadership } from './Leadership';
