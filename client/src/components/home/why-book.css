@@ -1,0 +1,1235 @@
+/* ==========================================================================
+   02 - WHY CHOOSE US - the prospectus
+   --------------------------------------------------------------------------
+   A white stage, a book set on it in the school's deep blue board, and pages
+   of cool white paper. The blue is spent on the cover, the numbers and the
+   one rule under each figure; everything else is ink on paper.
+
+   NOTHING ON AN ANCESTOR OF `.wb` MAY SET `overflow`, `transform`, `filter`
+   OR `contain`. ScrollTrigger pins the section with `position: fixed`, and
+   any of those would become its containing block. The clipping the turning
+   leaves need happens on `.wb__stage`, inside the pin.
+
+   THE PAGE IS A CONTAINER. Every size printed on a page is in `cqi` - a
+   fraction of the page's own width - so the typography is set once and is
+   correct on a 1920px spread and on a 330px phone page alike.
+   ========================================================================== */
+
+.wb {
+  --wb-paper: #fdfdff;
+  --wb-ink-shade: 17, 14, 44;
+  --wb-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .26 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  position: relative;
+  background: var(--white);
+  color: var(--ink);
+  isolation: isolate;
+}
+
+/* ==========================================================================
+   The stage
+   ========================================================================== */
+.wb__stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: clip;
+  background:
+    radial-gradient(60% 55% at 50% 58%, var(--brand-50) 0%, rgba(246, 245, 251, 0) 70%),
+    var(--white);
+}
+
+.wb__inner {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head meta'
+    'scene scene'
+    'foot foot';
+  row-gap: clamp(6px, 1.4vh, 18px);
+  /* The masthead is compact (or gone) by the time this section pins. */
+  padding-top: calc(var(--nav-h-compact) + clamp(8px, 1.8vh, 22px));
+  padding-bottom: clamp(12px, 2.4vh, 30px);
+}
+
+.wb__head {
+  grid-area: head;
+  align-self: end;
+}
+
+.wb__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 clamp(8px, 1.2vh, 14px);
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wb__eyebrow b {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.wb__eyebrow-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--line-blue-strong);
+}
+
+.wb__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.45rem, min(2.5vw, 4.4vh), 2.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.wb__title em {
+  font-style: normal;
+  color: var(--blue);
+}
+
+.wb__meta {
+  grid-area: meta;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wb__meta span:first-child {
+  color: var(--blue);
+}
+
+/* --------------------------------------------------------------------------
+   The scene: perspective for the book as a whole, a wrapper the pointer
+   tips, and a wrapper the arrival tips. Two wrappers so the two motions
+   never write the same property.
+   -------------------------------------------------------------------------- */
+.wb__scene {
+  grid-area: scene;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  perspective: 2600px;
+  perspective-origin: 50% 30%;
+}
+
+.wb__float {
+  transform-style: preserve-3d;
+}
+
+.wb__tilt {
+  transform-origin: 50% 70%;
+}
+
+/* ==========================================================================
+   The book
+   ========================================================================== */
+.wb-book {
+  --ratio: 0.72;
+  --page-h: clamp(
+    260px,
+    min(calc(100svh - 300px), calc((100vw - 2 * var(--gutter) - 64px) / 2 / var(--ratio))),
+    820px
+  );
+  --page-w: calc(var(--page-h) * var(--ratio));
+  position: relative;
+  width: calc(var(--page-w) * 2);
+  height: var(--page-h);
+  user-select: none;
+}
+
+.wb-book--single {
+  --ratio: 0.68;
+  --page-h: clamp(
+    300px,
+    min(calc(100svh - 230px), calc((100vw - 2 * var(--gutter) - 22px) / var(--ratio))),
+    900px
+  );
+  width: var(--page-w);
+}
+
+/* The soft pool of shadow the book sits in. Static, so the blur is paid for
+   once. */
+.wb-book__shadow {
+  position: absolute;
+  z-index: -1;
+  left: 3%;
+  right: 3%;
+  bottom: -44px;
+  height: 70px;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(26, 22, 64, 0.26), rgba(26, 22, 64, 0) 72%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* The board: a white cloth hardback, a few pixels proud of the paper all
+   round. White on a white stage, so its edge is drawn by light rather than
+   by colour - a hairline, a darker lower lip where the board has thickness,
+   and a layered shadow under it. */
+.wb-book__cover {
+  position: absolute;
+  z-index: 0;
+  inset: -10px -13px -13px;
+  border-radius: 9px 9px 11px 11px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 40%),
+    linear-gradient(180deg, #ffffff 0%, #f6f6fa 60%, #ecebf3 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(26, 22, 64, 0.08),
+    inset 0 1px 0 #ffffff,
+    inset 0 -3px 0 rgba(26, 22, 64, 0.07),
+    0 1px 2px rgba(26, 22, 64, 0.1),
+    0 16px 30px -16px rgba(26, 22, 64, 0.28),
+    0 42px 80px -40px rgba(26, 22, 64, 0.34);
+}
+
+/* The spine, where the board folds: a soft crease with a highlight on its
+   ridge. */
+.wb-book__cover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 34px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    rgba(26, 22, 64, 0.1),
+    rgba(26, 22, 64, 0.02) 34%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(26, 22, 64, 0.02) 66%,
+    rgba(26, 22, 64, 0.1)
+  );
+}
+
+/* The foot of the text block: fine page edges showing under the paper,
+   between the pages and the lip of the board. */
+.wb-book__cover::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 5px;
+  height: 7px;
+  border-radius: 0 0 2px 2px;
+  background: repeating-linear-gradient(180deg, #ffffff 0 1px, #dfdee9 1px 2px);
+  box-shadow: 0 1px 0 rgba(26, 22, 64, 0.08);
+}
+
+.wb-book--single .wb-book__cover::after {
+  left: 16px;
+}
+
+.wb-book--single .wb-book__cover {
+  inset: -10px -13px -13px -16px;
+}
+
+.wb-book--single .wb-book__cover::before {
+  left: 0;
+  width: 16px;
+  transform: none;
+  border-radius: 9px 0 0 11px;
+}
+
+/* A silk bookmark hanging out of the foot of the book. */
+.wb-book__ribbon {
+  position: absolute;
+  z-index: 1;
+  top: 60%;
+  bottom: -44px;
+  left: calc(50% + 26px);
+  width: 12px;
+  background: linear-gradient(90deg, var(--brand-400), var(--brand-300) 50%, var(--brand-400));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
+  box-shadow: 0 6px 10px rgba(26, 22, 64, 0.2);
+}
+
+.wb-book--single .wb-book__ribbon {
+  left: 68%;
+}
+
+/* The block of pages under each side, seen only as a sliver of fine lines at
+   the outer edge. The module moves them as pages cross the spine. */
+.wb-book__stack {
+  position: absolute;
+  z-index: 1;
+  top: 1px;
+  height: calc(var(--page-h) - 1px);
+  width: var(--page-w);
+  background: repeating-linear-gradient(90deg, #ffffff 0 1.4px, #d9d8e4 1.4px 2.4px);
+  box-shadow: 0 1px 0 #d9d8e4;
+}
+
+.wb-book__stack--r {
+  left: var(--page-w);
+  border-radius: 0 2px 2px 0;
+  transform: translateX(7px);
+}
+
+.wb-book__stack--l {
+  left: 0;
+  border-radius: 2px 0 0 2px;
+  transform: translateX(-1px);
+}
+
+.wb-book--single .wb-book__stack--r {
+  left: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Pages that do not move: the first left page and the last right page.
+   -------------------------------------------------------------------------- */
+.wb-book__base,
+.wb-leaf {
+  position: absolute;
+  top: 0;
+  width: var(--page-w);
+  height: var(--page-h);
+}
+
+.wb-book__base {
+  z-index: 2;
+  overflow: hidden;
+}
+
+.wb-book__base--l {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.wb-book__base--r {
+  left: var(--page-w);
+  border-radius: 0 3px 3px 0;
+}
+
+.wb-book--single .wb-book__base--r {
+  left: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Leaves
+   --------------------------------------------------------------------------
+   `.wb-leaf`   position and stacking order. No transform: each leaf is its
+                own 3D context, ordered by z-index.
+   `.wb-seg`    a hinged strip. The first carries the perspective and the
+                turn; each nested one adds its share of the curl.
+   `.wb-face`   one printed side of that strip.
+   `.wb-face__page`  the whole page, slid so the strip shows its own slice.
+   -------------------------------------------------------------------------- */
+.wb-leaf {
+  z-index: 10;
+  left: var(--page-w);
+}
+
+.wb-book--single .wb-leaf {
+  left: 0;
+}
+
+.wb-seg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(var(--page-w) * var(--seg-w));
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.wb-seg .wb-seg {
+  left: 100%;
+}
+
+/* Half a pixel of overlap either side, so the hinges never open a hairline
+   of daylight when the strips bend. */
+.wb-face {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -0.5px;
+  right: -0.5px;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.wb-face--back {
+  transform: rotateY(180deg);
+}
+
+.wb-face__page {
+  position: absolute;
+  top: 0;
+  left: calc(var(--page-w) * var(--x) * -1 + 0.5px);
+  width: var(--page-w);
+  height: 100%;
+}
+
+/* The light falling off a strip as it turns from the reader. Darker toward
+   the edge that has travelled further. */
+.wb-face__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-ink-shade), 0.14),
+    rgba(var(--wb-ink-shade), 0.36)
+  );
+}
+
+.wb-face--back .wb-face__shade {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-ink-shade), 0.34),
+    rgba(var(--wb-ink-shade), 0.12)
+  );
+}
+
+/* The shadow a lifted leaf throws onto the page beneath it. */
+.wb-book__cast {
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  height: 100%;
+  width: var(--page-w);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wb-book__cast--r {
+  left: var(--page-w);
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-ink-shade), 0.3),
+    rgba(var(--wb-ink-shade), 0.12) 60%,
+    rgba(var(--wb-ink-shade), 0)
+  );
+}
+
+.wb-book--single .wb-book__cast--r {
+  left: 0;
+}
+
+.wb-book__cast--l {
+  left: 0;
+  transform-origin: 100% 50%;
+  background: linear-gradient(
+    270deg,
+    rgba(var(--wb-ink-shade), 0.3),
+    rgba(var(--wb-ink-shade), 0.12) 60%,
+    rgba(var(--wb-ink-shade), 0)
+  );
+}
+
+/* ==========================================================================
+   The page
+   ========================================================================== */
+.wb-page {
+  position: absolute;
+  inset: 0;
+  container: wbpage / size;
+  overflow: hidden;
+  background-color: var(--wb-paper);
+  background-image: var(--wb-grain),
+    linear-gradient(180deg, #ffffff 0%, #fbfbfe 60%, #f6f6fb 100%);
+  background-size: 180px 180px, 100% 100%;
+  color: var(--ink);
+}
+
+/* The gutter: paper curving down into the spine. */
+.wb-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 16%;
+  pointer-events: none;
+}
+
+.wb-page--r::after {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-ink-shade), 0.17),
+    rgba(var(--wb-ink-shade), 0.05) 26%,
+    rgba(var(--wb-ink-shade), 0)
+  );
+}
+
+.wb-page--l::after,
+.wb-page--back::after {
+  right: 0;
+  background: linear-gradient(
+    270deg,
+    rgba(var(--wb-ink-shade), 0.17),
+    rgba(var(--wb-ink-shade), 0.05) 26%,
+    rgba(var(--wb-ink-shade), 0)
+  );
+}
+
+.wb-page--single::after {
+  left: 0;
+  width: 9%;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--wb-ink-shade), 0.12),
+    rgba(var(--wb-ink-shade), 0)
+  );
+}
+
+.wb-page__inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: 6.4cqi 5.4cqi;
+}
+
+.wb-page--l .wb-page__inner {
+  padding-inline: 6.8cqi 8.6cqi;
+}
+
+.wb-page--r .wb-page__inner {
+  padding-inline: 8.6cqi 6.8cqi;
+}
+
+.wb-page--single .wb-page__inner {
+  padding-inline: 7.4cqi 6.2cqi;
+  padding-block: 6cqi 5cqi;
+}
+
+.wb-page p {
+  margin: 0;
+}
+
+/* Running head: the publication on one side, the place in it on the other. */
+.wb-page__run {
+  display: flex;
+  justify-content: space-between;
+  gap: 3cqi;
+  flex: none;
+  padding-bottom: 2.4cqi;
+  margin-bottom: 5cqi;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(7px, 1.75cqi, 11px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+
+.wb-page__run span:last-child {
+  color: var(--blue);
+}
+
+.wb-page__folio {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 2.4cqi;
+  margin-top: 4.4cqi !important;
+  font-size: clamp(7.5px, 1.8cqi, 11px);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.wb-page__folio::before {
+  content: '';
+  width: 6cqi;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.wb-page--r .wb-page__folio,
+.wb-page--single .wb-page__folio {
+  justify-content: flex-end;
+}
+
+.wb-page--r .wb-page__folio::before,
+.wb-page--single .wb-page__folio::before {
+  order: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Photographs
+   -------------------------------------------------------------------------- */
+.wb-plate {
+  position: relative;
+  overflow: hidden;
+  background: var(--brand-100);
+}
+
+/* Taller than the frame, so the drift inside it never shows an edge. */
+.wb-plate img {
+  position: absolute;
+  left: 0;
+  top: -5%;
+  width: 100%;
+  height: 110%;
+  display: block;
+  object-fit: cover;
+  transform-origin: 50% 50%;
+}
+
+.wb-page__plate {
+  flex: 1 1 0;
+  min-height: 16cqh;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(26, 22, 64, 0.06);
+}
+
+.wb-page__caption {
+  flex: none;
+  display: flex;
+  gap: 2.6cqi;
+  margin-top: 3.2cqi !important;
+  font-size: clamp(8.5px, 2.05cqi, 13px);
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+.wb-page__caption b {
+  flex: none;
+  padding-top: 0.12em;
+  font-size: 0.86em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+/* --------------------------------------------------------------------------
+   Words
+   -------------------------------------------------------------------------- */
+.wb-page__lead {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 3.2cqi;
+  margin: 2cqi 0 4.4cqi;
+}
+
+.wb-page__num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(30px, 15cqi);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: var(--blue);
+}
+
+.wb-page__kicker {
+  flex: none;
+  padding-bottom: 0.2em;
+  font-size: clamp(7.5px, 1.95cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.wb-page--intro .wb-page__kicker {
+  margin: 2cqi 0 3cqi !important;
+}
+
+.wb-page__title {
+  flex: none;
+  max-width: 15ch;
+  margin-bottom: 3.8cqi !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(16px, 7.2cqi);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.wb-page__title--xl {
+  font-size: max(19px, 8.8cqi);
+  max-width: 12ch;
+}
+
+.wb-page__body {
+  flex: none;
+  max-width: 36ch;
+  font-size: clamp(11px, 3cqi, 17px);
+  line-height: 1.62;
+  text-wrap: pretty;
+  color: var(--ink-2);
+}
+
+/* One figure, or a row of them, set off by the only blue rule on the page. */
+.wb-page__figs {
+  flex: none;
+  display: flex;
+  gap: 6cqi;
+  margin-top: auto;
+  padding-top: 4cqi;
+  border-top: 1px solid var(--line-blue);
+}
+
+.wb-page__fig {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqi;
+  min-width: 0;
+}
+
+.wb-page__fig-v {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(24px, 11.5cqi);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue-deep);
+}
+
+.wb-page__figs.is-row {
+  gap: 4.5cqi;
+}
+
+.wb-page__figs.is-row .wb-page__fig-v {
+  font-size: max(16px, 6.6cqi);
+}
+
+.wb-page__fig-l {
+  max-width: 24ch;
+  font-size: clamp(7.5px, 1.9cqi, 12px);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wb-page__pull {
+  flex: none;
+  margin-top: auto !important;
+  padding: 0.3em 0 0.3em 4cqi;
+  border-left: 2px solid var(--blue);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: max(14px, 5cqi);
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--blue-ink);
+}
+
+/* The contents page. */
+.wb-toc {
+  flex: none;
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line-blue);
+}
+
+.wb-toc li {
+  display: flex;
+  align-items: baseline;
+  gap: 2.2cqi;
+  padding: 1.8cqi 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: clamp(9px, 2.3cqi, 14px);
+  line-height: 1.3;
+  color: var(--ink-strong);
+}
+
+.wb-toc__no,
+.wb-toc__pg {
+  flex: none;
+  font-size: 0.84em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.wb-toc__no {
+  color: var(--blue);
+}
+
+.wb-toc__pg {
+  color: var(--ink-3);
+}
+
+.wb-toc__t {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wb-toc__dots {
+  flex: 1 1 2cqi;
+  min-width: 2cqi;
+  border-bottom: 1px dotted var(--line-strong);
+  transform: translateY(-0.28em);
+}
+
+/* A short page drops the contents before it lets anything overflow. */
+@container wbpage (max-height: 470px) {
+  .wb-page--intro .wb-toc {
+    display: none;
+  }
+}
+
+@container wbpage (max-height: 420px) {
+  .wb-page--single .wb-page__body {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The cover page - the first left page, full bleed
+   -------------------------------------------------------------------------- */
+.wb-page--cover .wb-page__inner {
+  padding: 0;
+}
+
+.wb-cover__plate {
+  position: absolute;
+  inset: 0;
+}
+
+.wb-cover__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(26, 22, 64, 0.5) 0%,
+    rgba(26, 22, 64, 0) 26%,
+    rgba(26, 22, 64, 0) 42%,
+    rgba(34, 27, 79, 0.9) 100%
+  );
+}
+
+.wb-cover__top {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6.4cqi 8.6cqi 0 6.8cqi;
+  font-size: clamp(7.5px, 1.8cqi, 11px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.wb-cover__crest {
+  padding: 1.3cqi 2cqi;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.wb-cover__body {
+  position: relative;
+  margin-top: auto;
+  padding: 0 8.6cqi 9cqi 6.8cqi;
+  color: #ffffff;
+}
+
+.wb-cover__label {
+  margin-bottom: 3cqi !important;
+  font-size: clamp(7.5px, 1.9cqi, 12px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.wb-cover__name {
+  max-width: 9ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(22px, 11cqi);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.wb-cover__rule {
+  display: block;
+  width: 14cqi;
+  height: 2px;
+  margin-top: 5cqi;
+  background: var(--brand-300);
+}
+
+/* The phone's opening page carries a small version of the cover. */
+.wb-page__plate--cover {
+  flex-grow: 1.2;
+  margin-bottom: 4.4cqi;
+}
+
+.wb-cover__mini {
+  position: absolute;
+  left: 5cqi;
+  right: 5cqi;
+  bottom: 4.6cqi;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqi;
+  color: #ffffff;
+}
+
+.wb-cover__mini span {
+  font-size: clamp(8px, 2.2cqi, 12px);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.wb-cover__mini b {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(18px, 7.6cqi);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.wb-page--single .wb-page__lead {
+  margin: 4.4cqi 0 3cqi;
+}
+
+.wb-page--single .wb-page__num {
+  font-size: max(24px, 10cqi);
+}
+
+.wb-page--single .wb-page__title {
+  max-width: 18ch;
+  font-size: max(17px, 6.6cqi);
+  margin-bottom: 2.6cqi !important;
+}
+
+.wb-page--single .wb-page__body {
+  max-width: none;
+  font-size: clamp(12px, 3.6cqi, 16px);
+  line-height: 1.55;
+}
+
+.wb-page--single .wb-page__figs,
+.wb-page--single .wb-page__pull {
+  margin-top: 4cqi !important;
+}
+
+.wb-page--single .wb-page__fig-v {
+  font-size: max(20px, 8.4cqi);
+}
+
+.wb-page--single .wb-page__figs.is-row .wb-page__fig-v {
+  font-size: max(15px, 5.6cqi);
+}
+
+.wb-page--single .wb-page__pull {
+  font-size: max(14px, 4.4cqi);
+}
+
+/* The reverse of a phone's page. */
+.wb-page--back .wb-page__inner {
+  align-items: center;
+  justify-content: center;
+}
+
+.wb-back__mark {
+  padding: 3cqi 5cqi;
+  border: 1px solid var(--brand-200);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 6cqi;
+  letter-spacing: 0.32em;
+  color: var(--brand-300);
+}
+
+/* ==========================================================================
+   The furniture around the book
+   ========================================================================== */
+.wb__foot {
+  grid-area: foot;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.wb__status {
+  display: grid;
+  min-width: 0;
+}
+
+.wb-cue,
+.wb-chapter {
+  grid-area: 1 / 1;
+  align-self: center;
+  margin: 0;
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.wb-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* A hairline with a blue bead running down it, on a loop. */
+.wb-cue__line {
+  position: relative;
+  width: 1px;
+  height: 28px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.wb-cue__line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 10px;
+  background: var(--blue);
+  animation: wb-cue 1.9s var(--ease-in-out) infinite;
+}
+
+@keyframes wb-cue {
+  0% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(30px);
+  }
+}
+
+.wb-chapter {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+}
+
+.wb-chapter.is-on {
+  animation: wb-chapter var(--d-enter) var(--ease-out) 120ms both;
+}
+
+.wb-chapter b {
+  margin-right: 8px;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+@keyframes wb-chapter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The page counter: a rolling numeral and a hairline that fills. */
+.wb-count {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.wb-count__roll {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  color: var(--blue);
+}
+
+.wb-count__strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 700ms var(--ease-out);
+}
+
+.wb-count__strip > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+.wb-count__of {
+  font-weight: 500;
+}
+
+.wb-count__track {
+  position: relative;
+  width: clamp(72px, 11vw, 170px);
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.wb-count__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.wb-nav {
+  justify-self: end;
+  display: flex;
+  gap: 8px;
+}
+
+.wb-nav__btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line-blue-strong);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--blue);
+  cursor: pointer;
+  transition:
+    background var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out),
+    opacity var(--d-state) var(--ease-out);
+}
+
+.wb-nav__btn:hover:not(:disabled) {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--on-blue);
+}
+
+.wb-nav__btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.wb-nav__btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.wb-nav__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ==========================================================================
+   Phones and portrait tablets - one page at a time
+   ========================================================================== */
+.wb--single .wb__inner {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'head'
+    'scene'
+    'foot';
+}
+
+.wb--single .wb__meta,
+.wb--single .wb__status {
+  display: none;
+}
+
+.wb--single .wb__foot {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.wb--single .wb-count {
+  justify-self: start;
+}
+
+@media (max-width: 599px) {
+  .wb__title {
+    font-size: clamp(1.3rem, 6.2vw, 1.75rem);
+  }
+
+  .wb__eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .wb-nav__btn {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion - the spreads printed flat, one under the other
+   ========================================================================== */
+.wb--static .wb__stage {
+  height: auto;
+  overflow: visible;
+  background: var(--white);
+}
+
+.wb--static .wb__inner {
+  height: auto;
+  padding-block: var(--section-y);
+  row-gap: clamp(20px, 3vw, 36px);
+}
+
+.wb-static {
+  display: grid;
+  justify-items: center;
+  gap: clamp(48px, 7vw, 96px);
+  padding-block: 16px 40px;
+}
+
+.wb-book--static {
+  --page-h: min(calc((100vw - 2 * var(--gutter) - 64px) / 2 / var(--ratio)), 760px);
+}
+
+.wb-book--static.wb-book--single {
+  --page-h: min(calc((100vw - 2 * var(--gutter) - 22px) / var(--ratio)), 820px);
+}

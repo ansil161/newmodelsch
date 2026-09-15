@@ -1,122 +1,235 @@
 /* ==========================================================================
-   08 - Weekly life - the moving ribbon
+   09 - Weekly life - the collage that builds itself
    --------------------------------------------------------------------------
-   Proportions taken from the reference: tiles about a sixth of the viewport
-   wide at roughly 18:25, a hairline gap, a small soft radius, and a short
-   sentence sitting close above the strip rather than a headline over it.
+   THIS FILE DESCRIBES THE FINISHED COLLAGE.
+
+   One white stage a viewport tall, the sentence centred in it, an oversized
+   outlined word behind the sentence, and seven prints placed around it at
+   different sizes, proportions and tilts. That is the resting state - what a
+   reader with motion turned off gets, and what is left if the module never
+   runs. `HomeWeek.tsx` measures it and builds the opening from it.
+
+   SIZES ARE BOUND BY HEIGHT AS WELL AS WIDTH.
+
+   A print's width is `--w` units of `--wk-u`, and a unit is the smaller of a
+   width percent and a height percent. A short laptop window therefore gets
+   smaller prints rather than a collage running off the bottom of the stage.
+   Positions stay in percent of the stage.
    ========================================================================== */
+
 .week {
-  --tile-w: clamp(210px, 16.4vw, 320px);
-  --tile-gap: clamp(8px, 0.75vw, 14px);
-  --tile-r: clamp(12px, 1.05vw, 18px);
+  --wk-u: min(1vw, 1.6vh);
+  --wk-r: clamp(10px, 0.95vw, 16px);
+  /* The opening print's height. Its width is 4:5 of it, the lead print's own
+     proportion, so one uniform scale lands the lead print on it exactly. */
+  --wk-open-h: min(72vh, 50vw);
 
   position: relative;
-  padding-block: var(--section-y-tight);
   background: var(--white);
-  /* The track is several viewports wide; it must never widen the page. */
-  overflow: clip;
+  color: var(--ink);
+  isolation: isolate;
+  /* No `overflow`, `filter`, `transform` or `contain` here: this element is
+     pinned, and any of them would break the pin. The clipping happens on the
+     stage, inside it. */
 }
 
-.week__head {
+.week__stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+}
+
+.week__slot {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: calc(var(--wk-open-h) * 0.8);
+  height: var(--wk-open-h);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Type
+   -------------------------------------------------------------------------- */
+
+/* The oversized word. An outline with the faintest fill, so it reads as part
+   of the page's architecture rather than as a second headline. */
+.week__ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, min(14vw, 24vh), 15rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+  color: var(--brand-50);
+  -webkit-text-stroke: 1px var(--brand-200);
+  pointer-events: none;
+  user-select: none;
+}
+
+.week__copy {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding-inline: var(--gutter);
   text-align: center;
-  margin-bottom: clamp(32px, 4vw, 64px);
+  pointer-events: none;
 }
 
 .week__eyebrow {
-  margin-bottom: clamp(12px, 1.2vw, 18px);
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 1vw, 16px);
+  margin: 0 0 clamp(14px, 2.2vh, 24px);
+  letter-spacing: 0.22em;
+  color: var(--blue);
+}
+
+.week__rule {
+  display: block;
+  width: clamp(24px, 3vw, 48px);
+  height: 1px;
+  background: var(--line-blue-strong);
+  transform-origin: right center;
+}
+
+.week__rule:last-child {
+  transform-origin: left center;
 }
 
 .week__title {
-  max-width: 24ch;
-  font-family: var(--font-body);
+  margin: 0;
+  max-width: 17ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, min(3.7vw, 6vh), 3.9rem);
   font-weight: 600;
-  font-size: clamp(1.5rem, 2.7vw, 2.5rem);
-  line-height: 1.14;
-  letter-spacing: -0.028em;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   text-wrap: balance;
   color: var(--ink);
 }
 
-.week__viewport {
-  overflow: hidden;
+.week__word {
+  display: inline-block;
 }
 
-/* Two copies of the sequence in a row. The gap between them equals the gap
-   inside them, which is what makes the measured span loop without a seam. */
-.week__track,
-.week__set {
-  display: flex;
-  gap: var(--tile-gap);
+.week__word--last {
+  color: var(--blue-deep);
 }
 
-.week__track {
-  width: max-content;
-  will-change: transform;
+/* The copy block ignores the pointer so the stage never swallows a scroll
+   gesture; the one thing in it that is meant to be pressed opts back in. */
+.week__cta {
+  margin-top: clamp(22px, 3.4vh, 36px);
+  pointer-events: auto;
 }
 
-.week__set {
-  flex: none;
-  list-style: none;
+/* --------------------------------------------------------------------------
+   The prints
+   -------------------------------------------------------------------------- */
+
+.week__prints {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   margin: 0;
   padding: 0;
+  list-style: none;
+  pointer-events: none;
 }
 
 .week__tile {
-  flex: none;
-  width: var(--tile-w);
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: calc(var(--wk-u) * var(--w));
+  aspect-ratio: var(--ar);
+  transform-origin: 50% 50%;
 }
 
-/* The space is reserved before the photograph arrives, so nothing shifts. */
-.week__fig {
+.week__print {
   width: 100%;
-  aspect-ratio: 18 / 25;
-  border-radius: var(--tile-r);
+  height: 100%;
+  transform: rotate(var(--r, 0deg));
 }
 
-@media (max-width: 899px) {
-  .week {
-    --tile-w: clamp(170px, 26vw, 240px);
+/* A consistent, modest radius and no shadow. At the opening all seven prints
+   are stacked in one place, and seven coinciding shadows read as a grey halo
+   round the one photograph; the overlaps carry the depth on their own. */
+.week .week__fig {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--wk-r);
+}
+
+/* The lead print is on top: at the opening the others are hidden exactly
+   behind it. The rest are layered so every overlap in the finished collage
+   has a deliberate front and back. */
+.week__tile--1 { --x: 6%;    --y: 11%; --w: 20;   --ar: 4 / 5; z-index: 7; }
+.week__tile--2 { --x: 72%;   --y: 7%;  --w: 17;   --ar: 5 / 4; z-index: 4; }
+.week__tile--3 { --x: 80.5%; --y: 26%; --w: 13.5; --ar: 3 / 4; z-index: 5; }
+.week__tile--4 { --x: 63%;   --y: 63%; --w: 19;   --ar: 4 / 3; z-index: 3; }
+.week__tile--5 { --x: 17%;   --y: 49%; --w: 14;   --ar: 1;     z-index: 6; }
+.week__tile--6 { --x: 3%;    --y: 70%; --w: 12;   --ar: 4 / 5; z-index: 2; }
+.week__tile--7 { --x: 36%;   --y: 78%; --w: 10;   --ar: 1;     z-index: 5; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .week__tile {
+    will-change: transform;
   }
 }
 
-@media (max-width: 599px) {
+/* ==========================================================================
+   Tablet and phone - a vertical, layered composition
+   --------------------------------------------------------------------------
+   Not the desktop collage shrunk: three prints stacked into the top of the
+   stage, four into the bottom, the sentence in the band between. The same
+   opening, cluster and spread run over it; the module compresses the
+   cluster sideways to fit, which is what makes it read as layered here.
+   ========================================================================== */
+@media (max-width: 899px) {
   .week {
-    --tile-w: 46vw;
-    --tile-gap: 8px;
-    --tile-r: 12px;
+    --wk-u: min(1vw, 0.5vh);
+    --wk-r: 10px;
+    --wk-open-h: min(54vh, 96vw);
+  }
+
+  .week__ghost {
+    font-size: clamp(3.5rem, 21vw, 9rem);
   }
 
   .week__title {
-    max-width: 20ch;
+    max-width: 16ch;
+    font-size: clamp(1.75rem, 7.4vw, 2.6rem);
   }
+
+  .week__tile--1 { --x: 5%;  --y: 8%;  --w: 48; }
+  .week__tile--2 { --x: 57%; --y: 11%; --w: 38; }
+  .week__tile--3 { --x: 70%; --y: 22%; --w: 24; }
+  /* Pushed a little lower than the top band is high, to clear the button
+     under the sentence. */
+  .week__tile--4 { --x: 50%; --y: 68%; --w: 44; }
+  .week__tile--5 { --x: 7%;  --y: 67%; --w: 36; }
+  .week__tile--6 { --x: 22%; --y: 83%; --w: 28; }
+  .week__tile--7 { --x: 64%; --y: 85%; --w: 24; }
 }
 
-/* No loop is built. The strip becomes a row a person can swipe or scroll,
-   and the copy that only existed to hide the seam goes away. */
-@media (prefers-reduced-motion: reduce) {
-  .week__viewport {
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-  }
-
-  .week__viewport::-webkit-scrollbar {
-    display: none;
-  }
-
-  .week__track {
-    padding-inline: var(--gutter);
-    will-change: auto;
-  }
-
-  .week__set[aria-hidden='true'] {
-    display: none;
-  }
-
-  .week__tile {
-    scroll-snap-align: center;
+@media (min-width: 600px) and (max-width: 899px) {
+  .week {
+    --wk-u: min(0.78vw, 0.5vh);
   }
 }

@@ -1,13 +1,9 @@
 import { Link } from 'react-router-dom';
-import { ADMISSIONS_INTRO, PRINCIPAL, ROUTES, STATS, WHY_CHOOSE } from '@/constants';
+import { ADMISSIONS_INTRO, ROUTES, STATS } from '@/constants';
 import {
   academicImages,
-  artsImages,
   campusImages,
   everydayImages,
-  facultyImages,
-  heroImage,
-  heroInsets,
   studentImages,
 } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
@@ -15,17 +11,13 @@ import { draw, drift, lines, rise, unmask } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import {
   Collage,
-  EditorialHero,
   Figure,
   InviteSection,
   Mark,
   Script,
   SectionHead,
   StatReveal,
-  Sticker,
-  StickyStory,
 } from '@/components/editorial';
-import type { StoryPanel } from '@/components/editorial';
 import './home.css';
 
 /* ==========================================================================
@@ -48,7 +40,7 @@ import './home.css';
      a drawn line          the child's own path
      one enormous quote    what it is like from outside
      a letter              who is accountable
-     a moving ribbon       what a week looks like
+     a collage, assembled  what a week looks like
      one ask               and nothing else
 
    No two adjacent sections share a shape. That constraint is doing more work
@@ -57,76 +49,24 @@ import './home.css';
 
 /* --------------------------------------------------------------------------
    01 - HERO
+   --------------------------------------------------------------------------
+   An editorial canvas rather than a split screen: the statement, three
+   students cut out of their photographs, orbit lines drawn round them and the
+   figures placed in the space between. Its entrance, parallax loop and
+   magnetic call to action live beside this file. See `HomeCanvasHero.tsx`.
    -------------------------------------------------------------------------- */
 
-export function HomeHero() {
-  return (
-    <EditorialHero
-      sticker="Bahadurpura, Hyderabad · Est. 1962"
-      title={[
-        <>Building minds</>,
-        <>
-          that <Mark>move</Mark> the
-        </>,
-        <>world.</>,
-      ]}
-      question="Is this the right school for my child?"
-      lead="One campus, Nursery through Class 10, and a rule written into the charter in 1962 that has never been amended: no class grows past the point where a teacher can hold every name."
-      photo={heroImage}
-      inset={heroInsets[0]}
-      figures={[
-        { value: '64', label: 'Years of legacy' },
-        { value: '13', label: 'Years of learning' },
-        { value: '100%', label: 'Board results, 12 years' },
-      ]}
-      actions={[
-        { label: 'Explore the school', to: ROUTES.about, variant: 'primary' },
-        { label: 'Start an admission', to: ROUTES.admissions, variant: 'secondary' },
-      ]}
-      cue="Scroll"
-    />
-  );
-}
+export { HomeHero } from './HomeCanvasHero';
 
 /* --------------------------------------------------------------------------
    02 - WHY CHOOSE US
    --------------------------------------------------------------------------
-   The five claims the school makes about itself, each held on screen beside
-   the photograph that evidences it. Sticky rather than pinned - see
-   StickyStory for why that distinction is load-bearing.
+   The five reasons bound as a prospectus whose pages the reader's scroll
+   turns. A pinned, scrubbed piece of choreography with its own page model,
+   so it lives beside this file. See `HomeWhy.tsx`.
    -------------------------------------------------------------------------- */
 
-const STRENGTHS: StoryPanel[] = WHY_CHOOSE.map((item, i) => ({
-  id: `why-${item.id}`,
-  index: String(i + 1).padStart(2, '0'),
-  kicker: ['Curious by design', 'Rooted in values', 'Built for every child', 'Learning beyond marks', 'A place to come back to'][i],
-  title: item.title,
-  body: item.description,
-  photo: [academicImages[0], studentImages[3], studentImages[2], artsImages[0], studentImages[5]][i],
-}));
-
-export function HomeWhy() {
-  return (
-    <section className="section why" id="why">
-      <div className="wrap">
-        <SectionHead
-          sticker="What makes it different"
-          stickerTilt={2}
-          title={
-            <>
-              What makes this <br />
-              place <Mark kind="ring">different?</Mark>
-            </>
-          }
-          lead="Five answers, and every one of them is something you can check on a campus visit rather than something we can only assert here."
-          className="why__head"
-        />
-
-        <StickyStory panels={STRENGTHS} media="left" shape="blob" showCounter={false} className="why__story" />
-      </div>
-    </section>
-  );
-}
+export { HomeWhy } from './HomeWhy';
 
 /* --------------------------------------------------------------------------
    03 - EDUCATION
@@ -341,78 +281,21 @@ export { HomeVoices } from './HomeVoices';
 /* --------------------------------------------------------------------------
    08 - THE PRINCIPAL
    --------------------------------------------------------------------------
-   A portrait, a pull quote at display scale, and the letter underneath. The
-   quote and the letter are the same voice, so the quote is set as the thing
-   she says and the letter as the thing she wrote - which is why one is serif
-   and the other is not.
+   The letter, typeset as a magazine spread: a running head, a portrait held
+   still beside a two-column letter, and a hung pull quote. It has its own
+   layered parallax and a sticky column, so it lives beside this file like
+   the other sections with choreography of their own. See `HomePrincipal.tsx`.
    -------------------------------------------------------------------------- */
 
-export function HomePrincipal() {
-  const scope = useGsapScope<HTMLElement>((_, el) => {
-    const quote = el.querySelector<HTMLElement>('.principal__quote');
-    const frame = el.querySelector<HTMLElement>('.principal__fig');
-    if (quote) lines(quote, { trigger: el });
-    if (frame) unmask(frame, { trigger: el, from: 'left' });
-    draw(el, { trigger: el, delay: 0.6 });
-    rise(el.querySelectorAll<HTMLElement>('.principal__letter > *'), {
-      trigger: el,
-      delay: 0.3,
-      stagger: 0.08,
-    });
-    drift(el.querySelector('.principal__fig img'), 60, { trigger: el });
-  }, []);
-
-  return (
-    <section ref={scope} className="section principal" id="principal">
-      <div className="wrap principal__inner">
-        <div className="principal__media">
-          <Figure
-            photo={facultyImages[0]}
-            width={720}
-            sizes="(max-width: 900px) 78vw, 34vw"
-            shape="arch"
-            ratio="portrait"
-            className="principal__fig"
-          />
-          <p className="principal__badge">
-            <b>{PRINCIPAL.name}</b>
-            <span className="meta">{PRINCIPAL.tenure}</span>
-          </p>
-        </div>
-
-        <div className="principal__body">
-          <Sticker tone="sun" tilt={-2.2}>
-            From the principal
-          </Sticker>
-
-          <blockquote className="principal__quote ed-h1">
-            A school is not a building. It is a community of people who believe in{' '}
-            <Mark kind="underline">possibility.</Mark>
-          </blockquote>
-
-          <div className="principal__letter">
-            {PRINCIPAL.letter.map((paragraph) => (
-              <p className="body-text" key={paragraph.slice(0, 24)}>
-                {paragraph}
-              </p>
-            ))}
-            <p className="principal__sign">
-              <span className="principal__name">{PRINCIPAL.name}</span>
-              <span className="meta">{PRINCIPAL.title}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+export { HomePrincipal } from './HomePrincipal';
 
 /* --------------------------------------------------------------------------
    09 - WEEKLY LIFE
    --------------------------------------------------------------------------
-   A sentence over a ribbon of photographs that drifts on its own, looping
-   without a seam. Its loop, its visibility gating and its reduced-motion
-   fallback live beside this file, like the other self-animating sections.
+   One photograph that, under a pinned scroll, sends six more out from behind
+   it into a cluster, then opens that cluster into a collage around the
+   sentence. A measured, scrubbed timeline of its own, so it lives beside this
+   file like the other pinned sections. See `HomeWeek.tsx`.
    -------------------------------------------------------------------------- */
 
 export { HomeWeek } from './HomeWeek';

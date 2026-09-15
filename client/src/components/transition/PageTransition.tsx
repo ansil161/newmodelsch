@@ -398,7 +398,7 @@ export function PageTransition() {
         img.addEventListener('load', () => resolve(), { once: true });
         img.addEventListener('error', () => resolve(), { once: true });
       });
-    const hero = loaded(document.querySelector<HTMLImageElement>('.hero__frame img, .cover__media img'));
+    const hero = loaded(document.querySelector<HTMLImageElement>('.ch__student--girl img, .hero__frame img, .cover__media img'));
     // The logo itself: a lockup that fades up before its artwork has arrived
     // fades up as an empty box.
     const logo = loaded(p.lockup.querySelector('img'));

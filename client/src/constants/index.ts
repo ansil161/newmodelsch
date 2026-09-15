@@ -662,6 +662,7 @@ export const PRINCIPAL = {
   name: 'Dr. Meera Krishnan',
   title: 'Principal, New Model High School',
   tenure: 'Leading since 2009',
+  since: 2009,
   portrait: img('1508214751196-bcfd4ca60f91', 900),
   quote:
     'Education is not just about preparing students for exams. It is about preparing them for life.',

@@ -19,7 +19,7 @@
    ========================================================================== */
 
 .vx {
-  --vx-ink: var(--navy);
+  --vx-ink: var(--ink);
   --vx-quiet: var(--slate);
   --vx-pen: var(--blue);
   --vx-wash: var(--blue-soft);

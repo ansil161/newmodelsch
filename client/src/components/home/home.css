@@ -13,17 +13,6 @@
    ========================================================================== */
 
 /* ==========================================================================
-   02 - Why choose us
-   ========================================================================== */
-.why {
-  background: var(--white);
-}
-
-.why__head {
-  margin-bottom: clamp(48px, 6vw, 90px);
-}
-
-/* ==========================================================================
    03 - Education bands
    ========================================================================== */
 .education__bands {
@@ -193,93 +182,5 @@
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
     align-items: start;
     gap: clamp(48px, 6vw, 96px);
-  }
-}
-
-/* ==========================================================================
-   08 - Principal
-   ========================================================================== */
-.principal {
-  background: var(--white);
-}
-
-.principal__inner {
-  display: grid;
-  gap: clamp(40px, 5vw, 72px);
-  align-items: start;
-}
-
-.principal__media {
-  position: relative;
-}
-
-.principal__fig {
-  width: 100%;
-}
-
-/* The name plate sits on the foot of the portrait, half off it - the one
-   place on the page something overlaps a photograph's edge. */
-.principal__badge {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: -34px;
-  margin-left: clamp(12px, 3vw, 32px);
-  position: relative;
-  padding: 14px 20px 15px;
-  background: var(--sun);
-  color: var(--on-sun);
-  border-radius: var(--r-sm);
-  box-shadow: var(--e-2);
-}
-
-.principal__badge b {
-  font-size: var(--t-body);
-  font-weight: 600;
-}
-
-.principal__badge .meta {
-  color: var(--blue-soft);
-}
-
-.principal__body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(22px, 2.6vw, 32px);
-}
-
-.principal__quote {
-  margin: 0;
-  max-width: 17ch;
-}
-
-.principal__letter {
-  display: grid;
-  gap: 1.1em;
-  padding-top: clamp(20px, 2.4vw, 30px);
-  border-top: 1px solid var(--line);
-  width: 100%;
-}
-
-.principal__sign {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: 8px;
-}
-
-.principal__name {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-style: normal;
-  font-size: var(--t-h4);
-  color: var(--ink);
-}
-
-@media (min-width: 900px) {
-  .principal__inner {
-    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-    gap: clamp(56px, 7vw, 110px);
   }
 }

@@ -13,7 +13,7 @@
   position: relative;
   padding-block: clamp(96px, 11vw, 176px);
   background: var(--chalk);
-  color: var(--navy);
+  color: var(--ink);
   overflow: clip;
   isolation: isolate;
 }
@@ -104,7 +104,7 @@
   line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--ink);
 }
 
 .invite__eyebrow::before {
@@ -160,7 +160,7 @@
   font-feature-settings: 'lnum' 1;
   line-height: 1;
   letter-spacing: -0.03em;
-  color: var(--navy);
+  color: var(--ink);
 }
 
 .invite__year-swash {
@@ -183,7 +183,7 @@
   line-height: 1;
   letter-spacing: -0.03em;
   text-wrap: balance;
-  color: var(--navy);
+  color: var(--ink);
 }
 
 /* The emphasised word: the headline's own face, picked out in the logo
@@ -239,7 +239,7 @@
 
 .invite .chip {
   background: var(--white);
-  color: var(--navy);
+  color: var(--ink);
 }
 
 .invite__actions {
@@ -274,7 +274,7 @@
   min-height: 44px;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--ink);
   background:
     linear-gradient(var(--sun), var(--sun)) left bottom 9px / 0% 2px no-repeat,
     linear-gradient(var(--line-strong), var(--line-strong)) left bottom 9px / 100% 1px no-repeat;
@@ -317,7 +317,7 @@
   height: 32px;
   border-radius: 50%;
   box-shadow: inset 0 0 0 1px var(--line);
-  color: var(--navy);
+  color: var(--ink);
 }
 
 /* ==========================================================================
@@ -454,7 +454,7 @@
 .hand-mark--sun { color: var(--sun); }
 .hand-mark--blue { color: var(--blue); }
 .hand-mark--sky { color: var(--sky-line); }
-.hand-mark--ink { color: var(--navy); }
+.hand-mark--ink { color: var(--ink); }
 
 .hand-mark--loop [data-stroke],
 .hand-mark--path [data-stroke] { stroke-width: 5.5; }
@@ -485,7 +485,7 @@
   font-size: clamp(1.092rem, 1.482vw, 1.443rem);
   font-weight: 600;
   line-height: 1.15;
-  color: var(--navy);
+  color: var(--ink);
   white-space: nowrap;
 }
 

@@ -24,8 +24,8 @@ anchor, and the whole palette is derived from its one ink. All tokens live in
 | Navy | `#1a1640` — headings and strong type; the footer ground (white logo) |
 | Light | `#f6f5fb` / `#eceaf6` — selected supporting sections, fills, highlights |
 | Canvas | White `#ffffff` — almost every section |
-| Neutral | `#45425f` body, `#6b6884` muted, brand-tinted hairlines |
-| Headings | **Plus Jakarta Sans** 600–700 |
+| Neutral | `#17161d` headings, `#2c2b35` secondary headings, `#5b5a66` body, `#737280` muted |
+| Headings | **Geist** 600 (700 reserved for key figures) |
 | Text | **Inter** 400–600 for body, navigation, forms, buttons and figures |
 
 Two families, weights 400 / 500 / 600 / 700 only, loaded in one request.

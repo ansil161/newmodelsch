@@ -46,13 +46,17 @@
   --brand-900: #1a1640;
   --brand-950: #110e2c;
 
-  /* Neutrals, cool and faintly brand-tinted. Contrast on white:
-       700 9.5:1 (body)   500 5.3:1 (muted, AA)   300 furniture only */
-  --neutral-700: #45425f;
-  --neutral-600: #55526f;
-  --neutral-500: #6b6884;
-  --neutral-300: #a4a2b6;
-  --neutral-200: #e3e0ef;
+  /* Neutrals: true charcoal greys with only a trace of the brand hue, so type
+     reads as ink rather than as a tint of the logo. Contrast on white:
+       900 17:1 (headings)   800 13.5:1 (secondary headings)
+       600 6.8:1 (body)      500 4.7:1 (muted, AA)   300 furniture only */
+  --neutral-900: #17161d;
+  --neutral-800: #2c2b35;
+  --neutral-700: #45444f;
+  --neutral-600: #5b5a66;
+  --neutral-500: #737280;
+  --neutral-300: #a9a8b3;
+  --neutral-200: #e4e3ea;
 
   /* ==================================================== semantic tokens */
   --color-primary: var(--brand-500);
@@ -70,10 +74,16 @@
   /* The one tinted ground: selected supporting sections, quiet wells. */
   --color-surface-alt: var(--brand-50);
 
-  --color-text: var(--brand-900);
-  --color-text-body: var(--neutral-700);
+  /* Text hierarchy. Four values of grey, and the brand ink for the few
+     words that are meant to be found first. */
+  --color-text: var(--neutral-900); /* primary headings */
+  --color-text-secondary: var(--neutral-800); /* secondary headings */
+  --color-text-body: var(--neutral-600); /* running copy */
   --color-text-muted: var(--neutral-500);
   --color-text-subtle: var(--neutral-300);
+  --color-accent: var(--brand-500); /* keywords */
+  --color-link: var(--brand-500);
+  --color-link-hover: var(--brand-700);
 
   --color-border: rgba(26, 22, 64, 0.11);
   --color-border-strong: rgba(26, 22, 64, 0.2);
@@ -95,6 +105,7 @@
 
   /* ink */
   --ink: var(--color-text);
+  --ink-strong: var(--color-text-secondary);
   --ink-2: var(--color-text-body);
   --ink-3: var(--color-text-muted);
   --ink-4: var(--color-text-subtle);
@@ -157,18 +168,21 @@
   /* ==========================================================================
      Type
      --------------------------------------------------------------------------
-     PLUS JAKARTA SANS carries the headings: a modern geometric grotesque with
-     open counters and a confident bold, which gives the headlines presence
-     without the decoration of a display serif - the logo already carries the
-     school's traditional serif, and a second serif beside it would compete.
+     GEIST carries the headings: a clean, modern grotesque that holds its
+     shape at semibold, so a headline gets its presence from size and space
+     rather than from weight - the logo already carries the school's
+     traditional serif, and a second serif beside it would compete.
 
      INTER carries everything read or operated: body copy, navigation, forms,
      buttons, labels and figures (with tabular numerals where they line up).
 
-     Two families, four weights: 400 regular, 500 medium, 600 semibold,
-     700 bold. Nothing else.
+     Two families, four weights, each with one job:
+       400 regular    running copy
+       500 medium     labels, navigation, quiet emphasis
+       600 semibold   headings, buttons, links
+       700 bold       key numbers and the rare highlight. Never a paragraph.
      ========================================================================== */
-  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* Legacy roles, repointed. Figures and labels are Inter; annotations that
@@ -184,9 +198,17 @@
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
+  --fw-heading: var(--fw-semibold);
 
-  /* Fluid scale. Tuned for a bold sans, which sets wider and heavier than the
-     serif this scale was first drawn for. */
+  /* Leading. Headings close up as they grow; copy is given room. */
+  --lh-display: 1.04;
+  --lh-heading: 1.15;
+  --lh-title: 1.28;
+  --lh-lead: 1.6;
+  --lh-body: 1.72;
+
+  /* Fluid scale. Hierarchy is carried by size, leading and colour - the
+     weights above barely move between an H1 and a card title. */
   --t-mega: clamp(3rem, 9vw, 9rem);
   --t-hero: clamp(2.5rem, 5.8vw, 5.25rem);
   --t-h1: clamp(2.25rem, 4.6vw, 4.25rem);

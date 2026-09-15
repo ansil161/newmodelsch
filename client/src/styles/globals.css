@@ -17,11 +17,12 @@ html {
 body {
   margin: 0;
   background: var(--white);
-  color: var(--ink);
+  color: var(--color-text-body);
   font-family: var(--font-body);
   font-size: var(--t-body);
-  font-weight: 400;
-  line-height: 1.62;
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -39,14 +40,30 @@ fieldset {
   margin: 0;
 }
 
-/* Every heading is the heading face unless a rule says otherwise. */
+/* Every heading is the heading face, semibold, unless a rule says otherwise.
+   The weight is stated because the browser default for a heading is bold. */
 h1,
 h2,
 h3,
 h4,
 h5 {
   font-family: var(--font-display);
-  color: var(--ink);
+  font-weight: var(--fw-heading);
+  color: var(--color-text);
+}
+
+h3,
+h4,
+h5 {
+  color: var(--color-text-secondary);
+}
+
+/* Emphasis inside copy is a step of weight and a step darker - not the
+   browser's 700. Colour is left to the context, so a <b> on a filled badge
+   keeps that badge's type colour. */
+b,
+strong {
+  font-weight: var(--fw-semibold);
 }
 
 fieldset {
@@ -203,14 +220,16 @@ button {
 /* ==========================================================================
    Typography
    --------------------------------------------------------------------------
-   Headings are Plus Jakarta Sans in the brand navy; everything read or
-   operated is Inter. The hierarchy:
+   Headings are Geist; everything read or operated is Inter. Hierarchy comes
+   from size, leading and colour, not from piling on weight:
 
-     H1 (.ed-mega/.ed-hero/.ed-h1)  bold, tight tracking, generous size
-     H2 (.ed-h2)                    bold, a clear section heading
-     H3 (.ed-h3/.fn-h3)             semibold, cards and subsections
-     body / lead                    Inter 400, 1.62 / 1.5 leading
+     H1 (.ed-mega/.ed-hero/.ed-h1)  semibold, charcoal, tight tracking, large
+     H2 (.ed-h2)                    semibold, charcoal, a clear section heading
+     H3 (.ed-h3/.fn-h3/.fn-h4)      semibold, a step lighter grey
+     lead / body                    Inter 400, medium grey, 1.6 / 1.72 leading
+     keywords (.ed-em/.text-accent) the brand ink
      labels (.meta/.sticker)        Inter 500-600, spaced capitals
+     bold (700)                     key figures only (.stat-num)
    ========================================================================== */
 .ed-mega,
 .ed-hero,
@@ -218,45 +237,42 @@ button {
 .ed-h2,
 .ed-h3 {
   font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.04;
+  font-weight: var(--fw-heading);
+  line-height: var(--lh-heading);
   letter-spacing: -0.02em;
-  /* Tight tracking closes the gaps between words as well as letters; this
-     hands the word space back so a bold line still reads as separate words. */
-  word-spacing: 0.05em;
   text-wrap: balance;
-  color: var(--ink);
+  color: var(--color-text);
 }
 
 .ed-mega {
   font-size: var(--t-mega);
   line-height: 0.98;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
 }
 
 .ed-hero {
   font-size: var(--t-hero);
-  line-height: 1.02;
-  letter-spacing: -0.025em;
+  line-height: var(--lh-display);
+  letter-spacing: -0.03em;
 }
 
 .ed-h1 {
   font-size: var(--t-h1);
-  line-height: 1.05;
-  letter-spacing: -0.022em;
+  line-height: 1.06;
+  letter-spacing: -0.026em;
 }
 
 .ed-h2 {
   font-size: var(--t-h2);
-  line-height: 1.1;
-  letter-spacing: -0.016em;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .ed-h3 {
   font-size: var(--t-h3);
-  font-weight: 600;
-  line-height: 1.22;
+  line-height: var(--lh-title);
   letter-spacing: -0.012em;
+  color: var(--color-text-secondary);
 }
 
 /* Emphasis inside a headline is the logo's colour, not a second style of
@@ -264,17 +280,17 @@ button {
 .ed-em {
   font-style: normal;
   font-weight: inherit;
-  color: var(--color-primary);
+  color: var(--color-accent);
 }
 
 /* Functional headings: a card title, a form legend, a table header. */
 .fn-h3,
 .fn-h4 {
   font-family: var(--font-display);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: var(--fw-heading);
+  line-height: var(--lh-title);
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: var(--color-text-secondary);
 }
 
 .fn-h3 {
@@ -283,18 +299,21 @@ button {
 
 .fn-h4 {
   font-size: var(--t-h4);
+  letter-spacing: -0.005em;
 }
 
 .lead {
   font-size: var(--t-lead);
-  line-height: 1.5;
-  color: var(--ink-2);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-lead);
+  color: var(--color-text-body);
   max-width: var(--measure);
 }
 
 .body-text {
   font-size: var(--t-body);
-  color: var(--ink-2);
+  line-height: var(--lh-body);
+  color: var(--color-text-body);
   max-width: var(--measure);
 }
 
@@ -302,10 +321,52 @@ button {
   margin-top: 1.1em;
 }
 
-/* Figures. Tabular numerals so a column of them aligns on the digit. */
+/* Emphasis in running copy steps up to heading charcoal, so a scanned
+   paragraph surfaces its key phrase without a wall of bold. */
+.lead strong,
+.lead b,
+.body-text strong,
+.body-text b {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+/* A keyword picked out in the brand ink. Medium, not bold: the colour
+   already does the work. */
+.text-accent {
+  font-weight: var(--fw-medium);
+  color: var(--color-accent);
+}
+
+.text-strong {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+/* A link inside running copy: brand ink with a quiet underline that firms
+   up on hover. */
+.lead a:not([class]),
+.body-text a:not([class]) {
+  color: var(--color-link);
+  font-weight: var(--fw-medium);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--color-border-brand);
+  transition: color var(--d-state) var(--ease-out), text-decoration-color var(--d-state) var(--ease-out);
+}
+
+.lead a:not([class]):hover,
+.body-text a:not([class]):hover {
+  color: var(--color-link-hover);
+  text-decoration-color: currentColor;
+}
+
+/* Figures. Tabular numerals so a column of them aligns on the digit. The
+   one place the bold weight is used as a matter of course. */
 .stat-num {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -656,10 +717,15 @@ a:hover .fig--hover img {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font-weight: 600;
-  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+  color: var(--color-link);
   cursor: pointer;
   padding-bottom: 3px;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--color-link-hover);
 }
 
 .link::after {
@@ -731,7 +797,7 @@ a:hover .fig--hover img {
 /* The oversized chapter numeral that opens a section or a panel. */
 .numeral {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   font-size: var(--t-numeral);
   line-height: 0.9;
   letter-spacing: -0.04em;

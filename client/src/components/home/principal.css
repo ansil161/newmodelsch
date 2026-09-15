@@ -1,0 +1,403 @@
+/* ==========================================================================
+   07 - The principal - a letter, set as a magazine spread
+   --------------------------------------------------------------------------
+   White sheet, one ink. The colour is spent in exactly four places, and each
+   is a different weight of the same logo hue:
+
+     brand-100   the field behind the portrait, running off the page
+     brand-300   the keyline arch, offset from the photograph
+     brand-500   the hung quotation mark, the drop cap, the reading rule
+     brand-900   the "principal since" plate - the only dark on the homepage
+
+   Phone first: running head, quote, portrait, letter. From 1000px the
+   portrait takes the left column and holds still while the letter scrolls.
+   ========================================================================== */
+
+.pm {
+  --pm-gap: clamp(56px, 7.4vw, 128px);
+
+  position: relative;
+  padding-block: var(--section-y);
+  background: var(--white);
+  color: var(--ink);
+  /* The colour field is placed off the page edge. Clip, not hidden: clip is
+     not a scroll container, so the sticky portrait still sticks. */
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* ==========================================================================
+   The running head
+   ========================================================================== */
+
+.pm__folio {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.3vw, 20px);
+  margin-bottom: clamp(44px, 6.4vw, 104px);
+}
+
+.pm__folio-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--brand-500);
+}
+
+.pm__folio-label {
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.pm__folio-rule {
+  position: relative;
+  flex: 1;
+  min-width: 24px;
+  height: 1px;
+  background: var(--line);
+}
+
+/* Rests full: `grow` scrubs it from empty as the section is read. */
+.pm__folio-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--brand-500);
+  transform-origin: left center;
+}
+
+.pm__folio-aside {
+  display: none;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   The grid
+   ========================================================================== */
+
+.pm__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'head'
+    'media'
+    'letter';
+  row-gap: clamp(44px, 8vw, 72px);
+}
+
+.pm__head {
+  grid-area: head;
+  min-width: 0;
+}
+
+.pm__media {
+  grid-area: media;
+  position: relative;
+  /* Leaves room on the right for the plate that hangs off the frame. */
+  width: min(84%, 460px);
+}
+
+.pm__letter {
+  grid-area: letter;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   The portrait
+   ========================================================================== */
+
+.pm__frame {
+  position: relative;
+}
+
+/* A block of the palest brand tint that the lower half of the portrait
+   stands on: it runs out past the frame's right edge and off the left edge
+   of the page. */
+.pm__wash {
+  position: absolute;
+  z-index: -1;
+  top: 46%;
+  bottom: -10%;
+  right: -16%;
+  left: -100vw;
+  background: var(--color-primary-light);
+}
+
+/* The same arch, drawn as a hairline and offset down and right. `translate`
+   rather than a transform, because `drift` owns this element's transform. */
+.pm__keyline {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 1px solid var(--brand-300);
+  border-radius: var(--r-arch);
+  translate: clamp(14px, 1.6vw, 26px) clamp(14px, 1.6vw, 26px);
+  pointer-events: none;
+}
+
+.pm__fig {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 4 / 5.1;
+}
+
+/* Taller than its frame by the drift distance, so the parallax never shows
+   an edge. */
+.pm__fig img {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  height: calc(100% + 64px);
+}
+
+.pm__since {
+  position: absolute;
+  z-index: 2;
+  right: -12%;
+  bottom: 11%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: clamp(128px, 11vw, 168px);
+  padding: clamp(16px, 1.6vw, 24px) clamp(18px, 1.8vw, 28px) clamp(16px, 1.6vw, 22px);
+  background: var(--brand-900);
+  border-radius: 2px;
+  box-shadow: var(--e-3);
+}
+
+.pm__since::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: var(--brand-400);
+}
+
+.pm__since-label {
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-navy-3);
+}
+
+.pm__since-year {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 3.3vw, 3.25rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+/* A caption set up the spine of the photograph, the way a magazine credits
+   a portrait. Desktop only: below that there is no gutter to set it in. */
+.pm__vert {
+  display: none;
+}
+
+/* ==========================================================================
+   The quote
+   ========================================================================== */
+
+/* Sized in em so it scales with itself; the reserved height is shorter than
+   the glyph's box because a quotation mark only uses the top of it. */
+.pm__glyph {
+  display: block;
+  height: 0.4em;
+  font-family: var(--font-display);
+  font-size: clamp(5.5rem, 10vw, 10rem);
+  font-weight: 600;
+  line-height: 0.72;
+  color: var(--brand-500);
+  user-select: none;
+}
+
+.pm__quote {
+  margin: clamp(14px, 1.8vw, 26px) 0 0;
+  max-width: 19ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.7vw, 3.75rem);
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+/* The setup in grey, the claim in ink: the sentence is read as two beats.
+   Its own line, so the claim never starts as an orphan at the end of it. */
+.pm__quote-setup {
+  display: block;
+  color: var(--ink-3);
+}
+
+/* ==========================================================================
+   The letter
+   ========================================================================== */
+
+.pm__letter {
+  position: relative;
+  padding-top: clamp(28px, 3vw, 40px);
+  border-top: 1px solid var(--line);
+}
+
+.pm__letter::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: clamp(40px, 4vw, 64px);
+  height: 2px;
+  background: var(--brand-500);
+}
+
+.pm__text {
+  max-width: var(--measure);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+}
+
+.pm__text p + p {
+  margin-top: 1.05em;
+}
+
+.pm__text p:first-child::first-line {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.pm__text p:first-child::first-letter {
+  float: left;
+  margin: 0.07em 0.12em 0 -0.02em;
+  font-family: var(--font-display);
+  font-size: 4.1em;
+  font-weight: 600;
+  line-height: 0.8;
+  color: var(--brand-500);
+}
+
+.pm__sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 32px;
+  margin-top: clamp(32px, 3.6vw, 52px);
+}
+
+.pm__who {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pm__mono {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  aspect-ratio: 1;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-blue-strong);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--brand-500);
+}
+
+.pm__who-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pm__name {
+  font-family: var(--font-display);
+  font-size: var(--t-h4);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   Tablet and up
+   ========================================================================== */
+
+@media (min-width: 700px) {
+  .pm__folio-aside {
+    display: block;
+  }
+}
+
+@media (min-width: 1000px) {
+  .pm__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'media head'
+      'media letter';
+    column-gap: var(--pm-gap);
+    row-gap: clamp(44px, 4.6vw, 72px);
+  }
+
+  /* Starts a step below the running head, so the two columns do not share a
+     top edge, then holds while the letter scrolls past. */
+  .pm__media {
+    position: sticky;
+    top: calc(var(--nav-h-compact) + clamp(28px, 3vw, 48px));
+    align-self: start;
+    width: auto;
+    margin-top: clamp(24px, 3.6vw, 64px);
+  }
+
+  .pm__since {
+    right: clamp(-44px, -3vw, -20px);
+  }
+
+  /* Hung punctuation: the mark sits out in the gutter, and the quote's first
+     letter lines up with the letter's left edge. */
+  .pm__glyph {
+    margin-left: -0.3em;
+  }
+
+  .pm__text {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1100px) {
+  .pm__vert {
+    display: block;
+    position: absolute;
+    top: 16%;
+    left: calc(clamp(30px, 2.8vw, 44px) * -1);
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    font-family: var(--font-body);
+    font-size: var(--t-label);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--ink-3);
+  }
+}
+
+@media (min-width: 1240px) {
+  .pm__text {
+    columns: 2;
+    column-gap: clamp(36px, 3.6vw, 60px);
+    column-rule: 1px solid var(--line-soft);
+  }
+}

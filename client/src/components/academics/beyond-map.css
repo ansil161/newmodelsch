@@ -20,7 +20,7 @@
 .bm {
   --bm-ground: var(--white);
   --bm-card: var(--white);
-  --bm-ink: var(--navy);
+  --bm-ink: var(--ink);
   --bm-copy: var(--slate);
   --bm-pen: rgba(26, 22, 64, 0.7);
   --bm-hair: rgba(26, 22, 64, 0.2);
