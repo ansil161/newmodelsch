@@ -1358,77 +1358,6 @@
   }
 }
 
-/* The indicator: one icon per spread down the right edge. Read chapters are
-   tinted, the current one is blue and named, the rest wait in grey. */
-.wb-index {
-  position: absolute;
-  top: 50%;
-  right: var(--gutter);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  transform: translateY(-50%);
-}
-
-.wb-index li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--ink-4);
-  transition: color var(--d-state) var(--ease-out);
-}
-
-.wb-index li.is-past {
-  color: var(--brand-300);
-}
-
-.wb-index li.is-on {
-  color: var(--blue);
-}
-
-.wb-index__ico {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  transition:
-    border-color var(--d-state) var(--ease-out),
-    background-color var(--d-state) var(--ease-out);
-}
-
-.wb-index__ico svg {
-  stroke-width: 1.7;
-}
-
-.wb-index li.is-on .wb-index__ico {
-  border-color: var(--line-blue-strong);
-  background: #ffffff;
-}
-
-.wb-index__label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(6px);
-  transition:
-    opacity var(--d-state) var(--ease-out),
-    transform var(--d-move) var(--ease-out);
-}
-
-.wb-index li.is-on .wb-index__label {
-  opacity: 1;
-  transform: none;
-}
-
 /* ==========================================================================
    Phones and portrait tablets
    ========================================================================== */
@@ -1438,45 +1367,6 @@
 
 .wb--single .wb-cue {
   display: none;
-}
-
-/* The indicator gets the foot row to itself - in the flow, not floated over
-   the book - with the icons at the right and the current chapter's name at
-   the left, cut short rather than allowed to run into the icons. */
-.wb--single .wb-index {
-  position: relative;
-  top: auto;
-  right: auto;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 2px;
-  min-height: 30px;
-  transform: none;
-}
-
-.wb--single .wb-index li {
-  gap: 0;
-}
-
-.wb--single .wb-index__ico {
-  width: 26px;
-  height: 26px;
-}
-
-.wb--single .wb-index__label {
-  display: none;
-}
-
-.wb--single .wb-index li.is-on .wb-index__label {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  max-width: calc(100% - 172px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: translateY(-50%);
 }
 
 /* ==========================================================================

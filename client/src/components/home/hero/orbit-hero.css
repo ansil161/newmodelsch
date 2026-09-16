@@ -1,0 +1,691 @@
+/* ==========================================================================
+   01 - HERO, AS A CENTRED ORBIT
+   --------------------------------------------------------------------------
+   THE WHOLE COMPOSITION IS SEVEN NUMBERS.
+
+   Everything below is derived from the custom properties in the first block.
+   Change `--oh-h` and the rings, the centre, the students and the type all
+   re-proportion together - which is the only reason a layout this positional
+   survives a breakpoint.
+
+     --oh-h        the hero's height. 88svh, floored and capped.
+     --oh-r        the OUTER ring's radius: 82% of the height, capped at 46vw
+                   so a wide, short window cannot push the arcs off the sides.
+     --oh-r2       the inner ring. Three quarters of the outer, always.
+     --oh-cy       where both rings are centred, 2.2% down from the top edge.
+     --oh-chip     the floating squares.
+     --oh-kid      the front student's width; the one behind is 82% of it.
+     --oh-line     the ring stroke. One hairline of very light grey, and the
+                   only non-white, non-ink colour in the composition's ground.
+
+   NOTHING HERE IS HIDDEN IN CSS. The entrance animates from states GSAP sets
+   itself, so a page without JavaScript is a finished page. `.is-pending` only
+   suppresses the ring rotation for the first frame, so a chip never streaks
+   before the timeline that reveals it has run.
+   ========================================================================== */
+
+.oh {
+  --oh-h: clamp(620px, 88vh, 940px);
+  --oh-h: clamp(620px, 88svh, 940px); /* svh where it exists; vh above it */
+  --oh-r: min(calc(var(--oh-h) * 0.82), 46vw);
+  --oh-r2: calc(var(--oh-r) * 0.75);
+  --oh-cy: calc(var(--oh-h) * 0.022);
+  --oh-chip: 54px;
+  /* The front student's WIDTH, and every other measurement in the group is
+     taken off it. Keyed to the hero's HEIGHT rather than the viewport's
+     width, because the thing that has to be protected is the gap between the
+     call to action and the top of their heads, and that is a vertical
+     budget. At 0.52 of the height his cut-out is 0.60 of it tall; the two
+     `bottom` offsets below then place both heads at 58% down the hero, which
+     is where the reference puts them. The `vw` cap only bites on a short,
+     wide window, where the pair would otherwise reach the edges. */
+  --oh-kid: min(calc(var(--oh-h) * 0.52), 38vw);
+  --oh-line: #e5e5e5;
+  --oh-spin: 34s;
+  --oh-spin-in: 29s;
+
+  position: relative;
+  isolation: isolate;
+  min-height: var(--oh-h);
+  padding-inline: clamp(16px, 4vw, 56px);
+  /* Clipped rather than hidden: the students are meant to run off the foot,
+     and `clip` does it without making the hero a scroll container. */
+  overflow: clip;
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   The rings
+   --------------------------------------------------------------------------
+   Two divs, not an SVG. A border-radius circle scales to any radius without
+   a viewBox to reconcile, costs one paint, and - the reason that matters -
+   lets the chips be ordinary DOM children of a rotating wrapper instead of
+   points on a path.
+   ========================================================================== */
+.oh__orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* THE MASTHEAD'S AIR IS NOT NEGOTIABLE.
+     Both rings are centred at the hero's top edge, so their arcs - and the
+     chips riding them - pass straight through the row the logo and the links
+     sit in. Stacking order does not help: a chip in the gap between two links
+     still reads as a piece of the navigation. So the whole decorative layer
+     fades out over the masthead's height and only exists below it, which also
+     gives the arcs a softer top end than the hero's own edge would. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 46px,
+    rgba(0, 0, 0, 0.35) 78px,
+    #000 132px
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 46px,
+    rgba(0, 0, 0, 0.35) 78px,
+    #000 132px
+  );
+}
+
+.oh__ring {
+  position: absolute;
+  left: 50%;
+  top: var(--oh-cy);
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin-left: calc(var(--r) * -1);
+  margin-top: calc(var(--r) * -1);
+  border: 1px solid var(--oh-line);
+  border-radius: 50%;
+}
+
+.oh__ring--outer {
+  --r: var(--oh-r);
+  --dur: var(--oh-spin);
+  --dir: normal; /* clockwise */
+  --dir-rev: reverse;
+}
+
+.oh__ring--inner {
+  --r: var(--oh-r2);
+  --dur: var(--oh-spin-in);
+  --dir: reverse; /* anticlockwise */
+  --dir-rev: normal;
+}
+
+/* The turntable. Separate from the ring so the border never repaints. */
+.oh__spin {
+  position: absolute;
+  inset: 0;
+  animation: oh-spin var(--dur) linear infinite;
+  animation-direction: var(--dir);
+  will-change: transform;
+}
+
+@keyframes oh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   The chips
+   --------------------------------------------------------------------------
+   FOUR ELEMENTS, FOUR TRANSFORMS, AND EACH ONE UNDOES THE LAST.
+
+     .oh__chip         rotate(a) translateY(-r)   puts it on the circumference
+     .oh__chip-unrot   rotate(-a)                 cancels the authored angle
+     .oh__chip-unspin  the ring's animation, reversed, same duration
+     .oh__chip-art     the bob, on `translate` so it composes with nothing
+
+   The net rotation on the artwork is zero at every instant, so the square
+   stays upright the whole way round rather than tumbling with the ring. Both
+   spin animations are linear and share a duration, so they cannot drift.
+   ========================================================================== */
+.oh__chip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--oh-chip);
+  height: var(--oh-chip);
+  margin: calc(var(--oh-chip) / -2);
+  transform: rotate(var(--a)) translateY(calc(var(--r) * -1));
+}
+
+.oh__chip-unrot,
+.oh__chip-unspin,
+.oh__chip-art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.oh__chip-unrot {
+  transform: rotate(calc(var(--a) * -1));
+}
+
+.oh__chip-unspin {
+  animation: oh-spin var(--dur) linear infinite;
+  animation-direction: var(--dir-rev);
+}
+
+.oh__chip-art {
+  border-radius: 15px;
+  color: var(--chip-ink);
+  background: var(--chip-bg);
+  animation: oh-bob var(--bob, 6s) var(--ease-in-out) infinite alternate;
+  animation-delay: var(--bob-delay, 0s);
+}
+
+/* Gentle, and deliberately not in step: three durations across six chips. */
+@keyframes oh-bob {
+  from {
+    translate: 0 4px;
+  }
+  to {
+    translate: -2px -5px;
+  }
+}
+
+.oh__chip:nth-child(2) .oh__chip-art {
+  --bob: 7.4s;
+  --bob-delay: -1.9s;
+}
+
+.oh__chip:nth-child(3) .oh__chip-art {
+  --bob: 5.2s;
+  --bob-delay: -3.4s;
+}
+
+/* The five accents. They are the only colour in the hero besides the call to
+   action, which is why each is one fill and one ink and nothing else. */
+.oh__chip.is-sky {
+  --chip-bg: #d9edf8;
+  --chip-ink: #1f6f9c;
+}
+
+.oh__chip.is-pink {
+  --chip-bg: #ffe0e9;
+  --chip-ink: #c23a63;
+}
+
+.oh__chip.is-violet {
+  --chip-bg: #ece3fb;
+  --chip-ink: #6b3fc4;
+}
+
+.oh__chip.is-green {
+  --chip-bg: #dcf3e4;
+  --chip-ink: #2b7c4c;
+}
+
+.oh__chip.is-amber {
+  --chip-bg: #ffeacd;
+  --chip-ink: #a9611a;
+}
+
+.oh__chip.is-blue {
+  --chip-bg: #e3e5fa;
+  --chip-ink: var(--color-primary);
+}
+
+/* The one loose mark: a small green asterisk beside the claim, the way the
+   reference sets one off-axis accent against an otherwise symmetric page. */
+.oh__spark {
+  position: absolute;
+  left: 50%;
+  /* Level with the call to action and clear of the claim's longest line,
+     which is where the reference puts its one off-axis mark. */
+  top: calc(var(--oh-h) * 0.47);
+  width: 34px;
+  height: 34px;
+  margin-left: clamp(110px, 16vw, 240px);
+  color: #2e8941;
+  animation: oh-turn 26s linear infinite;
+}
+
+.oh__spark svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.4;
+  stroke-linecap: round;
+}
+
+@keyframes oh-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ==========================================================================
+   The masthead and the claim
+   --------------------------------------------------------------------------
+   The one part of the hero that is not positioned: a normal flow column in a
+   normal container, so it reflows at every width instead of being placed.
+   ========================================================================== */
+.oh__in {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-top: clamp(14px, 2vh, 26px);
+}
+
+.oh__bar {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 40px);
+  height: 58px;
+}
+
+.oh__brand {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-right: auto;
+}
+
+.oh__logo {
+  height: 38px;
+  width: auto;
+}
+
+.oh__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.9vw, 28px);
+}
+
+.oh__nav-link {
+  font-size: 13.5px;
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.oh__nav-link:hover,
+.oh__nav-link.is-current {
+  color: var(--color-primary);
+}
+
+.oh__bar-end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* The dark button. Near-black rather than the brand ink, so the hero has one
+   unmistakable hierarchy: black chrome, indigo action. */
+.oh__enroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding-inline: 18px;
+  position: relative;
+  border-radius: var(--r-pill);
+  background: #101627;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--d-state) var(--ease-out),
+    transform var(--d-state) var(--ease-out);
+}
+
+.oh__enroll:hover {
+  background: #262f4a;
+  transform: translateY(-1px);
+}
+
+.oh__menu {
+  display: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.oh__menu-bars {
+  display: grid;
+  gap: 4px;
+  width: 16px;
+}
+
+.oh__menu-bars i {
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+/* -------------------------------------------------------------------- type */
+.oh__type {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* The vertical budget. Everything from here to the call to action has to
+     finish above the students' heads at every height the hero can take, so
+     each gap is a `vh` clamped at both ends rather than a fixed number. */
+  padding-top: clamp(24px, 5.6vh, 48px);
+}
+
+.oh__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding-inline: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-pill);
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  color: var(--color-text-secondary);
+}
+
+.oh__badge-dot {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: #2e8941;
+  color: #ffffff;
+}
+
+.oh__title {
+  margin-top: clamp(14px, 2vh, 20px);
+  font-family: var(--font-hero);
+  font-size: clamp(1.9rem, 3.9vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.032em;
+  color: #14182b;
+  text-wrap: balance;
+}
+
+/* Each line is a mask its own text rises out of, which is why the two spans
+   exist. The overflow has to be `clip` in both axes or the descenders of
+   line one are shaved. */
+.oh__line {
+  display: block;
+  overflow: clip;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+
+.oh__line > span {
+  display: block;
+}
+
+.oh__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  margin-top: clamp(20px, 3vh, 30px);
+  padding-inline: 22px;
+  border-radius: var(--r-pill);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 14px;
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background var(--d-state) var(--ease-out),
+    transform var(--d-state) var(--ease-out);
+}
+
+.oh__cta:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.oh__cta svg {
+  transition: transform var(--d-state) var(--ease-out);
+}
+
+.oh__cta:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   The students
+   --------------------------------------------------------------------------
+   Two cut-outs, overlapped, standing on the hero's foot rather than in a
+   frame - which is the whole reason they are absolutely positioned. The one
+   in front is offset left of centre and the one behind right of it, so the
+   pair reads as two people standing together rather than as a symmetrical
+   pair of bookends. `bottom` is negative: they are meant to be cut by the
+   hero's edge, not to sit on it.
+   ========================================================================== */
+.oh__kids {
+  position: absolute;
+  left: 50%;
+  right: auto;
+  bottom: 0;
+  z-index: 1;
+  width: min(96vw, 900px);
+  /* A stated height, not a percentage: the parallax moves this box by
+     `yPercent`, which is nothing at all against a box of height zero. */
+  height: calc(var(--oh-h) * 0.6);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.oh__kid {
+  position: absolute;
+  bottom: 0;
+}
+
+.oh__kid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Both sit on negative offsets: the hero's edge is meant to cut them, so the
+   flat bottom of each cut-out is always below it and never seen. */
+.oh__kid--boy {
+  z-index: 2;
+  right: 50%;
+  bottom: calc(var(--oh-h) * -0.205);
+  width: var(--oh-kid);
+  margin-right: calc(var(--oh-kid) * -0.2);
+}
+
+.oh__kid--girl {
+  z-index: 1;
+  left: 50%;
+  /* Shallower, so she stands a little further back and her head sits a
+     little above his - the pair reads as depth rather than as a row. */
+  bottom: calc(var(--oh-h) * -0.169);
+  width: calc(var(--oh-kid) * 0.82);
+  /* Two hundredths, not a round number: it is the offset that puts the
+     pair's own centre on the hero's centre line given his overlap above. */
+  margin-left: calc(var(--oh-kid) * -0.02);
+}
+
+/* ==========================================================================
+   Widths
+   --------------------------------------------------------------------------
+   Three moves, in this order: drop the two least important chips, hand the
+   navigation back to the site menu, then shrink the composition. The claim
+   and the call to action are never allowed to reach the students' faces, so
+   the students lose height before the type loses size.
+   ========================================================================== */
+@media (max-width: 1080px) {
+  .oh {
+    --oh-chip: 48px;
+  }
+
+  .oh__nav {
+    gap: 16px;
+  }
+
+  .oh__nav-link {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 900px) {
+  .oh {
+    --oh-h: clamp(600px, 84vh, 860px);
+    --oh-h: clamp(600px, 84svh, 860px);
+    --oh-kid: min(calc(var(--oh-h) * 0.52), 50vw);
+  }
+
+  /* The compact bar hands over: the real menu owns six destinations and a
+     photograph, and neither belongs in a hero. */
+  .oh__nav {
+    display: none;
+  }
+
+  .oh__menu {
+    display: grid;
+  }
+
+  .oh__chip[data-wide] {
+    display: none;
+  }
+
+  .oh__spark {
+    margin-left: clamp(96px, 26vw, 150px);
+  }
+}
+
+@media (max-width: 620px) {
+  .oh {
+    --oh-h: clamp(580px, 86vh, 760px);
+    --oh-h: clamp(580px, 86svh, 760px);
+    --oh-chip: 42px;
+    /* The rings stop being keyed to the height here: on a tall, narrow screen
+       82% of the height is wider than the screen, and the arcs would leave
+       through the sides instead of framing anything. */
+    --oh-r: 62vw;
+  }
+
+  .oh__logo {
+    height: 32px;
+  }
+
+  .oh__enroll {
+    height: 36px;
+    padding-inline: 14px;
+    font-size: 12px;
+  }
+
+  .oh__badge {
+    height: 29px;
+    font-size: 11.5px;
+  }
+
+  .oh__title {
+    font-size: clamp(1.75rem, 8.4vw, 2.5rem);
+    letter-spacing: -0.028em;
+  }
+
+  .oh__chip-art {
+    border-radius: 12px;
+  }
+
+  .oh__spark {
+    width: 26px;
+    height: 26px;
+    margin-left: 30vw;
+  }
+
+  .oh {
+    --oh-kid: min(calc(var(--oh-h) * 0.5), 62vw);
+  }
+
+  /* On a phone the pair is held by the width, not the height, so far less of
+     each cut-out needs hiding to keep their heads clear of the button - and
+     burying a third of them here would leave two floating faces. */
+  .oh__kid--boy {
+    bottom: calc(var(--oh-h) * -0.08);
+  }
+
+  .oh__kid--girl {
+    bottom: calc(var(--oh-h) * -0.05);
+  }
+}
+
+@media (max-width: 400px) {
+  /* The label goes, the accessible name stays. A button that announces as
+     nothing because its only remaining child is a decorative icon is not a
+     smaller button, it is a broken one. */
+  .oh__enroll span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .oh__enroll {
+    padding-inline: 11px;
+  }
+
+  .oh__spark {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion
+   --------------------------------------------------------------------------
+   Not slower - stopped. The rings hold still, the chips hold their authored
+   angles, and the entrance is the single fade the component builds instead.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .oh__spin,
+  .oh__chip-unspin,
+  .oh__chip-art,
+  .oh__spark {
+    animation: none !important;
+  }
+
+  .oh__enroll,
+  .oh__cta,
+  .oh__cta svg {
+    transition: none;
+  }
+
+  .oh__enroll:hover,
+  .oh__cta:hover {
+    transform: none;
+  }
+}
+
+/* One frame of stillness while the entrance timeline is built, so a chip
+   cannot streak across the ring before it has been revealed. */
+.oh.is-pending .oh__spin,
+.oh.is-pending .oh__chip-unspin {
+  animation-play-state: paused;
+}

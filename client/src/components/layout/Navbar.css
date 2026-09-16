@@ -29,6 +29,18 @@
   transform: translateY(-104%);
 }
 
+/* THE HOMEPAGE HERO CARRIES ITS OWN MASTHEAD.
+   This bar stands down while that hero is at the top of the window, and
+   returns - already in its scrolled form - the moment the reader leaves it.
+   It is lifted out rather than `display: none` so the handover is a move
+   rather than a pop, and it is inert in the markup while it is up there, so
+   the page never offers two primary navigations at once. */
+.nav.is-ghost {
+  transform: translateY(-104%);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .nav__inner {
   display: flex;
   align-items: center;

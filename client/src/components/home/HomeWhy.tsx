@@ -164,7 +164,9 @@ const CHAPTERS: Chapter[] = [
 
 const chapter = (id: ReasonId) => CHAPTERS.find((item) => item.id === id) ?? CHAPTERS[0];
 
-/** What the indicator beside the book shows for each spread. */
+/** What each spread is called. Read by the live region that announces a page
+ *  turn; the icons are unused now that the visible indicator column is gone,
+ *  and are kept only so the two lists cannot drift apart if it comes back. */
 const INDEX: { label: string; icon: IconName }[] = [
   { label: 'Contents', icon: 'book' },
   ...CHAPTERS.map(({ label, icon }) => ({ label, icon })),
@@ -1240,23 +1242,13 @@ export function HomeWhy() {
                 Scroll to turn the page
               </p>
 
-              {/* Where the reader is: one icon per spread, the current one
-                  named. Only the current label shows, so the column stays
-                  quiet and the one word on it is the one that matters. */}
-              <ol className="wb-index" aria-hidden="true">
-                {INDEX.map((item, s) => (
-                  <li
-                    key={item.label}
-                    className={s === page ? 'is-on' : s < page ? 'is-past' : undefined}
-                  >
-                    <span className="wb-index__label">{item.label}</span>
-                    <span className="wb-index__ico">
-                      <Icon name={item.icon} size={16} />
-                    </span>
-                  </li>
-                ))}
-              </ol>
-
+              {/* The visible chapter indicator that used to sit down the right
+                  edge has been removed. The book's own spreads say where the
+                  reader is, and a second, permanent column of icons beside
+                  them was one piece of furniture too many. The live region
+                  below is NOT its replacement and is not optional: it is how
+                  a screen reader learns the page turned at all, since the
+                  turn itself is a scroll-scrubbed animation. */}
               <p className="sr-only" aria-live="polite">
                 {current.label}
                 {title ? `: ${title}` : ''}

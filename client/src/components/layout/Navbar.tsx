@@ -9,6 +9,7 @@ import { reduced } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import { Logo } from '@/components/common/Logo';
 import { Figure } from '@/components/editorial';
+import { OPEN_MENU } from './menu-channel';
 import './Navbar.css';
 
 /* ==========================================================================
@@ -83,6 +84,21 @@ export function Navbar() {
     setOpen(false);
   }, [location.pathname, location.hash]);
 
+  /* The homepage hero carries its own compact masthead, so this bar would be
+     the second one on screen. It stands down while the hero is at the top of
+     the window and takes over the moment the reader leaves it - which is also
+     the moment the hero's masthead scrolls away. Every other page is
+     untouched. See `components/home/hero/OrbitHero.tsx`. */
+  const ghost = location.pathname === ROUTES.home && !scrolled && !open;
+
+  /* ...and below 900px the hero's masthead has no room for six links, so it
+     asks for this menu instead of shipping a second one. */
+  useEffect(() => {
+    const onAsk = () => setOpen(true);
+    window.addEventListener(OPEN_MENU, onAsk);
+    return () => window.removeEventListener(OPEN_MENU, onAsk);
+  }, []);
+
   /* Everything that has to happen while the menu is open, in one place. */
   useEffect(() => {
     if (!open) return;
@@ -129,7 +145,10 @@ export function Navbar() {
     <>
       <header
         ref={scope}
-        className={`nav${scrolled ? ' is-scrolled' : ''}${hidden && !open ? ' is-hidden' : ''}${open ? ' is-open' : ''}`}
+        className={`nav${scrolled ? ' is-scrolled' : ''}${hidden && !open ? ' is-hidden' : ''}${open ? ' is-open' : ''}${ghost ? ' is-ghost' : ''}`}
+        // Hidden from assistive tech as well while it stands down, so the
+        // homepage never announces two primary navigations.
+        inert={ghost || undefined}
       >
         <div className="nav__inner">
           <Link className="nav__brand" to={ROUTES.home} aria-label={`${SCHOOL.name}, home`}>

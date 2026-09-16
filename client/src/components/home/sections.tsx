@@ -50,13 +50,15 @@ import './home.css';
 /* --------------------------------------------------------------------------
    01 - HERO
    --------------------------------------------------------------------------
-   An editorial canvas rather than a split screen: the statement, three
-   students cut out of their photographs, orbit lines drawn round them and the
-   figures placed in the space between. Its entrance, parallax loop and
-   magnetic call to action live beside this file. See `HomeCanvasHero.tsx`.
+   A centred composition on a white sheet: a compact masthead, a badge, the
+   two-line claim, one button, and two students cut out of their photographs
+   standing at the foot of it. Two concentric hairline rings are drawn round
+   the whole thing, and the small coloured icons ride them rather than float.
+   Its geometry, entrance and orbit live beside this file. See
+   `hero/OrbitHero.tsx`.
    -------------------------------------------------------------------------- */
 
-export { HomeHero } from './HomeCanvasHero';
+export { OrbitHero as HomeHero } from './hero/OrbitHero';
 
 /* --------------------------------------------------------------------------
    02 - WHY CHOOSE US

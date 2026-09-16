@@ -23,6 +23,8 @@ export function AboutPage() {
 
   return (
     <div className="about">
+      {/* The scroll-scrubbed frame sequence that briefly opened this page is
+          gone - see the note in '@/components/about'. Back to the cover. */}
       <AboutCover />
       <AboutStory />
       <AboutFilm />

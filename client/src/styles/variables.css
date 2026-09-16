@@ -185,6 +185,13 @@
   --font-display: 'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
+  /* The third face, and it has exactly one job: the homepage hero's claim.
+     A geometric sans with rounded bowls and a single-storey `g`, which is the
+     shape the whole hero is drawn around. It is not available to anything
+     else - a second display face used twice stops being a hero and starts
+     being an inconsistency. */
+  --font-hero: 'Figtree', 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
   /* Legacy roles, repointed. Figures and labels are Inter; annotations that
      used to be handwritten are set in the heading face. */
   --font-mono: var(--font-body);
