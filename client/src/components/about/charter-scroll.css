@@ -9,7 +9,7 @@
 
    WITH `.is-live` the stage is one viewport tall and pinned. The six
    principles share one grid cell, the six photographs share the card's
-   frame, and `CharterScrollSection.tsx` moves between them. Sharing a grid
+   frame, and `CharterScrollSection.jsx` moves between them. Sharing a grid
    cell means the column is exactly as tall as its longest principle, with
    nothing measured.
    ========================================================================== */

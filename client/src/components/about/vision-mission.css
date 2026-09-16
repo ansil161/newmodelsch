@@ -9,7 +9,7 @@
    reader who has asked for less movement gets, and what is on screen for the
    frame before the timeline is built.
 
-   `.vm.is-live` — added by the motion build in VisionMission.tsx and removed
+   `.vm.is-live` — added by the motion build in VisionMission.jsx and removed
    when it reverts — is the pinned composition: one viewport-high stage where
    every layer shares the same cell and the scroll walks between them.
 
@@ -455,7 +455,7 @@
    shares the stage's box, so nothing below the section can move when a
    statement opens.
 
-   The geometry here is load-bearing: `DOCK` in VisionMission.tsx is derived
+   The geometry here is load-bearing: `DOCK` in VisionMission.jsx is derived
    from these four boxes. Each stroke's idle centre is read off its own
    `top` + `height`, and the dock moves that centre to 50% of the stage. Move
    a number here and the matching `yPercent` there follows it.

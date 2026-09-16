@@ -7,7 +7,7 @@
    outlined word behind the sentence, and seven prints placed around it at
    different sizes, proportions and tilts. That is the resting state - what a
    reader with motion turned off gets, and what is left if the module never
-   runs. `HomeWeek.tsx` measures it and builds the opening from it.
+   runs. `HomeWeek.jsx` measures it and builds the opening from it.
 
    SIZES ARE BOUND BY HEIGHT AS WELL AS WIDTH.
 

@@ -103,7 +103,7 @@
 
 /* Each line gets its own overflow box so it can set itself from below without
    the block needing to clip anything of its own. The site's own headline
-   vocabulary - see `lines()` in `lib/motion.ts`. */
+   vocabulary - see `lines()` in `lib/motion.js`. */
 .hc__line,
 .hc__mask {
   display: block;
@@ -346,7 +346,7 @@
 /* ==========================================================================
    THE TRANSFORMATION - 900px and up, motion allowed
    --------------------------------------------------------------------------
-   The query is the one `HomeCampus.tsx` gives its `matchMedia`, in the same
+   The query is the one `HomeCampus.jsx` gives its `matchMedia`, in the same
    words. If the two ever disagree the section composes itself for a timeline
    that was never built, and waits.
    ========================================================================== */

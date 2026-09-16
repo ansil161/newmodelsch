@@ -12,7 +12,7 @@
      --pmsg-accent  icons, the eyebrow rule, the link arrow
 
    No sticky, no pin: the section is ordinary document flow, and its only
-   motion is the one-shot entrance in PrincipalMessage.tsx.
+   motion is the one-shot entrance in PrincipalMessage.jsx.
    ========================================================================== */
 
 .pmsg {

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx"
+    "lint": "eslint . --ext js,jsx"
   },
   "dependencies": {
     "gsap": "^3.13.0",
@@ -17,11 +17,7 @@
     "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.1",
     "@vitejs/plugin-react": "^5.0.4",
-    "typescript": "^5.9.3",
     "vite": "^7.1.9"
   }
 }
