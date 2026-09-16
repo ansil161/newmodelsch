@@ -51,11 +51,18 @@ export const CONTACT_CHANNELS = [
   },
 ];
 
+/**
+ * `day` and `hours` are what a reader sees. `days` (0 = Sunday), `opens` and
+ * `closes` are the same hours as data, in the school's own time zone, for the
+ * footer's open-now indicator. Public holidays are not known to the site.
+ */
 export const OFFICE_HOURS = [
-  { day: 'Monday - Friday', hours: '8:30 am - 4:30 pm' },
-  { day: 'Saturday', hours: '8:30 am - 1:00 pm' },
-  { day: 'Sunday & public holidays', hours: 'Closed' },
+  { day: 'Monday - Friday', hours: '8:30 am - 4:30 pm', days: [1, 2, 3, 4, 5], opens: '08:30', closes: '16:30' },
+  { day: 'Saturday', hours: '8:30 am - 1:00 pm', days: [6], opens: '08:30', closes: '13:00' },
+  { day: 'Sunday & public holidays', hours: 'Closed', days: [0] },
 ];
+
+export const SCHOOL_TIME_ZONE = 'Asia/Kolkata';
 
 export const DIRECTIONS = {
   address: 'Doodh Bowli Road, Kabutar Khana, Bahadurpura, Hyderabad, Telangana',

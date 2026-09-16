@@ -26,7 +26,7 @@ export function HomePage() {
       {/* 02 - the five things that make it different, each with its evidence */}
       <HomeWhy />
 
-      {/* 03 - the pause. Nothing to read, nothing to do. */}
+      {/* 03 - the legacy: one photograph, four figures, one drawn line */}
       <HomeTransition />
 
       {/* 04 - the place */}

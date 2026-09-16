@@ -1,13 +1,8 @@
 import { Link } from 'react-router-dom';
-import { ADMISSIONS_INTRO, ROUTES, STATS } from '@/constants';
-import {
-  academicImages,
-  campusImages,
-  everydayImages,
-  studentImages,
-} from '@/constants/imagery';
+import { ADMISSIONS_INTRO, ROUTES } from '@/constants';
+import { academicImages, everydayImages, studentImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
-import { draw, drift, lines, rise, unmask } from '@/lib/motion';
+import { rise, unmask } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import {
   Collage,
@@ -16,7 +11,6 @@ import {
   Mark,
   Script,
   SectionHead,
-  StatReveal,
 } from '@/components/editorial';
 import './home.css';
 
@@ -35,7 +29,7 @@ import './home.css';
      a horizontal axis     the sixty-four years behind it
      a held photograph     the four things that make it different
      a pinned journey      the thirteen years, walked
-     a full-bleed band     the pause
+     a drawn legacy        the four figures behind it
      an asymmetric grid    the place
      a drawn line          the child's own path
      one enormous quote    what it is like from outside
@@ -185,66 +179,16 @@ export function HomeEducation() {
 }
 
 /* --------------------------------------------------------------------------
-   04 - THE TRANSITION
+   04 - OUR LEGACY
    --------------------------------------------------------------------------
-   The pause between the education and the place. One statement at the largest
-   size on the site, over a photograph that drifts behind it.
-
-   It is the only section on the homepage with nothing to read and nothing to
-   do. That is its job: the two sections either side of it are dense, and a
-   long page loses people at exactly the seam between two dense things.
+   One photograph of the place and the four figures behind it, joined by a
+   line that is drawn as the reader arrives: the photograph, then the year it
+   began, the years since, the alumni and the results. The connector is
+   measured from the live layout and the reveal is a sequenced timeline, so
+   it lives beside this file. See `HomeTransition.jsx`.
    -------------------------------------------------------------------------- */
 
-export function HomeTransition() {
-  const scope = useGsapScope((_, el) => {
-    const head = el.querySelector('.tr__title');
-    const image = el.querySelector('.tr__bg img');
-    if (head) lines(head, { trigger: el, start: 'top 78%' });
-    if (image) drift(image, 130, { trigger: el });
-    draw(el, { trigger: el, delay: 0.6, start: 'top 78%' });
-    rise(el.querySelectorAll('.tr__foot > *'), { trigger: el, delay: 0.5 });
-  }, []);
-
-  return (
-    <section ref={scope} className="tr" aria-labelledby="tr-title">
-      <div className="tr__bg" aria-hidden="true">
-        <Figure
-          photo={campusImages[8]}
-          width={2000}
-          sizes="100vw"
-          shape="square"
-          ratio="free"
-          decorative
-        />
-        <span className="tr__scrim" />
-      </div>
-
-      <div className="tr__inner wrap">
-        <h2 className="tr__title ed-mega" id="tr-title">
-          Thirteen years.
-          <br />
-          <Mark kind="underline">One journey.</Mark>
-        </h2>
-
-        <div className="tr__foot">
-          <p className="tr__lead">
-            A child who joins in Nursery leaves in Class 10 having been taught by the same
-            institution for their entire school life - by people who watched them learn to read.
-          </p>
-          <StatReveal
-            items={STATS.map((stat) => ({
-              value: `${stat.value.toLocaleString('en-IN')}${stat.suffix}`,
-              label: stat.label,
-              detail: stat.detail,
-            }))}
-            layout="row"
-            className="tr__stats"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
+export { HomeTransition } from './HomeTransition';
 
 /* --------------------------------------------------------------------------
    05 - CAMPUS

@@ -7,7 +7,7 @@ import { SCHOOL } from '@/constants';
    cropped or stretched. Both files are served unchanged from /public/brand.
 
      color   the indigo logo, on white and light grounds. The default.
-     white   the reversed logo, only on the dark navy ground (the footer).
+     white   the reversed logo, for dark navy grounds only.
 
    The intrinsic size is passed as width/height so the browser knows the
    aspect ratio before the file arrives. Each context sets only a `height`

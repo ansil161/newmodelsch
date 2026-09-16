@@ -95,10 +95,14 @@
 }
 
 .vx__lead {
-  margin-top: clamp(20px, 2vw, 28px);
+  /* Clear of the swash drawn under the headline, which hangs well below the
+     line box it belongs to. */
+  margin-top: clamp(46px, 3.8vw, 56px);
   max-width: 34ch;
   font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
   line-height: 1.68;
+  /* The longest of these is two sentences' worth; no word left on its own. */
+  text-wrap: pretty;
   color: var(--vx-quiet);
 }
 
@@ -143,6 +147,9 @@
 .vx__quote {
   grid-area: quote;
   position: relative;
+  /* Over the portrait's blobs and loop, which are thrown past the edge of
+     their own column: a decoration passes under the words, never across them. */
+  z-index: 4;
   min-width: 0;
 }
 
@@ -181,7 +188,7 @@
    itself on a single line, which is right for 'journey?' and wrong for a
    clause. This one is allowed to wrap. */
 .vx__accent {
-  margin-top: clamp(10px, 1.1vw, 16px);
+  margin-top: clamp(14px, 1.4vw, 20px);
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(1.365rem, 1.95vw, 1.911rem);
@@ -195,7 +202,7 @@
   display: flex;
   align-items: center;
   gap: clamp(14px, 1.2vw, 18px);
-  margin-top: clamp(26px, 2.8vw, 40px);
+  margin-top: clamp(30px, 3vw, 44px);
 }
 
 .vx__face {
@@ -340,6 +347,9 @@
    corner as the floating assistant dock, which is a thumb-sized ambiguity
    nobody needs; the tablet grid moves the dock clear of them again. */
 .vx__arrows {
+  /* Above the loop, which hangs low enough to cross the buttons. */
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: flex-start;
   gap: 12px;
@@ -353,6 +363,8 @@
   aspect-ratio: 1;
   border-radius: 50%;
   color: var(--vx-ink);
+  /* Opaque, so the loop passes behind the ring rather than through it. */
+  background: var(--white);
   box-shadow: inset 0 0 0 1.5px var(--vx-line);
   cursor: pointer;
   transition:
@@ -479,11 +491,12 @@
 
 .vx__rail {
   position: relative;
-  margin-top: clamp(52px, 6vw, 96px);
   /* The shadows and the scrubbed depth both live in this padding, so the
-     horizontal clip never cuts the top or bottom off a card. */
-  padding-block: 28px;
-  margin-block: -6px;
+     horizontal clip never cuts the top or bottom off a card. The margin is
+     the gap under whichever column above runs longest - the quote, on a
+     laptop, with a long story in it. */
+  padding-block: 28px 56px;
+  margin-block: clamp(16px, 2vw, 32px) -34px;
   overflow: clip;
 }
 
@@ -793,9 +806,19 @@
     flex: 1 1 0;
   }
 
+  /* Capped, and held to the outer edge: left to fill half a wide tablet, the
+     portrait stands twice the height of the quote beside it. */
   .vx__media {
-    max-width: none;
+    width: 100%;
+    max-width: 400px;
+    justify-self: end;
     padding-top: clamp(46px, 5vw, 78px);
+  }
+
+  /* Centred on the portrait beside it rather than hung from the top of it,
+     so a short quote does not leave the column empty underneath. */
+  .vx__quote {
+    align-self: center;
   }
 
   .vx__arrows {
@@ -827,26 +850,45 @@
    The reference composition: four columns, the index standing on its own at
    the right-hand edge behind a rule, and the rail running underneath all of
    it.
+
+   Not below 1280px. Four columns in less than that leave the intro and the
+   quote a quarter of a laptop screen each, which is how the headline ended up
+   running into the quote; the tablet composition above holds until there is
+   room for all four.
+
+   The intro and the quote are the reading columns, so they take the width;
+   the portrait gives some of its share back.
    ========================================================================== */
 
-@media (min-width: 1180px) {
+@media (min-width: 1280px) {
   .vx__grid {
     grid-template-columns:
-      minmax(0, 0.92fr) minmax(0, 1.02fr) minmax(0, 1.08fr)
-      minmax(150px, 0.4fr);
+      minmax(0, 1.12fr) minmax(0, 1.1fr) minmax(0, 0.95fr)
+      minmax(168px, 0.4fr);
     grid-template-areas: 'intro quote media cats';
-    column-gap: clamp(30px, 3.1vw, 56px);
+    column-gap: clamp(40px, 3.8vw, 60px);
     row-gap: 0;
   }
 
   .vx__intro {
     display: flex;
+    /* Back to a column: the tablet grid's `end` would push the eyebrow and the
+       link to the right-hand edge of the column. */
+    align-items: flex-start;
     padding-top: clamp(20px, 2.4vw, 40px);
+    /* The headline is sized off this column rather than off the window. */
+    container-type: inline-size;
   }
 
-  .vx__lead,
-  .vx__cta {
-    margin-top: clamp(20px, 2vw, 28px);
+  /* 'True Journeys' sets at about 6.6em. Sized off the column, it fills the
+     column and stops there, so neither it nor the swash under it can reach
+     into the quote - at any width, and whatever the window is doing. */
+  .vx__title {
+    font-size: clamp(2.35rem, 14.5cqi, 3.5rem);
+  }
+
+  .vx__lead {
+    margin-top: clamp(46px, 3.8vw, 56px);
   }
 
   .vx__cta {
@@ -858,7 +900,25 @@
   }
 
   .vx__quote {
+    align-self: start;
     padding-top: clamp(20px, 2.4vw, 40px);
+  }
+
+  .vx__media {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  /* A notch under the tablet sizes: a sentence in a third of the page reads
+     as a paragraph at this size rather than as a column of three-word lines. */
+  .vx__head {
+    font-size: clamp(1.3rem, 1.75vw, 1.75rem);
+    line-height: 1.34;
+  }
+
+  .vx__accent {
+    font-size: clamp(1.35rem, 1.8vw, 1.8rem);
+    max-width: 20ch;
   }
 
   .vx__cats {
@@ -886,12 +946,6 @@
     left: -22px;
     width: 2px;
     background: var(--vx-pen);
-  }
-}
-
-@media (min-width: 1480px) {
-  .vx__title {
-    font-size: 3.5rem;
   }
 }
 

@@ -779,29 +779,32 @@ export const SOCIALS = [
 ];
 
 /**
- * The footer's directory, grouped by what a reader is doing rather than by
- * sitemap order: reading about the school, or getting into it. Every href is
- * a real page or a real anchor on one - `#enquiry` is the form on Admissions,
- * `#visit` the booking band at the foot of Contact.
+ * The footer's two link columns, set between Contact and the newsletter.
+ * Every href is a real page or a real anchor on one - `#process`,
+ * `#documents`, `#faq` and `#enquiry` are sections of Admissions, `#visit`
+ * the booking band at the foot of Contact.
  */
 export const FOOTER_NAV = [
   {
-    title: 'The school',
+    title: 'Explore',
     links: [
       { label: 'Home', href: ROUTES.home },
       { label: 'About', href: ROUTES.about },
       { label: 'Academics', href: ROUTES.academics },
       { label: 'Student Life', href: ROUTES.studentLife },
       { label: 'Gallery', href: ROUTES.gallery },
+      { label: 'Admissions', href: ROUTES.admissions },
+      { label: 'Contact', href: ROUTES.contact },
     ],
   },
   {
-    title: 'Joining',
+    title: 'Admissions',
     links: [
-      { label: 'Admissions', href: ROUTES.admissions },
+      { label: 'How to apply', href: `${ROUTES.admissions}#process` },
+      { label: 'Documents', href: `${ROUTES.admissions}#documents` },
+      { label: 'FAQs', href: `${ROUTES.admissions}#faq` },
       { label: 'Enquiry form', href: `${ROUTES.admissions}#enquiry` },
       { label: 'Book a visit', href: `${ROUTES.contact}#visit` },
-      { label: 'Contact', href: ROUTES.contact },
     ],
   },
 ];

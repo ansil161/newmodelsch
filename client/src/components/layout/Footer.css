@@ -1,79 +1,176 @@
 /* ==========================================================================
    FOOTER
    --------------------------------------------------------------------------
-   One 12-column grid shared by the statement and the directory, so the
-   admissions desk and the campus address hang from the same vertical line
-   and the whole footer reads as one page rather than three stacked strips.
+   A white sheet, lit faintly from above by the logo's own ink, with one
+   raised panel on it. Everything else is type on the ground.
+
+   The last section of every page is a full-bleed photograph under a dark
+   scrim; a white footer under it reads as the page turning over.
+
+   One 12-column grid is shared by the panel and the directory on desktop, so
+   the admissions desk and the campus column hang from the same line.
    ========================================================================== */
 .foot {
-  /* THE ONE NAVY GROUND ON THE SITE, and the one place the white logo is
-     used. The page's own tokens are re-pointed at their light-on-navy values
-     here, so every rule below - and every shared class inside, `.meta`,
-     `.link`, headings - resolves to readable type without being rewritten. */
-  --ink: var(--on-navy);
-  --ink-2: var(--on-navy-2);
-  --ink-3: var(--on-navy-3);
-  --ink-4: rgba(247, 246, 252, 0.4);
-  --line: rgba(247, 246, 252, 0.12);
-  --line-strong: rgba(247, 246, 252, 0.22);
-  --line-soft: rgba(247, 246, 252, 0.07);
-  --line-blue: rgba(247, 246, 252, 0.14);
-  --line-blue-strong: rgba(247, 246, 252, 0.26);
-  --blue-soft: rgba(179, 171, 219, 0.3);
-  --blue-deep: var(--brand-200);
-  --color-primary: var(--brand-200);
-  --color-focus: var(--white);
-  --sun: var(--white);
-  --sun-deep: var(--brand-200);
-  --on-sun: var(--brand-900);
+  /* Local: the tint the panel and its chips are made of. */
+  --tint: var(--brand-50);
+  --edge: rgba(70, 53, 149, 0.1);
+  --edge-hi: rgba(70, 53, 149, 0.2);
+  --open: var(--ok);
 
   position: relative;
-  background: var(--navy);
+  background: var(--white);
   color: var(--ink);
-  padding-top: clamp(80px, 10vw, 152px);
+  padding-top: clamp(64px, 8vw, 128px);
   overflow: clip;
   isolation: isolate;
 }
 
-/* On navy the primary action inverts: a white button with navy type. */
+/* Light from above: the logo ink at a whisper, over a fine grid that fades
+   out before it reaches the directory. */
+.foot__aura {
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(1100px, 120vh);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 42% at 50% 0%, rgba(70, 53, 149, 0.08), transparent 72%),
+    radial-gradient(30% 28% at 90% 30%, rgba(122, 109, 189, 0.06), transparent 70%);
+}
+
+.foot__aura::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(70, 53, 149, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(70, 53, 149, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(60% 55% at 50% 0%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(60% 55% at 50% 0%, #000 20%, transparent 75%);
+}
+
 .foot .btn-primary {
-  background: var(--white);
-  color: var(--brand-900);
-  box-shadow: none;
+  box-shadow: 0 18px 36px -18px rgba(70, 53, 149, 0.7);
 }
 
-.foot .btn-primary::after {
-  background: var(--brand-100);
-}
-
-.foot .btn-primary:hover {
-  color: var(--brand-900);
-}
-
-/* The highlighter under white type is the logo ink itself. */
-.foot .mark {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23463595'/%3E%3C/svg%3E");
+.foot :focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* --------------------------------------------------------------------------
-   Statement
+   Invitation panel
    -------------------------------------------------------------------------- */
-.foot__top {
+.foot__panel {
+  --gx: 78%;
+  --gy: 0%;
+
+  position: relative;
   display: grid;
-  gap: clamp(52px, 7vw, 72px);
-  padding-bottom: clamp(64px, 8vw, 120px);
+  gap: clamp(36px, 5vw, 56px);
+  padding: clamp(28px, 5.4vw, 80px);
+  border-radius: clamp(20px, 2.4vw, 32px);
+  background:
+    radial-gradient(90% 120% at 0% 0%, rgba(220, 216, 238, 0.7), transparent 55%),
+    linear-gradient(155deg, var(--brand-50) 0%, #fbfbfe 60%, var(--white) 100%);
+  box-shadow:
+    inset 0 0 0 1px var(--edge),
+    0 1px 2px rgba(26, 22, 64, 0.04),
+    0 50px 100px -60px rgba(26, 22, 64, 0.25);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* The light that follows the pointer. */
+.foot__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    560px circle at var(--gx) var(--gy),
+    rgba(179, 171, 219, 0.28),
+    transparent 62%
+  );
+}
+
+/* A field of dots, only in the far corner, so the panel has a texture where
+   there is no type to give it one. */
+.foot__dots {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 58%;
+  height: 70%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(70, 53, 149, 0.22) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 72%);
+  mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 72%);
+}
+
+.foot__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(22px, 2.6vw, 34px);
+  padding: 8px 14px 8px 12px;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px var(--edge),
+    0 6px 16px -10px rgba(26, 22, 64, 0.2);
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-500);
+}
+
+.foot__pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand-500);
+}
+
+.foot__pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: foot-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes foot-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
 }
 
 .foot__title {
-  font-size: clamp(2.75rem, 5.2vw + 0.4rem, 5.25rem);
+  font-size: clamp(2.5rem, 4.8vw + 0.4rem, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   max-width: 12ch;
 }
 
 .foot__lead {
-  margin-top: clamp(22px, 2.4vw, 32px);
-  max-width: 40ch;
+  margin-top: clamp(20px, 2.2vw, 30px);
+  max-width: 42ch;
   font-size: var(--t-lead);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--ink-2);
 }
 
@@ -81,92 +178,182 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 18px 32px;
-  margin-top: clamp(30px, 3.2vw, 44px);
+  gap: 12px;
+  margin-top: clamp(28px, 3vw, 42px);
 }
 
-.foot__visit {
-  font-size: var(--t-small);
-}
-
-/* The admissions desk. */
-.foot__desk {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+/* The second action: a quiet white button, not a text link, so the pair
+   reads as a choice of two rather than one button and a footnote. */
+.foot__ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
-}
-
-.foot__desk .meta {
-  margin-bottom: 6px;
-}
-
-.foot__phone {
-  font-family: var(--font-display);
-  font-size: clamp(1.875rem, 2.7vw, 2.625rem);
+  padding: 15px 24px;
+  border-radius: var(--r-ctl);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+  font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  line-height: 1;
   color: var(--ink);
-}
-
-.foot__mail {
-  font-size: var(--t-small);
-  color: var(--ink-2);
-  overflow-wrap: anywhere;
-}
-
-/* The highlighter, drawn under a contact on hover. The same pale blue sweep
-   as `.mark` in the headlines, so the hover belongs to the page's own
-   vocabulary; the type itself turns blue as the sweep lands. */
-.foot__hl {
-  background: linear-gradient(var(--blue-soft), var(--blue-soft)) no-repeat 0 92% / 0% 0.3em;
+  white-space: nowrap;
   transition:
-    background-size 380ms var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
     color var(--d-state) var(--ease-out);
 }
 
-.foot__hl:hover,
-.foot__hl:focus-visible {
-  background-size: 100% 0.3em;
-  color: var(--blue-deep);
+.foot__ghost svg {
+  color: var(--brand-500);
+}
+
+.foot__ghost:hover {
+  box-shadow:
+    inset 0 0 0 1px var(--brand-500),
+    0 12px 24px -16px rgba(70, 53, 149, 0.5);
+  color: var(--brand-600);
+}
+
+/* The admissions desk: a white card lifted off the panel. */
+.foot__desk {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: end;
+  padding: clamp(22px, 2.4vw, 32px);
+  border-radius: var(--r-frame);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow:
+    inset 0 0 0 1px var(--edge),
+    0 30px 60px -36px rgba(26, 22, 64, 0.28);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.foot__desk-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: clamp(18px, 2vw, 26px);
+}
+
+.foot__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  padding: 4px 11px 4px 9px;
+  border-radius: var(--r-pill);
+  background: var(--tint);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.foot__status:empty {
+  visibility: hidden;
+}
+
+.foot__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--neutral-300);
+}
+
+.foot__status.is-open {
+  background: rgba(47, 122, 82, 0.09);
+  color: var(--open);
+}
+
+.foot__status.is-open .foot__status-dot {
+  background: var(--open);
+  box-shadow: 0 0 0 3px rgba(47, 122, 82, 0.18);
+}
+
+.foot__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.2vw, 2.125rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.foot__phone-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--brand-500);
+  color: var(--white);
+  box-shadow: 0 10px 24px -10px rgba(70, 53, 149, 0.8);
+  transition: transform var(--d-move) var(--ease-back);
+}
+
+.foot__phone:hover {
+  color: var(--brand-500);
+}
+
+.foot__phone:hover .foot__phone-icon {
+  transform: rotate(-12deg) scale(1.06);
+}
+
+.foot__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.foot__mail svg {
+  flex: none;
+  color: var(--brand-500);
+}
+
+.foot__mail span {
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.foot__mail:hover {
+  color: var(--brand-500);
 }
 
 .foot__hours {
   display: grid;
-  width: 100%;
-  max-width: 36ch;
-  margin: 18px 0 0;
+  margin: clamp(20px, 2.2vw, 28px) 0 0;
 }
 
 .foot__hours > div {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding-block: 9px;
+  padding-block: 11px;
   border-top: 1px solid var(--line);
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
   color: var(--ink-3);
-}
-
-.foot__hours > div:last-child {
-  border-bottom: 1px solid var(--line);
 }
 
 .foot__hours dd {
   margin: 0;
-  color: var(--ink-2);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
   white-space: nowrap;
-}
-
-/* The hairline between statement and directory. Drawn by the scroll. */
-.foot__rule {
-  display: block;
-  height: 1px;
-  background: var(--line-blue-strong);
-  transform-origin: left center;
 }
 
 /* --------------------------------------------------------------------------
@@ -175,129 +362,185 @@
 .foot__dir {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 44px 24px;
-  padding-block: clamp(36px, 4.4vw, 60px) clamp(88px, 11vw, 168px);
+  gap: 48px 24px;
+  padding-block: clamp(64px, 8vw, 120px) clamp(48px, 5.5vw, 80px);
 }
 
-.foot__group--social,
+.foot__group--brand,
 .foot__group--visit {
   grid-column: 1 / -1;
 }
 
+.foot__home {
+  display: inline-block;
+}
+
+.foot__logo {
+  height: clamp(54px, 4.8vw, 68px);
+}
+
+.foot__about {
+  max-width: 34ch;
+  margin-top: 20px;
+  font-size: var(--t-small);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+.foot__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.foot__social {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+  color: var(--ink-strong);
+  transition:
+    background var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
+    transform var(--d-move) var(--ease-out);
+}
+
+.foot__social:hover {
+  background: var(--brand-500);
+  box-shadow:
+    inset 0 0 0 1px var(--brand-500),
+    0 14px 28px -14px rgba(70, 53, 149, 0.8);
+  color: var(--white);
+  transform: translateY(-3px);
+}
+
 .foot__label {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .foot__list {
   display: grid;
+  gap: 2px;
 }
 
-/* A directory link. The rule under it draws in from the left and leaves to
-   the right, the link steps a few pixels in, and its neighbours dim - three
-   small movements that read as one because they share a duration. */
+/* A directory link: a short rule slides in from the left as the label steps
+   aside for it, and its neighbours dim - three movements on one duration. */
 .foot__link {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding-block: 6px;
   font-size: clamp(0.9375rem, 1vw, 1rem);
   line-height: 1.3;
   letter-spacing: -0.005em;
-  color: var(--ink);
+  color: var(--ink-strong);
+  transition:
+    opacity 360ms var(--ease-out),
+    transform 360ms var(--ease-out),
+    color 360ms var(--ease-out);
+}
+
+.foot__link::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  width: 8px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--brand-500);
+  opacity: 0;
+  transform: translateX(-6px);
   transition:
     opacity 360ms var(--ease-out),
     transform 360ms var(--ease-out);
 }
 
-.foot__link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right center;
-  transition: transform 360ms var(--ease-out);
-}
-
-.foot__link svg {
-  opacity: 0.5;
-  transition:
-    transform 360ms var(--ease-out),
-    opacity 360ms var(--ease-out);
-}
-
-.foot__link:focus-visible::after {
-  transform: scaleX(1);
+.foot__link:focus-visible {
+  color: var(--brand-500);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .foot__list:has(.foot__link:hover) .foot__link:not(:hover) {
-    opacity: 0.4;
+    opacity: 0.45;
   }
 
   .foot__link:hover {
-    color: var(--blue-deep);
-    transform: translateX(5px);
+    color: var(--brand-500);
+    transform: translateX(16px);
   }
 
-  .foot__link:hover::after {
-    transform: scaleX(1);
-    transform-origin: left center;
-  }
-
-  .foot__link--out:hover svg {
+  .foot__link:hover::before {
     opacity: 1;
-    transform: translate(2px, -2px);
+    transform: translateX(0);
   }
-}
-
-/* On a phone the four networks sit in a row rather than a column: they are
-   short, parallel, and a column of them is a list nobody needs to scan. */
-.foot__group--social .foot__list {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 22px;
 }
 
 .foot__addr {
-  max-width: 30ch;
-  margin-bottom: 14px;
+  display: flex;
+  gap: 12px;
+  max-width: 32ch;
   font-style: normal;
   font-size: var(--t-small);
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--ink-2);
 }
 
+.foot__addr svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--brand-500);
+}
+
 .foot__map {
-  font-size: var(--t-small);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 11px 16px;
+  border-radius: var(--r-ctl);
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  transition:
+    background var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.foot__map svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.foot__map:hover {
+  background: var(--tint);
+  box-shadow: inset 0 0 0 1px var(--brand-500);
+  color: var(--brand-600);
+}
+
+.foot__map:hover svg {
+  transform: translate(2px, -2px);
 }
 
 /* --------------------------------------------------------------------------
    Wordmark
    -------------------------------------------------------------------------- */
-.foot__sign {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 24px;
-  padding-bottom: clamp(14px, 1.8vw, 26px);
-}
-
-.foot__sign-start {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* The white logo, a touch larger than the masthead's: at the foot of the
-   page it signs the whole document. */
-.foot__logo {
-  height: clamp(50px, 4.6vw, 64px);
+.foot__brand {
+  position: relative;
+  border-top: 1px solid var(--line);
+  padding-top: clamp(24px, 3vw, 44px);
+  /* The name fades into the ground from the top down, so it is felt rather
+     than read and never competes with the logo above it. A mask on the
+     parent, not a gradient on the letters, because the letters are split
+     and rotated while they stand up. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, rgba(0, 0, 0, 0.15) 100%);
+  mask-image: linear-gradient(to bottom, #000 30%, rgba(0, 0, 0, 0.15) 100%);
 }
 
 /* The size here is an estimate of the fitted size - the column width over
@@ -311,17 +554,15 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: calc((min(100vw, var(--container)) - 2 * var(--gutter)) / 4.7);
-  line-height: 1;
-  letter-spacing: -0.03em;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
   white-space: nowrap;
-  /* Tonal: a shade of the navy ground, so the name is felt rather than read
-     and never competes with the logo above it. */
-  color: var(--brand-800);
+  color: var(--brand-200);
   user-select: none;
   /* The tracking is applied after the last letter too, which pulls the box
      in behind the final "l" and lets its ink run past the margin. This hands
-     that space back, so the fitted name ends on the rule below it. */
-  padding-right: 0.025em;
+     that space back, so the fitted name ends on the margin. */
+  padding-right: 0.04em;
 }
 
 /* The vanishing point for `stand()`, in em so it scales with the letters. */
@@ -338,40 +579,43 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 32px;
-  margin-top: clamp(24px, 3vw, 44px);
-  padding-block: 18px clamp(20px, 2.4vw, 28px);
-  border-top: 1px solid var(--line-blue);
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  gap: 14px 32px;
+  padding-block: clamp(20px, 2.4vw, 28px);
+  border-top: 1px solid var(--line);
+  font-size: 0.8125rem;
   color: var(--ink-3);
+}
+
+.foot__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
 }
 
 .foot__up {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 0;
   font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
+  font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
   transition: color var(--d-state) var(--ease-out);
 }
 
-.foot__up-ring {
+.foot__up-box {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--line-blue-strong);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
   transition:
     background 300ms var(--ease-out),
-    box-shadow 300ms var(--ease-out);
+    box-shadow 300ms var(--ease-out),
+    color 300ms var(--ease-out);
 }
 
 .foot__up svg {
@@ -380,23 +624,24 @@
 }
 
 .foot__up:hover {
-  color: var(--blue-deep);
+  color: var(--brand-500);
 }
 
-.foot__up:hover .foot__up-ring {
-  background: var(--sun);
-  box-shadow: none;
-}
-
-/* The glyph on the filled ring is white; blue on blue would disappear. */
-.foot__up:hover .foot__up-ring,
-.foot__up:hover .foot__up-ring svg {
-  color: var(--on-sun);
+.foot__up:hover .foot__up-box {
+  background: var(--brand-500);
+  box-shadow: 0 12px 24px -12px rgba(70, 53, 149, 0.8);
+  color: var(--white);
 }
 
 /* Rotated half a turn, so a positive Y is up on screen. */
 .foot__up:hover svg {
-  transform: rotate(180deg) translateY(2px);
+  transform: rotate(180deg) translateY(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foot__pulse::after {
+    animation: none;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -404,7 +649,7 @@
    --------------------------------------------------------------------------
    Designed here rather than inherited: the name breaks onto two lines and
    is fitted to "Model", so on a phone it is larger than on a laptop, not
-   smaller. The button takes the full width, where a thumb expects it.
+   smaller. Both actions take the full width, where a thumb expects them.
    -------------------------------------------------------------------------- */
 @media (max-width: 699px) {
   .foot__wordmark {
@@ -413,8 +658,19 @@
     font-size: calc((100vw - 2 * var(--gutter)) / 2.9);
   }
 
-  .foot__cta {
+  .foot__cta,
+  .foot__ghost {
     flex: 1 1 100%;
+  }
+
+  .foot__phone-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .foot__hours > div {
+    flex-direction: column;
+    gap: 2px;
   }
 
   .foot__legal {
@@ -431,27 +687,19 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .foot__group--social {
+  .foot__group--visit {
     grid-column: auto;
-  }
-
-  .foot__group--social .foot__list {
-    display: grid;
   }
 }
 
 /* --------------------------------------------------------------------------
    Desktop - the shared 12-column grid
    -------------------------------------------------------------------------- */
-@media (min-width: 900px) {
-  .foot__top,
+@media (min-width: 1000px) {
+  .foot__panel,
   .foot__dir {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: clamp(16px, 2.2vw, 40px);
-  }
-
-  .foot__top {
-    align-items: end;
   }
 
   .foot__say {
@@ -459,14 +707,22 @@
   }
 
   .foot__desk {
-    grid-column: 9 / span 4;
+    grid-column: 8 / span 5;
   }
 
   .foot__group {
     grid-column: span 2;
   }
 
+  .foot__group--brand {
+    grid-column: 1 / span 4;
+  }
+
+  .foot__group--brand + .foot__group {
+    grid-column: 6 / span 2;
+  }
+
   .foot__group--visit {
-    grid-column: 9 / span 4;
+    grid-column: 10 / span 3;
   }
 }

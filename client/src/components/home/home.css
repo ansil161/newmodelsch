@@ -7,7 +7,7 @@
 
    The one idea running through it: no two adjacent sections share a shape.
    The strengths are a sticky column, the bands are a four-across row, the
-   transition is full-bleed, the campus is a pinned exhibition, the journey is
+   legacy is a photograph wired to four figures, the campus is a pinned exhibition, the journey is
    a curve. A reader scrolling this page never sees the same layout twice in
    a row, which is most of why it does not read as a template.
    ========================================================================== */
@@ -103,84 +103,4 @@
   .band:nth-child(2) { margin-top: 34px; }
   .band:nth-child(3) { margin-top: 68px; }
   .band:nth-child(4) { margin-top: 102px; }
-}
-
-/* ==========================================================================
-   04 - The transition
-   ========================================================================== */
-/* The photograph is a ghost behind a white wash rather than a dark band under
-   a navy scrim: the page stays one white sheet, and the picture is felt as
-   texture through it. */
-.tr {
-  position: relative;
-  padding-block: clamp(110px, 15vw, 240px);
-  overflow: clip;
-  isolation: isolate;
-  background: var(--white);
-  color: var(--ink);
-}
-
-.tr__bg {
-  position: absolute;
-  inset: -10% 0;
-  z-index: -1;
-}
-
-.tr__bg .fig,
-.tr__bg img {
-  height: 100%;
-  border-radius: 0;
-}
-
-.tr__scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.96) 0%,
-    rgba(255, 255, 255, 0.86) 45%,
-    rgba(255, 255, 255, 0.97) 100%
-  );
-}
-
-.tr__title {
-  color: var(--ink);
-  max-width: 12ch;
-}
-
-.tr__foot {
-  margin-top: clamp(44px, 5vw, 76px);
-  display: grid;
-  gap: clamp(32px, 4vw, 56px);
-}
-
-.tr__lead {
-  font-size: var(--t-lead);
-  color: var(--ink-2);
-  max-width: 46ch;
-  line-height: 1.5;
-}
-
-.tr__stats .stat {
-  border-top-color: var(--blue);
-}
-
-.tr__stats .stat__value {
-  color: var(--blue-deep);
-}
-
-.tr__stats .stat__label {
-  color: var(--ink);
-}
-
-.tr__stats .stat__detail {
-  color: var(--ink-3);
-}
-
-@media (min-width: 900px) {
-  .tr__foot {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    align-items: start;
-    gap: clamp(48px, 6vw, 96px);
-  }
 }

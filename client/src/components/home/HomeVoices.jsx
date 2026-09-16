@@ -58,7 +58,7 @@ const MOVED = 'opacity,visibility,transform,clipPath';
 const PORTRAIT = {
   width: 720,
   widths: [420, 720, 1080],
-  sizes: '(max-width: 699px) 74vw, (max-width: 1179px) 40vw, 27vw',
+  sizes: '(max-width: 699px) 74vw, (max-width: 1279px) min(44vw, 400px), 23vw',
 };
 
 /* --------------------------------------------------------------------------
