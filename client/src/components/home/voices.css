@@ -98,12 +98,12 @@
   /* Clear of the swash drawn under the headline, which hangs well below the
      line box it belongs to. */
   margin-top: clamp(46px, 3.8vw, 56px);
-  max-width: 34ch;
-  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
-  line-height: 1.68;
+  max-width: 36ch;
+  font-size: var(--t-standfirst);
+  line-height: 1.65;
   /* The longest of these is two sentences' worth; no word left on its own. */
   text-wrap: pretty;
-  color: var(--vx-quiet);
+  color: var(--color-text-lead);
 }
 
 .vx__cta {

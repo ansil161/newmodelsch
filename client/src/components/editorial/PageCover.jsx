@@ -12,6 +12,7 @@ export function PageCover({
   lead,
   photo,
   facts,
+  aside,
   tone = 'dark',
   className = '',
 }) {
@@ -79,7 +80,9 @@ export function PageCover({
           {lead ? <p className="lead cover__lead">{lead}</p> : null}
         </div>
 
-        {facts?.length ? (
+        {/* `aside` replaces the standard facts row for a page that sets its
+            figures its own way. */}
+        {aside ?? (facts?.length ? (
           <dl className="cover__facts">
             {facts.map((fact) => (
               <div className="cover__fact" key={fact.label}>
@@ -94,7 +97,7 @@ export function PageCover({
               </div>
             ))}
           </dl>
-        ) : null}
+        ) : null)}
       </div>
     </section>
   );

@@ -16,7 +16,6 @@ class Messages:
     CSRF_ISSUED = "Security token issued."
 
     INVALID_CREDENTIALS = "Invalid email or password."
-    CAPTCHA_FAILED = "Security verification failed. Please try again."
     TOO_MANY_ATTEMPTS = "Too many attempts. Please try again later."
     SESSION_EXPIRED = "Your session has expired. Please sign in again."
     CSRF_FAILED = "Your security token has expired. Please try again."
@@ -26,7 +25,6 @@ class Codes:
     """Stable values of the `code` field, for client code to branch on."""
 
     INVALID_CREDENTIALS = "invalid_credentials"
-    CAPTCHA_FAILED = "captcha_failed"
     SESSION_EXPIRED = "session_expired"
     CSRF_FAILED = "csrf_failed"
 
@@ -41,7 +39,6 @@ class Events:
     REFRESH_FAILURE = "refresh_failure"
     REFRESH_REUSE_DETECTED = "refresh_reuse_detected"
     RATE_LIMIT_TRIGGERED = "rate_limit_triggered"
-    CAPTCHA_FAILURE = "captcha_failure"
     CSRF_FAILURE = "csrf_failure"
 
 

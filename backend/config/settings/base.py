@@ -3,7 +3,7 @@ Settings shared by every environment.
 
 Every value that differs between a laptop and a server comes from the process
 environment, or from backend/.env during local development. The defaults
-written here are the *safe* ones - secure cookies, CAPTCHA on, no CORS - so a
+written here are the *safe* ones - secure cookies, no CORS - so a
 variable that is forgotten in production fails closed rather than open.
 development.py and production.py adjust only what genuinely differs.
 """
@@ -35,14 +35,10 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 
+# There is no Django admin: the React console is the only administration UI.
 INSTALLED_APPS = [
-    # django.contrib.admin, with its login rate-limited like the API's.
-    "apps.accounts.admin_apps.ThrottledAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
     "django.contrib.postgres",
     "corsheaders",
     "rest_framework",
@@ -54,19 +50,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     # Before CommonMiddleware, so preflight responses carry CORS headers.
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
-ADMIN_URL = env("ADMIN_URL", default="admin/")
 
 TEMPLATES = [
     {
@@ -76,8 +68,6 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -105,10 +95,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 # ModelBackend keyed on email, plus the per-account failure limit. It is the
-# only backend, so the API login and the admin login share one lockout.
+# only backend, so every password check shares one lockout.
 AUTHENTICATION_BACKENDS = ["apps.accounts.backends.EmailBackend"]
 
-# Applied wherever a password is *set* - the admin and createsuperuser. There
+# Applied wherever a password is *set* - createsuperuser and create_account. There
 # is no public registration, so these never reach the login form.
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -122,16 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # ---------------------------------------------------------------------------
-# Internationalisation, static files, email
+# Internationalisation, email
 # ---------------------------------------------------------------------------
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MAILERS = {
     "default": {
@@ -195,11 +182,6 @@ AUTH_COOKIES = {
     "SAMESITE": COOKIE_SAMESITE,
 }
 
-# Sessions exist only for the Django admin.
-SESSION_COOKIE_SECURE = COOKIE_SECURE
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
-
 
 # ---------------------------------------------------------------------------
 # CSRF and CORS
@@ -230,8 +212,7 @@ SECURE_REFERRER_POLICY = "same-origin"
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
 
-# The backend serves JSON and the admin, both from its own origin. The admin
-# ships no inline script or style, so this needs no exceptions.
+# The backend serves only JSON, so this needs no exceptions.
 SECURE_CSP = {
     "default-src": [CSP.SELF],
     "base-uri": [CSP.NONE],
@@ -305,29 +286,6 @@ AUTH_LOGIN_FAILURE_WINDOW = env.int("LOGIN_FAILURE_WINDOW_SECONDS", default=900)
 # flight during sign-out), not as theft. Past it, reuse signs the user out
 # everywhere. Either way the stale token itself is refused.
 AUTH_REFRESH_REUSE_GRACE_SECONDS = env.int("REFRESH_REUSE_GRACE_SECONDS", default=30)
-
-
-# ---------------------------------------------------------------------------
-# CAPTCHA
-# ---------------------------------------------------------------------------
-
-CAPTCHA = {
-    "ENABLED": env.bool("CAPTCHA_ENABLED", default=True),
-    # turnstile (Cloudflare) | hcaptcha | recaptcha (v2 checkbox)
-    "PROVIDER": env("CAPTCHA_PROVIDER", default="turnstile"),
-    # Public: sent to the browser by GET /api/v1/auth/csrf/.
-    "SITE_KEY": env("CAPTCHA_SITE_KEY", default=""),
-    # Private: used only for the server-to-provider verification call.
-    "SECRET_KEY": env("CAPTCHA_SECRET_KEY", default=""),
-    # When set, a solved challenge must come from one of these hostnames.
-    "EXPECTED_HOSTNAMES": env_list("CAPTCHA_EXPECTED_HOSTNAMES"),
-    "TIMEOUT": env.float("CAPTCHA_TIMEOUT_SECONDS", default=5.0),
-}
-
-if CAPTCHA["PROVIDER"] not in {"turnstile", "hcaptcha", "recaptcha"}:
-    raise ImproperlyConfigured("CAPTCHA_PROVIDER must be turnstile, hcaptcha or recaptcha.")
-if CAPTCHA["ENABLED"] and not (CAPTCHA["SITE_KEY"] and CAPTCHA["SECRET_KEY"]):
-    raise ImproperlyConfigured("CAPTCHA_ENABLED requires CAPTCHA_SITE_KEY and CAPTCHA_SECRET_KEY.")
 
 
 # ---------------------------------------------------------------------------

@@ -11,8 +11,8 @@ which check the caller's role in the object's workspace:
     member, role too low 403, with a message saying so
     enough               the object
 
-Superusers are administrators of every workspace: they already are, through
-the Django admin, and pretending otherwise here would only move the
+Superusers are administrators of every workspace: they hold every
+permission already, and pretending otherwise here would only move the
 workaround somewhere less audited.
 """
 

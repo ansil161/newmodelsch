@@ -12,8 +12,7 @@ class EmailBackend(ModelBackend):
     failure limit.
 
     It is the project's only backend, so every password check goes through
-    it: the API login and the Django admin login share one lockout, and the
-    limit cannot be sidestepped by choosing the other door.
+    it and the limit cannot be sidestepped.
     """
 
     @sensitive_variables("password")

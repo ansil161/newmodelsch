@@ -310,7 +310,7 @@ deliberately minimal placeholder for the school's real signed-in area.
 | API client (cookies, CSRF, single-flight refresh) | `lib/apiClient.ts` |
 | Auth endpoints | `lib/authApi.ts` |
 | Session state | `providers/AuthProvider.tsx`, `hooks/useAuth.ts` |
-| Layout, guard, form, CAPTCHA | `components/auth/` |
+| Layout, guard, form | `components/auth/` |
 | Pages | `pages/LoginPage.tsx`, `pages/DashboardPage.tsx` |
 
 - **No token ever reaches JavaScript.** The backend sets HttpOnly cookies; every
@@ -327,9 +327,7 @@ deliberately minimal placeholder for the school's real signed-in area.
 In development, `npm run dev` proxies `/api` to the Django server
 (`DEV_API_PROXY_TARGET`, default `http://127.0.0.1:8000`). In production, either
 route `/api` to Django on the same host or set `VITE_API_BASE_URL` to the API's
-versioned root (e.g. `https://api.example.com/api/v1`). If a Content Security
-Policy is added to this site, allow the CAPTCHA provider's script and frame
-origin (`https://challenges.cloudflare.com` for Turnstile).
+versioned root (e.g. `https://api.example.com/api/v1`).
 
 ## Not yet set up
 

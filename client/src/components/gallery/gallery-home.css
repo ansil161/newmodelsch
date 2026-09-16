@@ -304,8 +304,9 @@
 }
 
 .gal-cat__lead {
-  max-width: 40ch;
-  color: var(--ink-2);
+  max-width: 42ch;
+  font-size: var(--t-standfirst);
+  color: var(--color-text-lead);
 }
 
 .gal-cat__note {

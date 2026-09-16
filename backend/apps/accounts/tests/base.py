@@ -1,11 +1,8 @@
-from unittest import mock
-
 from django.conf import settings
 from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 
-from apps.accounts.captcha import CaptchaResult
 from apps.accounts.models import User
 
 PASSWORD = "Correct-Horse-Battery-9"
@@ -14,9 +11,8 @@ _DEFAULT = object()
 
 class AuthAPITestCase(APITestCase):
     """
-    One active user, CAPTCHA verification stubbed to pass (it has its own
-    tests in test_captcha.py), and a clean cache so rate limits and lockouts
-    never leak between tests.
+    One active user and a clean cache so rate limits and lockouts never
+    leak between tests.
     """
 
     def setUp(self):
@@ -29,10 +25,6 @@ class AuthAPITestCase(APITestCase):
         self.me_url = reverse("accounts:me")
 
         self.user = User.objects.create_user(email="teacher@example.com", password=PASSWORD, full_name="Asha Rao")
-
-        patcher = mock.patch("apps.accounts.views.verify_captcha", return_value=CaptchaResult(True))
-        self.verify_captcha = patcher.start()
-        self.addCleanup(patcher.stop)
 
     @property
     def access_cookie(self):
@@ -47,7 +39,6 @@ class AuthAPITestCase(APITestCase):
         payload = {
             "email": self.user.email if email is _DEFAULT else email,
             "password": password,
-            "captcha_token": "captcha-token",
         }
         return client.post(self.login_url, payload, format="json", **extra)
 

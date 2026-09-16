@@ -132,7 +132,7 @@
   margin-top: clamp(20px, 2.2vw, 30px);
   max-width: 54ch;
   font-family: var(--font-body);
-  font-size: clamp(0.9688rem, 1.02vw, 1.0625rem);
+  font-size: var(--t-standfirst);
   line-height: 1.72;
   color: var(--pmsg-quiet);
 }

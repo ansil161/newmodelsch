@@ -3,7 +3,7 @@ import { AUTH_ROUTES } from '@/constants';
 import { useAuth } from '@/hooks/useAuth';
 import { useNoIndex } from '@/hooks/useNoIndex';
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { Mark, Sticker } from '@/components/editorial';
+import { Icon } from '@/components/common/Icon';
 import { AuthFrame, PanelPending } from '@/components/auth/AuthFrame';
 import { LoginForm } from '@/components/auth/LoginForm';
 
@@ -39,23 +39,28 @@ export function LoginPage() {
 
   return (
     <AuthFrame>
-      <div className="auth__grid">
+      <div className="auth__stack">
         <section className="auth__intro" aria-labelledby="login-title">
-          <Sticker tilt={-2.2}>Sign in</Sticker>
-          <h1 id="login-title" className="ed-h1 auth__title">
-            Welcome <Mark kind="underline">back.</Mark>
+          <span className="auth__eyebrow auth-rise" style={{ '--i': 0 }}>
+            <Icon name="lock" size={12} />
+            Staff sign-in
+          </span>
+          <h1 id="login-title" className="auth__title auth-rise" style={{ '--i': 1 }}>
+            Welcome <span className="auth__title-accent">back.</span>
           </h1>
-          <p className="lead auth__lead">
+          <p className="auth__lead auth-rise" style={{ '--i': 2 }}>
             Sign in with the email address the school office registered for you.
           </p>
         </section>
 
-        <div className="auth__panel">
-          {status === 'loading' ? (
-            <PanelPending label="Checking your session" />
-          ) : (
-            <LoginForm labelledBy="login-title" />
-          )}
+        <div className="auth__panel auth-rise" style={{ '--i': 3 }}>
+          <div className="auth__panel-core">
+            {status === 'loading' ? (
+              <PanelPending label="Checking your session" />
+            ) : (
+              <LoginForm labelledBy="login-title" />
+            )}
+          </div>
         </div>
       </div>
     </AuthFrame>

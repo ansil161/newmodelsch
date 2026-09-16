@@ -306,7 +306,7 @@ button {
   font-size: var(--t-lead);
   font-weight: var(--fw-regular);
   line-height: var(--lh-lead);
-  color: var(--color-text-body);
+  color: var(--color-text-lead);
   max-width: var(--measure);
 }
 

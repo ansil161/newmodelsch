@@ -4,8 +4,7 @@ from unittest import mock
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
-from django.test import Client, RequestFactory, SimpleTestCase, TestCase, override_settings
-from django.urls import reverse
+from django.test import RequestFactory, SimpleTestCase, TestCase, override_settings
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
@@ -64,11 +63,10 @@ class ResponseHygieneTests(AuthAPITestCase):
         for response in responses:
             self.assertIn("no-store", response["Cache-Control"])
 
-    def test_csrf_bootstrap_exposes_only_public_captcha_configuration(self):
+    def test_csrf_bootstrap_returns_only_the_token(self):
         data = self.client.get(self.csrf_url).json()["data"]
+        self.assertEqual(list(data), ["csrf_token"])
         self.assertTrue(data["csrf_token"])
-        self.assertEqual(data["captcha"], {"enabled": True, "provider": "turnstile", "site_key": "test-site-key"})
-        self.assertNotIn(settings.CAPTCHA["SECRET_KEY"], json.dumps(data))
 
     def test_security_headers(self):
         response = self.client.get(self.csrf_url)
@@ -82,6 +80,10 @@ class ResponseHygieneTests(AuthAPITestCase):
             response = self.client.post(path, {"email": "new@example.com", "password": PASSWORD}, format="json")
             self.assertEqual(response.status_code, 404)
         self.assertFalse(User.objects.filter(email="new@example.com").exists())
+
+    def test_there_is_no_django_admin(self):
+        for path in ("/admin/", "/admin/login/"):
+            self.assertEqual(self.client.get(path).status_code, 404)
 
 
 class CookieTests(AuthAPITestCase):
@@ -183,14 +185,7 @@ class AuditLogTests(AuthAPITestCase):
         self.assertEqual(captured.records[1].user_id, self.user.pk)
         self.assertTrue(captured.records[0].email_fp)
 
-    def test_rate_limit_and_captcha_events_are_logged(self):
-        from apps.accounts.captcha import CaptchaResult
-
-        self.verify_captcha.return_value = CaptchaResult(False, ("invalid-input-response",))
-        with self.assertLogs("apps.accounts.audit", level="WARNING") as captured:
-            self.login()
-        self.assertEqual(captured.records[0].event, "captcha_failure")
-
+    def test_rate_limit_events_are_logged(self):
         rates = {"login_ip_burst": "1/min", "login_ip_sustained": "100/hour", "auth_refresh": "30/min"}
         with override_settings(AUTH_THROTTLE_RATES=rates), self.assertLogs("apps.accounts.audit", "WARNING") as captured:
             self.login()
@@ -260,32 +255,3 @@ class UserModelTests(TestCase):
         user = User.objects.create_superuser(email="root@example.com", password=PASSWORD)
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
-
-
-class AdminLoginTests(AuthAPITestCase):
-    def setUp(self):
-        super().setUp()
-        self.staff = User.objects.create_user(email="staff@example.com", password=PASSWORD, is_staff=True)
-        self.admin_login = reverse("admin:login")
-        self.browser = Client()
-
-    def post(self, password, **extra):
-        return self.browser.post(self.admin_login, {"username": self.staff.email, "password": password}, **extra)
-
-    def test_admin_login_works(self):
-        self.assertEqual(self.post(PASSWORD).status_code, 302)
-
-    def test_admin_login_shares_the_account_lock(self):
-        for _ in range(settings.AUTH_LOGIN_FAILURE_LIMIT):
-            self.post("wrong")
-        response = self.post(PASSWORD)
-        self.assertEqual(response.status_code, 200)  # the form again, not a redirect in
-        self.assertNotIn("_auth_user_id", self.browser.session)
-
-    @override_settings(AUTH_THROTTLE_RATES={"login_ip_burst": "2/min", "login_ip_sustained": "100/hour", "auth_refresh": "30/min"})
-    def test_admin_login_is_rate_limited_per_ip(self):
-        self.post("wrong")
-        self.post("wrong")
-        response = self.post(PASSWORD)
-        self.assertEqual(response.status_code, 429)
-        self.assertIn("Retry-After", response)

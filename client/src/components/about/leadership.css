@@ -64,12 +64,12 @@
 
 .ld__lead {
   margin: 0;
-  max-width: 25rem;
+  max-width: 28rem;
   /* Sits on the heading's second line rather than its descenders. */
   padding-bottom: 0.3em;
-  font-size: var(--t-small);
+  font-size: var(--t-standfirst);
   line-height: 1.6;
-  color: var(--ink-2);
+  color: var(--color-text-lead);
 }
 
 /* --------------------------------------------------------------------------

@@ -100,9 +100,9 @@
 .ac-proof__lead {
   margin: 0;
   max-width: 48ch;
-  font-size: clamp(1rem, 1.35vw, 1.0625rem);
-  line-height: 1.8;
-  color: var(--ink-3);
+  font-size: var(--t-standfirst);
+  line-height: 1.7;
+  color: var(--color-text-lead);
 }
 
 .ac-proof__action {

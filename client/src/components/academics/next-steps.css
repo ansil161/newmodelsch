@@ -167,11 +167,12 @@
 }
 
 .nx__lead {
-  margin: clamp(18px, 2.2cqi, 30px) 0 0;
-  max-width: 40ch;
-  font-size: clamp(0.95rem, 1.12cqi, 1.0625rem);
-  line-height: 1.7;
-  color: var(--slate);
+  /* Clear of the swash under "starts". */
+  margin: clamp(30px, 3cqi, 42px) 0 0;
+  max-width: 42ch;
+  font-size: clamp(1.0625rem, 1.25cqi, 1.1875rem);
+  line-height: 1.65;
+  color: var(--color-text-lead);
 }
 
 .nx__cta {

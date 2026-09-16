@@ -80,6 +80,10 @@
   --color-text-secondary: var(--neutral-800); /* secondary headings */
   --color-text-body: var(--neutral-600); /* running copy */
   --color-text-muted: var(--neutral-500);
+  /* The sentence under a section heading. A step darker than running copy,
+     because it is read at a glance beside a 60-80px headline and has to hold
+     its own there; every section's standfirst reaches for this one ink. */
+  --color-text-lead: var(--neutral-700);
   --color-text-subtle: var(--neutral-300);
   --color-accent: var(--brand-500); /* keywords */
   --color-link: var(--brand-500);
@@ -223,6 +227,9 @@
   --t-h3: clamp(1.3125rem, 1.8vw, 1.75rem);
   --t-h4: clamp(1.125rem, 1.35vw, 1.25rem);
   --t-lead: clamp(1.0625rem, 1.3vw, 1.25rem);
+  /* The standfirst under a section heading, in a narrower column than a
+     page lead: never below 17px, so no section sets it smaller than body. */
+  --t-standfirst: clamp(1.0625rem, 1.2vw, 1.1875rem);
   --t-body: clamp(1rem, 1.05vw, 1.0625rem);
   --t-small: clamp(0.875rem, 0.95vw, 0.9375rem);
   --t-label: clamp(0.6875rem, 0.78vw, 0.75rem);

@@ -30,7 +30,6 @@ import {
   InviteSection,
   Mark,
   Script,
-  PageCover,
   SectionHead,
   StatReveal,
   Sticker,
@@ -49,27 +48,6 @@ import './about.css';
    school earns trust in writing is by being specific in places it could have
    been vague.
    ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   The cover
-   -------------------------------------------------------------------------- */
-
-export function AboutCover() {
-  return (
-    <PageCover
-      sticker="About the school"
-      title={
-        <>
-          Our <span className="ed-em">story.</span>
-        </>
-      }
-      question="Who are they, and can I trust them?"
-      lead={STORY.lead}
-      photo={heritageImages[0]}
-      facts={STORY.marks.map((mark) => ({ value: mark.value, label: mark.label }))}
-    />
-  );
-}
 
 /* --------------------------------------------------------------------------
    01 - THE STORY
@@ -123,15 +101,6 @@ export function AboutStory() {
             </p>
           ))}
         </div>
-
-        {/* A sibling of the prose, not a child of it: from 900px the prose
-            column is a third of the page, too narrow for four figures, so the
-            marks take their own row across all three columns. */}
-        <StatReveal
-          items={STORY.marks.map((mark) => ({ value: mark.value, label: mark.label }))}
-          layout="grid"
-          className="story__marks"
-        />
       </div>
     </section>
   );

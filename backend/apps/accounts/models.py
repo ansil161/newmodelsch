@@ -9,7 +9,7 @@ from .validators import normalize_email
 
 class UserManager(BaseUserManager):
     """
-    Accounts are created by administrators - in the admin or with
+    Accounts are created by administrators - with `create_account` or
     `createsuperuser` - never through the API. There is no signup.
     """
 

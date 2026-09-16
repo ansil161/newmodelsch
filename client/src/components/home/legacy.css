@@ -134,8 +134,8 @@
 
 .legacy__lead {
   margin-top: clamp(12px, 1.4vw, 20px);
-  max-width: 40ch;
-  font-size: var(--t-small);
+  max-width: 42ch;
+  font-size: var(--t-standfirst);
   line-height: 1.6;
   color: var(--on-navy-2);
 }
@@ -380,7 +380,7 @@
   }
 
   .legacy__lead {
-    font-size: var(--t-body);
+    font-size: var(--t-standfirst);
   }
 
   .legacy__grid {

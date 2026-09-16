@@ -4,8 +4,8 @@ Security event logging for authentication.
 Every line carries an `event` name (see constants.Events), the client IP, and
 where known the user id. Email addresses are never written: failures carry
 `email_fp`, a keyed hash that lets repeated attempts against one account be
-correlated without the log holding the address. Passwords, tokens, CAPTCHA
-responses and headers are never passed here at all.
+correlated without the log holding the address. Passwords, tokens
+and headers are never passed here at all.
 """
 
 import logging

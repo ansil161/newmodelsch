@@ -10,7 +10,6 @@
    and re-export it here. `AboutCover` stays exported either way. */
 
 export {
-  AboutCover,
   AboutStory,
   AboutFilm,
   AboutTimeline,
@@ -21,6 +20,8 @@ export {
   AboutCta,
 } from './sections';
 
+export { AboutCover } from './AboutHero';
+export { AboutLedger } from './LegacyLedger';
 export { VisionMission as AboutVisionMission } from './VisionMission';
 export { CharterScrollSection as AboutCharter } from './CharterScrollSection';
 export { AboutLeadership } from './Leadership';

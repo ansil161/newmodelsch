@@ -97,9 +97,9 @@
 .sw__lead {
   margin: clamp(24px, 2.6vw, 32px) 0 0;
   max-width: 46ch;
-  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  font-size: var(--t-standfirst);
   line-height: 1.65;
-  color: var(--sw-slate);
+  color: var(--color-text-lead);
 }
 
 .sw__cta {

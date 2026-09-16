@@ -1,29 +1,57 @@
 /* ==========================================================================
    SIGN-IN PAGES
    --------------------------------------------------------------------------
-   /login and the signed-in landing behind it: the only pages on the site
-   that are operated rather than read. They use the site's materials - the
-   ivory ground, the serif statement, the sticker, the paper panel, the mono
-   field labels of the enquiry forms - and none of its motion. Nothing here
-   animates except the button's own fill and the spinner inside it.
+   /login: the one page on the site that is operated rather than read. An
+   editorial split - the statement and the form on a quiet white ground, a
+   deep indigo brand stage beside them - built only from the logo's palette.
+
+   Cards are machined in two layers (a tinted shell holding a white core with
+   concentric radii). Motion is one heavy fade-up on arrival, and the button's
+   own press and icon travel. Everything collapses to one column below 1024px.
    ========================================================================== */
 
 .auth {
-  min-height: 100svh;
+  --auth-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --auth-radius: 28px;
+  --auth-bezel: 6px;
+
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  background: var(--color-background);
+  font-family: var(--font-display);
+  isolation: isolate;
+}
+
+/* A faint brand bloom behind the form column; stronger on phones, where the
+   stage is gone and it is the only colour on the page. */
+.auth::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 36rem at -10% -10%, rgba(70, 53, 149, 0.08), transparent 60%),
+    radial-gradient(40rem 30rem at 50% 110%, rgba(70, 53, 149, 0.05), transparent 60%);
+}
+
+.auth__column {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  background: var(--ivory);
+  min-width: 0;
+  padding-inline: clamp(16px, 5vw, 72px);
 }
 
 /* --------------------------------------------------------------------------
-   Masthead - the same official logo as the navigation, at the same size
+   Masthead
    -------------------------------------------------------------------------- */
 .auth__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding-block: clamp(18px, 2.4vw, 28px);
+  padding-block: clamp(18px, 2.6vw, 32px);
 }
 
 .auth__brand {
@@ -39,82 +67,118 @@
 .auth__back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-height: 44px;
+  padding: 5px 16px 5px 5px;
+  border-radius: var(--r-pill);
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 0 0 1px var(--color-border-soft);
   font-size: var(--t-small);
-  font-weight: 500;
-  color: var(--ink-2);
-  transition: color var(--d-state) var(--ease-out);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  transition:
+    background var(--d-state) var(--auth-ease),
+    box-shadow var(--d-state) var(--auth-ease);
+}
+
+.auth__back-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: var(--e-1);
+  color: var(--color-primary);
+  transition: transform var(--d-move) var(--auth-ease);
 }
 
 .auth__back:hover {
-  color: var(--ink);
+  background: var(--color-primary-light);
+  box-shadow: inset 0 0 0 1px var(--color-border-brand);
 }
 
-.auth__back svg {
-  flex: none;
-  transition: transform var(--d-state) var(--ease-out);
-}
-
-.auth__back:hover svg {
+.auth__back:hover .auth__back-icon {
   transform: translateX(-3px);
 }
 
 /* --------------------------------------------------------------------------
-   The spread: statement on the left, panel on the right; stacked below 960
+   Statement and panel
    -------------------------------------------------------------------------- */
 .auth__main {
   display: grid;
   align-content: center;
-  padding-block: clamp(20px, 5vw, 72px);
+  justify-items: center;
+  padding-block: clamp(28px, 6vh, 80px);
 }
 
-.auth__grid {
+.auth__stack {
+  width: 100%;
+  max-width: 30rem;
   display: grid;
-  gap: clamp(28px, 5vw, 64px);
-  align-items: center;
+  gap: clamp(28px, 4vh, 40px);
 }
 
 .auth__intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
+  display: grid;
+  justify-items: start;
+  gap: 16px;
 }
 
-/* `ch` on the heading itself, which is set in the display face. */
+.auth__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--color-primary-wash);
+  box-shadow: inset 0 0 0 1px var(--color-border-brand);
+  color: var(--color-primary);
+  font-size: 0.6875rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
 .auth__title {
-  max-width: 9ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5.2vw, 4.25rem);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--color-text);
 }
 
-.auth__title--wide {
-  max-width: 16ch;
-  overflow-wrap: anywhere;
+.auth__title-accent {
+  color: var(--color-primary);
 }
 
 .auth__lead {
-  max-width: 36ch;
+  max-width: 34ch;
+  font-size: var(--t-lead);
+  line-height: var(--lh-lead);
+  color: var(--color-text-lead);
 }
 
+/* The double bezel: a tinted tray, and the white plate that sits in it. */
 .auth__panel {
-  width: 100%;
-  background: var(--paper);
-  border-radius: var(--r-lg);
-  padding: clamp(22px, 4vw, 44px);
-  box-shadow: var(--e-3);
+  padding: var(--auth-bezel);
+  border-radius: var(--auth-radius);
+  background: linear-gradient(180deg, var(--brand-100), var(--brand-50));
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-soft),
+    0 2px 6px rgba(26, 22, 64, 0.03),
+    0 50px 90px -50px rgba(26, 22, 64, 0.28);
 }
 
-.auth__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-@media (min-width: 960px) {
-  .auth__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 29rem);
-  }
+.auth__panel-core {
+  padding: clamp(22px, 3.4vw, 36px);
+  border-radius: calc(var(--auth-radius) - var(--auth-bezel));
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(26, 22, 64, 0.05),
+    0 12px 32px -18px rgba(26, 22, 64, 0.18);
 }
 
 /* --------------------------------------------------------------------------
@@ -127,64 +191,85 @@
 
 .auth-form__field {
   display: grid;
-  gap: 7px;
+  gap: 8px;
 }
 
 .auth-form__label {
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-3);
+  font-size: var(--t-small);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+
+.auth-form__control {
+  position: relative;
+}
+
+.auth-form__icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: color var(--d-state) var(--auth-ease);
+}
+
+.auth-form__control:focus-within .auth-form__icon {
+  color: var(--color-primary);
 }
 
 .auth-form__input {
   width: 100%;
-  min-height: 52px;
-  padding: 13px 16px;
-  border-radius: var(--r-ctl);
-  background: var(--ivory);
-  /* --ink-4 rather than the enquiry forms' hairline: an input's edge is the
-     control itself, and a hairline at 1.2:1 does not show where it is. */
-  border: 1px solid var(--ink-4);
-  color: var(--ink);
+  min-height: 54px;
+  padding: 14px 16px 14px 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-display);
   /* Never below 16px: under it, iOS Safari zooms the page on focus. */
   font-size: max(1rem, var(--t-body));
   transition:
-    border-color var(--d-state) var(--ease-out),
-    background var(--d-state) var(--ease-out),
-    box-shadow var(--d-state) var(--ease-out);
+    background var(--d-state) var(--auth-ease),
+    box-shadow var(--d-state) var(--auth-ease);
+}
+
+.auth-form__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.8;
 }
 
 .auth-form__input:hover {
-  border-color: var(--ink-3);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
 }
 
 .auth-form__input:focus {
   outline: none;
-  border-color: var(--ink);
-  background: var(--paper);
-  box-shadow: 0 0 0 3px var(--sun-soft);
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 1.5px var(--color-primary),
+    0 0 0 4px var(--sun-wash);
 }
 
 .auth-form__input[aria-invalid='true'] {
-  border-color: var(--err);
+  box-shadow: inset 0 0 0 1.5px var(--err);
 }
 
 .auth-form__input[aria-invalid='true']:focus {
-  box-shadow: 0 0 0 3px var(--coral-soft);
+  box-shadow:
+    inset 0 0 0 1.5px var(--err),
+    0 0 0 4px rgba(179, 55, 43, 0.12);
 }
 
 .auth-form__input[readonly] {
-  color: var(--ink-2);
+  color: var(--color-text-body);
 }
 
-.auth-form__password {
-  position: relative;
-}
-
-.auth-form__password .auth-form__input {
-  padding-right: 58px;
+.auth-form__input--reveal {
+  padding-right: 56px;
 }
 
 .auth-form__reveal {
@@ -195,20 +280,22 @@
   height: 44px;
   display: grid;
   place-items: center;
-  border-radius: var(--r-ctl);
-  color: var(--ink-3);
+  border-radius: 11px;
+  color: var(--color-text-muted);
   cursor: pointer;
   transform: translateY(-50%);
-  transition: color var(--d-tap) var(--ease-out), background var(--d-tap) var(--ease-out);
+  transition:
+    color var(--d-tap) var(--auth-ease),
+    background var(--d-tap) var(--auth-ease);
 }
 
 .auth-form__reveal:hover,
 .auth-form__reveal[aria-pressed='true'] {
-  color: var(--ink);
+  color: var(--color-primary);
 }
 
 .auth-form__reveal:hover {
-  background: var(--sand);
+  background: var(--color-primary-light);
 }
 
 .auth-form__error {
@@ -216,33 +303,96 @@
   color: var(--err);
 }
 
-/* Reserves the widget's height before its script arrives, so the button does
-   not jump down under a reader's thumb. */
-.auth-form__captcha {
-  min-height: 65px;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.auth-form__hint {
-  font-size: var(--t-small);
-  color: var(--ink-3);
-}
-
-.auth-form__hint:empty,
 .auth-form__alerts:empty {
   display: none;
 }
 
-.auth-form__submit {
+.auth-form__note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.auth-form__note svg {
+  flex: none;
+  color: var(--color-primary);
+}
+
+/* The submit: a pill, with its arrow set in its own island at the right. */
+.auth-submit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
+  min-height: 58px;
+  margin-top: 4px;
+  padding: 6px 6px 6px 26px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--brand-500), var(--brand-600));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 2px rgba(26, 22, 64, 0.2),
+    0 18px 36px -18px rgba(70, 53, 149, 0.7);
+  color: var(--color-on-primary);
+  font-size: 1rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition:
+    transform var(--d-state) var(--auth-ease),
+    box-shadow var(--d-move) var(--auth-ease),
+    filter var(--d-state) var(--auth-ease);
+}
+
+.auth-submit__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  transition:
+    transform var(--d-move) var(--auth-ease),
+    background var(--d-state) var(--auth-ease);
+}
+
+.auth-submit:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 2px rgba(26, 22, 64, 0.2),
+    0 24px 44px -18px rgba(70, 53, 149, 0.8);
+}
+
+.auth-submit:hover .auth-submit__icon {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateX(2px) scale(1.05);
+}
+
+.auth-submit:active {
+  transform: scale(0.985);
+}
+
+.auth-submit:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: var(--r-pill);
 }
 
 /* Disabled while a request is in flight - but it is busy, not unavailable,
    so it keeps most of its ink. */
-.auth-form__submit:disabled[aria-busy='true'] {
-  opacity: 0.86;
+.auth-submit:disabled {
   cursor: progress;
+  filter: saturate(0.85);
+  opacity: 0.9;
 }
 
 .auth-alert {
@@ -250,24 +400,23 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border-radius: var(--r-sm);
-  background: var(--coral-soft);
-  box-shadow: inset 3px 0 0 var(--coral);
-  color: var(--ink);
+  border-radius: 14px;
+  background: #fbefed;
+  box-shadow: inset 0 0 0 1px rgba(179, 55, 43, 0.18);
+  color: var(--color-text);
   font-size: var(--t-small);
   line-height: 1.45;
 }
 
 .auth-alert svg {
   flex: none;
-  margin-top: 2px;
+  margin-top: 1px;
   color: var(--err);
 }
 
 .auth-spinner {
   width: 16px;
   height: 16px;
-  flex: none;
   border-radius: 50%;
   border: 2px solid currentColor;
   border-right-color: transparent;
@@ -281,7 +430,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Pending - the panel's placeholder while the session or config loads
+   Pending - the panel's placeholder while the session loads
    -------------------------------------------------------------------------- */
 .auth-pending {
   display: grid;
@@ -294,6 +443,7 @@
   width: 44px;
   height: 2px;
   overflow: hidden;
+  border-radius: 2px;
   background: var(--line-strong);
 }
 
@@ -301,7 +451,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--ink);
+  background: var(--color-primary);
   transform: translateX(-100%);
   animation: auth-pending 1.1s var(--ease-in-out) infinite;
 }
@@ -316,23 +466,379 @@
    Foot
    -------------------------------------------------------------------------- */
 .auth__foot {
-  padding-block: 18px 26px;
+  display: flex;
+  justify-content: center;
+  padding-block: 8px 24px;
 }
 
 .auth__foot p {
+  max-width: 30rem;
   padding-top: 18px;
-  border-top: 1px solid var(--line);
-  font-size: var(--t-small);
-  color: var(--ink-3);
-  line-height: 1.55;
+  border-top: 1px solid var(--color-border-soft);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  text-align: center;
 }
 
 .auth__foot a {
-  color: var(--ink-2);
+  color: var(--color-text-secondary);
+  font-weight: var(--fw-medium);
   text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
   text-underline-offset: 3px;
+  transition: color var(--d-state) var(--auth-ease);
 }
 
 .auth__foot a:hover {
-  color: var(--ink);
+  color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   The brand stage - wide screens only
+   -------------------------------------------------------------------------- */
+.auth-stage {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .auth {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .auth-stage {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: 14px 14px 14px 0;
+  }
+}
+
+@media (min-width: 1440px) {
+  .auth {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+
+.auth-stage__shell {
+  height: 100%;
+  padding: var(--auth-bezel);
+  border-radius: 34px;
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 0 0 1px var(--color-border-soft);
+}
+
+.auth-stage__core {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(34px - var(--auth-bezel));
+  background:
+    radial-gradient(120% 80% at 80% 100%, var(--brand-600) 0%, transparent 60%),
+    linear-gradient(160deg, var(--brand-800) 0%, var(--brand-950) 70%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--on-navy);
+  isolation: isolate;
+}
+
+.auth-stage__orb {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-stage__orb--a {
+  width: 34rem;
+  height: 34rem;
+  right: -10rem;
+  bottom: -6rem;
+  background: radial-gradient(circle, rgba(122, 109, 189, 0.55), transparent 65%);
+  animation: auth-drift 14s var(--ease-in-out) infinite alternate;
+}
+
+.auth-stage__orb--b {
+  width: 26rem;
+  height: 26rem;
+  left: -9rem;
+  top: -8rem;
+  background: radial-gradient(circle, rgba(179, 171, 219, 0.2), transparent 65%);
+  animation: auth-drift 18s var(--ease-in-out) infinite alternate-reverse;
+}
+
+@keyframes auth-drift {
+  to {
+    transform: translate3d(-2.5rem, -1.5rem, 0);
+  }
+}
+
+/* A hairline grid that fades out from the top-left, like ruled paper. */
+.auth-stage__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(247, 246, 252, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 246, 252, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(90% 70% at 20% 10%, #000 20%, transparent 75%);
+}
+
+.auth-stage__copy {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  max-width: 34rem;
+  padding: clamp(36px, 4.4vw, 64px);
+  animation: auth-rise 1s var(--auth-ease) 200ms both;
+}
+
+.auth-stage__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 12px;
+  border-radius: var(--r-pill);
+  background: rgba(247, 246, 252, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(247, 246, 252, 0.14);
+  color: var(--on-navy-2);
+  font-size: 0.6875rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.auth-stage__pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand-300);
+}
+
+.auth-stage__pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand-300);
+  animation: auth-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes auth-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.auth-stage__title {
+  font-size: clamp(2.25rem, 3.4vw, 3.5rem);
+  font-weight: var(--fw-semibold);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--on-navy);
+}
+
+.auth-stage__title em {
+  font-style: normal;
+  color: var(--brand-300);
+}
+
+.auth-stage__text {
+  max-width: 36ch;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--on-navy-3);
+}
+
+/* Takes whatever height the copy leaves, so the two never overlap. */
+.auth-stage__figure {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  pointer-events: none;
+  animation: auth-rise-lg 1.3s var(--auth-ease) 350ms both;
+}
+
+.auth-stage__halo {
+  position: absolute;
+  bottom: -30%;
+  left: 11%;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(179, 171, 219, 0.35), transparent 62%);
+}
+
+.auth-stage__photo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: auto;
+  height: 100%;
+  max-width: 88%;
+  max-height: 36rem;
+  object-fit: contain;
+  object-position: bottom;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 30px 40px rgba(17, 14, 44, 0.45));
+}
+
+/* Floating glass chips - a double bezel in miniature. The stage is sticky,
+   so their blur never repaints on scroll. */
+.auth-chip {
+  position: absolute;
+  padding: 5px;
+  border-radius: 22px;
+  background: rgba(247, 246, 252, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(247, 246, 252, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.auth-chip__core {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 10px;
+  border-radius: 17px;
+  background: rgba(17, 14, 44, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.auth-chip__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--brand-400), var(--brand-500));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: var(--on-navy);
+}
+
+.auth-chip__text {
+  display: grid;
+  gap: 1px;
+  line-height: 1.3;
+}
+
+.auth-chip__text strong {
+  font-size: 0.9375rem;
+  font-weight: var(--fw-semibold);
+  color: var(--on-navy);
+}
+
+.auth-chip__text span {
+  font-size: 0.8125rem;
+  color: var(--on-navy-3);
+}
+
+.auth-chip--kb {
+  left: clamp(24px, 4vw, 56px);
+  bottom: 30%;
+  transform: rotate(-3deg);
+  animation: auth-chip-in 1s var(--auth-ease) 700ms both;
+}
+
+.auth-chip--since {
+  right: clamp(24px, 4vw, 56px);
+  bottom: 12%;
+  transform: rotate(2.5deg);
+  animation: auth-chip-in 1s var(--auth-ease) 850ms both;
+}
+
+@keyframes auth-chip-in {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* A short stage has no room for the chips beside the copy and photograph. */
+@media (min-width: 1024px) and (max-height: 720px) {
+  .auth-chip {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Arrival - one heavy fade-up, staggered by --i
+   -------------------------------------------------------------------------- */
+.auth-rise {
+  animation: auth-rise 0.9s var(--auth-ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms + 60ms);
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes auth-rise-lg {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 60px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phones
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .auth {
+    --auth-radius: 24px;
+    --auth-bezel: 5px;
+  }
+
+  .auth::before {
+    background: radial-gradient(40rem 26rem at 50% -8%, rgba(70, 53, 149, 0.12), transparent 65%);
+  }
+
+  .auth__back {
+    padding-right: 5px;
+  }
+
+  /* Icon only; the link keeps its accessible name from the hidden text. */
+  .auth__back > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .auth__main {
+    align-content: start;
+    padding-block: 12px 32px;
+  }
+
+  .auth__panel-core {
+    padding: 20px 18px;
+  }
 }

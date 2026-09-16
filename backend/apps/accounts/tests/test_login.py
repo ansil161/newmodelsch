@@ -5,7 +5,6 @@ from django.conf import settings
 from django.test import override_settings
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
-from apps.accounts.captcha import CaptchaResult
 from apps.accounts.constants import Messages
 from apps.accounts.models import User
 
@@ -84,11 +83,11 @@ class LoginTests(AuthAPITestCase):
         self.assertIn(field, body["errors"])
 
     def test_missing_email(self):
-        response = self.client.post(self.login_url, {"password": PASSWORD, "captcha_token": "t"}, format="json")
+        response = self.client.post(self.login_url, {"password": PASSWORD}, format="json")
         self.assertFieldError(response, "email")
 
     def test_missing_password(self):
-        response = self.client.post(self.login_url, {"email": self.user.email, "captcha_token": "t"}, format="json")
+        response = self.client.post(self.login_url, {"email": self.user.email}, format="json")
         self.assertFieldError(response, "password")
 
     def test_blank_password(self):
@@ -104,37 +103,6 @@ class LoginTests(AuthAPITestCase):
 
     def test_get_is_not_allowed(self):
         self.assertEqual(self.client.get(self.login_url).status_code, 405)
-
-
-class LoginCaptchaTests(AuthAPITestCase):
-    def test_captcha_token_and_client_ip_are_sent_for_verification(self):
-        self.login(REMOTE_ADDR="203.0.113.7")
-        self.verify_captcha.assert_called_once_with("captcha-token", "203.0.113.7")
-
-    def test_captcha_success_allows_sign_in(self):
-        self.verify_captcha.return_value = CaptchaResult(True)
-        self.assertEqual(self.login().status_code, 200)
-
-    def test_captcha_failure_is_rejected_before_the_password_is_checked(self):
-        self.verify_captcha.return_value = CaptchaResult(False, ("invalid-input-response",))
-        with mock.patch("apps.accounts.views.authenticate") as authenticate:
-            response = self.login()
-
-        authenticate.assert_not_called()
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.json(),
-            {"success": False, "message": Messages.CAPTCHA_FAILED, "code": "captcha_failed", "errors": {}},
-        )
-        self.assertNotIn(self.access_cookie, response.cookies)
-
-    def test_captcha_failures_do_not_count_toward_the_account_lock(self):
-        self.verify_captcha.return_value = CaptchaResult(False, ("invalid-input-response",))
-        for _ in range(settings.AUTH_LOGIN_FAILURE_LIMIT + 2):
-            self.login(password="wrong")
-
-        self.verify_captcha.return_value = CaptchaResult(True)
-        self.assertEqual(self.login().status_code, 200)
 
 
 class AccountLockTests(AuthAPITestCase):

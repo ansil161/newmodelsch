@@ -1,6 +1,5 @@
 import {
   ADMISSIONS_INTRO,
-  CURRICULUM_NOTE,
   CURRICULUM_ROWS,
   ROUTES,
   TEACHING_PRINCIPLES,
@@ -224,7 +223,7 @@ const CURRICULUM_STAGES = [
 ];
 
 export function AcCurriculum() {
-  return <CurriculumMap id="curriculum" stages={CURRICULUM_STAGES} colophon={CURRICULUM_NOTE} />;
+  return <CurriculumMap id="curriculum" stages={CURRICULUM_STAGES} />;
 }
 
 /* 02b - AFTER CLASS 10 lives in `NextSteps.jsx`. */

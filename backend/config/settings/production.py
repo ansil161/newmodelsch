@@ -2,8 +2,8 @@
 Production. wsgi.py and asgi.py default to this module.
 
 It refuses to import - so the process refuses to start - when a setting that
-protects users is missing or unsafe. A server that boots with CAPTCHA off or
-insecure cookies is worse than one that does not boot.
+protects users is missing or unsafe. A server that boots with insecure
+cookies is worse than one that does not boot.
 """
 
 from django.core.exceptions import ImproperlyConfigured
@@ -12,7 +12,6 @@ from .base import *  # noqa: F403
 from .base import (
     ALLOWED_HOSTS,
     AUTH_COOKIES,
-    CAPTCHA,
     CORS_ALLOWED_ORIGINS,
     CSRF_TRUSTED_ORIGINS,
     REDIS_URL,
@@ -38,13 +37,11 @@ _require(
     "ALLOWED_HOSTS must list the API's hostnames explicitly.",
 )
 _require(AUTH_COOKIES["SECURE"], "COOKIE_SECURE must be True in production.")
-_require(CAPTCHA["ENABLED"], "CAPTCHA_ENABLED must be True in production.")
 _require(
     all(origin.startswith("https://") for origin in [*CORS_ALLOWED_ORIGINS, *CSRF_TRUSTED_ORIGINS]),
     "CORS_ALLOWED_ORIGINS and CSRF_TRUSTED_ORIGINS must be https:// origins.",
 )
 
-SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)

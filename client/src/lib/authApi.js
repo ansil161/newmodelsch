@@ -1,11 +1,9 @@
-import { api, getSessionBootstrap, resetCsrfToken } from './apiClient';
+import { api, resetCsrfToken } from './apiClient';
 
 /**
  * The four auth endpoints, and nothing else: sign-in only. There is no
  * registration, signup or password-reset call because the API has none.
  */
-
-const PROVIDERS = ['turnstile', 'hcaptcha', 'recaptcha'];
 
 const toUser = (user) => ({
   id: user.id,
@@ -15,19 +13,8 @@ const toUser = (user) => ({
 });
 
 export const authApi = {
-  /** Which CAPTCHA to render, if any. Public values only - served by the backend. */
-  async loginConfig() {
-    const { captcha } = await getSessionBootstrap();
-    const provider = PROVIDERS.find((known) => known === captcha.provider) ?? null;
-    return { enabled: captcha.enabled && provider !== null, provider, siteKey: captcha.site_key };
-  },
-
-  async login({ email, password, captchaToken }) {
-    const data = await api.post(
-      '/auth/login/',
-      { email, password, captcha_token: captchaToken },
-      { skipRefresh: true },
-    );
+  async login({ email, password }) {
+    const data = await api.post('/auth/login/', { email, password }, { skipRefresh: true });
     resetCsrfToken(); // rotated by the server for the new session
     return toUser(data.user);
   },

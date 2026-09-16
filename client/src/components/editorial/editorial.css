@@ -1481,7 +1481,7 @@
 }
 
 .cta__lead {
-  color: var(--ink-2);
+  color: var(--color-text-lead);
   max-width: 48ch;
 }
 

@@ -9,14 +9,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.core.http import get_client_ip
 from apps.core.responses import failure, success
 
 from . import services
 from .audit import log_auth_event
-from .captcha import public_config, verify_captcha
 from .constants import AUTHENTICATE_HEADER, Codes, Events, Messages
-from .exceptions import CaptchaFailed, InvalidCredentials, TooManyAttempts
+from .exceptions import InvalidCredentials, TooManyAttempts
 from .permissions import CSRFProtected
 from .serializers import LoginSerializer, UserSerializer
 from .throttles import LoginFailureTracker, LoginIPBurstThrottle, LoginIPSustainedThrottle, RefreshThrottle
@@ -47,9 +45,9 @@ class CSRFTokenView(AuthAPIView):
     """
     GET /api/v1/auth/csrf/
 
-    The login form's bootstrap: a CSRF token for the X-CSRFToken header and
-    the public CAPTCHA configuration. Returning the token in the body lets
-    the CSRF cookie stay HttpOnly and works when the API is cross-origin.
+    The login form's bootstrap: a CSRF token for the X-CSRFToken header.
+    Returning the token in the body lets the CSRF cookie stay HttpOnly and
+    works when the API is cross-origin.
     """
 
     authentication_classes = ()
@@ -58,19 +56,17 @@ class CSRFTokenView(AuthAPIView):
     def get(self, request):
         return success(
             Messages.CSRF_ISSUED,
-            {"csrf_token": get_token(request._request), "captcha": public_config()},
+            {"csrf_token": get_token(request._request)},
         )
 
 
 class LoginView(AuthAPIView):
     """
-    POST /api/v1/auth/login/   {email, password, captcha_token}
+    POST /api/v1/auth/login/   {email, password}
 
     Order matters: CSRF and the per-IP limits run before the view (DRF
-    permissions, then throttles); then input validation, CAPTCHA, the
-    per-account lock, and only then the password check. A request that
-    fails CAPTCHA never reaches the password hasher and never counts toward
-    an account's lock - so locking someone out costs a solved CAPTCHA per try.
+    permissions, then throttles); then input validation, the per-account
+    lock, and only then the password check.
     """
 
     authentication_classes = ()
@@ -81,17 +77,6 @@ class LoginView(AuthAPIView):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
-
-        captcha = verify_captcha(serializer.validated_data["captcha_token"], get_client_ip(request))
-        if not captcha.success:
-            log_auth_event(
-                Events.CAPTCHA_FAILURE,
-                request,
-                level=logging.WARNING,
-                email=email,
-                codes=",".join(captcha.error_codes),
-            )
-            raise CaptchaFailed()
 
         retry_after = LoginFailureTracker(email).retry_after()
         if retry_after:

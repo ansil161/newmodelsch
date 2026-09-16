@@ -1,4 +1,4 @@
-from rest_framework import exceptions, status
+from rest_framework import exceptions
 
 from apps.core.exceptions import PublicMessage
 
@@ -10,12 +10,6 @@ class InvalidCredentials(PublicMessage, exceptions.AuthenticationFailed):
 
     default_detail = Messages.INVALID_CREDENTIALS
     default_code = Codes.INVALID_CREDENTIALS
-
-
-class CaptchaFailed(PublicMessage, exceptions.APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = Messages.CAPTCHA_FAILED
-    default_code = Codes.CAPTCHA_FAILED
 
 
 class CSRFFailed(PublicMessage, exceptions.PermissionDenied):

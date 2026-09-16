@@ -1,7 +1,7 @@
 """
 Settings for `manage.py test --settings=config.settings.test`.
 
-Deterministic whatever backend/.env says about cookies, CAPTCHA, rate limits
+Deterministic whatever backend/.env says about cookies, rate limits
 or logging. Only DATABASE_URL and SECRET_KEY are taken from the environment;
 Django creates and destroys its own test database.
 """
@@ -9,7 +9,7 @@ Django creates and destroys its own test database.
 import tempfile
 
 from .development import *  # noqa: F403
-from .development import AUTH_COOKIES, CAPTCHA, KNOWLEDGE_BASE
+from .development import AUTH_COOKIES, KNOWLEDGE_BASE
 
 DEBUG = False
 
@@ -43,15 +43,10 @@ CACHES = {
 
 AUTH_COOKIES = {**AUTH_COOKIES, "SECURE": False, "SAMESITE": "Lax", "DOMAIN": None}
 
-# Verification itself is mocked in the tests; the keys only need to exist.
-CAPTCHA = {
-    **CAPTCHA,
-    "ENABLED": True,
-    "PROVIDER": "turnstile",
-    "SITE_KEY": "test-site-key",
-    "SECRET_KEY": "test-secret-key",
-    "EXPECTED_HOSTNAMES": [],
-}
+# The API has no sessions, but the test client's logout() (which DRF's
+# force_authenticate(user=None) calls) still opens one. Signed cookies need
+# no django.contrib.sessions table.
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]

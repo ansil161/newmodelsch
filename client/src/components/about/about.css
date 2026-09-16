@@ -34,11 +34,6 @@
 }
 
 @media (min-width: 900px) {
-  .story__marks {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
   .story__inner {
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
     column-gap: clamp(32px, 4vw, 72px);
@@ -88,7 +83,7 @@
 }
 
 .film__lead {
-  color: var(--ink-2);
+  color: var(--color-text-lead);
   max-width: 40ch;
 }
 
@@ -368,7 +363,7 @@
 }
 
 .recog__lead {
-  color: var(--ink-2);
+  color: var(--color-text-lead);
   max-width: 44ch;
 }
 

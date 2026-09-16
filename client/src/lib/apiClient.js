@@ -48,7 +48,7 @@ let bootstrapRequest = null;
 let refreshRequest = null;
 let sessionExpiredHandler = null;
 
-/** The CSRF token and public login configuration - fetched once, shared by every caller. */
+/** The CSRF token - fetched once, shared by every caller. */
 export function getSessionBootstrap() {
   if (!bootstrapRequest) {
     const request = send('/auth/csrf/', { skipRefresh: true });

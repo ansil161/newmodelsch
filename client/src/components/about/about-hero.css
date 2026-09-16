@@ -1,0 +1,823 @@
+/* ==========================================================================
+   ABOUT - THE COVER (`.ah`)
+   --------------------------------------------------------------------------
+   White paper with architectural column lines and one warm bloom behind the
+   pictures; a high-contrast serif statement with an italic, underlined
+   accent; an arched collage with a seal, a backplate and a caption; four
+   open-bordered figures under a ruled heading.
+
+   Colour is spent on hairlines, the gold accent, and the figures' badges,
+   each in its own muted tint. The collage is one aspect-ratio box with
+   everything placed in percentages, so it scales as a unit.
+   ========================================================================== */
+
+.ah {
+  --ah-bg: #ffffff;
+  --ah-ink: #1b1a17;
+  --ah-copy: #5f5b54;
+  --ah-muted: #8a857b;
+  --ah-gold: #a8814f;
+  --ah-gold-soft: #d9c3a3;
+  --ah-hair: rgba(120, 100, 70, 0.26);
+  --ah-line: rgba(27, 26, 23, 0.08);
+  --ah-serif: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  --ah-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ah-script: 'Caveat', 'Segoe Script', cursive;
+  --ah-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-top: calc(var(--nav-h) + clamp(32px, 4.5vw, 56px));
+  padding-bottom: clamp(72px, 9vw, 128px);
+  background-color: var(--ah-bg);
+}
+
+/* Column lines like an architect's sheet, fading out toward the edges, and a
+   warm bloom behind the collage. Static, so each costs one paint. */
+.ah__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 30rem at 78% 30%, rgba(236, 222, 200, 0.45), transparent 70%),
+    radial-gradient(26rem 18rem at 6% 62%, rgba(226, 219, 242, 0.32), transparent 70%);
+}
+
+.ah__backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, var(--ah-line) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+  mask-image: radial-gradient(80% 70% at 50% 40%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 40%, #000 30%, transparent 85%);
+  opacity: 0.55;
+}
+
+.ah__inner {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 72px);
+}
+
+.ah__top {
+  display: grid;
+  gap: clamp(44px, 5vw, 72px);
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   The statement
+   -------------------------------------------------------------------------- */
+.ah__text {
+  display: grid;
+  justify-items: start;
+  gap: clamp(18px, 2vw, 26px);
+}
+
+.ah__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--ah-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ah-gold);
+}
+
+.ah__eyebrow-rule {
+  width: 36px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.ah__title {
+  font-family: var(--ah-serif);
+  /* Each line is ~8.9em wide; this keeps both authored lines whole. */
+  font-size: clamp(2.125rem, 4.3vw, 4rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--ah-ink);
+  font-feature-settings: 'kern', 'liga';
+}
+
+/* Each authored line is its own mask for the entrance. The padding keeps
+   descenders and the underline inside it; the negative margin returns it. */
+.ah__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+}
+
+.ah__line > span {
+  display: block;
+}
+
+.ah__em {
+  position: relative;
+  display: inline-block;
+  font-style: italic;
+  font-weight: 500;
+  color: #2a2620;
+}
+
+.ah__underline {
+  position: absolute;
+  left: -2%;
+  bottom: -0.12em;
+  width: 104%;
+  height: 0.2em;
+  overflow: visible;
+  fill: none;
+  stroke: var(--ah-gold-soft);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.ah__underline path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  vector-effect: non-scaling-stroke;
+}
+
+.ah__lead {
+  max-width: 26rem;
+  font-family: var(--ah-sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ah-copy);
+  text-wrap: pretty;
+}
+
+/* Plain facts, set as a ruled row rather than as chips. */
+.ah__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+  margin-top: 6px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ah-line);
+  list-style: none;
+  font-family: var(--ah-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ah-ink);
+}
+
+.ah__facts li {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ah__facts li + li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  margin-inline: 14px;
+  border-radius: 50%;
+  background: var(--ah-gold-soft);
+}
+
+.ah__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  font-family: var(--ah-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ah-ink);
+}
+
+.ah__link > span:first-child {
+  background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat;
+  padding-bottom: 2px;
+  transition: background-size 0.5s var(--ah-ease);
+}
+
+.ah__link-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--ah-hair);
+  color: var(--ah-gold);
+  transition:
+    transform 0.5s var(--ah-ease),
+    background 0.3s var(--ah-ease),
+    color 0.3s var(--ah-ease);
+}
+
+.ah__link:hover > span:first-child {
+  background-size: 35% 1px;
+}
+
+.ah__link:hover .ah__link-icon {
+  background: var(--ah-ink);
+  color: #fff;
+  transform: translateY(3px);
+}
+
+.ah__link:active .ah__link-icon {
+  transform: translateY(3px) scale(0.94);
+}
+
+.ah__link:focus-visible {
+  outline: 2px solid var(--ah-gold);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   The collage
+   -------------------------------------------------------------------------- */
+.ah__collage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.16;
+}
+
+/* A tinted arch behind the portrait: the depth the pictures sit in front of. */
+.ah__plate {
+  position: absolute;
+  right: -3%;
+  bottom: 12%;
+  width: 40%;
+  aspect-ratio: 0.8;
+  border-radius: 999px 999px 36px 36px;
+  background:
+    radial-gradient(circle, rgba(168, 129, 79, 0.28) 1px, transparent 1.4px) 0 0 / 14px 14px,
+    linear-gradient(180deg, #f8f1e7, #f3ece1);
+}
+
+.ah__main {
+  position: absolute;
+  top: 9%;
+  left: 7%;
+  width: 64%;
+  aspect-ratio: 1.22;
+}
+
+/* A dome over a short wall: the vertical radius is most of the height, so the
+   top reads as an arch and the foot as a building's base. */
+.ah__main-frame,
+.ah__main-ring {
+  border-radius: 50% 50% 22px 22px / 60% 60% 22px 22px;
+}
+
+.ah__main-frame {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #ece6da;
+  box-shadow:
+    0 0 0 1px var(--ah-hair),
+    0 40px 60px -40px rgba(92, 72, 44, 0.45);
+}
+
+.ah__main-frame img,
+.ah__inset-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The walk to school is shot through morning haze; a touch of contrast
+   keeps it from reading as washed out beside the sunlit building. */
+.ah__inset-frame img {
+  filter: contrast(1.08) saturate(1.06);
+}
+
+/* The architectural outline: the same arch drawn a step outside the picture. */
+.ah__main-ring {
+  position: absolute;
+  inset: -14px -14px 40% -14px;
+  border: 1px solid var(--ah-hair);
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  pointer-events: none;
+}
+
+.ah__inset-drift {
+  position: absolute;
+  right: 2%;
+  bottom: 8%;
+  width: 33%;
+}
+
+.ah__inset {
+  position: relative;
+  aspect-ratio: 0.74;
+}
+
+.ah__inset-frame {
+  height: 100%;
+  overflow: hidden;
+  border-radius: 999px 999px 30px 30px;
+  background: #e2e6da;
+  /* A white mat where it overlaps the main arch, then the hairline. */
+  box-shadow:
+    0 0 0 7px var(--ah-bg),
+    0 0 0 8px var(--ah-hair),
+    0 36px 50px -30px rgba(92, 72, 44, 0.4);
+}
+
+/* The seal: the school's name set round a circle, laid on the arch's foot. */
+.ah__seal {
+  position: absolute;
+  top: 55%;
+  left: 0;
+  width: 21%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--ah-bg);
+  box-shadow:
+    0 0 0 1px var(--ah-hair),
+    0 18px 30px -18px rgba(92, 72, 44, 0.45);
+}
+
+.ah__seal-text {
+  position: absolute;
+  inset: 6%;
+  width: 88%;
+  height: 88%;
+  overflow: visible;
+  font-family: var(--ah-sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: var(--ah-ink);
+}
+
+.ah__seal-core {
+  position: absolute;
+  inset: 31%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f8f1e7;
+  box-shadow: inset 0 0 0 1px var(--ah-gold-soft);
+  color: var(--ah-gold);
+}
+
+/* Under the seal, clear of the portrait. */
+.ah__caption {
+  position: absolute;
+  top: 87%;
+  left: 3%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ah-serif);
+  font-size: clamp(0.8125rem, 1vw, 0.9375rem);
+  font-style: italic;
+  color: var(--ah-copy);
+  white-space: nowrap;
+}
+
+.ah__caption-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--ah-gold-soft);
+}
+
+.ah__script-drift {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34%;
+}
+
+.ah__script {
+  display: grid;
+  justify-items: start;
+  width: max-content;
+  margin-left: auto;
+  font-family: var(--ah-script);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  font-weight: 500;
+  line-height: 0.95;
+  color: #5d5042;
+  transform: rotate(-9deg);
+  transform-origin: left center;
+}
+
+.ah__script span:nth-child(2) {
+  padding-left: 0.9em;
+}
+
+.ah__script span:nth-child(3) {
+  padding-left: 1.8em;
+}
+
+/* Ornaments: a four-point star, a hairline cross, one arc. */
+.ah__ornaments {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ah__ornament {
+  position: absolute;
+  display: block;
+}
+
+.ah__ornament--star {
+  top: 36%;
+  left: 0;
+  width: 13px;
+  height: 13px;
+  background: #3a372f;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+.ah__ornament--plus {
+  top: 12%;
+  right: 38%;
+  width: 11px;
+  height: 11px;
+  background:
+    linear-gradient(var(--ah-gold), var(--ah-gold)) center / 1px 100% no-repeat,
+    linear-gradient(var(--ah-gold), var(--ah-gold)) center / 100% 1px no-repeat;
+  opacity: 0.75;
+}
+
+.ah__ornament--arc {
+  top: 22%;
+  right: -3%;
+  width: 26%;
+  height: auto;
+  stroke: var(--ah-hair);
+  stroke-width: 1;
+}
+
+.ah__ornament--arc path {
+  vector-effect: non-scaling-stroke;
+}
+
+/* --------------------------------------------------------------------------
+   The figures - a ruled heading, then open borders rather than cards
+   -------------------------------------------------------------------------- */
+.ah__stats-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(56px, 6.5vw, 88px);
+  font-family: var(--ah-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ah-muted);
+}
+
+.ah__stats-head > span:last-child {
+  font-family: var(--ah-serif);
+  font-size: 0.9375rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ah-gold);
+}
+
+.ah__stats-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ah-hair), var(--ah-line));
+}
+
+.ah__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 36px);
+  margin-top: clamp(40px, 4vw, 56px);
+  padding-left: 22px;
+  list-style: none;
+}
+
+.ah__stat {
+  --accent: #e3a77b;
+  --accent-mid: #efc7a8;
+  --accent-soft: #f3dccb;
+  --badge: #fbefe5;
+  --icon: #c07a48;
+
+  position: relative;
+  min-height: clamp(210px, 17vw, 240px);
+  padding: 66px clamp(18px, 2vw, 28px) 28px clamp(24px, 2.2vw, 32px);
+}
+
+.ah__stat--blue {
+  --accent: #8fb3d1;
+  --accent-mid: #bcd3e6;
+  --accent-soft: #d9e6f1;
+  --badge: #eaf2f8;
+  --icon: #5584ab;
+}
+
+.ah__stat--green {
+  --accent: #9dc39a;
+  --accent-mid: #c3dbc0;
+  --accent-soft: #dceada;
+  --badge: #ecf4ea;
+  --icon: #5e9159;
+}
+
+.ah__stat--lavender {
+  --accent: #b4a2d8;
+  --accent-mid: #d0c4e8;
+  --accent-soft: #e3dbf2;
+  --badge: #f1ecf9;
+  --icon: #7f68b0;
+}
+
+/* Left rule into the foot, curving at the corner. Colours are opaque so the
+   overlap with the right-hand stroke below is seamless. */
+.ah__stat::before,
+.ah__stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.ah__stat::before {
+  top: 22px;
+  left: 0;
+  right: 48px;
+  border-left: 1.5px solid var(--accent);
+  border-bottom: 1px solid var(--accent-mid);
+  border-bottom-left-radius: 26px;
+}
+
+/* The right edge rises from the foot and fades before it reaches the top. */
+.ah__stat::after {
+  right: 0;
+  width: 96px;
+  height: 74%;
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent-mid);
+  border-bottom-right-radius: 32px;
+  mask-image: linear-gradient(to top, #000 45%, transparent);
+  -webkit-mask-image: linear-gradient(to top, #000 45%, transparent);
+}
+
+/* A tint that pools at the foot of the open frame and deepens on hover. */
+.ah__stat-wash {
+  position: absolute;
+  inset: 22px 0 0 0;
+  border-radius: 0 0 32px 26px;
+  background: linear-gradient(to top, var(--badge), transparent 70%);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ah-ease);
+}
+
+.ah__stat-badge {
+  position: absolute;
+  top: 0;
+  left: -21px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--badge);
+  box-shadow:
+    0 0 0 5px var(--ah-bg),
+    0 0 0 6px var(--accent-soft);
+  color: var(--icon);
+  transition:
+    transform 0.6s var(--ah-ease),
+    box-shadow 0.4s var(--ah-ease);
+}
+
+.ah__stat-index {
+  position: absolute;
+  top: 12px;
+  right: 6px;
+  font-family: var(--ah-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: #b8b1a5;
+  transition: color 0.4s var(--ah-ease);
+}
+
+.ah__stat-figure {
+  position: relative;
+  display: grid;
+  gap: 12px;
+}
+
+.ah__stat-value {
+  font-family: var(--ah-serif);
+  /* '10,000+' is ~3.6em: sized to stay inside its column's borders. */
+  font-size: clamp(2.5rem, 3.7vw, 3.35rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ah-ink);
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+
+.ah__stat-label {
+  font-family: var(--ah-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ah-muted);
+}
+
+.ah__stat-detail {
+  position: relative;
+  max-width: 22ch;
+  margin-top: 14px;
+  font-family: var(--ah-sans);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ah-copy);
+}
+
+@media (hover: hover) {
+  .ah__stat:hover .ah__stat-wash {
+    opacity: 1;
+  }
+
+  .ah__stat:hover .ah__stat-badge {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 5px var(--ah-bg),
+      0 0 0 6px var(--accent),
+      0 12px 20px -10px var(--accent);
+  }
+
+  .ah__stat:hover .ah__stat-index {
+    color: var(--icon);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Widths
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .ah__top {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ah__top {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+}
+
+/* Tablet and below: the figures go two by two. */
+@media (max-width: 1023px) {
+  .ah__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 48px;
+  }
+
+  .ah__backdrop::before {
+    background-size: calc(100% / 4) 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .ah {
+    padding-top: calc(var(--nav-h) + 28px);
+  }
+
+  .ah__top {
+    gap: 48px;
+  }
+
+  /* A line is ~8.9em and the column is the viewport less 40px of gutter, so
+     the size follows the width down to the smallest phones. */
+  .ah__title {
+    font-size: clamp(1.625rem, calc(10.6vw - 5px), 2.5rem);
+  }
+
+  /* Stacked, every fact gets its own dot, so no separator is left leading
+     a wrapped line. */
+  .ah__facts {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ah__facts li::before,
+  .ah__facts li + li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    margin: 0 12px 0 0;
+    border-radius: 50%;
+    background: var(--ah-gold-soft);
+  }
+
+  .ah__collage {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .ah__main-ring {
+    inset: -9px -9px 40% -9px;
+  }
+
+  .ah__inset-frame {
+    box-shadow:
+      0 0 0 5px var(--ah-bg),
+      0 0 0 6px var(--ah-hair),
+      0 24px 36px -24px rgba(92, 72, 44, 0.4);
+  }
+
+  .ah__seal-text {
+    font-size: 10.5px;
+  }
+
+  .ah__seal-core svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ah__caption {
+    top: 89%;
+  }
+
+  .ah__stats-head {
+    margin-top: 64px;
+  }
+
+  .ah__stats {
+    column-gap: 22px;
+    row-gap: 40px;
+    margin-top: 40px;
+    padding-left: 16px;
+  }
+
+  .ah__stat {
+    min-height: 0;
+    padding: 54px 12px 22px 20px;
+  }
+
+  .ah__stat::before {
+    top: 18px;
+    right: 36px;
+    border-bottom-left-radius: 20px;
+  }
+
+  .ah__stat::after {
+    width: 64px;
+    border-bottom-right-radius: 24px;
+  }
+
+  .ah__stat-wash {
+    inset: 18px 0 0 0;
+    border-radius: 0 0 24px 20px;
+  }
+
+  .ah__stat-badge {
+    left: -17px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .ah__stat-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ah__stat-index {
+    top: 8px;
+  }
+
+  .ah__stat-value {
+    /* Half the viewport less gutters and padding, over '10,000+' at ~3.6em. */
+    font-size: clamp(1.375rem, calc(13.5vw - 20px), 2.5rem);
+  }
+
+  .ah__stat-label {
+    font-size: 0.625rem;
+    letter-spacing: 1.6px;
+  }
+
+  .ah__stat-detail {
+    margin-top: 10px;
+    font-size: 0.75rem;
+  }
+}

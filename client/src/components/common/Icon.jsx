@@ -211,6 +211,14 @@ const PATHS = {
       <path d="M12 3.5 16.2 10H7.8L12 3.5Z" />
     </>
   ),
+  // An institution: pediment, columns and the step beneath them.
+  landmark: (
+    <>
+      <path d="M12 3 20.5 8h-17L12 3Z" />
+      <path d="M6 11v6.5M10 11v6.5M14 11v6.5M18 11v6.5" />
+      <path d="M3.5 20.5h17" />
+    </>
+  ),
   cap: (
     <>
       <path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z" />

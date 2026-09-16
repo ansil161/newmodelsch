@@ -82,11 +82,11 @@
 }
 
 .charter__lead {
-  margin: clamp(14px, 1.4vw, 20px) 0 0;
-  max-width: 42ch;
-  font-size: var(--t-body);
+  margin: clamp(16px, 1.6vw, 24px) 0 0;
+  max-width: 44ch;
+  font-size: var(--t-standfirst);
   line-height: 1.55;
-  color: var(--ink-3);
+  color: var(--color-text-lead);
 }
 
 /* ==========================================================================
@@ -442,7 +442,7 @@
 
   .is-live .charter__lead {
     margin-top: 10px;
-    font-size: var(--t-small);
+    font-size: var(--t-body);
   }
 
   .is-live .charter__steps {

@@ -1,18 +1,19 @@
 # New Model High School — API
 
 Django 6.1 + Django REST framework. **Sign-in only**: there is no registration,
-signup or password-reset endpoint. Accounts are created by administrators in the
-Django admin or with `createsuperuser`.
+signup or password-reset endpoint, and no Django admin: the React admin console
+is the only administration UI. Accounts are created by administrators with
+`createsuperuser` or `create_account`.
 
 ```
 backend/
   manage.py
   config/
     settings/   base.py · development.py · production.py · test.py
-    urls.py     /admin/, /api/v1/auth/, /api/v1/ (knowledge base), /api/internal/
+    urls.py     /api/v1/auth/, /api/v1/ (knowledge base), /api/internal/
   apps/
     core/       response envelope, exception handler, client IP, JSON logging
-    accounts/   user model, cookie-JWT auth, CAPTCHA, throttles, admin, tests
+    accounts/   user model, cookie-JWT auth, throttles, account commands, tests
     knowledge_base/  workspaces, knowledge bases, documents, versions, chunks,
                 the ingestion job queue, the AI-service client, audit log, tests
   requirements/ base.txt · development.txt · production.txt
@@ -27,18 +28,22 @@ venv\Scripts\activate                 # macOS/Linux: source venv/bin/activate
 pip install -r requirements/development.txt
 cp .env.example .env                  # fill in SECRET_KEY, DATABASE_URL, ...
 python manage.py migrate
-python manage.py createsuperuser      # the only way to create the first account
+python manage.py createsuperuser      # the first account
 python manage.py runserver 127.0.0.1:8000
 ```
 
+## Managing accounts
+
+```bash
+python manage.py create_account teacher@example.com --full-name "Asha Rao" --staff
+python manage.py grant_workspace_access teacher@example.com --role editor
+```
+
+`create_account` prompts for the password and applies the password validators.
+Superusers administer every workspace and need no membership.
+
 The frontend's dev server proxies `/api` to `127.0.0.1:8000`, so run both and
 open `http://127.0.0.1:5173/login`.
-
-For local CAPTCHA, Cloudflare's published Turnstile test keys work end to end
-(`CAPTCHA_SITE_KEY=1x00000000000000000000AA`,
-`CAPTCHA_SECRET_KEY=1x0000000000000000000000000000000AA`): the widget always
-passes and the server still makes a real siteverify call. The secret
-`2x0000000000000000000000000000000AA` always fails, for testing rejection.
 
 ## Tests
 
@@ -52,8 +57,8 @@ Runs against a throwaway PostgreSQL database that Django creates and drops.
 
 | Method | Path | Auth | Purpose |
 | --- | --- | --- | --- |
-| GET | `/api/v1/auth/csrf/` | – | CSRF token + public CAPTCHA config |
-| POST | `/api/v1/auth/login/` | CSRF | `{email, password, captcha_token}` → sets cookies, returns user |
+| GET | `/api/v1/auth/csrf/` | – | CSRF token |
+| POST | `/api/v1/auth/login/` | CSRF | `{email, password}` → sets cookies, returns user |
 | POST | `/api/v1/auth/refresh/` | CSRF + refresh cookie | rotates both cookies |
 | POST | `/api/v1/auth/logout/` | CSRF | blacklists refresh token, clears cookies; idempotent |
 | GET | `/api/v1/auth/me/` | access cookie | the signed-in user |
@@ -70,11 +75,9 @@ Every response is `{"success", "message", "data"}` or
   revokes every session the user has. Changing a password ends every session.
 - **CSRF** — every unsafe request needs `X-CSRFToken`; the token comes from
   `GET /csrf/`, and is rotated at sign-in and sign-out.
-- **CAPTCHA** — Turnstile, hCaptcha or reCAPTCHA v2, verified server-side with
-  the secret key. Fails closed if the provider is unreachable.
 - **Brute force** — per-IP limits (IPv6 bucketed by /64) and a per-account lock
   after 5 failed passwords in 15 minutes. The lock is temporary, applies equally
-  to unknown emails, and is shared with the Django admin login.
+  to unknown emails.
 - **Responses** — one message for unknown email, wrong password and disabled
   account; no stack traces or internals; `Cache-Control: no-store`.
 - **Logs** — JSON lines with `event`, `ip`, `user_id`; emails appear only as a
@@ -147,7 +150,6 @@ pip install -r requirements/production.txt
 export DJANGO_SETTINGS_MODULE=config.settings.production   # wsgi/asgi default to it
 python manage.py check --deploy
 python manage.py migrate
-python manage.py collectstatic --noinput
 python manage.py createcachetable      # only if REDIS_URL is not set
 gunicorn config.wsgi --workers 3 --threads 8 --bind 0.0.0.0:8000
 python manage.py process_documents     # at least one, as its own process
@@ -158,7 +160,7 @@ A streaming chat answer holds a worker thread for as long as it streams, hence
 processed in parallel; they never claim the same job.
 
 `production.py` refuses to start without a strong `SECRET_KEY`, explicit
-`ALLOWED_HOSTS`, `COOKIE_SECURE=True`, CAPTCHA enabled, and `https://` CORS and
+`ALLOWED_HOSTS`, `COOKIE_SECURE=True`, and `https://` CORS and
 CSRF origins. Set `TRUSTED_PROXY_COUNT` to the number of reverse proxies in front
 of Django (and `USE_X_FORWARDED_PROTO=True` only behind a proxy that sets it), or
 rate limits and logs will see the proxy's address instead of the client's.

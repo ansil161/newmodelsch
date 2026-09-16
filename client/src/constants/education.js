@@ -20,65 +20,47 @@ export const STORY = {
   portrait: img('1573894997713-de07a124df43', 1200),
   portraitAlt: 'Archival photograph of the founding classroom',
   marks: [
-    { value: '1962', label: 'Founded' },
-    { value: '1', label: 'Campus' },
-    { value: '10,000+', label: 'Alumni' },
-    { value: '64', label: 'Years unbroken' },
+    { value: '1962', label: 'Founded', detail: 'Two rooms off Doodh Bowli Road, forty students.' },
+    { value: '1', label: 'Campus', detail: 'Still on the same ground in Bahadurpura.' },
+    { value: '10,000+', label: 'Alumni', detail: 'Sent into the world over six decades.' },
+    { value: '64', label: 'Years unbroken', detail: 'The charter rule has never been amended.' },
   ],
 };
 
 /**
- * The opening frame of the About page.
+ * The opening frame of the About page: an editorial spread on ivory.
  *
  * Separate from STORY because it answers a different job: STORY is the record,
- * this is the overture — the six seconds before a parent has decided whether
- * to keep reading.
- *
- * The shape of that overture changed. It used to be a two-zone editorial
- * spread on ivory: a set statement on the left, an arched photograph on the
- * right, an archival print laid on the seam. That is five things asking to be
- * looked at on a screen whose only job is to be looked at once.
- *
- * It is now a cover. One photograph edge to edge, the chapter named across
- * the foot of it, and the argument in a single paragraph on the rule beneath.
- * `detail` and `detailAlt` are gone with the inset that used them, and the
- * `headline` array is gone with the statement it set — the claim it carried
- * survives verbatim inside `lead`.
+ * this is the overture. The figures repeat STORY.marks with the cover's own
+ * labels - if a number changes there, change it here too.
  */
 export const ABOUT_HERO = {
-  label: 'About New Model High School',
-  /**
-   * Two words, and the second is the italic of the same face.
-   *
-   * What this replaced: a four-element statement set across two masked lines
-   * ('Sixty four years on / one rule, never amended.'). It was good copy in
-   * the wrong slot. A cover does not argue - it names the chapter and lets
-   * the photograph do the arguing - so the claim moved down into `lead`,
-   * where it is read second rather than competing with the picture.
-   *
-   * The disc that follows the title is drawn, not typed: the full stop as a
-   * mark rather than a glyph. It is the one place the hero spends colour.
-   */
-  title: { roman: 'Our', italic: 'Story' },
-  lead: 'Sixty-four years on one rule, never amended: no class grows past the point where a teacher can hold every name. Three teachers wrote it into the charter in 1962, and the school has grown by adding rooms ever since.',
-  cta: { label: 'Read the record', hash: '#story' },
-  meta: { key: 'Bahadurpura, Hyderabad', value: 'Est. 1962' },
-  /**
-   * The full-bleed frame. Sized for a 2x wide viewport because it is the only
-   * image in the section and it carries the whole screen.
-   *
-   * Drawn from the same library as the homepage stills, and chosen against
-   * the constraint that library was assembled for: an uncluttered left edge
-   * with the subject right of centre. The title runs across the foot on the
-   * left, so a frame with its subject there would be a title printed over a
-   * face. It is not the still the homepage opens on — the two screens must
-   * not be the same photograph.
-   *
-   * Replace this one call with the school's own wide documentary frame,
-   * composed the same way, and nothing else changes.
-   */
-  frame: img('1573894997713-de07a124df43', 2400),
-  frameAlt: 'A lesson in progress at New Model High School',
+  eyebrow: 'About us',
+  /** One entry per line; `em` is set in the italic and underlined. */
+  titleLines: [{ text: 'Shaping ', em: 'Tomorrow’s' }, { text: 'Leaders Today' }],
+  lead: 'At New Model High School, we believe in nurturing curious minds, kind hearts and confident learners who make a positive impact on the world.',
+  facts: ['Nursery to Class 10', 'Bahadurpura, Hyderabad', 'Session 2026-27'],
+  link: { label: 'Read our story', hash: '#story' },
+  script: ['Education', 'for a better', 'tomorrow'],
+  seal: 'New Model High School • Est. 1962 • ',
+  caption: 'Our campus, Bahadurpura',
+  main: {
+    id: '1592280771190-3e2e4d571952',
+    alt: 'The school building seen from the front courtyard',
+    focus: '50% 62%',
+  },
+  inset: {
+    id: '1718199885029-6ba9e8b8cf79',
+    alt: 'Two students in uniform walking to school with their bags',
+    focus: '50% 55%',
+  },
+  statsHead: { label: 'The school in numbers', aside: 'Since 1962' },
+  stats: [
+    { value: '1962', label: 'Established', detail: 'Two rooms off Doodh Bowli Road.', icon: 'landmark', tone: 'peach' },
+    { value: '1', label: 'School', detail: 'Still on the same ground.', icon: 'cap', tone: 'blue' },
+    { value: '10,000+', label: 'Alumni', detail: 'Sent into the world over six decades.', icon: 'users', tone: 'green', count: true },
+    { value: '64', label: 'Years of legacy', detail: 'The charter rule, never amended.', icon: 'history', tone: 'lavender', count: true },
+  ],
 };
 
 export const VISION = {
@@ -593,5 +575,4 @@ export const ACADEMIC_PROOF = [
  * Non-negotiable disclosure required by the blueprint: the structure above is
  * information architecture, and official curriculum replaces it before launch.
  */
-export const CURRICULUM_NOTE =
-  'Subject lists and stage descriptions on this page define the structure of the learning journey. Exact curriculum, subject combinations and assessment patterns are confirmed by the school and published here before each academic session.';
+export const CURRICULUM_NOTE = '';

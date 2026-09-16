@@ -143,18 +143,19 @@
 .aj .aj__swash {
   position: absolute;
   left: -3%;
-  bottom: -0.2em;
+  top: 90%;
   width: 106%;
   color: var(--aj-pen);
   pointer-events: none;
 }
 
 .aj__lead {
-  margin: clamp(18px, 2vw, 26px) 0 0;
-  max-width: 40ch;
-  font-size: var(--t-small);
-  line-height: 1.7;
-  color: var(--ink-3);
+  /* Clear of the swash under "off this page." */
+  margin: clamp(36px, 3.6vw, 50px) 0 0;
+  max-width: 44ch;
+  font-size: var(--t-standfirst);
+  line-height: 1.65;
+  color: var(--color-text-lead);
 }
 
 /* ----- the pen, everywhere in this section */

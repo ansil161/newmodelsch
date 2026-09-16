@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from .captcha import MAX_TOKEN_LENGTH
 from .models import User
 from .validators import normalize_email
 
@@ -10,9 +9,6 @@ class LoginSerializer(serializers.Serializer):
     # Not trimmed: whitespace can be part of a password. Capped so a
     # multi-megabyte "password" cannot be used to make the hasher do work.
     password = serializers.CharField(max_length=1024, trim_whitespace=False, write_only=True)
-    captcha_token = serializers.CharField(
-        max_length=MAX_TOKEN_LENGTH, allow_blank=True, default="", write_only=True
-    )
 
     def validate_email(self, value):
         return normalize_email(value)

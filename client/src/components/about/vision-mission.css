@@ -51,9 +51,9 @@
 }
 
 .vm__lead {
-  font-size: var(--t-body);
-  line-height: 1.7;
-  color: var(--ink-2);
+  font-size: var(--t-standfirst);
+  line-height: 1.65;
+  color: var(--color-text-lead);
   max-width: 46ch;
 }
 

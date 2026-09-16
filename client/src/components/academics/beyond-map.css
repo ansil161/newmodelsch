@@ -179,17 +179,20 @@
 }
 
 .bm__lead {
-  margin: 22px 0 0;
-  max-width: 42ch;
-  font-size: var(--t-body);
-  line-height: 1.7;
-  color: var(--bm-copy);
+  /* Clear of the swash under "syllabus." */
+  margin: 34px 0 0;
+  max-width: 44ch;
+  font-size: var(--t-standfirst);
+  line-height: 1.65;
+  color: var(--color-text-lead);
 }
 
-/* ----- the board */
+/* ----- the board. On the column it only ever follows the copy, never sits
+   beside it, and the gap is wide enough that the first thread and note read as
+   the start of the board rather than as a tail on the paragraph. */
 .bm__board {
   position: relative;
-  margin-top: 64px;
+  margin-top: 80px;
 }
 
 /* ----- the node */
@@ -367,6 +370,15 @@
 
 .bm .bm-note__arrow {
   display: none;
+}
+
+/* On a phone half the column is narrower than the longer notes, so they wrap
+   beside their thread rather than running off the edge of the screen. */
+@media (max-width: 759.98px) {
+  .bm-note {
+    max-width: calc(50% - 32px);
+    white-space: normal;
+  }
 }
 
 /* ----- the print */
@@ -600,7 +612,7 @@
   }
 
   .bm__board {
-    margin-top: 96px;
+    margin-top: clamp(116px, 14vw, 150px);
   }
 
   .bm__list {
@@ -654,19 +666,27 @@
 /* ==========================================================================
    Desktop - the composed map
    --------------------------------------------------------------------------
-   The stage is 100cqi by 66cqi. The node is centred at (51, 38.5) with a
-   radius of 5.5; everything else reads its place from its own properties.
+   The stage is 100cqi wide and (66 + drop)cqi tall. The node is centred at
+   (51, 38.5) with a radius of 5.5; everything else reads its place from its
+   own properties.
+
+   THE TEXT-SAFE REGION. The copy owns the top-left 43cqi, and the lead is
+   held to a measure inside it. The left-hand column (Collaboration, Problem
+   Solving, and the pen marks among them) is placed below the lead, never
+   beside it: BeyondMap measures where the lead ends and sets `--bm-drop`, the
+   stage units that column moves down by, and the stage grows by the same.
+   Items opt in through `--shift`; everything on the right ignores it.
    ========================================================================== */
 @media (min-width: 1180px) {
   .bm__stage {
-    aspect-ratio: 100 / 66;
+    aspect-ratio: 100 / calc(66 + var(--bm-drop, 0));
   }
 
   .bm__copy {
     position: absolute;
     left: 0;
     top: 0;
-    width: 40cqi;
+    width: 43cqi;
     max-width: none;
   }
 
@@ -682,10 +702,11 @@
     white-space: nowrap;
   }
 
+  /* Held clear of the node, its orbit and the specks right of it. */
   .bm__lead {
-    max-width: 34cqi;
-    margin-top: 1.7cqi;
-    font-size: clamp(0.95rem, 1.12cqi, 1.08rem);
+    max-width: min(41cqi, 36rem);
+    margin-top: clamp(28px, 2.6cqi, 40px);
+    font-size: clamp(1.0625rem, 1.25cqi, 1.1875rem);
     line-height: 1.65;
   }
 
@@ -735,7 +756,7 @@
   .bm-exp:nth-child(even) .bm-photo {
     position: absolute;
     left: calc(var(--px) * 1cqi);
-    top: calc(var(--py) * 1cqi);
+    top: calc((var(--py) + var(--shift, 0)) * 1cqi);
     width: calc(var(--pw) * 1cqi);
     rotate: var(--pr);
     pointer-events: auto;
@@ -746,7 +767,7 @@
   .bm-exp:nth-child(even) .bm-card {
     position: absolute;
     left: calc(var(--cx) * 1cqi);
-    top: calc(var(--cy) * 1cqi);
+    top: calc((var(--cy) + var(--shift, 0)) * 1cqi);
     width: calc(var(--cw) * 1cqi);
     margin: 0;
     rotate: var(--cr);
@@ -788,7 +809,7 @@
     position: absolute;
     left: calc(var(--nx) * 1cqi);
     right: auto;
-    top: calc(var(--ny) * 1cqi);
+    top: calc((var(--ny) + var(--shift, 0)) * 1cqi);
     font-size: clamp(1rem, 1.45cqi, 1.3rem);
     rotate: var(--nr);
   }
@@ -806,7 +827,7 @@
   .bm .bm-mark {
     position: absolute;
     left: calc(var(--dx) * 1cqi);
-    top: calc(var(--dy) * 1cqi);
+    top: calc((var(--dy) + var(--shift, 0)) * 1cqi);
     width: calc(var(--dw) * 1cqi);
     rotate: var(--dr);
   }
@@ -943,7 +964,7 @@
   .bm__foot {
     position: absolute;
     left: 42cqi;
-    top: 60.5cqi;
+    top: calc((60.5 + var(--bm-drop, 0)) * 1cqi);
     margin: 0;
   }
 }

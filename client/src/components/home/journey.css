@@ -73,9 +73,9 @@
 .jr__lead {
   margin: 0;
   max-width: 46ch;
-  font-size: var(--t-small);
+  font-size: var(--t-standfirst);
   line-height: 1.62;
-  color: var(--jr-ink-2);
+  color: var(--color-text-lead);
 }
 
 .jr__span {

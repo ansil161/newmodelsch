@@ -4,8 +4,7 @@ import { EmptyState } from '@/components/console';
 export function NoWorkspace() {
   return (
     <EmptyState icon="users" title="You have no knowledge-base access yet">
-      Your account is not a member of any workspace. Ask an administrator to add you — they can do it in the
-      Django admin under <strong>Workspace memberships</strong>, or with{' '}
+      Your account is not a member of any workspace. Ask an administrator to add you with{' '}
       <code>manage.py grant_workspace_access</code>.
     </EmptyState>
   );
