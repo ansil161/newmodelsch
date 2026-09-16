@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { NAV_LINKS, ROUTES, SCHOOL } from '@/constants';
+import { Link } from 'react-router-dom';
+import { ROUTES, SCHOOL } from '@/constants';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
 import { onStage, stageOpen } from '@/lib/stage';
 import { Icon } from '@/components/common/Icon';
-import { Logo } from '@/components/common/Logo';
-import { OPEN_MENU } from '@/components/layout/menu-channel';
 import './orbit-hero.css';
 
 /* ==========================================================================
@@ -17,7 +14,7 @@ import './orbit-hero.css';
    rings drawn round it.
 
      THE COMPOSITION, TOP TO BOTTOM
-       a compact masthead          logo, links, one dark button
+       (the site masthead)         fixed, above this - see `layout/Navbar`
        a badge                     the one piece of news
        the claim, two lines        the only large type on the page
        one button                  the only thing to do
@@ -45,7 +42,7 @@ import './orbit-hero.css';
 
    ENTRANCE (held behind the brand intro by the stage gate)
 
-     0.00  masthead down        0.10  badge up
+     0.10  badge up
      0.18  the claim, line by line
      0.30  rings open           0.45  students rise
      0.65  chips pop, scattered
@@ -54,24 +51,19 @@ import './orbit-hero.css';
    ========================================================================== */
 
 /** Where the students stand. Both are transparent cut-outs on the white. */
-const KIDS = [
-  {
-    id: 'boy',
-    src: '/images/home/hero/student-blue.webp',
-    w: 770,
-    h: 888,
-    alt: 'A New Model High School student in the school shirt',
-    priority: true,
-  },
-  {
-    id: 'girl',
-    src: '/images/home/hero/student-girl.webp',
-    w: 632,
-    h: 851,
-    alt: 'A New Model High School student in the school pinafore',
-    priority: false,
-  },
-];
+/* ONE PHOTOGRAPH, NOT TWO CUT-OUTS.
+
+   This used to be two separately-placed students so they could be offset,
+   overlapped and given a staggered entrance. The supplied artwork already
+   composes the pair - the two of them stand together in a single frame - so
+   placing them by hand would mean cutting the image apart to rebuild an
+   arrangement it already has. It is positioned as one figure. */
+const STUDENTS = {
+  src: '/images/home/hero/students-pair.webp',
+  w: 892,
+  h: 609,
+  alt: 'Two New Model High School students in uniform, one with a backpack and one holding books',
+};
 
 /* THE ANGLES ARE A SPACING PROBLEM, NOT A PLACEMENT ONE.
 
@@ -99,14 +91,6 @@ const CHIPS = [
 ];
 
 export function OrbitHero() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
-
-  /* The compact masthead borrows the site menu rather than shipping a second
-     one: below 900px its button opens the real panel in `Navbar`, which
-     already owns the focus trap, the scroll lock and the escape key. */
-  useEffect(() => setMenuOpen(false), [location.pathname]);
-
   const scope = useGsapScope((_, el) => {
     const q = gsap.utils.selector(el);
 
@@ -128,18 +112,14 @@ export function OrbitHero() {
     /* ---------------------------------------------------------------- entrance */
     const tl = gsap.timeline({ paused: !stageOpen(), defaults: { ease: 'ease-out-quint' } });
 
-    tl.from(q('.oh__bar'), { y: -14, autoAlpha: 0, duration: 0.8 }, 0)
-      .from(q('.oh__badge'), { y: 14, autoAlpha: 0, duration: 0.8 }, 0.1)
+    tl.from(q('.oh__badge'), { y: 14, autoAlpha: 0, duration: 0.8 }, 0.1)
       .from(q('.oh__line > span'), { yPercent: 108, duration: 1.05, stagger: 0.09 }, 0.18)
       .from(q('.oh__cta'), { y: 14, autoAlpha: 0, duration: 0.8 }, 0.34)
       .from(q('.oh__ring'), { scale: 0.93, autoAlpha: 0, duration: 1.5, stagger: 0.12 }, 0.3)
       .from(q('.oh__spark'), { scale: 0, autoAlpha: 0, duration: 0.8, ease: 'back.out(2)' }, 0.55)
-      // The one behind comes up first, so the pair assembles front-last.
-      .from(
-        q('.oh__kid--girl img, .oh__kid--boy img'),
-        { yPercent: 9, autoAlpha: 0, duration: 1.25, stagger: 0.12 },
-        0.45,
-      )
+      // The pair rises as one. There is no stagger to give them any more:
+      // they arrive in the same photograph.
+      .from(q('.oh__kid img'), { yPercent: 9, autoAlpha: 0, duration: 1.25 }, 0.45)
       .from(
         q('.oh__chip-art'),
         {
@@ -209,48 +189,9 @@ export function OrbitHero() {
       </div>
 
       <div className="oh__in">
-        {/* -------------------------------------------------------- masthead */}
-        <header className="oh__bar">
-          <Link className="oh__brand" to={ROUTES.home} aria-label={SCHOOL.name + ', home'}>
-            <Logo className="oh__logo" decorative priority />
-          </Link>
-
-          <nav className="oh__nav" aria-label="Primary">
-            {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.href}
-                to={link.href}
-                end={link.href === ROUTES.home}
-                className={({ isActive }) => 'oh__nav-link' + (isActive ? ' is-current' : '')}
-              >
-                {link.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="oh__bar-end">
-            <Link className="oh__enroll" to={ROUTES.admissions + '#enquiry'}>
-              <span>Enroll Now</span>
-              <Icon name="arrowUpRight" size={15} />
-            </Link>
-
-            <button
-              type="button"
-              className="oh__menu"
-              aria-expanded={menuOpen}
-              onClick={() => {
-                setMenuOpen(true);
-                window.dispatchEvent(new CustomEvent(OPEN_MENU));
-              }}
-            >
-              <span className="oh__menu-bars" aria-hidden="true">
-                <i />
-                <i />
-              </span>
-              <span className="sr-only">Open menu</span>
-            </button>
-          </div>
-        </header>
+        {/* The masthead is the site's own `Navbar`, which now wears this
+            hero's compact design on every page. The hero used to carry a
+            second copy of it; `.oh__in` reserves its height instead. */}
 
         {/* ----------------------------------------------------------- claim */}
         <div className="oh__type">
@@ -279,19 +220,17 @@ export function OrbitHero() {
 
       {/* --------------------------------------------------------- students */}
       <div className="oh__kids">
-        {KIDS.map((k) => (
-          <figure key={k.id} className={'oh__kid oh__kid--' + k.id}>
-            <img
-              src={k.src}
-              width={k.w}
-              height={k.h}
-              alt={k.alt}
-              decoding="async"
-              fetchPriority={k.priority ? 'high' : 'auto'}
-              draggable={false}
-            />
-          </figure>
-        ))}
+        <figure className="oh__kid">
+          <img
+            src={STUDENTS.src}
+            width={STUDENTS.w}
+            height={STUDENTS.h}
+            alt={STUDENTS.alt}
+            decoding="async"
+            fetchPriority="high"
+            draggable={false}
+          />
+        </figure>
       </div>
     </section>
   );

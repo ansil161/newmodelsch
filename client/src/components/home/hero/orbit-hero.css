@@ -14,7 +14,7 @@
      --oh-r2       the inner ring. Three quarters of the outer, always.
      --oh-cy       where both rings are centred, 2.2% down from the top edge.
      --oh-chip     the floating squares.
-     --oh-kid      the front student's width; the one behind is 82% of it.
+     --oh-kid      the width of the pair's photograph.
      --oh-line     the ring stroke. One hairline of very light grey, and the
                    only non-white, non-ink colour in the composition's ground.
 
@@ -31,15 +31,12 @@
   --oh-r2: calc(var(--oh-r) * 0.75);
   --oh-cy: calc(var(--oh-h) * 0.022);
   --oh-chip: 54px;
-  /* The front student's WIDTH, and every other measurement in the group is
-     taken off it. Keyed to the hero's HEIGHT rather than the viewport's
-     width, because the thing that has to be protected is the gap between the
-     call to action and the top of their heads, and that is a vertical
-     budget. At 0.52 of the height his cut-out is 0.60 of it tall; the two
-     `bottom` offsets below then place both heads at 58% down the hero, which
-     is where the reference puts them. The `vw` cap only bites on a short,
-     wide window, where the pair would otherwise reach the edges. */
-  --oh-kid: min(calc(var(--oh-h) * 0.52), 38vw);
+  /* The WIDTH of the pair's photograph. Keyed to the hero's HEIGHT rather
+     than the viewport's width, because the thing that has to be protected is
+     the gap between the call to action and the tops of their heads, and that
+     is a vertical budget. The `vw` cap only bites on a short, wide window,
+     where the pair would otherwise run into the edges. */
+  --oh-kid: min(calc(var(--oh-h) * 0.9), 64vw);
   --oh-line: #e5e5e5;
   --oh-spin: 34s;
   --oh-spin-in: 29s;
@@ -69,11 +66,12 @@
   pointer-events: none;
   /* THE MASTHEAD'S AIR IS NOT NEGOTIABLE.
      Both rings are centred at the hero's top edge, so their arcs - and the
-     chips riding them - pass straight through the row the logo and the links
-     sit in. Stacking order does not help: a chip in the gap between two links
-     still reads as a piece of the navigation. So the whole decorative layer
-     fades out over the masthead's height and only exists below it, which also
-     gives the arcs a softer top end than the hero's own edge would. */
+     chips riding them - pass straight through the strip the fixed site
+     masthead occupies. Stacking order does not help: the bar is `position:
+     fixed` and paints over this anyway, so a chip would slide under it and
+     out again, which reads as a glitch rather than as depth. The whole
+     decorative layer fades out across that strip instead, which also gives
+     the arcs a softer top end than the hero's own edge would. */
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -264,117 +262,24 @@
 }
 
 /* ==========================================================================
-   The masthead and the claim
+   The claim
    --------------------------------------------------------------------------
    The one part of the hero that is not positioned: a normal flow column in a
    normal container, so it reflows at every width instead of being placed.
+
+   THE HERO DOES NOT CARRY A MASTHEAD OF ITS OWN. It used to, and the site's
+   fixed one stood down while the hero held the top of the window. There is
+   one masthead now - `layout/Navbar`, fixed above everything - so this column
+   has to reserve its height the way every other top-of-page section does.
+   `--nav-h` rather than a number, because the bar is shorter on a phone and
+   the badge would otherwise sit under it there.
    ========================================================================== */
 .oh__in {
   position: relative;
   z-index: 2;
   max-width: 1200px;
   margin-inline: auto;
-  padding-top: clamp(14px, 2vh, 26px);
-}
-
-.oh__bar {
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 3vw, 40px);
-  height: 58px;
-}
-
-.oh__brand {
-  display: flex;
-  align-items: center;
-  flex: none;
-  margin-right: auto;
-}
-
-.oh__logo {
-  height: 38px;
-  width: auto;
-}
-
-.oh__nav {
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 1.9vw, 28px);
-}
-
-.oh__nav-link {
-  font-size: 13.5px;
-  font-weight: var(--fw-medium);
-  line-height: 1;
-  letter-spacing: -0.005em;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color var(--d-state) var(--ease-out);
-}
-
-.oh__nav-link:hover,
-.oh__nav-link.is-current {
-  color: var(--color-primary);
-}
-
-.oh__bar-end {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-}
-
-/* The dark button. Near-black rather than the brand ink, so the hero has one
-   unmistakable hierarchy: black chrome, indigo action. */
-.oh__enroll {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 40px;
-  padding-inline: 18px;
-  position: relative;
-  border-radius: var(--r-pill);
-  background: #101627;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: var(--fw-semibold);
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background var(--d-state) var(--ease-out),
-    transform var(--d-state) var(--ease-out);
-}
-
-.oh__enroll:hover {
-  background: #262f4a;
-  transform: translateY(-1px);
-}
-
-.oh__menu {
-  display: none;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-pill);
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.oh__menu-bars {
-  display: grid;
-  gap: 4px;
-  width: 16px;
-}
-
-.oh__menu-bars i {
-  height: 1.5px;
-  background: currentColor;
-  border-radius: 2px;
+  padding-top: var(--nav-h);
 }
 
 /* -------------------------------------------------------------------- type */
@@ -385,8 +290,12 @@
   text-align: center;
   /* The vertical budget. Everything from here to the call to action has to
      finish above the students' heads at every height the hero can take, so
-     each gap is a `vh` clamped at both ends rather than a fixed number. */
-  padding-top: clamp(24px, 5.6vh, 48px);
+     each gap is a `vh` clamped at both ends rather than a fixed number.
+
+     Smaller than it looks: `.oh__in` has already spent `--nav-h` clearing the
+     masthead above, and the students' heads have not moved. This is the gap
+     BELOW the bar, not the gap from the top of the page. */
+  padding-top: clamp(16px, 2.6vh, 30px);
 }
 
 .oh__badge {
@@ -476,12 +385,16 @@
 /* ==========================================================================
    The students
    --------------------------------------------------------------------------
-   Two cut-outs, overlapped, standing on the hero's foot rather than in a
-   frame - which is the whole reason they are absolutely positioned. The one
-   in front is offset left of centre and the one behind right of it, so the
-   pair reads as two people standing together rather than as a symmetrical
-   pair of bookends. `bottom` is negative: they are meant to be cut by the
-   hero's edge, not to sit on it.
+   One photograph of the pair, standing on the hero's foot rather than in a
+   frame - which is the whole reason it is absolutely positioned. `bottom` is
+   negative: the hero's edge is meant to cut them off around the waist, so the
+   flat bottom of the cut-out is always below it and never seen.
+
+   THE TWO NUMBERS BELOW ARE A PAIR, AND THEY HAVE TO MOVE TOGETHER.
+   `--oh-kid` is the width; the artwork's own 1.465 ratio turns that into a
+   height, and the `bottom` offset is then whatever puts the tops of their
+   heads at 60% down the hero - just clear of the call to action. Change the
+   width without re-deriving the offset and their heads move into the button.
    ========================================================================== */
 .oh__kids {
   position: absolute;
@@ -499,35 +412,20 @@
 
 .oh__kid {
   position: absolute;
-  bottom: 0;
+  left: 50%;
+  width: var(--oh-kid);
+  margin-left: calc(var(--oh-kid) / -2);
+  /* Not a number picked by eye. The artwork is 1/1.465 = 0.683 as tall as it
+     is wide, so at a width of 0.90h it stands 0.614h tall; to put the tops of
+     their heads at 0.60h the foot has to hang 0.60 + 0.614 - 1 = 0.214 below
+     the hero's edge. Re-derive it if `--oh-kid` changes. */
+  bottom: calc(var(--oh-h) * -0.214);
 }
 
 .oh__kid img {
   display: block;
   width: 100%;
   height: auto;
-}
-
-/* Both sit on negative offsets: the hero's edge is meant to cut them, so the
-   flat bottom of each cut-out is always below it and never seen. */
-.oh__kid--boy {
-  z-index: 2;
-  right: 50%;
-  bottom: calc(var(--oh-h) * -0.205);
-  width: var(--oh-kid);
-  margin-right: calc(var(--oh-kid) * -0.2);
-}
-
-.oh__kid--girl {
-  z-index: 1;
-  left: 50%;
-  /* Shallower, so she stands a little further back and her head sits a
-     little above his - the pair reads as depth rather than as a row. */
-  bottom: calc(var(--oh-h) * -0.169);
-  width: calc(var(--oh-kid) * 0.82);
-  /* Two hundredths, not a round number: it is the offset that puts the
-     pair's own centre on the hero's centre line given his overlap above. */
-  margin-left: calc(var(--oh-kid) * -0.02);
 }
 
 /* ==========================================================================
@@ -543,30 +441,13 @@
     --oh-chip: 48px;
   }
 
-  .oh__nav {
-    gap: 16px;
-  }
-
-  .oh__nav-link {
-    font-size: 13px;
-  }
 }
 
 @media (max-width: 900px) {
   .oh {
     --oh-h: clamp(600px, 84vh, 860px);
     --oh-h: clamp(600px, 84svh, 860px);
-    --oh-kid: min(calc(var(--oh-h) * 0.52), 50vw);
-  }
-
-  /* The compact bar hands over: the real menu owns six destinations and a
-     photograph, and neither belongs in a hero. */
-  .oh__nav {
-    display: none;
-  }
-
-  .oh__menu {
-    display: grid;
+    --oh-kid: min(calc(var(--oh-h) * 0.9), 82vw);
   }
 
   .oh__chip[data-wide] {
@@ -587,16 +468,6 @@
        82% of the height is wider than the screen, and the arcs would leave
        through the sides instead of framing anything. */
     --oh-r: 62vw;
-  }
-
-  .oh__logo {
-    height: 32px;
-  }
-
-  .oh__enroll {
-    height: 36px;
-    padding-inline: 14px;
-    font-size: 12px;
   }
 
   .oh__badge {
@@ -620,37 +491,20 @@
   }
 
   .oh {
-    --oh-kid: min(calc(var(--oh-h) * 0.5), 62vw);
+    --oh-kid: min(calc(var(--oh-h) * 0.86), 94vw);
   }
 
-  /* On a phone the pair is held by the width, not the height, so far less of
-     each cut-out needs hiding to keep their heads clear of the button - and
-     burying a third of them here would leave two floating faces. */
-  .oh__kid--boy {
-    bottom: calc(var(--oh-h) * -0.08);
-  }
-
-  .oh__kid--girl {
-    bottom: calc(var(--oh-h) * -0.05);
+  /* On a phone the pair is held by the WIDTH, not the height, so the
+     photograph is proportionally much shorter and the 0.214 above would bury
+     most of it. This only has to do two things: keep their heads clear of the
+     button, and keep the artwork's own flat bottom edge below the hero's, so
+     the fold is what cuts them and not a straight line across their legs. */
+  .oh__kid {
+    bottom: calc(var(--oh-h) * -0.07);
   }
 }
 
 @media (max-width: 400px) {
-  /* The label goes, the accessible name stays. A button that announces as
-     nothing because its only remaining child is a decorative icon is not a
-     smaller button, it is a broken one. */
-  .oh__enroll span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .oh__enroll {
-    padding-inline: 11px;
-  }
 
   .oh__spark {
     display: none;
@@ -671,13 +525,11 @@
     animation: none !important;
   }
 
-  .oh__enroll,
   .oh__cta,
   .oh__cta svg {
     transition: none;
   }
 
-  .oh__enroll:hover,
   .oh__cta:hover {
     transform: none;
   }

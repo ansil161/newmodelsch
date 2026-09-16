@@ -7,13 +7,14 @@
   left: 0;
   right: 0;
   z-index: var(--z-nav);
-  /* A clean white masthead from the first frame, so the logo always sits on
-     the ground it was drawn for. The masthead sits above the panel it opens,
-     so the close button stays on top of the thing it is closing. */
-  background: var(--white);
+  /* THE BAR IS THE HOMEPAGE HERO'S BAR, EVERYWHERE.
+     Transparent at the top of a page so it sits on whatever the page opens
+     with - which is what made the hero's own masthead read as part of the
+     composition rather than as chrome laid over it. It takes a ground only
+     once the reader has scrolled and there is content passing underneath. */
+  background: transparent;
   box-shadow: 0 1px 0 transparent;
   transition:
-    transform var(--d-move) var(--ease-out),
     background var(--d-move) var(--ease-out),
     box-shadow var(--d-move) var(--ease-out);
 }
@@ -25,29 +26,15 @@
   box-shadow: 0 1px 0 var(--line), 0 10px 28px -24px rgba(26, 22, 64, 0.28);
 }
 
-.nav.is-hidden {
-  transform: translateY(-104%);
-}
-
-/* THE HOMEPAGE HERO CARRIES ITS OWN MASTHEAD.
-   This bar stands down while that hero is at the top of the window, and
-   returns - already in its scrolled form - the moment the reader leaves it.
-   It is lifted out rather than `display: none` so the handover is a move
-   rather than a pop, and it is inert in the markup while it is up there, so
-   the page never offers two primary navigations at once. */
-.nav.is-ghost {
-  transform: translateY(-104%);
-  opacity: 0;
-  pointer-events: none;
-}
-
+/* The hero's column, not the site's wide one: 1200px, so the links sit over
+   the middle of the composition rather than out at the screen edges. */
 .nav__inner {
   display: flex;
   align-items: center;
-  gap: clamp(16px, 3vw, 44px);
+  gap: clamp(14px, 3vw, 40px);
   height: var(--nav-h);
-  padding-inline: var(--gutter);
-  max-width: var(--container);
+  padding-inline: clamp(16px, 4vw, 56px);
+  max-width: calc(1200px + 2 * clamp(16px, 4vw, 56px));
   margin-inline: auto;
   transition: height var(--d-move) var(--ease-out);
 }
@@ -62,11 +49,13 @@
    The link wraps the image with no padding of its own, so its measured box
    is exactly the logo's - the page transition lands on that box. Only the
    height is set; the width follows the artwork's own ratio. */
+/* `margin-right: auto` here and `margin-left: auto` on the end cluster is
+   what centres the links between them, exactly as the hero's bar did. */
 .nav__brand {
   display: flex;
   align-items: center;
   flex: none;
-  margin-right: clamp(4px, 1.6vw, 28px);
+  margin-right: auto;
 }
 
 .nav__logo {
@@ -83,45 +72,27 @@
    -------------------------------------------------------------------------- */
 .nav__links {
   display: none;
-  margin-left: auto;
-  gap: clamp(14px, 1.7vw, 30px);
+  align-items: center;
+  gap: clamp(14px, 1.9vw, 28px);
 }
 
 .nav__link {
   position: relative;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
   padding-block: 6px;
   transition: color var(--d-state) var(--ease-out);
 }
 
-.nav__link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: var(--color-primary);
-  border-radius: 2px;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--d-move) var(--ease-out);
-}
-
-.nav__link:hover {
-  color: var(--color-primary);
-}
-
-.nav__link:hover::after,
-.nav__link.is-current::after {
-  transform: scaleX(1);
-}
-
+/* The current page is marked by colour alone. The old bar drew a 2px rule
+   under it; at 13.5px that rule is heavier than the word it underlines. */
+.nav__link:hover,
 .nav__link.is-current {
   color: var(--color-primary);
-  font-weight: 600;
 }
 
 /* --------------------------------------------------------------------------
@@ -362,29 +333,40 @@
 .nav__end {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-left: auto;
 }
 
-.nav__phone {
-  display: none;
+/* The hero's button. Near-black rather than the brand indigo on purpose: the
+   masthead is chrome, and leaving indigo to the page's own calls to action
+   keeps one unmistakable hierarchy - black chrome, indigo action. It also
+   overrides `.btn`, which is why every property it inherits is restated. */
+.nav__cta {
+  /* Present at every width. The hero's bar carried this button on a phone
+     too, beside the menu toggle - it is the site's one conversion action and
+     burying it in a menu costs more than the 40px it takes up. */
+  display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.04em;
-  color: var(--ink-2);
-  transition: color var(--d-state) var(--ease-out);
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: #101627;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background var(--d-state) var(--ease-out),
+    transform var(--d-state) var(--ease-out);
 }
 
-.nav__phone:hover {
-  color: var(--blue-deep);
-}
-
-.nav__cta {
-  display: none;
-  padding: 12px 22px;
-  font-size: 0.875rem;
+.nav__cta:hover {
+  background: #262f4a;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------
@@ -396,33 +378,41 @@
    -------------------------------------------------------------------------- */
 .nav__toggle {
   position: relative;
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
-  border-radius: var(--r-ctl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-pill);
   cursor: pointer;
-  background: var(--blue);
-  color: var(--on-blue);
-  transition: background var(--d-state) var(--ease-out);
+  background: transparent;
+  color: var(--color-text);
+  transition:
+    background var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out);
 }
 
 .nav__toggle:hover {
-  background: var(--blue-ink);
-  color: var(--on-blue);
+  border-color: var(--color-border-strong);
+  background: var(--color-primary-wash);
+}
+
+/* Open, it sits on the menu's own ground and has to read against it. */
+.nav.is-open .nav__toggle {
+  border-color: var(--color-border-strong);
 }
 
 .nav__toggle-bars {
   position: relative;
-  width: 17px;
-  height: 12px;
+  width: 16px;
+  height: 11px;
 }
 
 .nav__toggle-bars i {
   position: absolute;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 1.5px;
   background: currentColor;
   border-radius: 2px;
   transition: transform var(--d-move) var(--ease-out);
@@ -436,20 +426,15 @@
 }
 
 .nav.is-open .nav__toggle-bars i:last-child {
-  transform: translateY(-5px) rotate(-45deg);
+  transform: translateY(-4px) rotate(-45deg);
 }
 
-@media (min-width: 1080px) {
+/* 900px rather than 1080: the links are 13.5px now and the phone number has
+   left the bar, so the six of them fit a long way sooner. Below this the
+   full-screen menu takes over, which is the same handover the hero's bar had. */
+@media (min-width: 900px) {
   .nav__links {
     display: flex;
-  }
-
-  .nav__cta {
-    display: inline-flex;
-  }
-
-  .nav__end {
-    margin-left: 0;
   }
 
   .nav__toggle {
@@ -457,11 +442,21 @@
   }
 }
 
-/* The phone number joins only once the logo, six links and the enquiry
-   button all have room; before that it would crowd the logo. */
-@media (min-width: 1320px) {
-  .nav__phone {
-    display: inline-flex;
+/* A narrow phone keeps the button but drops its label. The text stays in the
+   markup, visually hidden, so the link still announces as "Enroll Now"
+   instead of as a bare arrow. */
+@media (max-width: 400px) {
+  .nav__cta {
+    padding-inline: 11px;
+  }
+
+  .nav__cta span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 

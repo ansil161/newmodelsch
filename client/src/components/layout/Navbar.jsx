@@ -8,7 +8,6 @@ import { reduced } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import { Logo } from '@/components/common/Logo';
 import { Figure } from '@/components/editorial';
-import { OPEN_MENU } from './menu-channel';
 import './Navbar.css';
 
 /* ==========================================================================
@@ -49,27 +48,29 @@ import './Navbar.css';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const toggleRef = useRef(null);
   const panelRef = useRef(null);
 
-  /* The bar's own state machine. ScrollTrigger rather than a scroll listener,
-     because Lenis already drives ScrollTrigger and a second listener would be
-     measuring a scroll position Lenis has not committed yet. */
+  /* The bar's own state machine, and it has exactly two states now: sitting
+     on the page, or resting on its own ground once the reader has moved.
+
+     THE MASTHEAD NEVER LEAVES. It used to slide away while the reader was
+     travelling down and return on the way back up, which saves a strip of
+     screen but costs the reader the navigation at the exact moment they are
+     deepest in a page and most likely to want it. On a site that is six
+     destinations wide, a bar that is always there is worth its 62px.
+
+     ScrollTrigger rather than a scroll listener, because Lenis already drives
+     ScrollTrigger and a second listener would be measuring a scroll position
+     Lenis has not committed yet. */
   const scope = useGsapScope(() => {
     const st = ScrollTrigger.create({
       start: 'top -80',
       end: 99999,
       onUpdate: (self) => {
         setScrolled(self.progress > 0 || self.scroll() > 80);
-        // Hidden only when travelling down, and only once the opening screen
-        // has actually left. Measured against the viewport rather than a fixed
-        // number, so it is the same moment on a laptop and on a phone - a
-        // constant here hides the masthead while a tall screen is still
-        // showing the hero.
-        setHidden(self.direction === 1 && self.scroll() > window.innerHeight);
       },
     });
     return () => st.kill();
@@ -82,21 +83,6 @@ export function Navbar() {
   useEffect(() => {
     setOpen(false);
   }, [location.pathname, location.hash]);
-
-  /* The homepage hero carries its own compact masthead, so this bar would be
-     the second one on screen. It stands down while the hero is at the top of
-     the window and takes over the moment the reader leaves it - which is also
-     the moment the hero's masthead scrolls away. Every other page is
-     untouched. See `components/home/hero/OrbitHero.jsx`. */
-  const ghost = location.pathname === ROUTES.home && !scrolled && !open;
-
-  /* ...and below 900px the hero's masthead has no room for six links, so it
-     asks for this menu instead of shipping a second one. */
-  useEffect(() => {
-    const onAsk = () => setOpen(true);
-    window.addEventListener(OPEN_MENU, onAsk);
-    return () => window.removeEventListener(OPEN_MENU, onAsk);
-  }, []);
 
   /* Everything that has to happen while the menu is open, in one place. */
   useEffect(() => {
@@ -144,10 +130,7 @@ export function Navbar() {
     <>
       <header
         ref={scope}
-        className={`nav${scrolled ? ' is-scrolled' : ''}${hidden && !open ? ' is-hidden' : ''}${open ? ' is-open' : ''}${ghost ? ' is-ghost' : ''}`}
-        // Hidden from assistive tech as well while it stands down, so the
-        // homepage never announces two primary navigations.
-        inert={ghost || undefined}
+        className={`nav${scrolled ? ' is-scrolled' : ''}${open ? ' is-open' : ''}`}
       >
         <div className="nav__inner">
           <Link className="nav__brand" to={ROUTES.home} aria-label={`${SCHOOL.name}, home`}>
@@ -172,16 +155,9 @@ export function Navbar() {
           </nav>
 
           <div className="nav__end">
-            <a className="nav__phone" href={SCHOOL.phoneHref}>
-              <Icon name="phone" size={16} />
-              <span>{SCHOOL.phone}</span>
-            </a>
-
-            <Link className="btn btn-sun nav__cta" to={`${ROUTES.admissions}#enquiry`}>
-              <span className="btn__label">
-                Enquire
-                <Icon name="arrowRight" size={16} />
-              </span>
+            <Link className="nav__cta" to={`${ROUTES.admissions}#enquiry`}>
+              <span>Enroll Now</span>
+              <Icon name="arrowUpRight" size={15} />
             </Link>
 
             <button
