@@ -2,9 +2,9 @@ import { usePageMeta } from '@/hooks/usePageMeta';
 import {
   SlBeyond,
   SlCampus,
-  SlCover,
   SlCta,
   SlDay,
+  SlHero,
   SlSafety,
   SlVisit,
   SlVoices,
@@ -37,7 +37,7 @@ export function StudentLifePage() {
 
   return (
     <div className="student-life">
-      <SlCover />
+      <SlHero />
       <SlDay />
       <SlCampus />
       <SlBeyond />

@@ -14,7 +14,7 @@ import './assistant.css';
 /* ==========================================================================
    FLOATING ASSISTANT
    --------------------------------------------------------------------------
-   One white Chat button in the bottom-right corner, and the panel it opens.
+   One brand-ink Chat button in the bottom-right corner, and the panel it opens.
 
    WHAT IT DOES NOT TOUCH
 

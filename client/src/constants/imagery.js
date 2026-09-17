@@ -564,3 +564,38 @@ export const IMAGERY = {
   everyday: everydayImages,
   voices: voiceImages,
 };
+
+/* ==========================================================================
+   lifeHeroImages - the Student Life cover
+   --------------------------------------------------------------------------
+   Keyed by the slot each frame fills. The lead is cropped to a tall panel
+   that feathers into the indigo on its left, so its `focus` keeps the crowd
+   of faces right of centre. The bench frame sits on a pale card and was
+   chosen because its own ground is nearly white; the field frame is printed
+   in charcoal on lime, so it needs strong silhouettes rather than faces.
+   The three faces are cropped to 44px circles - check each crop by eye when
+   the school's own photography replaces them.
+   ========================================================================== */
+
+export const lifeHeroImages = {
+  lead: {
+    id: '1524069290683-0457abfe42c3',
+    alt: 'Students in uniform crowding together, laughing and waving at the camera',
+    focus: '46% 38%',
+  },
+  bench: {
+    id: '1653566031536-4d1b6a9da15e',
+    alt: 'Three girls wiring up a small robot they are building together',
+    focus: '52% 50%',
+  },
+  field: {
+    id: '1649008726820-d90aeb70c32e',
+    alt: 'Students in uniform stretching together on the school ground',
+    focus: '50% 40%',
+  },
+  faces: [
+    { id: '1692269725911-87697c558be1', alt: '', focus: '78% 30%' },
+    { id: '1623303366639-0e330d7c3d9f', alt: '', focus: '84% 26%' },
+    { id: '1692269725827-699e04a11cdf', alt: '', focus: '30% 26%' },
+  ],
+};

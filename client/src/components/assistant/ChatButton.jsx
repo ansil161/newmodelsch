@@ -3,7 +3,7 @@ import { cx } from '@/utils';
 import { MODES } from './modes';
 
 /**
- * The dock's one button: talk to the school. White and navy, in the site's
+ * The dock's one button: talk to the school. Logo ink and white, in the site's
  * own materials.
  */
 export function ChatButton({ active, controls, onClick, ref }) {

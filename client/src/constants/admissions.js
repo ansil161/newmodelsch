@@ -13,6 +13,10 @@ export const ADMISSIONS_INTRO = {
   statusDetail: 'Applications close 28 February 2026',
   title: 'Admissions for 2026-27 are open.',
   lead: 'Places are offered for Nursery through Class 10 at our Bahadurpura campus. The process below is the whole process - there is no separate list, and no step that happens off this page.',
+  /* The cover's two-line version of `lead`, for a first screen that has to be
+     read at a glance. Same facts, nothing added. */
+  summary:
+    'Places are offered for Nursery through Class 10 at our Bahadurpura campus. Every step of applying is on this page.',
   quickFacts: [
     { value: 'Nursery - 10', label: 'Entry classes' },
     { value: 'CBSE', label: 'Board' },

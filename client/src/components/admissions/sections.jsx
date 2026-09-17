@@ -6,7 +6,7 @@ import {
   SCHOOL,
   VISIT_CAMPUS,
 } from '@/constants';
-import { admissionImages, campusImages } from '@/constants/imagery';
+import { campusImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { draw, lines, rise, unmask } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
@@ -14,7 +14,6 @@ import {
   EditorialAccordion,
   Figure,
   Mark,
-  PageCover,
   SectionHead,
   Sticker,
 } from '@/components/editorial';
@@ -40,31 +39,8 @@ import './admissions.css';
    file the destination as another stop on the way.
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   The cover
-   -------------------------------------------------------------------------- */
-
-export function AdCover() {
-  return (
-    <PageCover
-      sticker={`Admissions ${ADMISSIONS_INTRO.session} · ${ADMISSIONS_INTRO.status}`}
-      title={
-        <>
-          Your child&rsquo;s next <span className="ed-em">chapter.</span>
-        </>
-      }
-      question="How do we join?"
-      lead={ADMISSIONS_INTRO.lead}
-      photo={admissionImages[0]}
-      facts={ADMISSIONS_INTRO.quickFacts.map((fact) => ({
-        value: fact.value,
-        label: fact.label,
-      }))}
-    />
-  );
-}
-
-/* 01 - WHO CAN APPLY lives in `WhoCanApply.jsx`.
+/* THE COVER lives in `AdmissionsCover.jsx`.
+   01 - WHO CAN APPLY lives in `WhoCanApply.jsx`.
    02 - THE SIX STEPS lives in `AdmissionJourney.jsx`. */
 
 /* --------------------------------------------------------------------------

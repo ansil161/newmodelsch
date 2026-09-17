@@ -10,7 +10,6 @@ import {
   InviteSection,
   Mark,
   Script,
-  PageCover,
   SectionHead,
   StickyStory,
 } from '@/components/editorial';
@@ -38,31 +37,7 @@ import './academics.css';
    links to two of them and a bookmark outlives a redesign.
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   The cover
-   -------------------------------------------------------------------------- */
-
-export function AcCover() {
-  return (
-    <PageCover
-      sticker="Academics"
-      title={
-        <>
-          What a child <span className="ed-em">learns.</span>
-        </>
-      }
-      question="What will my child actually learn?"
-      lead="Thirteen graded years from Nursery to Class 10, the practices behind them, the skills the syllabus omits, and the board results they produce. Stage by stage, with the evidence attached."
-      photo={academicImages[0]}
-      facts={[
-        { value: '13', label: 'Graded years', detail: 'Nursery to Class 10' },
-        { value: 'CBSE', label: 'Board', detail: 'From Class 1' },
-        { value: '101', label: 'Teaching staff', detail: 'Average 11 years' },
-        { value: '100%', label: 'Board pass rate', detail: 'Twelve years running' },
-      ]}
-    />
-  );
-}
+/* The cover lives in `AcademicsHero.jsx`. */
 
 /* --------------------------------------------------------------------------
    01 - HOW WE TEACH

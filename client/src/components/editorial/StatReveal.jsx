@@ -1,3 +1,4 @@
+import { Icon } from '@/components/common/Icon';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { count, rise } from '@/lib/motion';
 
@@ -15,6 +16,11 @@ export function StatReveal({ items, layout = 'row', large = false, className = '
           <div className="stat" key={item.label + item.value}>
             <dt className="sr-only">{item.label}</dt>
             <dd className="stat__body">
+              {item.icon ? (
+                <span className="stat__icon" aria-hidden="true">
+                  <Icon name={item.icon} size={22} />
+                </span>
+              ) : null}
               <span className="stat-num stat__value">{item.value}</span>
               <span className="stat__label" aria-hidden="true">
                 {item.label}

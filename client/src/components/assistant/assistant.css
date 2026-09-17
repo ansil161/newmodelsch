@@ -1,7 +1,7 @@
 /* ==========================================================================
    FLOATING ASSISTANT - Chat
    --------------------------------------------------------------------------
-   One white button in the corner and the panel it opens, in the site's own
+   One brand-ink button in the corner and the panel it opens, in the site's own
    materials: the white ground, the ink and the school blue, the hairlines,
    the cool shadows, Inter for what is read and Plus Jakarta Sans for the
    greeting. No
@@ -110,24 +110,34 @@
   transform: none;
 }
 
+/* Filled in the logo ink one step deeper (brand-600), so the corner holds
+   its own against photography; white glyph at 11:1. Hover and press go one
+   step further (brand-700, 13.6:1). */
 .fa-chat {
   width: var(--fa-chat);
   height: var(--fa-chat);
-  background: var(--white);
-  color: var(--blue);
+  background: var(--color-primary-dark);
+  color: var(--color-on-primary);
   box-shadow:
-    inset 0 0 0 1px var(--line-blue),
-    0 1px 2px rgba(26, 22, 64, 0.06),
-    0 8px 20px -10px rgba(26, 22, 64, 0.3);
+    0 1px 2px rgba(26, 22, 64, 0.1),
+    0 8px 20px -10px rgba(26, 22, 64, 0.45);
+  transition:
+    transform 380ms var(--ease-out-soft),
+    box-shadow 380ms var(--ease-out-soft),
+    background-color var(--d-state) var(--ease-out);
+}
+
+.fa-chat:focus-visible {
+  outline-color: var(--color-primary-dark);
 }
 
 @media (hover: hover) {
   .fa-chat:hover {
     transform: scale(1.06);
+    background: var(--color-primary-darker);
     box-shadow:
-      inset 0 0 0 1px var(--line-blue-strong),
-      0 1px 2px rgba(26, 22, 64, 0.06),
-      0 12px 26px -12px rgba(26, 22, 64, 0.36);
+      0 1px 2px rgba(26, 22, 64, 0.1),
+      0 12px 26px -12px rgba(26, 22, 64, 0.5);
   }
 }
 
@@ -135,6 +145,11 @@
 .fa-dock .fa-btn:active {
   transform: scale(0.97);
   transition-duration: var(--d-tap);
+}
+
+.fa-dock .fa-chat:active,
+.fa-chat.is-active {
+  background: var(--color-primary-darker);
 }
 
 /* ==========================================================================

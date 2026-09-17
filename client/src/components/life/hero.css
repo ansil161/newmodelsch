@@ -1,0 +1,821 @@
+/* ==========================================================================
+   STUDENT LIFE - THE COVER (`.slh`)
+   --------------------------------------------------------------------------
+   Four surfaces and nothing else: indigo (the logo's hue, lifted for a large
+   field), charcoal, a warm paper, and one lime accent that exists only on
+   this page. Type is the heading face at a medium weight throughout - the
+   headline gets its presence from size and case, not from bold.
+
+   Layout by width:
+     < 700     one column. The photograph drops into the panel under the
+               copy and bleeds to its edges; two labels; cards stacked.
+     700-1099  the photograph returns to the right; three labels; the two
+               small cards share a row and the lime card spans under them.
+     >= 1100   the full spread: cut corner, four labels, 1 : 1 : 1.62 cards.
+   ========================================================================== */
+
+.slh {
+  --slh-indigo-0: #2a1f7c;
+  --slh-indigo-1: #3a2b9e;
+  --slh-indigo-2: #4c3cc6;
+  --slh-lime: #d5f35e;
+  --slh-lime-deep: #bfe03d;
+  --slh-char: #17161d;
+  --slh-paper: #f3f2ee;
+  --slh-on: #f7f6fc;
+  --slh-on-2: rgba(247, 246, 252, 0.76);
+  --slh-on-3: rgba(247, 246, 252, 0.52);
+  --slh-r: clamp(20px, 2vw, 30px);
+  --slh-gap: clamp(8px, 0.8vw, 12px);
+  --slh-pad: clamp(22px, 3.4vw, 56px);
+  --slh-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  padding-top: calc(var(--nav-h) + clamp(10px, 1.4vw, 22px));
+  padding-bottom: clamp(56px, 7vw, 112px);
+  background: #ffffff;
+}
+
+.slh__inner {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: clamp(12px, 2vw, 32px);
+}
+
+/* ==========================================================================
+   The panel
+   ========================================================================== */
+.slh__panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: clamp(560px, calc(100svh - var(--nav-h) - 210px), 700px);
+  padding: var(--slh-pad);
+  border-radius: var(--slh-r);
+  color: var(--slh-on);
+  background:
+    radial-gradient(55% 75% at 80% 35%, rgba(120, 104, 240, 0.5), transparent 70%),
+    linear-gradient(122deg, var(--slh-indigo-0) 0%, var(--slh-indigo-1) 48%, var(--slh-indigo-2) 100%);
+}
+
+/* Two long angled planes of lighter indigo - the geometric depth behind the
+   type. Static paint, moved only by transform. */
+.slh__planes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.slh__plane {
+  position: absolute;
+  top: -40%;
+  height: 180%;
+  transform: skewX(-22deg);
+}
+
+.slh__plane--a {
+  right: -6%;
+  width: 62%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015) 70%);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.slh__plane--b {
+  left: 14%;
+  width: 22%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 80%);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* The photograph and the labels share one box, so the labels are placed
+   against the picture rather than against the panel. */
+.slh__stage {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 0;
+  width: 58%;
+}
+
+.slh__visual {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 36%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 36%);
+}
+
+.slh__visual img {
+  position: absolute;
+  left: 0;
+  top: -80px;
+  width: 100%;
+  height: calc(100% + 80px);
+  object-fit: cover;
+}
+
+/* A wash of the panel's own ink over the picture, strongest where it meets
+   the type, so the crowd sits in the indigo instead of on it. */
+.slh__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(42, 31, 124, 0.55) 0%, rgba(42, 31, 124, 0) 50%),
+    linear-gradient(0deg, rgba(30, 22, 96, 0.42) 0%, rgba(30, 22, 96, 0) 38%),
+    rgba(58, 43, 158, 0.12);
+}
+
+/* The cut corner. Painted in the page's own white. */
+.slh__notch {
+  display: none;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  z-index: 4;
+  width: clamp(72px, 7vw, 116px);
+  aspect-ratio: 1;
+  background: #ffffff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* --------------------------------------------------------------------------
+   The labels
+   -------------------------------------------------------------------------- */
+.slh__pills {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.slh__pill-slot {
+  position: absolute;
+}
+
+.slh__pill-slot--a { left: 6%; top: 26%; }
+.slh__pill-slot--b { right: 8%; bottom: 30%; }
+.slh__pill-slot--c { left: 16%; bottom: 17%; }
+.slh__pill-slot--d { right: 17%; bottom: 5%; }
+
+.slh__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--slh-char);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 14px 34px -14px rgba(18, 12, 70, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  /* The idle float is on `translate`, which composes with the transform the
+     entrance animates rather than fighting it. */
+  animation: slh-float 5.5s ease-in-out infinite alternate;
+}
+
+.slh__pill-slot--b .slh__pill { animation-duration: 6.5s; animation-delay: -2s; }
+.slh__pill-slot--c .slh__pill { animation-duration: 7s; animation-delay: -4s; }
+.slh__pill-slot--d .slh__pill { animation-duration: 6s; animation-delay: -1s; }
+
+.slh__pill-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand-100);
+  color: var(--slh-indigo-1);
+}
+
+.slh__pill--accent {
+  background: var(--slh-lime);
+}
+
+.slh__pill--accent .slh__pill-icon {
+  background: var(--slh-char);
+  color: var(--slh-lime);
+}
+
+@keyframes slh-float {
+  from { translate: 0 -3px; }
+  to { translate: 0 4px; }
+}
+
+/* --------------------------------------------------------------------------
+   The statement
+   -------------------------------------------------------------------------- */
+.slh__copy {
+  position: relative;
+  z-index: 2;
+}
+
+.slh__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--slh-on-2);
+}
+
+.slh__eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--slh-lime);
+  box-shadow: 0 0 0 4px rgba(213, 243, 94, 0.18);
+}
+
+.slh__title {
+  margin-top: clamp(18px, 2.2vw, 32px);
+  font-family: var(--font-display);
+  font-size: clamp(2.625rem, 11.5vw, 4rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--slh-on);
+}
+
+/* Each line is its own mask for the entrance. */
+.slh__line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.04em;
+}
+
+.slh__line > span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.slh__faces {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.2em;
+}
+
+.slh__face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 0.56em;
+  height: 0.56em;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 0.035em solid var(--slh-indigo-1);
+  background: var(--brand-200);
+}
+
+.slh__face + .slh__face {
+  margin-left: -0.14em;
+}
+
+.slh__face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(2.1);
+}
+
+.slh__face--plus {
+  background: #ffffff;
+  color: var(--slh-indigo-1);
+}
+
+.slh__face--plus svg {
+  width: 0.26em;
+  height: 0.26em;
+}
+
+/* --------------------------------------------------------------------------
+   The foot: a sentence, a pill and a play control
+   -------------------------------------------------------------------------- */
+.slh__foot {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  gap: clamp(16px, 1.8vw, 24px);
+  align-self: end;
+}
+
+.slh__lead {
+  max-width: 36ch;
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--slh-on-2);
+}
+
+.slh__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slh__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 52px;
+  padding: 0 7px 0 22px;
+  border-radius: 999px;
+  background: var(--slh-paper);
+  color: var(--slh-char);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  transition: background-color var(--d-state) var(--slh-ease);
+}
+
+.slh__cta-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--slh-char);
+  color: var(--slh-lime);
+  transition: transform var(--d-move) var(--slh-ease);
+}
+
+.slh__cta:hover {
+  background: #ffffff;
+}
+
+.slh__cta:hover .slh__cta-icon {
+  transform: translateX(3px) rotate(-8deg);
+}
+
+.slh__play {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--slh-lime);
+  color: var(--slh-char);
+  transition: transform var(--d-move) var(--slh-ease), background-color var(--d-state) var(--slh-ease);
+}
+
+.slh__play svg {
+  margin-left: 2px;
+}
+
+.slh__play:hover {
+  transform: scale(1.07);
+  background: #e2f985;
+}
+
+.slh__play-note {
+  margin-left: 4px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--slh-on-3);
+}
+
+.slh__cta:focus-visible,
+.slh__play:focus-visible,
+.slh__card-play:focus-visible,
+.slh__strands a:focus-visible {
+  outline: 2px solid var(--slh-lime);
+  outline-offset: 3px;
+}
+
+.slh__card--world .slh__strands a:focus-visible,
+.slh__card-play:focus-visible {
+  outline-color: var(--slh-indigo-1);
+}
+
+/* ==========================================================================
+   The cards
+   ========================================================================== */
+.slh__cards {
+  display: grid;
+  gap: var(--slh-gap);
+  margin-top: var(--slh-gap);
+}
+
+.slh__card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(280px, 23vw, 330px);
+  padding: clamp(22px, 2.1vw, 30px);
+  border-radius: var(--slh-r);
+  transition: transform 600ms var(--slh-ease), box-shadow 600ms var(--slh-ease);
+}
+
+.slh__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -36px rgba(23, 22, 29, 0.45);
+}
+
+.slh__card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.slh__card-label span {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--slh-lime);
+}
+
+.slh__card-title {
+  margin-top: 14px;
+  max-width: 17ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.75vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+}
+
+.slh__card-title--lg {
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  max-width: 14ch;
+  font-size: clamp(1.5rem, 2.05vw, 2.125rem);
+  line-height: 1.06;
+}
+
+.slh__card-title--lg span {
+  display: block;
+}
+
+.slh__card-title--lg span + span {
+  margin-top: 0.3em;
+  opacity: 0.62;
+}
+
+.slh__card-art {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.slh__card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 900ms var(--slh-ease);
+}
+
+.slh__card:hover .slh__card-art img {
+  scale: 1.04;
+}
+
+/* --------------------------------------------------------------------------
+   1 - charcoal: the figures
+   -------------------------------------------------------------------------- */
+.slh__card--motion {
+  color: var(--slh-on);
+  background:
+    radial-gradient(110% 80% at 100% 110%, rgba(76, 60, 198, 0.42), transparent 60%),
+    var(--slh-char);
+}
+
+.slh__card--motion .slh__card-label {
+  color: var(--slh-on-3);
+}
+
+.slh__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 22px);
+  margin-top: auto;
+  padding-top: 28px;
+}
+
+.slh__stat {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.slh__stat dt {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--slh-on-3);
+}
+
+.slh__stat-value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 4vw, 3.75rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--slh-on);
+}
+
+/* --------------------------------------------------------------------------
+   2 - paper: the film
+   The bench photograph has a near-white ground of its own; multiplied onto
+   the paper, that ground disappears and the girls sit on the card itself.
+   -------------------------------------------------------------------------- */
+.slh__card--media {
+  justify-content: space-between;
+  background: var(--slh-paper);
+  color: var(--slh-char);
+}
+
+.slh__card--media .slh__card-art {
+  inset: 0 0 0 24%;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 46%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 46%);
+}
+
+/* A pool of paper under the caption, painted over the photograph's foot. */
+.slh__card--media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(20deg, var(--slh-paper) 0%, var(--slh-paper) 22%, rgba(243, 242, 238, 0) 52%);
+}
+
+.slh__card-play {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--slh-char);
+  color: #ffffff;
+  transition: transform var(--d-move) var(--slh-ease), background-color var(--d-state) var(--slh-ease), color var(--d-state) var(--slh-ease);
+}
+
+.slh__card-play svg {
+  margin-left: 2px;
+}
+
+.slh__card-play:hover {
+  transform: scale(1.08);
+  background: var(--slh-lime);
+  color: var(--slh-char);
+}
+
+.slh__card-caption {
+  position: relative;
+  max-width: 13ch;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   3 - lime: the invitation
+   The field photograph is a black-and-white print in an arch, the site's
+   shape for people, rising off the card's foot.
+   -------------------------------------------------------------------------- */
+.slh__card--world {
+  justify-content: space-between;
+  background: var(--slh-lime);
+  color: var(--slh-char);
+}
+
+.slh__waves {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--slh-char);
+  stroke-width: 1;
+  opacity: 0.28;
+}
+
+.slh__waves path {
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.slh__card--world .slh__card-art {
+  right: clamp(18px, 3vw, 44px);
+  bottom: 0;
+  /* Sized from the card's height, so the arch always rises whole. */
+  height: 86%;
+  aspect-ratio: 0.82;
+  border-radius: 999px 999px 0 0;
+}
+
+.slh__card--world .slh__card-art img {
+  filter: grayscale(1) contrast(1.15);
+  transition: scale 900ms var(--slh-ease), filter 900ms var(--slh-ease);
+}
+
+/* The print takes its colour back under the pointer. */
+.slh__card--world:hover .slh__card-art img {
+  filter: grayscale(0) contrast(1);
+}
+
+.slh__strands {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+
+.slh__strands a {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--slh-char);
+  color: var(--slh-lime);
+  transition: transform var(--d-move) var(--slh-ease), background-color var(--d-state) var(--slh-ease);
+}
+
+.slh__strands a:hover {
+  transform: translateY(-3px);
+  background: var(--slh-indigo-1);
+}
+
+/* ==========================================================================
+   < 700 - one column
+   ========================================================================== */
+@media (max-width: 699px) {
+  .slh__panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .slh__plane--a {
+    right: -40%;
+    width: 110%;
+  }
+
+  .slh__foot {
+    margin-top: 18px;
+  }
+
+  .slh__play-note {
+    display: none;
+  }
+
+  /* The photograph joins the flow under the copy and bleeds to the panel's
+     sides and foot, feathered from the top instead of the left. */
+  .slh__stage {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: clamp(300px, 92vw, 420px);
+    margin: 28px calc(var(--slh-pad) * -1) 0;
+    order: 3;
+  }
+
+  .slh__visual {
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+  }
+
+  .slh__visual::after {
+    background:
+      linear-gradient(180deg, rgba(42, 31, 124, 0.5) 0%, rgba(42, 31, 124, 0) 45%),
+      rgba(58, 43, 158, 0.12);
+  }
+
+  .slh__pill-slot--a { left: 6%; top: 38%; }
+  .slh__pill-slot--b { right: 6%; top: auto; bottom: 12%; }
+  .slh__pill-slot--c,
+  .slh__pill-slot--d {
+    display: none;
+  }
+
+  .slh__card {
+    min-height: 280px;
+  }
+
+  .slh__card--media {
+    min-height: clamp(260px, 72vw, 320px);
+  }
+
+  .slh__card--world {
+    min-height: clamp(320px, 92vw, 380px);
+  }
+
+  .slh__card--world .slh__card-art {
+    height: 56%;
+  }
+}
+
+/* ==========================================================================
+   >= 700 - the photograph on the right
+   ========================================================================== */
+@media (min-width: 700px) {
+  .slh__title {
+    font-size: clamp(3.25rem, 6.6vw, 6.75rem);
+  }
+
+  .slh__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .slh__card--world {
+    grid-column: 1 / -1;
+    min-height: 300px;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1099px) {
+  .slh__panel {
+    min-height: clamp(540px, 70vw, 640px);
+  }
+
+  .slh__stage {
+    width: 60%;
+  }
+
+  .slh__pill-slot--a { left: 12%; top: 22%; }
+  .slh__pill-slot--b { right: 5%; top: 50%; }
+  .slh__pill-slot--c { display: none; }
+  .slh__pill-slot--d { right: 10%; bottom: 7%; }
+}
+
+/* ==========================================================================
+   >= 1100 - the full spread
+   ========================================================================== */
+@media (min-width: 1100px) {
+  .slh__title {
+    font-size: clamp(4rem, 6.1vw, 6.75rem);
+  }
+
+  .slh__notch {
+    display: block;
+  }
+
+  /* Square under the cut, or the rounded corner's edge shows past it. */
+  .slh__panel {
+    border-top-right-radius: 0;
+  }
+
+  .slh__cards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.62fr);
+  }
+
+  .slh__card--world {
+    grid-column: auto;
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slh__pill {
+    animation: none;
+  }
+
+  .slh__card,
+  .slh__card-art img {
+    transition: none;
+  }
+
+  .slh__card:hover {
+    transform: none;
+  }
+}

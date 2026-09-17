@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { gsap, SplitText } from '@/lib/gsap';
-import { drift, reduced, settle } from '@/lib/motion';
+import { drift, playOnScroll, reduced, settle } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import { Hand } from './Hand';
 import './invite.css';
@@ -71,10 +71,7 @@ export function InviteSection({
        The copy. Triggered on the headline rather than the column, because
        on a phone the column is `display: contents` and has no box.
        ------------------------------------------------------------------ */
-    const copy = gsap.timeline({
-      defaults: { ease: 'power3.out' },
-      scrollTrigger: { trigger: heading ?? el, start: 'top 86%', once: true },
-    });
+    const copy = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
 
     copy.from(el.querySelectorAll('[data-in="eyebrow"]'), { y: 16, autoAlpha: 0, duration: 0.7 });
 
@@ -110,16 +107,14 @@ export function InviteSection({
     // after the headline has settled: someone marking a sentence after
     // writing it, not part of the same motion.
     draw(copy, el.querySelectorAll('.invite__copy [data-stroke]'), 1.0);
+    playOnScroll(copy, { trigger: heading ?? el, start: 'top 86%' });
 
     /* ------------------------------------------------------------------
        The collage, on its own trigger - on a phone it sits a screen below
        the headline, and should arrive when it is actually reached.
        ------------------------------------------------------------------ */
     if (plate) {
-      const paste = gsap.timeline({
-        defaults: { ease: 'power3.out' },
-        scrollTrigger: { trigger: plate, start: 'top 82%', once: true },
-      });
+      const paste = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
 
       paste.from(plate.querySelectorAll('.clg__mark--brush'), {
         autoAlpha: 0,
@@ -158,6 +153,8 @@ export function InviteSection({
           1.25,
         );
       }
+
+      playOnScroll(paste, { trigger: plate, start: 'top 82%' });
     }
 
     return () => {

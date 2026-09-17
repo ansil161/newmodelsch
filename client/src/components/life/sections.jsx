@@ -25,7 +25,6 @@ import {
   HorizontalGallery,
   InviteSection,
   Mark,
-  PageCover,
   Script,
   SectionHead,
   StatReveal,
@@ -48,31 +47,6 @@ import './life.css';
    by category, year and event, is its own page under this one:
    /student-life/gallery. The wall below links to it.
    ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   The cover
-   -------------------------------------------------------------------------- */
-
-export function SlCover() {
-  return (
-    <PageCover
-      sticker="Student life"
-      title={
-        <>
-          A day that never <span className="ed-em">stands still.</span>
-        </>
-      }
-      question="What will my child's day feel like here?"
-      lead="The shape of an ordinary morning, the spaces it happens in, the things that happen between lessons, and the safety policy behind all of it. Nothing on this page is staged for visitors."
-      photo={studentImages[3]}
-      facts={CAMPUS_INTRO.facts.map((fact) => ({
-        value: fact.value,
-        label: fact.label,
-        detail: fact.detail,
-      }))}
-    />
-  );
-}
 
 /* --------------------------------------------------------------------------
    02 - THE CAMPUS

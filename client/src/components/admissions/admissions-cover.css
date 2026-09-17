@@ -1,0 +1,705 @@
+/* ==========================================================================
+   ADMISSIONS COVER - "the next chapter"
+   --------------------------------------------------------------------------
+   Two sizes drive the whole composition, and everything that has to line up
+   with the giant word is measured in that word's own em:
+
+     --adc-g   the giant word
+     --adc-l   the line above it
+
+   The students are placed in the giant word's em (their height, their offset
+   from the left, how far their heads sit into the letters), so the overlap
+   between figure and type is the same at 1024px as it is at 1920px rather
+   than drifting as the viewport changes.
+   ========================================================================== */
+
+.adc {
+  --adc-g: clamp(5.5rem, 22vw, 9rem);
+  --adc-l: clamp(2.25rem, 9.6vw, 3.5rem);
+  --adc-ground: var(--brand-50);
+
+  position: relative;
+  isolation: isolate;
+}
+
+/* --------------------------------------------------------------------------
+   The stage - everything above the band
+   -------------------------------------------------------------------------- */
+.adc__stage {
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--nav-h) + clamp(12px, 2vw, 28px));
+  padding-bottom: clamp(36px, 8vw, 56px);
+  background: var(--adc-ground);
+}
+
+.adc__inner {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.adc__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: clamp(24px, 5vh, 56px);
+  font-size: var(--t-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.adc__context {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--color-text-secondary);
+}
+
+.adc__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 12px 6px 10px;
+  border-radius: var(--r-ctl);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--color-border-brand);
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+}
+
+/* A live light: applications are open right now. */
+.adc__pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.adc__pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: adc-pulse 2.4s var(--ease-out-soft) infinite;
+}
+
+@keyframes adc-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.adc__place {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-muted);
+}
+
+.adc__place span + span::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin-right: 12px;
+  vertical-align: middle;
+  background: var(--color-border-strong);
+}
+
+/* A phone has room for one line of context, and it is the one that says
+   whether applications are open. */
+@media (max-width: 699px) {
+  .adc__place {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The scene
+   --------------------------------------------------------------------------
+   On a phone the order is the order a parent needs: the headline, what it
+   means and what to do, then the students standing on the facts. */
+.adc__scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.adc__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.adc__lede {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.24em;
+  font-size: var(--adc-l);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.adc__lede-word {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.adc__lede-word > span {
+  display: block;
+}
+
+/* THE WORD. Tight enough that the letters read as one shape, not eight. */
+.adc__giant {
+  position: relative;
+  display: block;
+  font-size: var(--adc-g);
+  line-height: 0.8;
+  letter-spacing: -0.058em;
+  white-space: nowrap;
+  color: var(--color-primary);
+}
+
+.adc__giant-float {
+  position: relative;
+  display: block;
+}
+
+/* The mask the letters stand up out of. Padded so a descender, the hover lift
+   and the entrance tilt all stay inside it; the negative margin gives the
+   space back so the padding never moves the layout. */
+.adc__giant-mask {
+  display: block;
+  overflow: hidden;
+  padding: 0.08em 0.12em 0.16em 0.06em;
+  margin: -0.08em -0.12em -0.16em -0.06em;
+}
+
+.adc__char {
+  display: inline-block;
+  transition:
+    translate 0.6s var(--ease-out),
+    color 0.4s var(--ease-out);
+}
+
+.adc__char > span {
+  display: inline-block;
+}
+
+.adc__char:hover {
+  translate: 0 -0.06em;
+  color: var(--brand-700);
+}
+
+/* The line the word stands on, run out past the edge of the page. */
+.adc__baseline {
+  position: absolute;
+  left: 0;
+  bottom: 0.115em;
+  width: 100vw;
+  height: 1px;
+  background: var(--color-border-brand);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The students
+   -------------------------------------------------------------------------- */
+.adc__people {
+  position: relative;
+  z-index: 2;
+  order: 2;
+  align-self: flex-end;
+  width: min(100%, 560px);
+  margin-top: clamp(28px, 8vw, 48px);
+  pointer-events: none;
+}
+
+.adc__people-float {
+  display: block;
+}
+
+.adc__people img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* The figures are cropped at the knee; the crop fades into the ground
+     instead of ending on a hard edge. (No drop-shadow here: the mask clips a
+     filter's blur at the image box and prints the box as a faint rectangle.) */
+  -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+}
+
+/* --------------------------------------------------------------------------
+   The copy
+   -------------------------------------------------------------------------- */
+.adc__intro {
+  position: relative;
+  z-index: 3;
+  order: 1;
+  margin-top: clamp(20px, 5vw, 32px);
+}
+
+.adc__summary {
+  max-width: 34ch;
+  font-size: var(--t-lead);
+  line-height: var(--lh-lead);
+  color: var(--color-text-lead);
+  text-wrap: pretty;
+}
+
+.adc__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 26px;
+  margin-top: clamp(22px, 2.6vw, 34px);
+}
+
+.adc__cta {
+  padding: 18px 30px;
+}
+
+.adc__cta .btn__label svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.adc__cta:hover .btn__label svg {
+  transform: translateX(4px);
+}
+
+.adc__call {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--t-small);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--d-state) var(--ease-out);
+}
+
+.adc__call svg {
+  color: var(--color-primary);
+}
+
+.adc__call span {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px no-repeat;
+  transition: background-size 0.5s var(--ease-out);
+  padding-bottom: 2px;
+}
+
+.adc__call:hover {
+  color: var(--color-primary);
+}
+
+.adc__call:hover span {
+  background-size: 100% 1px;
+}
+
+/* --------------------------------------------------------------------------
+   The seal - the secondary action, and the one thing that keeps turning
+   -------------------------------------------------------------------------- */
+.adc__seal {
+  position: absolute;
+  z-index: 4;
+  top: 30%;
+  right: -2%;
+  width: clamp(80px, 21vw, 120px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: 1rem;
+  pointer-events: auto;
+}
+
+.adc__seal-float,
+.adc__seal-turn {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.adc__seal-ring {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: var(--e-2);
+  animation: adc-turn 32s linear infinite;
+}
+
+.adc__seal-ring text {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--color-text-secondary);
+}
+
+@keyframes adc-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.adc__seal-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  transition:
+    scale 0.5s var(--ease-back),
+    background-color var(--d-state) var(--ease-out);
+}
+
+.adc__seal-core svg {
+  transition: transform 0.5s var(--ease-out);
+}
+
+.adc__seal:hover .adc__seal-core {
+  scale: 1.12;
+  background: var(--brand-700);
+}
+
+.adc__seal:hover .adc__seal-core svg {
+  transform: translateY(3px);
+}
+
+.adc__seal:focus-visible {
+  outline-offset: 6px;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------------------------
+   The fact cards
+   --------------------------------------------------------------------------
+   Three layers per card, and each layer has exactly one owner, so nothing
+   fights over `transform`:
+
+     .adc__card        position; GSAP owns its transform (entrance, pointer)
+     .adc__card-bob    the idle float - CSS `translate`, out of step per card
+     .adc__card-body   the tilt and the hover - CSS `rotate` and `scale`
+
+   On a phone the cards are a staggered two-by-two over the students' feet;
+   from 900px each one is pinned to its own spot around the figures.
+   -------------------------------------------------------------------------- */
+.adc__cards {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 10px;
+  margin: -9% 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1rem;
+}
+
+.adc__card {
+  position: relative;
+  min-width: 0;
+  pointer-events: auto;
+}
+
+.adc__card:nth-child(even) {
+  margin-top: 26px;
+}
+
+.adc__card-bob {
+  animation: adc-bob var(--bob-d, 5s) ease-in-out var(--bob-delay, 0s) infinite alternate;
+}
+
+@keyframes adc-bob {
+  from {
+    translate: 0 -5px;
+  }
+  to {
+    translate: 0 6px;
+  }
+}
+
+.adc__card-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px 11px 11px;
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow:
+    0 0 0 1px rgba(26, 22, 64, 0.06),
+    0 2px 4px rgba(26, 22, 64, 0.04),
+    0 22px 44px -20px rgba(26, 22, 64, 0.34);
+  rotate: var(--tilt, 0deg);
+  transition:
+    rotate 0.6s var(--ease-out),
+    scale 0.6s var(--ease-back),
+    box-shadow 0.4s var(--ease-out);
+}
+
+.adc__card:hover .adc__card-body {
+  rotate: 0deg;
+  scale: 1.06;
+  box-shadow:
+    0 0 0 1px rgba(26, 22, 64, 0.08),
+    0 4px 8px rgba(26, 22, 64, 0.05),
+    0 30px 56px -22px rgba(26, 22, 64, 0.42);
+}
+
+.adc__card-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--brand-50);
+  color: var(--color-primary);
+}
+
+.adc__card-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.adc__card-label {
+  font-size: 0.75rem;
+  font-weight: var(--fw-medium);
+  line-height: 1.25;
+  color: var(--color-text-muted);
+}
+
+.adc__card-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.0625rem, 0.95rem + 0.4vw, 1.3125rem);
+  font-weight: var(--fw-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+/* The deadline: the one card in the brand ink. */
+.adc__card--deadline .adc__card-body {
+  background: var(--color-primary);
+  box-shadow:
+    0 2px 4px rgba(26, 22, 64, 0.08),
+    0 24px 48px -18px rgba(70, 53, 149, 0.6);
+}
+
+.adc__card--deadline .adc__card-icon {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+}
+
+.adc__card--deadline .adc__card-label {
+  color: var(--on-navy-2);
+}
+
+.adc__card--deadline .adc__card-value {
+  color: var(--white);
+}
+
+/* Each card's tilt and float, deliberately unequal. */
+.adc__card--deadline {
+  --tilt: -3deg;
+  --bob-d: 4.6s;
+}
+
+.adc__card--classes {
+  --tilt: 2.5deg;
+  --bob-d: 5.4s;
+  --bob-delay: -1.8s;
+}
+
+.adc__card--board {
+  --tilt: 2deg;
+  --bob-d: 5s;
+  --bob-delay: -3.1s;
+}
+
+.adc__card--weeks {
+  --tilt: -2deg;
+  --bob-d: 6s;
+  --bob-delay: -0.9s;
+}
+
+/* ==========================================================================
+   Tablet
+   ========================================================================== */
+@media (min-width: 700px) {
+  .adc {
+    --adc-g: 20vw;
+    --adc-l: clamp(2.75rem, 7vw, 4rem);
+  }
+
+  .adc__people {
+    width: min(78%, 620px);
+  }
+
+  .adc__seal {
+    width: 132px;
+  }
+
+}
+
+/* ==========================================================================
+   Desktop - the students step into the word
+   --------------------------------------------------------------------------
+   A grid of two rows with the students spanning both, pinned to the bottom.
+   Their top margin is the one number that sets how far their heads rise into
+   the letters, and it is written in the word's em.
+   ========================================================================== */
+@media (min-width: 900px) {
+  .adc {
+    --adc-g: clamp(9rem, 17.2vw, 17.5rem);
+    --adc-l: clamp(2.75rem, 4.6vw, 4.75rem);
+  }
+
+  .adc__scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .adc__title {
+    grid-area: 1 / 1;
+  }
+
+  .adc__people {
+    grid-area: 1 / 1 / 3 / 2;
+    align-self: end;
+    justify-self: start;
+    /* The artwork's own ratio (892 x 609), so no layout pass has to derive a
+       width from a percentage height. */
+    width: calc(1.9em * 892 / 609);
+    height: 1.9em;
+    /* Left offset capped so the figures may run into the gutter but never
+       past the edge of the screen on a narrow laptop - there they step
+       further into the word instead. */
+    margin: calc(var(--adc-l) * 1.02 + 0.36em) 0 0
+      min(3.02em, calc(100% - 1.9em * 892 / 609 + var(--gutter) * 0.6));
+    font-size: var(--adc-g);
+  }
+
+  .adc__people-float,
+  .adc__people img {
+    height: 100%;
+    width: auto;
+  }
+
+  .adc__intro {
+    grid-area: 2 / 1;
+    align-self: start;
+    max-width: min(30rem, 36vw);
+    margin-top: clamp(28px, 3.4vw, 52px);
+    padding-bottom: clamp(40px, 5vw, 72px);
+  }
+
+  /* Measured from the students' box, in the word's em, back up to where the
+     line above the word begins. */
+  .adc__stage {
+    padding-bottom: 0;
+  }
+
+  .adc__seal {
+    top: calc((var(--adc-l) * 1.22 + 0.36em) * -1);
+    right: 0;
+    width: clamp(128px, 10.5vw, 164px);
+  }
+
+  .adc__cards {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+  }
+
+  .adc__card {
+    position: absolute;
+    margin: 0;
+  }
+
+  .adc__card:nth-child(even) {
+    margin-top: 0;
+  }
+
+  /* Four spots around two figures: one by each shoulder, one low on each
+     side, never over a face. */
+  .adc__card--deadline {
+    top: 30%;
+    left: -17%;
+  }
+
+  .adc__card--classes {
+    top: 41%;
+    right: 0;
+  }
+
+  .adc__card--board {
+    bottom: 13%;
+    left: 1%;
+  }
+
+  .adc__card--weeks {
+    bottom: 5%;
+    right: 12%;
+  }
+}
+
+/* ==========================================================================
+   Less movement
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .adc__pulse::after,
+  .adc__seal-ring,
+  .adc__card-bob {
+    animation: none;
+  }
+
+  .adc__card-body {
+    transition: none;
+  }
+
+  .adc__card:hover .adc__card-body {
+    scale: none;
+  }
+
+  .adc__char,
+  .adc__seal-core,
+  .adc__seal-core svg,
+  .adc__cta .btn__label svg {
+    transition: none;
+  }
+
+  .adc__char:hover {
+    translate: none;
+  }
+}

@@ -296,3 +296,45 @@ export const VISIT_CAMPUS = {
   image: img('1571260899304-425eee4c7efc', 1400),
   imageAlt: 'The school entrance on a weekday morning',
 };
+
+/* ==========================================================================
+   The cover - a panel, three cards
+   --------------------------------------------------------------------------
+   The figures in the dark card are the strand figures above, taken by id, so
+   the cover can never disagree with the section it points at.
+   ========================================================================== */
+
+const strandStat = (id) => ACTIVITY_STRANDS.find((strand) => strand.id === id).stat;
+
+export const STUDENT_LIFE_HERO = {
+  eyebrow: 'Student life · 2026-27',
+  titleLines: ['Every day', 'becomes a', 'story'],
+  lead: 'Friendships, sport, studios and stages - the part of school a child remembers, running every day between the bells.',
+  cta: { label: 'Explore student life', hash: '#day' },
+  film: { label: 'Watch four students on film', hash: '#voices' },
+  pills: [
+    { label: 'Friendships', icon: 'users', slot: 'a' },
+    { label: 'Sports & movement', icon: 'ball', slot: 'b' },
+    { label: 'Creative spaces', icon: 'palette', slot: 'c' },
+    { label: 'Explore more', icon: 'compass', slot: 'd', accent: true },
+  ],
+  motion: {
+    label: 'Life in motion',
+    title: 'A place to discover, connect, and grow.',
+    stats: [
+      { value: strandStat('clubs').value, label: 'Student-run societies' },
+      { value: strandStat('competitions').value, label: 'Events entered a year' },
+    ],
+  },
+  media: {
+    caption: 'Learning continues beyond the classroom.',
+  },
+  world: {
+    titleLines: ['More than a school day.', 'A world of experiences.'],
+    links: [
+      { label: 'Sport', icon: 'ball', hash: '#strand-sports' },
+      { label: 'Arts & music', icon: 'palette', hash: '#strand-arts' },
+      { label: 'Clubs & councils', icon: 'users', hash: '#strand-clubs' },
+    ],
+  },
+};

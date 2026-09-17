@@ -250,99 +250,515 @@
 
 /* ==========================================================================
    08 - Faculty archive
+   --------------------------------------------------------------------------
+   Built in the homepage legacy section's language (`home/legacy.css`): a
+   soft brand ground with one disc, white cards with tinted icon tiles, one
+   photograph card with its copy over the picture, and figures in the logo's
+   darker indigo.
+
+     < 600px     cards stacked, then the photograph, figures two up
+     600-959px   the same, a wider photograph
+     >= 960px    head beside its lead; cards beside the photograph
+
+   THE ANIMATION IS NOT DEFINED HERE, AND NOTHING HERE MAY FIGHT IT.
+
+   SectionHead animates the tag, the title lines, the underline and the lead;
+   `rise` animates every `.dept`; StatReveal rises every `.stat` and counts
+   its figure. GSAP writes the transform and opacity of `.dept` and `.stat`
+   inline, so no rule below transforms either - hover changes colour and
+   shadow, and moves only their children.
    ========================================================================== */
+.faculty {
+  --fa-card-shadow: 0 1px 2px rgba(26, 22, 64, 0.03), 0 18px 40px -26px rgba(26, 22, 64, 0.2);
+  --fa-card-shadow-hi: 0 2px 4px rgba(26, 22, 64, 0.04), 0 30px 56px -30px rgba(70, 53, 149, 0.34);
+
+  overflow: clip;
+  isolation: isolate;
+  background: linear-gradient(
+    180deg,
+    var(--white) 0%,
+    var(--brand-50) 16%,
+    var(--brand-50) 84%,
+    var(--white) 100%
+  );
+}
+
+/* The one soft disc, as on the homepage. Furniture only. */
+.faculty__orb {
+  position: absolute;
+  z-index: -1;
+  width: clamp(220px, 26vw, 400px);
+  aspect-ratio: 1;
+  top: clamp(40px, 8vw, 140px);
+  right: clamp(-200px, -11vw, -100px);
+  border-radius: 50%;
+  background: var(--brand-100);
+  box-shadow: 0 0 0 clamp(28px, 3.6vw, 56px) rgba(236, 234, 246, 0.55);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The head
+   -------------------------------------------------------------------------- */
+.faculty .sec-head__title {
+  max-width: 16ch;
+  letter-spacing: -0.03em;
+}
+
+.faculty .mark-ul {
+  color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   The departments
+   -------------------------------------------------------------------------- */
 .faculty__body {
   display: grid;
-  gap: clamp(28px, 3.4vw, 56px);
-  margin-top: clamp(44px, 5vw, 76px);
-  align-items: start;
+  gap: clamp(28px, 4vw, 40px);
+  margin-top: clamp(40px, 5vw, 72px);
 }
 
 .faculty__list {
   display: grid;
-  border-top: 1px solid var(--line);
+  grid-auto-rows: 1fr;
+  gap: 12px;
+}
+
+.faculty__list li {
+  display: flex;
+  min-width: 0;
 }
 
 .dept {
   width: 100%;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding-block: clamp(16px, 1.8vw, 22px);
-  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px 12px 12px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 20px;
+  background: var(--white);
+  box-shadow: var(--fa-card-shadow);
   text-align: left;
   cursor: pointer;
-  color: var(--ink-3);
-  transition: color var(--d-state) var(--ease-out), padding-left var(--d-state) var(--ease-out);
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    border-color var(--d-state) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out-soft);
+}
+
+.dept__icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 15px;
+  background: var(--brand-100);
+  color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px rgba(70, 53, 149, 0.06);
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.dept__text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
 }
 
 .dept__name {
   font-family: var(--font-display);
-  font-size: var(--t-h3);
-  font-weight: 600;
-  letter-spacing: -0.018em;
-  line-height: 1.1;
+  font-size: clamp(1.0625rem, 1.3vw, 1.25rem);
+  font-weight: var(--fw-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  transition: color var(--d-state) var(--ease-out);
 }
 
-.dept:hover {
-  color: var(--ink);
-  padding-left: 10px;
+.dept__strength {
+  font-size: var(--t-small);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+  transition: color var(--d-state) var(--ease-out);
 }
 
+.dept__go {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--brand-50);
+  color: var(--color-primary);
+  transition:
+    background-color var(--d-state) var(--ease-out),
+    color var(--d-state) var(--ease-out);
+}
+
+.dept__go svg {
+  transition: transform var(--d-move) var(--ease-out);
+}
+
+.dept:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .dept:not(.is-open):hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--fa-card-shadow-hi);
+  }
+
+  .dept:not(.is-open):hover .dept__icon {
+    background: var(--brand-200);
+  }
+
+  .dept:not(.is-open):hover .dept__go {
+    background: var(--brand-100);
+  }
+
+  .dept:not(.is-open):hover .dept__go svg {
+    transform: translateX(2px);
+  }
+}
+
+/* Open: the card is filled with the logo's ink. */
 .dept.is-open {
-  color: var(--ink);
-  padding-left: 14px;
-  border-bottom-color: var(--ink);
+  cursor: default;
+  border-color: transparent;
+  background: var(--color-primary);
+  box-shadow:
+    0 2px 4px rgba(70, 53, 149, 0.12),
+    0 22px 40px -20px rgba(70, 53, 149, 0.6);
+}
+
+.dept.is-open .dept__icon {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.dept.is-open .dept__name {
+  color: var(--white);
 }
 
 .dept.is-open .dept__strength {
-  color: var(--sun-deep);
+  color: var(--brand-200);
 }
 
-.faculty__detail {
-  display: grid;
+.dept.is-open .dept__go {
+  background: var(--white);
+  color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   The photograph card
+   -------------------------------------------------------------------------- */
+.faculty__feature {
+  position: relative;
+  min-height: 560px;
+  padding: 6px;
+  border-radius: calc(var(--r-lg) + 6px);
+  background: var(--white);
+  box-shadow:
+    0 1px 3px rgba(26, 22, 64, 0.05),
+    0 30px 60px -34px rgba(26, 22, 64, 0.34);
+}
+
+.faculty__shot {
+  position: absolute;
+  inset: 6px;
+  border-radius: var(--r-lg);
+  /* What shows for the moment a new photograph is loading: the veil's own
+     dark, so the white copy over it never loses its ground. */
+  background: var(--brand-900);
+}
+
+.faculty__shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.faculty__veil {
+  position: absolute;
+  inset: 6px;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(17, 14, 44, 0.08) 0%,
+      rgba(17, 14, 44, 0.2) 30%,
+      rgba(17, 14, 44, 0.62) 58%,
+      rgba(17, 14, 44, 0.92) 100%
+    ),
+    linear-gradient(90deg, rgba(26, 22, 64, 0.3) 0%, rgba(26, 22, 64, 0) 65%);
+}
+
+.faculty__chip {
+  position: absolute;
+  top: clamp(20px, 2vw, 28px);
+  left: clamp(20px, 2vw, 28px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px 9px 12px;
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--color-primary);
+  font-size: var(--t-small);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  box-shadow: 0 10px 24px -12px rgba(17, 14, 44, 0.5);
+}
+
+.faculty__copy {
+  position: absolute;
+  inset: auto 6px 6px;
+  padding: clamp(22px, 3.2vw, 44px);
+  color: var(--white);
+}
+
+.faculty__label {
+  display: flex;
+  align-items: center;
   gap: 14px;
-  align-content: start;
+  margin: 0 0 clamp(10px, 1.2vw, 16px);
+  font-size: var(--t-label);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--on-navy);
 }
 
-.faculty__detail .fig {
-  margin-bottom: 6px;
+.faculty__rule {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.faculty__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.4vw, 3.125rem);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-display);
+  letter-spacing: -0.03em;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.faculty__text {
+  margin: clamp(10px, 1.2vw, 16px) 0 0;
+  max-width: 46ch;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--on-navy-2);
 }
 
 .faculty__leads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(18px, 2vw, 26px);
+}
+
+.faculty__lead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px 7px 7px;
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 10px 24px -14px rgba(17, 14, 44, 0.6);
+}
+
+.faculty__avatar {
+  flex: none;
   display: grid;
-  gap: 7px;
-  margin-top: 6px;
+  place-items: center;
+  width: 38px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: var(--brand-100);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
 }
 
-.faculty__leads li {
-  font-family: var(--font-mono);
-  font-size: var(--t-label);
-  letter-spacing: 0.03em;
-  color: var(--ink-3);
-  padding-left: 16px;
-  position: relative;
+.faculty__lead-text {
+  display: grid;
+  gap: 1px;
 }
 
-.faculty__leads li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 8px;
-  height: 1.5px;
-  background: var(--sun);
+.faculty__lead-name {
+  font-size: var(--t-small);
+  font-weight: var(--fw-semibold);
+  line-height: 1.25;
+  color: var(--color-text);
 }
 
+.faculty__lead-role {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   The figures - white cards, an icon tile, the figure, its label
+   -------------------------------------------------------------------------- */
 .faculty__stats {
-  margin-top: clamp(44px, 5vw, 76px);
+  margin-top: clamp(16px, 2vw, 24px);
 }
 
-@media (min-width: 900px) {
+.faculty .stats--grid {
+  gap: clamp(12px, 1.6vw, 24px);
+}
+
+.faculty .stats--grid .stat {
+  padding: clamp(20px, 2.2vw, 30px);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow: var(--fa-card-shadow);
+  transition:
+    border-color var(--d-state) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out-soft);
+}
+
+.faculty .stat__body {
+  gap: 0;
+}
+
+.faculty .stat__icon {
+  display: grid;
+  place-items: center;
+  width: clamp(46px, 3.8vw, 54px);
+  aspect-ratio: 1;
+  margin-bottom: clamp(18px, 2vw, 26px);
+  border-radius: 15px;
+  background: var(--brand-100);
+  color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px rgba(70, 53, 149, 0.06);
+  transition: background-color var(--d-state) var(--ease-out);
+}
+
+.faculty .stats--grid .stat__value {
+  font-size: clamp(1.875rem, 4.4cqi, 3rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.035em;
+  color: var(--color-primary-darker);
+}
+
+.faculty .stat__label {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: var(--t-body);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--color-primary);
+}
+
+@media (hover: hover) {
+  .faculty .stats--grid .stat:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--fa-card-shadow-hi);
+  }
+
+  .faculty .stat:hover .stat__icon {
+    background: var(--brand-200);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Wide: the head's lead beside its title, the cards beside the photograph
+   -------------------------------------------------------------------------- */
+@media (min-width: 960px) {
+  .faculty .sec-head {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    column-gap: clamp(40px, 6vw, 110px);
+    align-items: end;
+  }
+
+  .faculty .sec-head__tag {
+    grid-column: 1;
+  }
+
+  .faculty .sec-head__title {
+    grid-column: 1;
+  }
+
+  .faculty .sec-head__tail {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    padding-bottom: 0.5em;
+  }
+
   .faculty__body {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: clamp(40px, 5vw, 88px);
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: clamp(20px, 2vw, 28px);
+    align-items: stretch;
+  }
+
+  .faculty__feature {
+    min-height: clamp(560px, 46vw, 640px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phone
+   -------------------------------------------------------------------------- */
+@media (max-width: 599px) {
+  .faculty__list {
+    gap: 10px;
+  }
+
+  .dept {
+    gap: 12px;
+    padding: 10px 12px 10px 10px;
+    border-radius: 18px;
+  }
+
+  .dept__icon {
+    width: 44px;
+    border-radius: 13px;
+  }
+
+  .dept__go {
+    width: 32px;
+  }
+
+  .faculty__feature {
+    min-height: 600px;
+  }
+
+  .faculty .stats--grid .stat {
+    padding: 18px;
+  }
+
+  .faculty .stat__label {
+    font-size: var(--t-small);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dept,
+  .dept__go svg,
+  .faculty .stats--grid .stat {
+    transition: none;
   }
 }
 

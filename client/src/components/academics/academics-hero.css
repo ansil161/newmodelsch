@@ -1,0 +1,364 @@
+/* ==========================================================================
+   ACADEMICS - THE COVER
+   --------------------------------------------------------------------------
+   Three layers, and each has its own transform so they never fight:
+
+     .ach__float   positioned by CSS (`translate`), parallax by GSAP (`y`)
+     .ach__card    entrance and idle hover by GSAP (`transform`), the pointer
+                   lift by CSS (`translate`)
+     .ach__frame   the entrance clip; the image inside it carries the scale
+                   and the scroll parallax
+
+   `translate` is a separate property from `transform`, which is what lets a
+   stylesheet offset and a GSAP tween live on the same element.
+   ========================================================================== */
+
+.ach {
+  --ach-radius: clamp(20px, 2.4vw, 34px);
+  --ach-notch: clamp(16px, 1.6vw, 22px);
+
+  position: relative;
+  background: var(--white);
+  padding-top: calc(var(--nav-h) + clamp(28px, 5vw, 72px));
+  padding-bottom: clamp(56px, 7vw, 112px);
+  overflow-x: clip;
+}
+
+/* --------------------------------------------------------------------------
+   The heading
+   -------------------------------------------------------------------------- */
+
+.ach__head {
+  text-align: center;
+  /* Room for the top card, which hangs half above the photograph. */
+  margin-bottom: clamp(60px, 6.4vw, 96px);
+}
+
+.ach__title-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.ach__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: clamp(2rem, 1.1rem + 3.9vw, 4.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+/* Each line is its own mask, padded so descenders are not clipped. */
+.ach__line {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.ach__line > span {
+  display: block;
+}
+
+/* Left of the shorter second line, as in a hand-placed spread. */
+.ach__star {
+  position: absolute;
+  left: 7%;
+  top: 60%;
+  width: clamp(18px, 1.9vw, 28px);
+  height: auto;
+  fill: var(--brand-300);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The photograph
+   -------------------------------------------------------------------------- */
+
+.ach__stage {
+  position: relative;
+}
+
+.ach__frame {
+  position: relative;
+  height: clamp(380px, 34vw, 500px);
+  overflow: hidden;
+  border-radius: var(--ach-radius);
+  background: var(--brand-100);
+  isolation: isolate;
+}
+
+/* Overscanned top and bottom so the parallax never shows an edge. */
+.ach__frame img {
+  position: absolute;
+  left: 0;
+  top: -8%;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+  object-position: var(--ach-focus, 50% 50%);
+  display: block;
+}
+
+/* The notch: a white tab cut into the lower-left corner, with two concave
+   corners so it reads as part of the page ground rather than a sticker. */
+.ach__notch {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 10px 12px 0 0;
+  background: var(--white);
+  border-top-right-radius: var(--ach-notch);
+}
+
+.ach__notch::before,
+.ach__notch::after {
+  content: '';
+  position: absolute;
+  width: var(--ach-notch);
+  height: var(--ach-notch);
+  background: radial-gradient(
+    circle at 100% 0%,
+    transparent calc(var(--ach-notch) - 0.5px),
+    var(--white) var(--ach-notch)
+  );
+  pointer-events: none;
+}
+
+.ach__notch::before {
+  left: 0;
+  bottom: 100%;
+}
+
+.ach__notch::after {
+  left: 100%;
+  bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The CTA
+   -------------------------------------------------------------------------- */
+
+.ach__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 5px 20px 5px 5px;
+  border-radius: var(--r-pill);
+  background: var(--brand-900);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: var(--fw-medium);
+  font-size: var(--t-small);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--d-state) var(--ease-out);
+}
+
+.ach__cta:hover {
+  background: var(--brand-700);
+}
+
+.ach__cta:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.ach__cta-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--brand-300);
+  color: var(--brand-900);
+  flex: none;
+}
+
+.ach__cta-arrow {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate var(--d-state) var(--ease-out);
+}
+
+.ach__cta:hover .ach__cta-arrow,
+.ach__cta:focus-visible .ach__cta-arrow {
+  translate: 3px 0;
+}
+
+/* --------------------------------------------------------------------------
+   The floating figures
+   -------------------------------------------------------------------------- */
+
+.ach__float {
+  position: absolute;
+  z-index: 3;
+}
+
+.ach__float--years {
+  top: 0;
+  left: clamp(20px, 4.5vw, 72px);
+  translate: 0 -52%;
+}
+
+.ach__float--stages {
+  right: clamp(20px, 3vw, 48px);
+  bottom: clamp(20px, 2.6vw, 40px);
+}
+
+.ach__card {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  min-width: clamp(150px, 13vw, 200px);
+  padding: clamp(14px, 1.5vw, 22px) clamp(16px, 1.8vw, 28px);
+  text-align: center;
+  border-radius: clamp(14px, 1.4vw, 20px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 1px 2px rgba(26, 22, 64, 0.06),
+    0 20px 44px -24px rgba(26, 22, 64, 0.38);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  transition:
+    translate var(--d-move) var(--ease-out),
+    box-shadow var(--d-move) var(--ease-out);
+}
+
+.ach__float--years .ach__card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94) 0%, rgba(236, 234, 246, 0.84) 100%);
+}
+
+.ach__float--stages .ach__card {
+  background: linear-gradient(155deg, rgba(246, 245, 251, 0.86) 0%, rgba(220, 216, 238, 0.76) 100%);
+}
+
+.ach__card-value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: clamp(1.625rem, 2.4vw, 2.25rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.ach__card-suffix {
+  margin-left: 2px;
+  font-size: 0.55em;
+  color: var(--color-primary);
+}
+
+.ach__card-label {
+  max-width: 17ch;
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 0.85vw, 0.875rem);
+  line-height: 1.4;
+  color: var(--color-text-lead);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ach__card:hover {
+    translate: 0 -4px;
+    box-shadow:
+      0 1px 2px rgba(26, 22, 64, 0.06),
+      0 28px 52px -26px rgba(26, 22, 64, 0.44);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tablet
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 959px) {
+  .ach__frame {
+    height: clamp(320px, 50vw, 440px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phone
+   --------------------------------------------------------------------------
+   The photograph goes nearly square so both students stay in frame, and
+   both cards move to straddle its top edge, over the blackboard: at this
+   width a card in the lower half lands on a face or on the notch.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 699px) {
+  .ach__head {
+    margin-bottom: 64px;
+  }
+
+  /* The heading breaks into three lines here; the star sits beside the
+     short middle one. */
+  .ach__star {
+    left: 6%;
+    top: 40%;
+  }
+
+  .ach__frame {
+    height: auto;
+    aspect-ratio: 1 / 1.06;
+  }
+
+  /* A narrower crop: pulled right so both faces stay clear of the edges. */
+  .ach__frame img {
+    object-position: 60% 44%;
+  }
+
+  /* Two cards side by side on one edge: each keeps to its own half. */
+  .ach__float {
+    max-width: calc(50% - 16px);
+  }
+
+  .ach__float--years {
+    left: 10px;
+  }
+
+  .ach__float--stages {
+    top: 0;
+    right: 10px;
+    bottom: auto;
+    translate: 0 -52%;
+  }
+
+  .ach__card {
+    min-width: 0;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  .ach__card-value {
+    font-size: clamp(1.0625rem, 5.4vw, 1.375rem);
+  }
+
+  .ach__card-label {
+    max-width: 18ch;
+    font-size: 0.6875rem;
+  }
+
+  .ach__notch {
+    padding: 8px 10px 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ach__card,
+  .ach__cta-arrow {
+    transition: none;
+  }
+}

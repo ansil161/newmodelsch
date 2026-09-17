@@ -14,7 +14,6 @@ import {
 import {
   academicImages,
   artsImages,
-  campusImages,
   everydayImages,
   facultyImages,
   heritageImages,
@@ -314,7 +313,53 @@ export { AboutPrincipal } from '@/components/principal/PrincipalMessage';
    row whether it is open or not, because that number is the actual answer to
    "how big is the department" and hiding it behind an interaction would be
    hiding the content behind the interface.
+
+   THE LOOK FOLLOWS THE HOMEPAGE LEGACY SECTION.
+
+   Six white department cards with icon tiles - the open one filled in the
+   logo's indigo - beside one photograph card that carries the open
+   department's name, description and heads over the picture. The four
+   figures are white cards with icon tiles below. The motion is unchanged:
+   SectionHead animates the head, `rise` brings the department cards in, and
+   StatReveal rises and counts the figures. GSAP owns the transform on `.dept`
+   and `.stat`, so their hover states never transform them.
    -------------------------------------------------------------------------- */
+
+/* One photograph and one icon per department, in FACULTY_DEPARTMENTS order. */
+const FACULTY_MEDIA = [
+  { photo: academicImages[5], icon: 'book' }, // Languages - the library reading hall
+  { photo: academicImages[3], icon: 'compass' }, // Mathematics - working notes on a problem
+  { photo: academicImages[1], icon: 'flask' }, // Sciences - a chemistry practical
+  { photo: academicImages[0], icon: 'globe' }, // Social Sciences - a teacher with senior students
+  { photo: academicImages[2], icon: 'robot' }, // Computing & Robotics - assembling a robot
+  { photo: artsImages[1], icon: 'palette' }, // Arts, Music & Sport - a student at an easel
+];
+
+/* One glyph per figure, in FACULTY_STATS order. */
+const FIGURE_ICONS = ['users', 'history', 'cap', 'shield'];
+
+/* 'Anjali Menon - Head of English' -> a name and the post it holds. */
+const splitLead = (lead) => {
+  const [name, ...role] = lead.split(' - ');
+  return { name, role: role.join(' - ') };
+};
+
+const initials = (name) =>
+  name
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('');
+
+/* Built once, not per render. StatReveal rebuilds its count whenever `items`
+   changes identity, and a rebuild mid-count reads the half-counted figure
+   back as the final one - so a click on a department while the figures were
+   still counting used to leave '0' behind. */
+const FACULTY_FIGURES = FACULTY_STATS.map((stat, i) => ({
+  value: stat.value,
+  label: stat.label,
+  icon: FIGURE_ICONS[i],
+}));
 
 export function AboutFaculty() {
   const [open, setOpen] = useState(0);
@@ -327,6 +372,8 @@ export function AboutFaculty() {
 
   return (
     <section ref={scope} className="section faculty" id="faculty">
+      <span className="faculty__orb" aria-hidden="true" />
+
       <div className="wrap">
         <SectionHead
           sticker="The staff room"
@@ -350,38 +397,68 @@ export function AboutFaculty() {
                   aria-controls="faculty-detail"
                   onClick={() => setOpen(i)}
                 >
-                  <span className="dept__name">{dept.name}</span>
-                  <span className="dept__strength meta">{dept.strength}</span>
+                  <span className="dept__icon" aria-hidden="true">
+                    <Icon name={FACULTY_MEDIA[i].icon} size={22} />
+                  </span>
+                  <span className="dept__text">
+                    <span className="dept__name">{dept.name}</span>
+                    <span className="dept__strength">{dept.strength}</span>
+                  </span>
+                  <span className="dept__go" aria-hidden="true">
+                    <Icon name="arrowRight" size={16} />
+                  </span>
                 </button>
               </li>
             ))}
           </ul>
 
-          <div className="faculty__detail" id="faculty-detail" aria-live="polite">
+          <article className="faculty__feature" id="faculty-detail" aria-live="polite">
             <Figure
-              photo={[academicImages[3], academicImages[1], academicImages[2], campusImages[3], academicImages[7], artsImages[0]][open]}
-              width={720}
-              sizes="(max-width: 900px) 88vw, 38vw"
+              photo={FACULTY_MEDIA[open].photo}
+              width={900}
+              sizes="(max-width: 959px) 92vw, 52vw"
               shape="frame"
-              ratio="landscape"
+              ratio="free"
               key={current.id}
+              className="faculty__shot"
               decorative
             />
-            <h3 className="fn-h3 faculty__dept-name">{current.name}</h3>
-            <p className="body-text">{current.description}</p>
-            <ul className="faculty__leads">
-              {current.leads.map((leadName) => (
-                <li key={leadName}>{leadName}</li>
-              ))}
-            </ul>
-          </div>
+            <span className="faculty__veil" aria-hidden="true" />
+
+            <span className="faculty__chip">
+              <Icon name="users" size={15} />
+              {current.strength}
+            </span>
+
+            <div className="faculty__copy">
+              <p className="faculty__label">
+                <span className="faculty__rule" aria-hidden="true" />
+                Department
+              </p>
+              <h3 className="faculty__title">{current.name}</h3>
+              <p className="faculty__text">{current.description}</p>
+
+              <ul className="faculty__leads">
+                {current.leads.map((lead) => {
+                  const { name, role } = splitLead(lead);
+                  return (
+                    <li className="faculty__lead" key={lead}>
+                      <span className="faculty__avatar" aria-hidden="true">
+                        {initials(name)}
+                      </span>
+                      <span className="faculty__lead-text">
+                        <span className="faculty__lead-name">{name}</span>
+                        {role ? <span className="faculty__lead-role">{role}</span> : null}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </article>
         </div>
 
-        <StatReveal
-          items={FACULTY_STATS.map((stat) => ({ value: stat.value, label: stat.label }))}
-          layout="grid"
-          className="faculty__stats"
-        />
+        <StatReveal items={FACULTY_FIGURES} layout="grid" className="faculty__stats" />
       </div>
     </section>
   );

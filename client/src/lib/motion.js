@@ -89,6 +89,47 @@ export function lines(target, opts = {}) {
 }
 
 /* --------------------------------------------------------------------------
+   playOnScroll - a composed timeline waits for its section
+   --------------------------------------------------------------------------
+   Use this instead of `scrollTrigger` in a timeline's vars whenever the
+   trigger is `once`.
+
+   GSAP measures a trigger attached to a timeline one tick late, so the
+   timeline can be filled first. Until then the trigger has no end, and the
+   next trigger created anywhere measures it on the spot. On a page reloaded
+   halfway down, that is several sections already scrolled past: each `once`
+   trigger completes and removes itself inside that measuring loop, the list
+   shrinks under it, and ScrollTrigger throws "reading 'end'", taking the
+   whole page down.
+
+   A standalone trigger is measured the moment it is made, so it never sits
+   in that half-built state. It plays the paused timeline on the way in, and
+   on the way past for a reader who jumps below it.
+
+   GSAP does not run enter/leave callbacks while it is measuring, so a trigger
+   measured already past its end - made below the fold, or pushed past by a
+   refresh - would never play, leaving its section hidden. `onRefresh` plays
+   it in that case. It only plays, never kills: a trigger removed during a
+   refresh is the crash this helper exists to avoid.
+
+   Delay belongs inside the timeline (a position on the first tween), not in
+   its vars: a paused timeline that is later played ignores its own delay.
+   -------------------------------------------------------------------------- */
+export function playOnScroll(tl, vars) {
+  tl.pause();
+  const play = () => tl.play();
+  return ScrollTrigger.create({
+    ...vars,
+    once: vars.once ?? true,
+    onEnter: play,
+    onLeave: play,
+    onRefresh: (self) => {
+      if (self.progress === 1) play();
+    },
+  });
+}
+
+/* --------------------------------------------------------------------------
    rise - a group of small things arrives
    --------------------------------------------------------------------------
    The workhorse. Metadata, list items, chips, cards, buttons. Short travel
@@ -142,24 +183,24 @@ export function unmask(
 
   els.forEach((el, i) => {
     const image = el.querySelector('img');
-    const tl = gsap.timeline({
-      delay: (opts.delay ?? 0) + i * (opts.stagger ?? 0.12),
-      scrollTrigger: {
-        trigger: opts.trigger ?? el,
-        start: opts.start ?? START,
-        once: opts.once ?? true,
-      },
-    });
+    const at = (opts.delay ?? 0) + i * (opts.stagger ?? 0.12);
+    const tl = gsap.timeline({ paused: true });
 
     tl.from(el, {
       clipPath: edge,
       duration: 1.25,
       ease: 'power4.inOut',
-    });
+    }, at);
 
     if (image) {
-      tl.from(image, { scale: 1.09, duration: 1.6, ease: 'power3.out' }, 0);
+      tl.from(image, { scale: 1.09, duration: 1.6, ease: 'power3.out' }, at);
     }
+
+    playOnScroll(tl, {
+      trigger: opts.trigger ?? el,
+      start: opts.start ?? START,
+      once: opts.once ?? true,
+    });
   });
 }
 
