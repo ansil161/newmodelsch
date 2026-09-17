@@ -184,7 +184,7 @@ export function AcProof() {
   return (
     <section
       ref={scope}
-      className="section ac-proof"
+      className="section ac-proof ground-cloth"
       id="academic-proof"
       aria-labelledby="ac-proof-title"
     >

@@ -151,7 +151,7 @@ export function MovingPhotoStrip() {
   }, []);
 
   return (
-    <section ref={scope} className="section gal-strip">
+    <section ref={scope} className="section gal-strip ground-cloth">
       <div className="wrap gal-strip__head">
         <SectionHead
           sticker="04 · Moments"

@@ -68,7 +68,7 @@ export function PrincipalMessage({ paragraphs, showMore = false }) {
   }, []);
 
   return (
-    <section ref={scope} className="pmsg" id="principal" aria-labelledby="pmsg-title">
+    <section ref={scope} className="pmsg ground-cloth" id="principal" aria-labelledby="pmsg-title">
       <div className="wrap pmsg__inner">
         <div className="pmsg__media">
           <Figure

@@ -170,10 +170,12 @@ button {
 
 /* A CONTROLLED SET OF GROUNDS.
 
-     white         the canvas. Almost every section.
-     --sand        a very light brand tint, for a few selected supporting
-                   sections (questions, explorers) so the page has rhythm.
-     navy          the footer only.
+     white         the canvas. Heroes, and sections whose photographs carry
+                   their own colour.
+     paper, mist   the two light grounds - see `.ground-*` below. The legacy
+                   `.section--paper` and `.section--sand` resolve to them.
+     cloth         the one dark ground: a few moments per page, and the
+                   footer.
 
    `.section--navy` and `.on-navy` used to turn the page over. They now stay
    white and re-point the light-type tokens at ink, so every rule written as
@@ -188,15 +190,133 @@ button {
   --line-navy: var(--line-blue);
 }
 
-.section--navy,
-.section--paper {
+.section--navy {
   background: var(--white);
   color: var(--ink);
 }
 
+/* THE THREE GROUNDS - see the grounds block in variables.css.
+
+   Each class sets the ground and re-points the ink tokens that would lose
+   contrast on it; a section stylesheet keeps writing `var(--ink-3)` or
+   `var(--blue)` and gets the right value. `--ground` is exposed so a shared
+   component can write `background: var(--ground, var(--white))`.
+
+   Paper and mist only need the muted grey taken one step darker
+   (4.3:1 -> 5.2:1). Cloth turns the page over. */
+.ground-paper,
+.ground-mist,
+.section--paper,
 .section--sand {
-  background: var(--color-surface-alt);
+  --ink-3: #676673;
+  --color-text-muted: #676673;
+  --text-muted: #676673;
+}
+
+.section--paper,
+.section--sand {
   color: var(--ink);
+}
+
+.ground-paper,
+.section--paper {
+  --ground: var(--ground-paper);
+  --sand: var(--ground-paper-2);
+  background-color: var(--ground);
+}
+
+.ground-mist,
+.section--sand {
+  --ground: var(--ground-mist);
+  --sand: var(--ground-mist-2);
+  background-color: var(--ground);
+}
+
+.ground-cloth {
+  --ground: var(--ground-cloth);
+  background-color: var(--ground);
+  color: var(--on-cloth-2);
+
+  --ink: var(--on-cloth);
+  --ink-strong: var(--on-cloth);
+  --ink-2: var(--on-cloth-2);
+  --ink-3: var(--on-cloth-3);
+  --ink-4: rgba(247, 246, 252, 0.34);
+  --slate: var(--on-cloth-2);
+  --text-primary: var(--on-cloth);
+  --text-body: var(--on-cloth-2);
+  --text-muted: var(--on-cloth-3);
+  --color-text: var(--on-cloth);
+  --color-text-secondary: var(--on-cloth);
+  --color-text-body: var(--on-cloth-2);
+  --color-text-lead: var(--on-cloth-2);
+  --color-text-muted: var(--on-cloth-3);
+  --color-text-subtle: rgba(247, 246, 252, 0.34);
+
+  --blue: var(--on-cloth-accent);
+  --blue-deep: var(--brand-200);
+  --blue-bright: var(--brand-300);
+  --blue-soft: rgba(179, 171, 219, 0.14);
+  --blue-wash: rgba(179, 171, 219, 0.08);
+  --color-accent: var(--on-cloth-accent);
+  --color-link: var(--brand-200);
+  --color-link-hover: var(--on-cloth);
+  --color-focus: var(--brand-300);
+  --sun: var(--brand-400);
+  --sun-deep: var(--brand-200);
+  --sun-soft: rgba(179, 171, 219, 0.14);
+
+  --line: var(--line-cloth);
+  --line-soft: rgba(247, 246, 252, 0.07);
+  --line-strong: var(--line-cloth-strong);
+  --line-blue: var(--line-cloth);
+  --line-blue-strong: var(--line-cloth-strong);
+  --color-border: var(--line-cloth);
+  --color-border-strong: var(--line-cloth-strong);
+  --color-border-brand: var(--line-cloth);
+
+  --sand: var(--ground-cloth-2);
+  --mist: var(--ground-cloth-2);
+}
+
+/* On cloth the brand-blue fill sinks into the ground (1.7:1), so the primary
+   button turns over: a white plate with the logo's ink on it. */
+.ground-cloth .btn-primary {
+  background: var(--white);
+  color: var(--brand-700);
+  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.6);
+}
+
+.ground-cloth .btn-primary::after {
+  background: var(--brand-100);
+}
+
+.ground-cloth .btn-primary:hover {
+  color: var(--brand-800);
+}
+
+.ground-cloth .chip {
+  background: rgba(247, 246, 252, 0.06);
+  color: var(--on-cloth-2);
+}
+
+.ground-cloth .sticker {
+  background: rgba(179, 171, 219, 0.14);
+  color: var(--brand-200);
+}
+
+/* The highlighter, re-inked a shade above the cloth so the light word on top
+   of it keeps its contrast; the underline and ring are drawn in the accent. */
+.ground-cloth .mark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23352c78'/%3E%3C/svg%3E");
+}
+
+.ground-cloth .mark-ul {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.5c26-4 52-5.5 78-4.6 26 .9 52 4.2 78 2.1' stroke='%23b3abdb' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.ground-cloth .mark-ring {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 90' preserveAspectRatio='none'%3E%3Cpath d='M112 6C56 3 12 20 8 44c-4 25 40 42 96 41 52-1 89-18 89-40 0-21-33-36-83-39-14-1-27 0-38 2' fill='none' stroke='%23b3abdb' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 /* A section that follows another is separated by a single blue-tinted

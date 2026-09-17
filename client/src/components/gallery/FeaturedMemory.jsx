@@ -82,7 +82,7 @@ export function FeaturedMemory() {
   const prints = event.photos.slice(1, 4);
 
   return (
-    <section ref={scope} id="featured" className="section gal-feat">
+    <section ref={scope} id="featured" className="section gal-feat ground-paper">
       <div className="wrap">
         <SectionHead
           sticker="05 · Featured story"

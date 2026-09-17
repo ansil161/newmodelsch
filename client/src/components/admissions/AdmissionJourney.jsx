@@ -173,7 +173,7 @@ export function AdProcess() {
   };
 
   return (
-    <section ref={scope} className="aj" id="process" aria-labelledby="aj-title">
+    <section ref={scope} className="aj ground-mist" id="process" aria-labelledby="aj-title">
       <svg className="aj__defs" width="0" height="0" aria-hidden="true" focusable="false">
         <clipPath id="aj-frame-clip" clipPathUnits="objectBoundingBox">
           <path d={FRAME_PATH} />

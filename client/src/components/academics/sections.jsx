@@ -73,7 +73,7 @@ const METHOD = TEACHING_PRINCIPLES.map((principle, i) => ({
 
 export function AcMethod() {
   return (
-    <section className="section method" id="how-we-teach">
+    <section className="section method ground-mist" id="how-we-teach">
       <div className="wrap">
         <SectionHead
           sticker="01 · Method"

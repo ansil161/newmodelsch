@@ -70,7 +70,7 @@ export function AcNext() {
   };
 
   return (
-    <section className="nx" id="after-ten" aria-labelledby="nx-title">
+    <section className="nx ground-paper" id="after-ten" aria-labelledby="nx-title">
       <span className="nx__corner nx__corner--tr" aria-hidden="true" data-nx-shape />
       <span className="nx__corner nx__corner--bl" aria-hidden="true" data-nx-shape />
       <Sprig />

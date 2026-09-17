@@ -21,7 +21,7 @@ import './Footer.css';
    --------------------------------------------------------------------------
    The back cover. Four layers, each quieter than the one before it.
 
-     INVITATION  a raised panel on the white ground: the one sentence the
+     INVITATION  a light raised panel on the cloth: the one sentence the
                  school would put its name to, the two next steps, and the
                  admissions desk beside them - with whether the office is
                  open right now, which is the question a parent reading
@@ -167,7 +167,7 @@ export function Footer() {
         <div className="foot__dir">
           <div className="foot__group foot__group--brand">
             <Link to={ROUTES.home} className="foot__home" aria-label={`${SCHOOL.name}, home`}>
-              <Logo className="foot__logo" decorative />
+              <Logo className="foot__logo" variant="white" decorative />
             </Link>
             <p className="foot__about">
               A CBSE school for Nursery to Class 10, teaching families in {SCHOOL.locality} since{' '}

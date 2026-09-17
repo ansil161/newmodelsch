@@ -171,7 +171,7 @@ export function CoDirections() {
   }, []);
 
   return (
-    <section ref={scope} className="section dir" id="directions">
+    <section ref={scope} className="section dir ground-cloth" id="directions">
       <div className="wrap">
         <SectionHead
           sticker="Getting here"

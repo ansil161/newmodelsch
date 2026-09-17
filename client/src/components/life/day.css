@@ -40,7 +40,7 @@
      one can reach past the gutter. Clipping x only - the section has nothing
      pinned or sticky in it, so there is no y behaviour to protect. */
   overflow-x: clip;
-  background: var(--white);
+  background: var(--ground-paper);
   isolation: isolate;
 }
 

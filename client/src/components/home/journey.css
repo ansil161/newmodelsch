@@ -1,15 +1,15 @@
 /* ==========================================================================
    07 - THE STUDENT JOURNEY
    --------------------------------------------------------------------------
-   The same white sheet as the rest of the page, a claim set large down the
-   left of it, and a stack of five raised cards on the right.
+   A claim set large down the left of a mist ground, and a stack of five
+   raised white cards on the right.
 
-   THE GROUND IS WHITE, AND THE CARDS DO THE SEPARATING
+   THE GROUND IS MIST, AND THE CARDS ARE WHITE
 
-   No band colour. Each sheet is lifted off the page by a blue hairline and a
-   soft cool shadow, and the photograph behind it gives the composition its
-   weight - so the section reads as its own page without the ground changing
-   under the reader.
+   The cool tint does the separating a shadow used to do alone: each sheet is
+   a white object on a coloured page, lifted by a blue hairline and a soft
+   cool shadow, and the photograph behind it gives the composition its
+   weight.
 
    THE RESTING STATE IS THE FINISHED STATE
 
@@ -19,7 +19,7 @@
    ========================================================================== */
 
 .jr {
-  --jr-ground: var(--white);
+  --jr-ground: var(--ground-mist);
   --jr-ink: var(--ink);
   --jr-ink-2: var(--ink-2);
   --jr-ink-3: var(--ink-3);

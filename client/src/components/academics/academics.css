@@ -5,7 +5,7 @@
    ========================================================================== */
 
 .method {
-  background: var(--white);
+  background: var(--ground-mist);
 }
 
 .method__head {

@@ -13,7 +13,8 @@
      NAVY       the same hue taken almost to black. Headings and strong type.
      LIGHT      the same hue lifted almost to white. Supporting section
                 grounds, fills, highlights, hover washes.
-     WHITE      the canvas. Most of the site is set directly on it.
+     WHITE      the canvas for heroes and photograph-led sections. The rest
+                of the page sits on the grounds below (paper, mist, cloth).
      NEUTRAL    cool greys with a trace of the brand hue, for body copy,
                 borders and dividers, so a rule belongs to the same light as
                 the type it divides.
@@ -96,6 +97,42 @@
   --color-border-solid: var(--neutral-200);
 
   --color-focus: var(--brand-500);
+
+  /* ==================================================== grounds
+     THE PAGE IS NOT ONE SHEET OF WHITE.
+
+     White stays the canvas for heroes and for the sections whose photographs
+     carry their own colour. Everything else takes one of three grounds, and
+     all three already exist in the site's own material - the prospectus on
+     the homepage is a navy cloth hardback lying open on a warm white desk:
+
+       PAPER   the desk. A warm off-white that takes the chill off a long
+               page, and lets a white card or print read as an object.
+       MIST    the logo ink breathed onto white. A cool counterpart to paper,
+               for sections that are about the school's own record.
+       CLOTH   the hardback's cover. The one dark ground, spent on a few
+               moments per page - a letter, a place, the back cover.
+
+     Neighbouring grounds are never the same, and cloth is never adjacent to
+     cloth. The `.ground-*` classes in globals.css apply these and re-point
+     the ink tokens so type on them stays in contrast. */
+  --ground-paper: #f7f5ef;
+  --ground-paper-2: #efebe1;
+  --ground-mist: #efedf7;
+  --ground-mist-2: #e5e2f2;
+  --ground-cloth: var(--brand-900);
+  --ground-cloth-2: #241f55;
+  --ground-cloth-deep: var(--brand-950);
+
+  /* Type on cloth, as real colours. Contrast on --ground-cloth:
+       on-cloth 15.4:1   on-cloth-2 10.3:1   on-cloth-3 6.8:1
+       on-cloth-accent (keywords, marks, icons) 7.7:1 */
+  --on-cloth: #f7f6fc;
+  --on-cloth-2: #cdc9e6;
+  --on-cloth-3: #a6a1c9;
+  --on-cloth-accent: var(--brand-300);
+  --line-cloth: rgba(247, 246, 252, 0.13);
+  --line-cloth-strong: rgba(247, 246, 252, 0.26);
 
   /* ==================================================== legacy names
      Everything below resolves to the semantic layer above. */

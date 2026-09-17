@@ -3,11 +3,15 @@ import { useGsapScope } from '@/hooks/useGsapScope';
 import { count, rise } from '@/lib/motion';
 
 export function StatReveal({ items, layout = 'row', large = false, className = '' }) {
+  // Keyed on the figures, not the array: a caller that maps its items inline
+  // hands over a new array on every render, which would restart the reveal.
+  const figures = items.map((item) => `${item.value}|${item.label}`).join('~');
+
   const scope = useGsapScope((_, el) => {
     const groups = el.querySelectorAll('.stat');
     rise(groups, { trigger: el, y: 22, stagger: 0.08 });
     count(el.querySelectorAll('.stat__value'), { trigger: el, delay: 0.15 });
-  }, [items]);
+  }, [figures]);
 
   return (
     <div className={`stats-frame ${className}`.trim()}>

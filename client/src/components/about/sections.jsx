@@ -71,7 +71,7 @@ export function AboutStory() {
   }, []);
 
   return (
-    <section ref={scope} className="section story" id="story">
+    <section ref={scope} className="section story ground-paper" id="story">
       <div className="wrap story__inner">
         <div className="story__head">
           <Sticker tone="sun" tilt={-2.2}>
@@ -133,7 +133,7 @@ export function AboutFilm() {
   }, []);
 
   return (
-    <section ref={scope} className="section film" id="film">
+    <section ref={scope} className="section film ground-cloth" id="film">
       <div className="wrap film__inner">
         <div className="film__text">
           <Sticker tone="paper" tilt={2}>
@@ -228,7 +228,7 @@ const CHAPTERS = HERITAGE_CHAPTERS.map((chapter, i) => ({
 
 export function AboutTimeline() {
   return (
-    <EditorialTimeline id="timeline" entries={CHAPTERS}>
+    <EditorialTimeline id="timeline" entries={CHAPTERS} className="ground-mist">
       <SectionHead
         sticker="The record"
         stickerTilt={2}
@@ -259,7 +259,7 @@ export function AboutPhilosophy() {
   }, []);
 
   return (
-    <section ref={scope} className="section phil" id="philosophy">
+    <section ref={scope} className="section phil ground-paper" id="philosophy">
       <div className="wrap phil__inner">
         <Figure
           photo={academicImages[0]}
@@ -371,7 +371,7 @@ export function AboutFaculty() {
   const current = FACULTY_DEPARTMENTS[open];
 
   return (
-    <section ref={scope} className="section faculty" id="faculty">
+    <section ref={scope} className="section faculty ground-mist" id="faculty">
       <span className="faculty__orb" aria-hidden="true" />
 
       <div className="wrap">

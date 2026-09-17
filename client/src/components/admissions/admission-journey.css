@@ -7,7 +7,7 @@
    ========================================================================== */
 
 .aj {
-  --aj-ground: var(--white);
+  --aj-ground: var(--ground-mist);
   --aj-cream: var(--blue-wash);
   --aj-title: var(--blue-ink);
   --aj-pen: var(--blue);

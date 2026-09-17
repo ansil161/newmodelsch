@@ -23,7 +23,7 @@
    ========================================================================== */
 
 .wb {
-  --wb-ground: #faf9f6;
+  --wb-ground: var(--ground-paper);
   --wb-paper: #fbfaf5;
   --wb-paper-2: #f3f1e9;
   --wb-ink: 23, 22, 29;

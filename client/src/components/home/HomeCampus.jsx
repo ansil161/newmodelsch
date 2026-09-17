@@ -410,7 +410,7 @@ export function HomeCampus() {
   const scope = useGsapScope((_, el) => buildMotion(el), []);
 
   return (
-    <section ref={scope} className="section hc" id="campus">
+    <section ref={scope} className="section hc ground-cloth" id="campus">
       <div className="hc__stage">
         <div className="wrap hc__inner">
           {/* The opening plate's geometry, and nothing else. Never drawn: the

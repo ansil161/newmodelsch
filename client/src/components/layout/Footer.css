@@ -1,11 +1,12 @@
 /* ==========================================================================
    FOOTER
    --------------------------------------------------------------------------
-   A white sheet, lit faintly from above by the logo's own ink, with one
-   raised panel on it. Everything else is type on the ground.
+   The back cover, in the prospectus cloth, lit faintly from above, with one
+   light raised panel on it. Everything else is type on the ground.
 
-   The last section of every page is a full-bleed photograph under a dark
-   scrim; a white footer under it reads as the page turning over.
+   The page ends on a dark ground so it ends at all: a white footer under a
+   white section reads as more page, not as the cover closing. The panel
+   stays light, so the invitation is the brightest thing on it.
 
    One 12-column grid is shared by the panel and the directory on desktop, so
    the admissions desk and the campus column hang from the same line.
@@ -18,7 +19,7 @@
   --open: var(--ok);
 
   position: relative;
-  background: var(--white);
+  background: var(--ground-cloth);
   color: var(--ink);
   padding-top: clamp(64px, 8vw, 128px);
   overflow: clip;
@@ -34,8 +35,8 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(50% 42% at 50% 0%, rgba(70, 53, 149, 0.08), transparent 72%),
-    radial-gradient(30% 28% at 90% 30%, rgba(122, 109, 189, 0.06), transparent 70%);
+    radial-gradient(50% 42% at 50% 0%, rgba(122, 109, 189, 0.22), transparent 72%),
+    radial-gradient(30% 28% at 90% 30%, rgba(122, 109, 189, 0.1), transparent 70%);
 }
 
 .foot__aura::after {
@@ -43,8 +44,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(70, 53, 149, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(70, 53, 149, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(247, 246, 252, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 246, 252, 0.04) 1px, transparent 1px);
   background-size: 64px 64px;
   background-position: center top;
   -webkit-mask-image: radial-gradient(60% 55% at 50% 0%, #000 20%, transparent 75%);
@@ -56,7 +57,7 @@
 }
 
 .foot :focus-visible {
-  outline: 2px solid var(--brand-500);
+  outline: 2px solid var(--brand-300);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -67,6 +68,10 @@
 .foot__panel {
   --gx: 78%;
   --gy: 0%;
+  --ink: var(--neutral-900);
+  --ink-2: var(--neutral-600);
+  --ink-3: var(--neutral-500);
+  --line: var(--color-border);
 
   position: relative;
   display: grid;
@@ -79,7 +84,7 @@
   box-shadow:
     inset 0 0 0 1px var(--edge),
     0 1px 2px rgba(26, 22, 64, 0.04),
-    0 50px 100px -60px rgba(26, 22, 64, 0.25);
+    0 50px 100px -50px rgba(5, 4, 20, 0.6);
   overflow: hidden;
   isolation: isolate;
 }
@@ -358,7 +363,20 @@
 
 /* --------------------------------------------------------------------------
    Directory
-   -------------------------------------------------------------------------- */
+   --------------------------------------------------------------------------
+   Everything below the panel is type on the cloth, so it re-points the ink
+   once here rather than in every rule. */
+.foot__dir,
+.foot__brand,
+.foot__legal {
+  --ink: var(--on-cloth);
+  --ink-strong: var(--on-cloth);
+  --ink-2: var(--on-cloth-2);
+  --ink-3: var(--on-cloth-3);
+  --line: var(--line-cloth);
+  --edge-hi: var(--line-cloth-strong);
+}
+
 .foot__dir {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -400,7 +418,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--white);
+  background: rgba(247, 246, 252, 0.04);
   box-shadow: inset 0 0 0 1px var(--edge-hi);
   color: var(--ink-strong);
   transition:
@@ -411,11 +429,11 @@
 }
 
 .foot__social:hover {
-  background: var(--brand-500);
+  background: var(--white);
   box-shadow:
-    inset 0 0 0 1px var(--brand-500),
-    0 14px 28px -14px rgba(70, 53, 149, 0.8);
-  color: var(--white);
+    inset 0 0 0 1px var(--white),
+    0 14px 28px -14px rgba(5, 4, 20, 0.8);
+  color: var(--brand-700);
   transform: translateY(-3px);
 }
 
@@ -453,7 +471,7 @@
   width: 8px;
   height: 1.5px;
   border-radius: 2px;
-  background: var(--brand-500);
+  background: var(--brand-300);
   opacity: 0;
   transform: translateX(-6px);
   transition:
@@ -462,7 +480,7 @@
 }
 
 .foot__link:focus-visible {
-  color: var(--brand-500);
+  color: var(--brand-200);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -471,7 +489,7 @@
   }
 
   .foot__link:hover {
-    color: var(--brand-500);
+    color: var(--brand-200);
     transform: translateX(16px);
   }
 
@@ -494,7 +512,7 @@
 .foot__addr svg {
   flex: none;
   margin-top: 2px;
-  color: var(--brand-500);
+  color: var(--brand-300);
 }
 
 .foot__map {
@@ -519,9 +537,9 @@
 }
 
 .foot__map:hover {
-  background: var(--tint);
-  box-shadow: inset 0 0 0 1px var(--brand-500);
-  color: var(--brand-600);
+  background: rgba(179, 171, 219, 0.12);
+  box-shadow: inset 0 0 0 1px var(--brand-300);
+  color: var(--on-cloth);
 }
 
 .foot__map:hover svg {
@@ -557,7 +575,7 @@
   line-height: 0.9;
   letter-spacing: -0.04em;
   white-space: nowrap;
-  color: var(--brand-200);
+  color: #342e74;
   user-select: none;
   /* The tracking is applied after the last letter too, which pulls the box
      in behind the final "l" and lets its ink run past the margin. This hands
@@ -610,7 +628,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--white);
+  background: rgba(247, 246, 252, 0.04);
   box-shadow: inset 0 0 0 1px var(--edge-hi);
   transition:
     background 300ms var(--ease-out),
@@ -624,13 +642,13 @@
 }
 
 .foot__up:hover {
-  color: var(--brand-500);
+  color: var(--on-cloth);
 }
 
 .foot__up:hover .foot__up-box {
-  background: var(--brand-500);
-  box-shadow: 0 12px 24px -12px rgba(70, 53, 149, 0.8);
-  color: var(--white);
+  background: var(--white);
+  box-shadow: 0 12px 24px -12px rgba(5, 4, 20, 0.8);
+  color: var(--brand-700);
 }
 
 /* Rotated half a turn, so a positive Y is up on screen. */

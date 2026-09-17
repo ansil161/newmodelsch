@@ -76,6 +76,12 @@
   transform: translateY(10px);
 }
 
+/* The label is a white tab wherever it sits, so its type stays dark even
+   when the section around it is on cloth. */
+.ground-cloth .gal-tile__label {
+  color: var(--neutral-900);
+}
+
 .gal-tile__view {
   top: clamp(10px, 1.2vw, 16px);
   right: clamp(10px, 1.2vw, 16px);

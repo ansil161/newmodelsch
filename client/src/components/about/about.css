@@ -58,10 +58,10 @@
 /* ==========================================================================
    02 - The film
    ========================================================================== */
-/* On the page's own white. The film is the dark thing in this section, and it
-   stays dark only inside its frame. */
+/* On the prospectus cloth: the page dims for the film the way a room does,
+   and the frame reads as a screen rather than as a black box on white. */
 .film {
-  background: var(--white);
+  background: var(--ground-cloth);
   color: var(--ink);
 }
 
@@ -204,7 +204,7 @@
    06 - Philosophy
    ========================================================================== */
 .phil {
-  background: var(--white);
+  background: var(--ground-paper);
 }
 
 .phil__inner {
@@ -277,8 +277,8 @@
   background: linear-gradient(
     180deg,
     var(--white) 0%,
-    var(--brand-50) 16%,
-    var(--brand-50) 84%,
+    var(--ground-mist) 14%,
+    var(--ground-mist) 86%,
     var(--white) 100%
   );
 }

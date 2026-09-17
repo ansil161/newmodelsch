@@ -160,7 +160,7 @@ export function AdVisit() {
   }, []);
 
   return (
-    <section ref={scope} className="section visit" id="visit">
+    <section ref={scope} className="section visit ground-cloth" id="visit">
       <div className="wrap visit__inner">
         <div className="visit__body">
           <Sticker tone="sun" tilt={-2}>

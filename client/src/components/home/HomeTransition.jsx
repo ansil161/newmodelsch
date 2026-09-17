@@ -554,7 +554,7 @@ export function HomeTransition() {
   }, []);
 
   return (
-    <section ref={scope} className="legacy" aria-labelledby="legacy-title">
+    <section ref={scope} className="legacy ground-mist" aria-labelledby="legacy-title">
       <span className="legacy__orb legacy__orb--a" aria-hidden="true" />
       <span className="legacy__orb legacy__orb--b" aria-hidden="true" />
 

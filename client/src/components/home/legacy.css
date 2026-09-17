@@ -16,12 +16,13 @@
   padding-block: var(--section-y);
   overflow: clip;
   isolation: isolate;
+  /* Picks up the prospectus desk above it and cools into the mist, so the
+     two sections hand over without a seam. */
   background: linear-gradient(
     180deg,
-    var(--white) 0%,
-    var(--brand-50) 18%,
-    var(--brand-50) 82%,
-    var(--white) 100%
+    var(--ground-paper) 0%,
+    var(--ground-mist) 24%,
+    var(--ground-mist) 100%
   );
 }
 

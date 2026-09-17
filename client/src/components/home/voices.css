@@ -1,9 +1,8 @@
 /* ==========================================================================
    COMMUNITY STORIES
    --------------------------------------------------------------------------
-   The school blue on the site's white sheet, like every other section. The
-   white cards in the rail are held off that sheet by a hairline and a soft
-   cool shadow rather than by a change of ground.
+   The school blue on the warm paper ground. The white cards in the rail read
+   as objects on it, held off it by a hairline and a soft cool shadow.
 
    The palette is declared once at the top of the section as four local
    custom properties, so the whole thing can be re-inked by changing four
@@ -25,12 +24,8 @@
   --vx-wash: var(--blue-soft);
   --vx-line: var(--line-blue);
 
-  background: var(--white);
+  background: var(--ground-paper);
   color: var(--vx-ink);
-  /* The principal's letter below sits on the same white. A single blue
-     hairline at the foot is the divider between them - a rule, not a change
-     of ground. */
-  border-bottom: 1px solid var(--vx-line);
   /* Every blob, stroke and note in here is placed off the edge of something.
      Clip rather than hidden: nothing in this section is pinned, and clip does
      not make the element a containing block for the dialog's top layer. */
@@ -208,7 +203,7 @@
 .vx__face {
   width: 66px;
   flex: none;
-  box-shadow: 0 0 0 3px var(--chalk), 0 0 0 4.5px var(--vx-wash);
+  box-shadow: 0 0 0 3px var(--ground-paper), 0 0 0 4.5px var(--vx-wash);
 }
 
 .vx__who {

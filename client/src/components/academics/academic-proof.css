@@ -23,7 +23,9 @@
    ========================================================================== */
 
 .ac-proof {
-  background: var(--white);
+  /* The evidence is set on the prospectus cloth: the one section on the page
+     that is a record rather than a promise gets the weight of a cover. */
+  background: var(--ground-cloth);
 }
 
 /* ==========================================================================
@@ -128,6 +130,17 @@
 
 .ac-proof__cta:hover {
   background: var(--blue-ink);
+}
+
+/* On cloth the accent is a light tint, too pale to carry white type, so the
+   button turns over like every primary action on the dark ground. */
+.ground-cloth .ac-proof__cta {
+  background: var(--white);
+  color: var(--brand-700);
+}
+
+.ground-cloth .ac-proof__cta:hover {
+  background: var(--brand-100);
 }
 
 .ac-proof__cta svg {

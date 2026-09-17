@@ -1,14 +1,15 @@
 /* ==========================================================================
    PRINCIPAL MESSAGE - the dark editorial feature
    --------------------------------------------------------------------------
-   Near-black ground, white type, grey copy, hairline rules, and one accent:
-   the logo's indigo lifted until it holds up on black. The palette is
-   declared once here so the whole section re-inks from five lines.
+   The deepest value of the prospectus cloth, white type, indigo-tinted copy,
+   hairline rules, and one accent: the logo's indigo lifted until it holds up
+   on the dark. The palette is declared once here so the whole section
+   re-inks from five lines.
 
-     --pmsg-bg      near-black with a trace of the brand hue
-     --pmsg-ink     headline, facts, name                  18:1 on the ground
-     --pmsg-quiet   running copy                           8.3:1
-     --pmsg-dim     labels and the role line               5.1:1
+     --pmsg-bg      the cloth at its deepest (brand-950)
+     --pmsg-ink     headline, facts, name                  16.8:1 on the ground
+     --pmsg-quiet   running copy                           11.3:1
+     --pmsg-dim     labels and the role line               7.4:1
      --pmsg-accent  icons, the eyebrow rule, the link arrow
 
    No sticky, no pin: the section is ordinary document flow, and its only
@@ -16,10 +17,12 @@
    ========================================================================== */
 
 .pmsg {
-  --pmsg-bg: #0a0910;
-  --pmsg-ink: #f7f6fc;
-  --pmsg-quiet: #aeacbc;
-  --pmsg-dim: #8a8898;
+  /* The prospectus cloth, not a neutral black: the one letter on the page
+     is bound in the school's own colour. Secondary type is tinted from it. */
+  --pmsg-bg: var(--ground-cloth-deep);
+  --pmsg-ink: var(--on-cloth);
+  --pmsg-quiet: var(--on-cloth-2);
+  --pmsg-dim: var(--on-cloth-3);
   --pmsg-accent: #9a8fe0;
   --pmsg-line: rgba(247, 246, 252, 0.1);
   --pmsg-radius: clamp(18px, 1.9vw, 28px);
@@ -63,7 +66,7 @@
   width: 100%;
   aspect-ratio: 4 / 4.4;
   border-radius: var(--pmsg-radius);
-  background: #16141f;
+  background: var(--ground-cloth-2);
 }
 
 .pmsg__fig img {

@@ -45,7 +45,7 @@ export function EditorialPhotoWall() {
   };
 
   return (
-    <section ref={scope} id="glimpse" className="section gal-wall">
+    <section ref={scope} id="glimpse" className="section gal-wall ground-paper">
       <div className="wrap gal-wall__grid">
         <div className="gal-wall__col gal-wall__col--left">
           <SectionHead

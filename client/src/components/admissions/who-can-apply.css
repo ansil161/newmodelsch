@@ -21,7 +21,7 @@
   position: relative;
   overflow: clip;
   padding-block: clamp(80px, 9vw, 148px) clamp(72px, 8vw, 128px);
-  background: var(--white);
+  background: var(--ground-paper);
   color: var(--ink);
 }
 

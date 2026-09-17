@@ -741,6 +741,12 @@
   color: var(--on-navy);
 }
 
+/* On cloth the cue turns over with the ground: a light tab, dark type. */
+.ground-cloth .hgal__viewport::after {
+  background: var(--on-cloth);
+  color: var(--brand-800);
+}
+
 @media (max-width: 899px) {
   /* A thumb already knows how to do this, so it is native scrolling with snap
      points rather than a transform the page has to drive. */
@@ -802,7 +808,7 @@
    ========================================================================== */
 .etl {
   position: relative;
-  background: var(--white);
+  background: var(--ground, var(--white));
   overflow: clip;
 }
 

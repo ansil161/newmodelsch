@@ -87,10 +87,312 @@
   transform: none;
 }
 
-.campex__stats {
-  margin-top: clamp(44px, 5vw, 76px);
-  padding-top: clamp(28px, 3.4vw, 44px);
-  border-top: 1px solid var(--line-strong);
+/* ==========================================================================
+   The campus in figures (`.cfigs`)
+   --------------------------------------------------------------------------
+   Four equal cards in the cover's four surfaces - charcoal, the indigo field
+   with its angled planes, lime with its drawn lines, and paper - taken at the
+   cover's own values (see hero.css), so the two groups of cards on this page
+   are visibly one set.
+
+   One column on a phone, two to a row on a tablet, four across from 1000px.
+   ========================================================================== */
+.cfigs {
+  --cf-char: #17161d;
+  --cf-indigo-0: #2a1f7c;
+  --cf-indigo-1: #3a2b9e;
+  --cf-indigo-2: #4c3cc6;
+  --cf-lime: #d5f35e;
+  --cf-paper: #f3f2ee;
+  --cf-on: #f7f6fc;
+  --cf-on-2: rgba(247, 246, 252, 0.74);
+  --cf-r: clamp(18px, 1.6vw, 24px);
+  --cf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(8px, 0.8vw, 12px);
+  margin-top: clamp(44px, 5vw, 72px);
+}
+
+.cfig {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-areas:
+    'tag icon'
+    '. .'
+    'value value'
+    'detail detail';
+  min-height: clamp(168px, 14vw, 196px);
+  padding: clamp(18px, 1.7vw, 24px);
+  border-radius: var(--cf-r);
+  transition:
+    translate 600ms var(--cf-ease),
+    box-shadow 600ms var(--cf-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cfig:hover {
+    translate: 0 -4px;
+    box-shadow: 0 26px 50px -32px rgba(23, 22, 29, 0.45);
+  }
+
+  .cfig:hover .cfig__icon {
+    rotate: -12deg;
+  }
+}
+
+/* ----- the type, shared */
+.cfig__tag {
+  grid-area: tag;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.cfig__dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.cfig__icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition:
+    background-color var(--d-state) var(--cf-ease),
+    color var(--d-state) var(--cf-ease),
+    rotate 600ms var(--cf-ease);
+}
+
+.cfig__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cfig__value {
+  grid-area: value;
+  margin: 20px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 3.3vw, 3.125rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cfig__detail {
+  grid-area: detail;
+  margin: 10px 0 0;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* ----- 1 - charcoal, lit from below */
+.cfig--char {
+  color: var(--cf-on);
+  background:
+    radial-gradient(110% 80% at 100% 115%, rgba(76, 60, 198, 0.5), transparent 62%),
+    var(--cf-char);
+}
+
+.cfig--char .cfig__tag,
+.cfig--char .cfig__detail {
+  color: var(--cf-on-2);
+}
+
+.cfig--char .cfig__dot {
+  background: var(--cf-lime);
+}
+
+.cfig--char .cfig__icon {
+  background: rgba(247, 246, 252, 0.08);
+  color: var(--cf-lime);
+  box-shadow: inset 0 0 0 1px rgba(247, 246, 252, 0.12);
+}
+
+.cfig--char:hover .cfig__icon {
+  background: var(--cf-lime);
+  color: var(--cf-char);
+}
+
+/* ----- 2 - the indigo field, with the cover's angled planes */
+.cfig--indigo {
+  color: var(--cf-on);
+  background:
+    radial-gradient(70% 90% at 85% 20%, rgba(120, 104, 240, 0.45), transparent 70%),
+    linear-gradient(122deg, var(--cf-indigo-0) 0%, var(--cf-indigo-1) 55%, var(--cf-indigo-2) 100%);
+}
+
+.cfig--indigo .cfig__tag,
+.cfig--indigo .cfig__detail {
+  color: var(--cf-on-2);
+}
+
+.cfig--indigo .cfig__icon {
+  background: rgba(247, 246, 252, 0.12);
+  color: var(--cf-on);
+  box-shadow: inset 0 0 0 1px rgba(247, 246, 252, 0.16);
+}
+
+.cfig--indigo:hover .cfig__icon {
+  background: var(--cf-on);
+  color: var(--cf-indigo-1);
+}
+
+.cfig__planes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.cfig__planes span {
+  position: absolute;
+  top: -40%;
+  height: 180%;
+  transform: skewX(-22deg);
+}
+
+.cfig__planes span:first-child {
+  right: -24%;
+  width: 62%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.015) 70%);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.cfig__planes span:last-child {
+  left: 22%;
+  width: 18%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 80%);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ----- 3 - lime, with the cover's drawn lines */
+.cfig--lime {
+  color: var(--cf-char);
+  background: var(--cf-lime);
+}
+
+.cfig--lime .cfig__detail {
+  color: rgba(23, 22, 29, 0.74);
+}
+
+.cfig--lime .cfig__icon {
+  background: var(--cf-char);
+  color: var(--cf-lime);
+}
+
+.cfig--lime:hover .cfig__icon {
+  background: var(--white);
+  color: var(--cf-char);
+}
+
+.cfig__waves {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--cf-char);
+  stroke-width: 1;
+  opacity: 0.24;
+  pointer-events: none;
+}
+
+.cfig__waves path {
+  vector-effect: non-scaling-stroke;
+}
+
+/* ----- 4 - paper. A hairline holds it off the mist ground it sits on. */
+.cfig--paper {
+  color: var(--cf-char);
+  background: var(--cf-paper);
+  box-shadow: inset 0 0 0 1px rgba(23, 22, 29, 0.07);
+}
+
+.cfig--paper .cfig__detail {
+  color: var(--neutral-600);
+}
+
+.cfig--paper .cfig__icon {
+  background: var(--cf-char);
+  color: var(--cf-on);
+}
+
+.cfig--paper:hover .cfig__icon {
+  background: var(--cf-lime);
+  color: var(--cf-char);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cfig--paper:hover {
+    box-shadow:
+      inset 0 0 0 1px rgba(23, 22, 29, 0.07),
+      0 26px 50px -32px rgba(23, 22, 29, 0.45);
+  }
+}
+
+/* ----- < 640: stacked, so each card is kept short */
+@media (max-width: 639px) {
+  .cfig {
+    min-height: 136px;
+  }
+
+  .cfig__value {
+    margin-top: 14px;
+  }
+}
+
+/* ----- 640-999: two to a row */
+@media (min-width: 640px) {
+  .cfigs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ----- >= 1000: four across */
+@media (min-width: 1000px) {
+  .cfigs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cfig,
+  .cfig__icon {
+    transition: none;
+  }
+
+  .cfig:hover {
+    translate: none;
+  }
+
+  .cfig:hover .cfig__icon {
+    rotate: none;
+  }
 }
 
 @media (min-width: 960px) {

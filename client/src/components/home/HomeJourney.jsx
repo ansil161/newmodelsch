@@ -273,7 +273,7 @@ export function HomeJourney() {
   const current = STAGES[active];
 
   return (
-    <section ref={scope} className="section jr" id="journey">
+    <section ref={scope} className="section jr ground-mist" id="journey">
       <div className="jr__stage">
         <div className="wrap jr__inner">
           {/* THE FIXED POINT. Nothing in here moves with the stack. */}

@@ -1000,7 +1000,7 @@ export function HomeVoices() {
   return (
     <section
       ref={scope}
-      className="section vx"
+      className="section vx ground-paper"
       id="voices"
       aria-labelledby="vx-title"
       onFocus={onFocus}

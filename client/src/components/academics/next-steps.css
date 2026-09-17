@@ -13,7 +13,7 @@
 
    The four paths are told apart by accent alone - indigo, blue, cerulean
    and a light blue - all from the site's blue family; the panels themselves
-   are white, so the section stays on the same continuous page. The written
+   are white on the paper ground, so they read as cards laid on it. The written
    word is the site blue.
    ========================================================================== */
 
@@ -37,7 +37,7 @@
   overflow: clip;
   isolation: isolate;
   padding-block: clamp(72px, 7vw, 112px) clamp(80px, 8vw, 128px);
-  background: var(--white);
+  background: var(--ground-paper);
   color: var(--ink);
 }
 

@@ -180,7 +180,7 @@ export function AdEligibility() {
   };
 
   return (
-    <section ref={scope} className="wca" id="admissions-intro" aria-labelledby="wca-title">
+    <section ref={scope} className="wca ground-paper" id="admissions-intro" aria-labelledby="wca-title">
       <div className="wrap">
         <div className="wca__intro">
           <header className="wca__copy">

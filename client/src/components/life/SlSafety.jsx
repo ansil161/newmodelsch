@@ -186,7 +186,7 @@ export function SlSafety() {
   };
 
   return (
-    <section ref={scope} className="section sw" id="safety" aria-labelledby="sw-title">
+    <section ref={scope} className="section sw ground-mist" id="safety" aria-labelledby="sw-title">
       <div className="wrap">
         <div className="sw__intro">
           <div className="sw__copy">

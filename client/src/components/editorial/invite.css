@@ -1,10 +1,9 @@
 /* ==========================================================================
    INVITE - the collage spreads that close a page
    --------------------------------------------------------------------------
-   White ground, navy ink, slate copy, one blue. The same white as every other
-   section, so a spread closes the page without turning it over; the prints'
-   white borders are carried by their contact shadow rather than by a tinted
-   ground.
+   Paper ground, navy ink, slate copy, one blue. The warm ground is what
+   lets the prints' white borders read as paper, and it hands the page over
+   to the footer's cloth without a flat white gap between them.
 
    See InviteSection.jsx for the hierarchy and Collage.jsx for the plate.
    ========================================================================== */
@@ -12,7 +11,7 @@
 .invite {
   position: relative;
   padding-block: clamp(96px, 11vw, 176px);
-  background: var(--chalk);
+  background: var(--ground-paper);
   color: var(--ink);
   overflow: clip;
   isolation: isolate;

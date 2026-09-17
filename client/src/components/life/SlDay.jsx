@@ -258,7 +258,7 @@ export function SlDay() {
   }, []);
 
   return (
-    <section ref={scope} className="section day" id="day">
+    <section ref={scope} className="section day ground-paper" id="day">
       <DayDefs />
 
       <div className="wrap day__inner">

@@ -163,7 +163,7 @@ export function InviteSection({
     };
   }, []);
 
-  const classes = ['invite', `invite--${side}`, bleed ? 'invite--bleed' : '', className]
+  const classes = ['invite', 'ground-paper', `invite--${side}`, bleed ? 'invite--bleed' : '', className]
     .filter(Boolean)
     .join(' ');
 

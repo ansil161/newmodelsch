@@ -254,7 +254,17 @@ export function count(
   if (!els.length || reduced()) return;
 
   els.forEach((el, i) => {
-    const final = el.textContent ?? '';
+    // If the setup re-runs while a count is mid-flight (a parent re-render
+    // reverts the context), the element holds a partial figure, and reading
+    // that as the target freezes the count on it - on '0', typically. So the
+    // authored figure is remembered, and the text is trusted again only when
+    // something other than this function has changed it.
+    const shown = el.textContent ?? '';
+    const final =
+      el.dataset.countTo !== undefined && el.dataset.countShown === shown
+        ? el.dataset.countTo
+        : shown;
+    el.dataset.countTo = final;
     const match = final.match(/-?[\d,]*\.?\d+/);
     if (!match) return;
 
@@ -268,7 +278,10 @@ export function count(
     const grouped = raw.includes(',');
     const box = { n: 0 };
 
-    if (opts.fromZero) el.textContent = prefix + (0).toFixed(decimals) + suffix;
+    if (opts.fromZero) {
+      el.textContent = prefix + (0).toFixed(decimals) + suffix;
+      el.dataset.countShown = el.textContent;
+    }
 
     gsap.to(box, {
       n: value,
@@ -279,11 +292,13 @@ export function count(
       onUpdate: () => {
         const n = decimals ? box.n.toFixed(decimals) : Math.round(box.n).toString();
         el.textContent = prefix + (grouped ? groupDigits(n) : n) + suffix;
+        el.dataset.countShown = el.textContent;
       },
       onComplete: () => {
         // Restore the authored string rather than the formatted one, so any
         // character the parser did not model survives.
         el.textContent = final;
+        el.dataset.countShown = final;
       },
       scrollTrigger: {
         trigger: opts.trigger ?? el,

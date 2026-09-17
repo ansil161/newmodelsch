@@ -16,7 +16,7 @@ import {
   studentImages,
 } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
-import { draw, drift, rise, unmask } from '@/lib/motion';
+import { count, draw, drift, rise, unmask } from '@/lib/motion';
 import { Icon } from '@/components/common/Icon';
 import {
   Collage,
@@ -27,7 +27,6 @@ import {
   Mark,
   Script,
   SectionHead,
-  StatReveal,
 } from '@/components/editorial';
 import './life.css';
 
@@ -132,17 +131,75 @@ export function SlCampus() {
           </ul>
         </div>
 
-        <StatReveal
-          items={CAMPUS_INTRO.facts.map((fact) => ({
-            value: fact.value,
-            label: fact.label,
-            detail: fact.detail,
-          }))}
-          layout="grid"
-          className="campex__stats"
-        />
+        <CampusFigures facts={CAMPUS_INTRO.facts} />
       </div>
     </section>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   The campus in four figures - four cards in the cover's own materials
+   --------------------------------------------------------------------------
+   The same four surfaces as the cards under this page's cover, so the figures
+   read as the cover's evidence arriving again further down: charcoal lit
+   from below, the indigo field with its angled planes, the lime with its
+   drawn lines, and paper. Four equal cards, compact, one row on a desktop.
+
+   Motion is the site's own: the cards rise in sequence and the figures count
+   up to themselves. `rise` owns each card's `transform`, so the hover lift is
+   written with the independent `translate` property and never fights it.
+   -------------------------------------------------------------------------- */
+
+const FIGURE_TONES = ['char', 'indigo', 'lime', 'paper'];
+
+function CampusFigures({ facts }) {
+  const scope = useGsapScope((_, el) => {
+    rise(el.querySelectorAll('.cfig'), { trigger: el, y: 34, stagger: 0.1 });
+    count(el.querySelectorAll('.cfig__value'), { trigger: el, delay: 0.25, stagger: 0.12 });
+  }, []);
+
+  return (
+    <ul ref={scope} className="cfigs" aria-label="The campus in figures">
+      {facts.map((fact, i) => {
+        const tone = FIGURE_TONES[i % FIGURE_TONES.length];
+
+        return (
+          <li className={`cfig cfig--${tone}`} key={fact.label}>
+            {tone === 'indigo' ? (
+              <span className="cfig__planes" aria-hidden="true">
+                <span />
+                <span />
+              </span>
+            ) : null}
+
+            {tone === 'lime' ? (
+              <svg
+                className="cfig__waves"
+                viewBox="0 0 600 300"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d="M-10 196C80 150 150 238 250 196S420 120 610 168" />
+                <path d="M-10 222C96 190 170 262 280 218S450 150 610 196" />
+                <path d="M-10 170C70 118 160 206 240 166S400 90 610 136" />
+              </svg>
+            ) : null}
+
+            <p className="cfig__tag">
+              <span className="cfig__dot" aria-hidden="true" />
+              {fact.label}
+            </p>
+
+            <span className="cfig__icon" aria-hidden="true">
+              <Icon name={fact.icon} size={18} />
+            </span>
+
+            <p className="cfig__value">{fact.value}</p>
+            <p className="cfig__detail">{fact.detail}</p>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -240,6 +297,7 @@ export function SlBeyond() {
 export function SlWall() {
   return (
     <HorizontalGallery
+      className="ground-cloth"
       cue="Drag"
       frames={galleryImages.map((photo, i) => ({
         photo,
