@@ -1,0 +1,452 @@
+/* ==========================================================================
+   FACULTY FIGURES - see FacultyFigures.jsx
+   --------------------------------------------------------------------------
+   Four grounds, one system: cloth (the anchor), white, the logo ink, paper.
+   Every panel shares the radius, the kicker, the figure face and the label
+   face; what changes is its ground and the small drawing under the figure.
+
+   GSAP writes transform and opacity on `.fstat`, the photograph's clip-path,
+   and transforms on the drawings - so no rule below transforms any of them.
+   ========================================================================== */
+
+.fstats {
+  --fs-r: clamp(20px, 1.8vw, 28px);
+  --fs-pad: clamp(22px, 2.4vw, 36px);
+  --fs-gap: clamp(12px, 1.2vw, 18px);
+
+  display: grid;
+  gap: var(--fs-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'staff years'
+    'ratio anchor';
+  margin-top: clamp(16px, 2vw, 24px);
+}
+
+.fstat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(20px, 2.4vw, 32px);
+  min-width: 0;
+  min-height: clamp(380px, 30vw, 440px);
+  padding: var(--fs-pad);
+  border-radius: var(--fs-r);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.fstat--anchor { grid-area: anchor; }
+.fstat--staff { grid-area: staff; }
+.fstat--years { grid-area: years; }
+.fstat--ratio { grid-area: ratio; }
+
+/* -------------------------------------------------------------- shared type */
+.fstat p {
+  margin: 0;
+}
+
+.fstat__kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fs-muted, var(--color-text-muted));
+}
+
+.fstat__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  aspect-ratio: 1;
+  border-radius: 11px;
+  background: var(--fs-icon-bg, var(--brand-100));
+  color: var(--fs-icon, var(--color-primary));
+}
+
+.fstat__index {
+  font-variant-numeric: tabular-nums;
+  color: var(--fs-index, var(--color-secondary-ink));
+}
+
+.fstat__index::after {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.fstat__value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.12em;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  color: var(--fs-ink, var(--color-primary-darker));
+}
+
+.fstat__value--mid { font-size: clamp(3rem, 4.6vw, 4.5rem); }
+
+.fstat__unit {
+  font-size: 0.42em;
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.02em;
+  color: var(--fs-unit, var(--color-primary));
+}
+
+.fstat__colon {
+  display: inline-block;
+  margin: 0 0.04em;
+  color: var(--fs-colon, var(--color-secondary));
+  transform: translateY(-0.06em);
+}
+
+.fstat .fstat__label {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-size: var(--t-h4);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--fs-label, var(--color-text));
+}
+
+/* ================================================================ 94% anchor
+   Cloth under a photograph. The veil holds the lower half in solid indigo so
+   the figure and its note are type on a colour, not type on a picture. */
+.fstat--anchor {
+  --fs-ink: var(--on-cloth);
+  --fs-unit: var(--brand-300);
+  --fs-label: var(--on-cloth);
+  --fs-body: var(--on-cloth-2);
+  --fs-muted: var(--on-cloth-2);
+  --fs-line: var(--line-cloth-strong);
+  --fs-index: var(--accent-300);
+  --fs-icon-bg: rgba(247, 246, 252, 0.14);
+  --fs-icon: var(--on-cloth);
+
+  padding: 0;
+  background: var(--ground-cloth);
+  color: var(--on-cloth);
+}
+
+.fstat__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: 0;
+  background: var(--ground-cloth);
+}
+
+.fstat__photo img {
+  /* The classroom's warm walls, pulled toward the panel's indigo. */
+  filter: saturate(0.62) contrast(1.04);
+}
+
+.fstat__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      0deg,
+      var(--brand-950) 0%,
+      rgba(17, 14, 44, 0.94) 32%,
+      rgba(26, 22, 64, 0.62) 56%,
+      rgba(26, 22, 64, 0.12) 82%,
+      rgba(26, 22, 64, 0.2) 100%
+    ),
+    linear-gradient(90deg, rgba(34, 27, 79, 0.55) 0%, rgba(34, 27, 79, 0) 60%),
+    linear-gradient(rgba(70, 53, 149, 0.22), rgba(70, 53, 149, 0.22));
+  pointer-events: none;
+}
+
+.fstat__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  flex: 1;
+  padding: var(--fs-pad);
+}
+
+.fstat--anchor .fstat__kicker {
+  align-self: flex-start;
+  padding: 5px 14px 5px 5px;
+  border: 1px solid var(--line-cloth);
+  border-radius: var(--r-pill);
+  background: rgba(17, 14, 44, 0.42);
+  backdrop-filter: blur(6px);
+}
+
+.fstat--anchor .fstat__icon {
+  width: 28px;
+  border-radius: 50%;
+}
+
+.fstat--anchor /* The meter - fifty ticks in two rows, forty-seven lit. */
+.meter {
+  display: grid;
+  gap: 10px;
+}
+
+.meter__ticks {
+  display: grid;
+  grid-template-columns: repeat(25, minmax(0, 1fr));
+  grid-auto-rows: 10px;
+  gap: 4px 3px;
+}
+
+.meter__tick {
+  border-radius: 2px;
+  background: rgba(247, 246, 252, 0.16);
+}
+
+.meter__tick.is-on {
+  background: var(--brand-300);
+}
+
+.meter__tick.is-on:last-child,
+.meter__tick.is-on:has(+ .meter__tick:not(.is-on)) {
+  background: var(--accent-300);
+}
+
+.meter__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: var(--t-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-cloth-3);
+}
+
+/* ================================================================ 101 staff */
+.fstat--staff {
+  justify-content: space-between;
+  border: 1px solid var(--color-border-card);
+  background: var(--white);
+  box-shadow: 0 1px 2px rgba(26, 22, 64, 0.03), 0 24px 48px -34px rgba(26, 22, 64, 0.28);
+}
+
+.depts {
+  display: grid;
+  gap: 14px;
+}
+
+.depts__bar {
+  display: flex;
+  gap: 3px;
+  height: 10px;
+}
+
+.depts__seg {
+  flex-basis: 0;
+  border-radius: 3px;
+  background: var(--brand-500);
+}
+
+.depts__seg:nth-child(2) { background: var(--brand-600); }
+.depts__seg:nth-child(3) { background: var(--brand-400); }
+.depts__seg:nth-child(4) { background: var(--brand-700); }
+.depts__seg:nth-child(5) { background: var(--brand-300); }
+.depts__seg:nth-child(6) { background: var(--brand-800); }
+
+.depts__caption {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* ================================================================ 11 yrs */
+.fstat--years {
+  --fs-ink: var(--white);
+  --fs-unit: var(--brand-200);
+  --fs-label: var(--white);
+  --fs-muted: var(--brand-200);
+  --fs-index: var(--accent-200);
+  --fs-icon-bg: rgba(255, 255, 255, 0.14);
+  --fs-icon: var(--white);
+
+  justify-content: space-between;
+  background: var(--brand-500);
+}
+
+/* A quiet ring in the corner - furniture, drawn in the panel's own ink. */
+.fstat--years::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 220px;
+  aspect-ratio: 1;
+  top: -90px;
+  right: -80px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+}
+
+.ruler {
+  display: grid;
+  gap: 10px;
+}
+
+.ruler__track {
+  position: relative;
+  height: 10px;
+  background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.34) 0 1px,
+      transparent 1px 5%
+    )
+    bottom / 100% 6px no-repeat;
+}
+
+.ruler__track::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.ruler__fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--white);
+}
+
+.ruler__mark {
+  position: absolute;
+  bottom: -4px;
+  width: 11px;
+  aspect-ratio: 1;
+  margin-left: -5.5px;
+  border: 2px solid var(--brand-500);
+  border-radius: 50%;
+  background: var(--accent-300);
+}
+
+.ruler__scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--t-label);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-200);
+}
+
+/* ================================================================ 1:18 */
+.fstat--ratio {
+  justify-content: space-between;
+  border: 1px solid rgba(142, 103, 47, 0.16);
+  background: var(--ground-paper);
+}
+
+.mentor {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px 14px;
+}
+
+.mentor__group {
+  display: grid;
+  grid-template-columns: repeat(9, 10px);
+  gap: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border-strong);
+}
+
+.mentor__dot {
+  display: block;
+  width: 10px;
+  aspect-ratio: 1;
+  border: 1.5px solid var(--brand-400);
+  border-radius: 50%;
+}
+
+.mentor__dot--lead {
+  width: 22px;
+  border: 0;
+  background: var(--accent-400);
+  box-shadow: 0 0 0 4px var(--accent-100);
+}
+
+.mentor__caption {
+  grid-column: 1 / -1;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* ================================================================ hover */
+@media (hover: hover) {
+  .fstat--staff,
+  .fstat--ratio {
+    transition:
+      border-color var(--d-state) var(--ease-out),
+      box-shadow var(--d-move) var(--ease-out-soft);
+  }
+
+  .fstat--staff:hover,
+  .fstat--ratio:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: 0 2px 4px rgba(26, 22, 64, 0.04), 0 30px 56px -30px rgba(70, 53, 149, 0.34);
+  }
+}
+
+/* ================================================================ wide
+   The anchor takes the left column and both rows; the staff room spans the
+   top right; experience and mentorship share the bottom right. */
+@media (min-width: 1100px) {
+  .fstats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: 'staff years ratio anchor';
+  }
+}
+
+/* ================================================================ phone */
+@media (max-width: 599px) {
+  .fstats {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'staff'
+      'years'
+      'ratio'
+      'anchor';
+  }
+
+  .fstat {
+    min-height: 0;
+  }
+
+  .fstat--anchor {
+    min-height: 440px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fstat--staff,
+  .fstat--ratio {
+    transition: none;
+  }
+}

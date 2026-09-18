@@ -263,10 +263,10 @@
    THE ANIMATION IS NOT DEFINED HERE, AND NOTHING HERE MAY FIGHT IT.
 
    SectionHead animates the tag, the title lines, the underline and the lead;
-   `rise` animates every `.dept`; StatReveal rises every `.stat` and counts
-   its figure. GSAP writes the transform and opacity of `.dept` and `.stat`
-   inline, so no rule below transforms either - hover changes colour and
-   shadow, and moves only their children.
+   `rise` animates every `.dept`. GSAP writes the transform and opacity of
+   `.dept` inline, so no rule below transforms it - hover changes colour and
+   shadow, and moves only its children. The figures under the departments
+   are FacultyFigures, styled in faculty-figures.css.
    ========================================================================== */
 .faculty {
   --fa-card-shadow: 0 1px 2px rgba(26, 22, 64, 0.03), 0 18px 40px -26px rgba(26, 22, 64, 0.2);
@@ -615,72 +615,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   The figures - white cards, an icon tile, the figure, its label
-   -------------------------------------------------------------------------- */
-.faculty__stats {
-  margin-top: clamp(16px, 2vw, 24px);
-}
-
-.faculty .stats--grid {
-  gap: clamp(12px, 1.6vw, 24px);
-}
-
-.faculty .stats--grid .stat {
-  padding: clamp(20px, 2.2vw, 30px);
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--r-lg);
-  background: var(--white);
-  box-shadow: var(--fa-card-shadow);
-  transition:
-    border-color var(--d-state) var(--ease-out),
-    box-shadow var(--d-move) var(--ease-out-soft);
-}
-
-.faculty .stat__body {
-  gap: 0;
-}
-
-.faculty .stat__icon {
-  display: grid;
-  place-items: center;
-  width: clamp(46px, 3.8vw, 54px);
-  aspect-ratio: 1;
-  margin-bottom: clamp(18px, 2vw, 26px);
-  border-radius: 15px;
-  background: var(--brand-100);
-  color: var(--color-primary);
-  box-shadow: inset 0 0 0 1px rgba(70, 53, 149, 0.06);
-  transition: background-color var(--d-state) var(--ease-out);
-}
-
-.faculty .stats--grid .stat__value {
-  font-size: clamp(1.875rem, 4.4cqi, 3rem);
-  font-weight: var(--fw-bold);
-  letter-spacing: -0.035em;
-  color: var(--color-primary-darker);
-}
-
-.faculty .stat__label {
-  margin-top: 8px;
-  font-family: var(--font-display);
-  font-size: var(--t-body);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.01em;
-  color: var(--color-primary);
-}
-
-@media (hover: hover) {
-  .faculty .stats--grid .stat:hover {
-    border-color: var(--color-border-brand);
-    box-shadow: var(--fa-card-shadow-hi);
-  }
-
-  .faculty .stat:hover .stat__icon {
-    background: var(--brand-200);
-  }
-}
-
-/* --------------------------------------------------------------------------
    Wide: the head's lead beside its title, the cards beside the photograph
    -------------------------------------------------------------------------- */
 @media (min-width: 960px) {
@@ -744,20 +678,11 @@
   .faculty__feature {
     min-height: 600px;
   }
-
-  .faculty .stats--grid .stat {
-    padding: 18px;
-  }
-
-  .faculty .stat__label {
-    font-size: var(--t-small);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dept,
-  .dept__go svg,
-  .faculty .stats--grid .stat {
+  .dept__go svg {
     transition: none;
   }
 }

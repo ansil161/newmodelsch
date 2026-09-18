@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   ALUMNI,
   FACULTY_DEPARTMENTS,
-  FACULTY_STATS,
   HERITAGE_CHAPTERS,
   PHILOSOPHY,
   ROUTES,
@@ -29,9 +28,9 @@ import {
   Mark,
   Script,
   SectionHead,
-  StatReveal,
   Sticker,
 } from '@/components/editorial';
+import { FacultyFigures } from './FacultyFigures';
 import './about.css';
 
 /* ==========================================================================
@@ -318,10 +317,10 @@ export { AboutPrincipal } from '@/components/principal/PrincipalMessage';
    Six white department cards with icon tiles - the open one filled in the
    logo's indigo - beside one photograph card that carries the open
    department's name, description and heads over the picture. The four
-   figures are white cards with icon tiles below. The motion is unchanged:
-   SectionHead animates the head, `rise` brings the department cards in, and
-   StatReveal rises and counts the figures. GSAP owns the transform on `.dept`
-   and `.stat`, so their hover states never transform them.
+   figures below are one composition (see FacultyFigures.jsx). SectionHead
+   animates the head, `rise` brings the department cards in, and
+   FacultyFigures reveals and counts its own figures. GSAP owns the transform
+   on `.dept`, so its hover state never transforms it.
    -------------------------------------------------------------------------- */
 
 /* One photograph and one icon per department, in FACULTY_DEPARTMENTS order. */
@@ -333,9 +332,6 @@ const FACULTY_MEDIA = [
   { photo: academicImages[2], icon: 'robot' }, // Computing & Robotics - assembling a robot
   { photo: artsImages[1], icon: 'palette' }, // Arts, Music & Sport - a student at an easel
 ];
-
-/* One glyph per figure, in FACULTY_STATS order. */
-const FIGURE_ICONS = ['users', 'history', 'cap', 'shield'];
 
 /* 'Anjali Menon - Head of English' -> a name and the post it holds. */
 const splitLead = (lead) => {
@@ -349,16 +345,6 @@ const initials = (name) =>
     .map((part) => part[0])
     .slice(0, 2)
     .join('');
-
-/* Built once, not per render. StatReveal rebuilds its count whenever `items`
-   changes identity, and a rebuild mid-count reads the half-counted figure
-   back as the final one - so a click on a department while the figures were
-   still counting used to leave '0' behind. */
-const FACULTY_FIGURES = FACULTY_STATS.map((stat, i) => ({
-  value: stat.value,
-  label: stat.label,
-  icon: FIGURE_ICONS[i],
-}));
 
 export function AboutFaculty() {
   const [open, setOpen] = useState(0);
@@ -457,7 +443,7 @@ export function AboutFaculty() {
           </article>
         </div>
 
-        <StatReveal items={FACULTY_FIGURES} layout="grid" className="faculty__stats" />
+        <FacultyFigures />
       </div>
     </section>
   );
