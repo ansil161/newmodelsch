@@ -276,10 +276,10 @@
   isolation: isolate;
   background: linear-gradient(
     180deg,
-    var(--white) 0%,
+    var(--canvas) 0%,
     var(--ground-mist) 14%,
     var(--ground-mist) 86%,
-    var(--white) 100%
+    var(--canvas) 100%
   );
 }
 

@@ -25,7 +25,7 @@
   --wk-open-h: min(72vh, 50vw);
 
   position: relative;
-  background: var(--white);
+  background: var(--canvas);
   color: var(--ink);
   isolation: isolate;
   /* No `overflow`, `filter`, `transform` or `contain` here: this element is

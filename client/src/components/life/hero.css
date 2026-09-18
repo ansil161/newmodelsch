@@ -33,7 +33,7 @@
   position: relative;
   padding-top: calc(var(--nav-h) + clamp(10px, 1.4vw, 22px));
   padding-bottom: clamp(56px, 7vw, 112px);
-  background: #ffffff;
+  background: var(--canvas);
 }
 
 .slh__inner {
@@ -130,7 +130,7 @@
     rgba(58, 43, 158, 0.12);
 }
 
-/* The cut corner. Painted in the page's own white. */
+/* The cut corner. Painted in the page's own ground. */
 .slh__notch {
   display: none;
   position: absolute;
@@ -139,7 +139,7 @@
   z-index: 4;
   width: clamp(72px, 7vw, 116px);
   aspect-ratio: 1;
-  background: #ffffff;
+  background: var(--canvas);
   clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 

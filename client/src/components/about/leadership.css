@@ -13,7 +13,7 @@
    ========================================================================== */
 
 .ld {
-  --ld-ground: var(--white);
+  --ld-ground: var(--canvas);
   /* The sunburst is a pale blue pen line - decoration, never a type colour. */
   --ld-sun: var(--sky-line);
   --ld-radius: clamp(12px, 1.45vw, 20px);
@@ -45,7 +45,7 @@
   line-height: 1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-2);
+  color: var(--color-primary); /* the section's label carries the logo ink */
 }
 
 .ld__title {

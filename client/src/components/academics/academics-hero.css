@@ -18,7 +18,10 @@
   --ach-notch: clamp(16px, 1.6vw, 22px);
 
   position: relative;
-  background: var(--white);
+  background:
+    radial-gradient(55% 40% at 50% 0%, rgba(70, 53, 149, 0.06), transparent 70%),
+    radial-gradient(30% 30% at 90% 18%, rgba(204, 154, 78, 0.07), transparent 70%),
+    var(--canvas);
   padding-top: calc(var(--nav-h) + clamp(28px, 5vw, 72px));
   padding-bottom: clamp(56px, 7vw, 112px);
   overflow-x: clip;
@@ -103,7 +106,7 @@
   display: block;
 }
 
-/* The notch: a white tab cut into the lower-left corner, with two concave
+/* The notch: a tab of the page ground cut into the lower-left corner, with two concave
    corners so it reads as part of the page ground rather than a sticker. */
 .ach__notch {
   position: absolute;
@@ -111,7 +114,7 @@
   bottom: 0;
   z-index: 2;
   padding: 10px 12px 0 0;
-  background: var(--white);
+  background: var(--canvas);
   border-top-right-radius: var(--ach-notch);
 }
 
@@ -124,7 +127,7 @@
   background: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--ach-notch) - 0.5px),
-    var(--white) var(--ach-notch)
+    var(--canvas) var(--ach-notch)
   );
   pointer-events: none;
 }

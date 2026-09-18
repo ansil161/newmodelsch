@@ -439,6 +439,9 @@
 
 .foot__label {
   margin-bottom: 18px;
+  /* The directory's column heads are the footer's one warm note: small
+     brass capitals on the cloth. */
+  color: var(--accent-300);
 }
 
 .foot__list {
@@ -471,7 +474,7 @@
   width: 8px;
   height: 1.5px;
   border-radius: 2px;
-  background: var(--brand-300);
+  background: var(--accent-300);
   opacity: 0;
   transform: translateX(-6px);
   transition:

@@ -37,7 +37,7 @@
      is a vertical budget. The `vw` cap only bites on a short, wide window,
      where the pair would otherwise run into the edges. */
   --oh-kid: min(calc(var(--oh-h) * 0.9), 64vw);
-  --oh-line: #e5e5e5;
+  --oh-line: #e7e4f1;
   --oh-spin: 34s;
   --oh-spin-in: 29s;
 
@@ -48,7 +48,14 @@
   /* Clipped rather than hidden: the students are meant to run off the foot,
      and `clip` does it without making the hero a scroll container. */
   overflow: clip;
-  background: #ffffff;
+  /* The page canvas, with the logo ink pooled under the rings' centre and
+     brass low on one side, so the ground has light in it rather than being a
+     blank sheet. */
+  background:
+    radial-gradient(58% 55% at 50% 0%, rgba(70, 53, 149, 0.12), transparent 72%),
+    radial-gradient(36% 44% at 90% 90%, rgba(204, 154, 78, 0.16), transparent 72%),
+    radial-gradient(34% 44% at 6% 78%, rgba(122, 109, 189, 0.12), transparent 72%),
+    var(--canvas);
 }
 
 /* ==========================================================================

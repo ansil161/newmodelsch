@@ -10,6 +10,11 @@
 .hello {
   padding-top: calc(var(--nav-h) + clamp(32px, 6vw, 80px));
   padding-bottom: clamp(56px, 7vw, 110px);
+  /* A white opening with light in it: the logo ink high on the left behind
+     the heading, a trace of brass under the photograph. */
+  background:
+    radial-gradient(45% 50% at 10% 20%, rgba(70, 53, 149, 0.06), transparent 70%),
+    radial-gradient(35% 40% at 85% 90%, rgba(204, 154, 78, 0.07), transparent 70%);
 }
 
 .hello__inner {

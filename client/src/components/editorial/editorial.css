@@ -1434,7 +1434,7 @@
 .cta {
   position: relative;
   padding-block: clamp(88px, 11vw, 180px);
-  background: var(--white);
+  background: var(--canvas);
   color: var(--ink);
   border-top: 1px solid var(--line-blue);
   overflow: clip;

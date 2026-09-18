@@ -115,7 +115,9 @@
    The panel
    -------------------------------------------------------------------------- */
 .qe__panel {
-  background: var(--white);
+  /* White on a white section: a breath of the logo ink at the head of the
+     card lets it read as an object without becoming a coloured panel. */
+  background: linear-gradient(180deg, var(--color-surface-tint), var(--white) 220px);
   border: 1px solid var(--line-blue);
   border-radius: var(--r-lg);
   padding: clamp(24px, 3.4vw, 44px);

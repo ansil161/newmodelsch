@@ -49,7 +49,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--color-primary); /* the section's label carries the logo ink */
 }
 
 .wca__label i {

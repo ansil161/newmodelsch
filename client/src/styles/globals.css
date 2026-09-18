@@ -16,7 +16,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--white);
+  background: var(--canvas);
   color: var(--color-text-body);
   font-family: var(--font-body);
   font-size: var(--t-body);
@@ -122,8 +122,8 @@ button {
 }
 
 ::selection {
-  background: var(--sun);
-  color: var(--on-sun);
+  background: var(--brand-200);
+  color: var(--brand-900);
 }
 
 /* ==========================================================================
@@ -191,7 +191,7 @@ button {
 }
 
 .section--navy {
-  background: var(--white);
+  background: var(--canvas);
   color: var(--ink);
 }
 
@@ -230,6 +230,10 @@ button {
   --ground: var(--ground-mist);
   --sand: var(--ground-mist-2);
   background-color: var(--ground);
+  /* The footer's dot grid, fainter: a printed texture rather than a flat
+     tint. A section that sets its own `background` simply goes without. */
+  background-image: radial-gradient(rgba(70, 53, 149, 0.085) 1px, transparent 1.3px);
+  background-size: 22px 22px;
 }
 
 .ground-cloth {
@@ -262,6 +266,9 @@ button {
   --color-link: var(--brand-200);
   --color-link-hover: var(--on-cloth);
   --color-focus: var(--brand-300);
+  --color-secondary: var(--accent-300);
+  --color-secondary-ink: var(--accent-300);
+  --color-secondary-soft: rgba(224, 189, 130, 0.16);
   --sun: var(--brand-400);
   --sun-deep: var(--brand-200);
   --sun-soft: rgba(179, 171, 219, 0.14);
@@ -325,7 +332,14 @@ button {
   height: 1px;
   max-width: calc(var(--container) - var(--gutter) * 2);
   margin-inline: auto;
-  background: linear-gradient(90deg, transparent, var(--line-blue) 12%, var(--line-blue) 88%, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-blue) 12%,
+    var(--accent-200) 50%,
+    var(--line-blue) 88%,
+    transparent
+  );
   border: 0;
 }
 
@@ -530,9 +544,11 @@ button {
 .sticker {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   padding: 7px 12px;
   border-radius: 6px;
   background: var(--color-primary-light);
+  box-shadow: inset 0 0 0 1px var(--color-border-brand);
   color: var(--color-primary);
   font-family: var(--font-body);
   font-size: var(--t-label);
@@ -541,6 +557,18 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+/* The default label carries one brass dot - the smallest place the second
+   colour appears, and the most repeated, so every page has it. The toned
+   variants are already a colour and go without. */
+.sticker:not([class*='sticker--'])::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-secondary);
 }
 
 .sticker--blue { background: var(--color-primary); color: var(--color-on-primary); }
@@ -580,7 +608,7 @@ button {
 .mark {
   display: inline;
   color: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23dcd8ee'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cpath d='M5 13C42 3 158 2 195 11c4 15 3 30 0 40-46 8-152 9-191 1-4-13-4-27 1-40Z' fill='%23f2e1bf'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 62%;
   background-size: calc(var(--mark-scale, 1) * 100%) 0.82em;
@@ -738,7 +766,10 @@ a:hover .fig--hover img {
   overflow: hidden;
   isolation: isolate;
   white-space: nowrap;
-  transition: color var(--d-state) var(--ease-out), transform var(--d-tap) var(--ease-out);
+  transition:
+    color var(--d-state) var(--ease-out),
+    box-shadow var(--d-state) var(--ease-out),
+    transform var(--d-tap) var(--ease-out);
 }
 
 .btn::after {
@@ -768,11 +799,14 @@ a:hover .fig--hover img {
 }
 
 /* `.btn-sun` is the old name for the primary button and renders identically. */
+/* The fill carries a faint top light - a lit edge, not a gradient you notice -
+   and the shadow under it is the logo ink, so the button sits on the page
+   rather than being printed on it. */
 .btn-primary,
 .btn-sun {
-  background: var(--color-primary);
+  background: var(--color-primary) linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 60%);
   color: var(--color-on-primary);
-  box-shadow: 0 10px 22px -16px rgba(70, 53, 149, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--e-brand);
 }
 
 .btn-primary::after,
@@ -783,12 +817,13 @@ a:hover .fig--hover img {
 .btn-primary:hover,
 .btn-sun:hover {
   color: var(--color-on-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--e-brand-hover);
 }
 
 .btn-secondary {
   background: var(--white);
   color: var(--color-primary);
-  box-shadow: inset 0 0 0 1.5px var(--line-blue-strong);
+  box-shadow: inset 0 0 0 1.5px var(--line-blue-strong), var(--e-1);
   transition:
     color var(--d-state) var(--ease-out),
     box-shadow var(--d-state) var(--ease-out),
@@ -801,7 +836,7 @@ a:hover .fig--hover img {
 
 .btn-secondary:hover {
   color: var(--color-primary-dark);
-  box-shadow: inset 0 0 0 1.5px var(--color-primary);
+  box-shadow: inset 0 0 0 1.5px var(--color-primary), var(--e-1);
 }
 
 .on-navy .btn-secondary,
@@ -876,7 +911,9 @@ a:hover .fig--hover img {
   right: 0;
   bottom: 0;
   height: 1.5px;
-  background: var(--sun-deep);
+  /* The redrawn rule is the second colour: the indigo line leaves, a brass
+     one arrives. */
+  background: var(--color-secondary);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.4s var(--ease-out) 0.12s;
@@ -892,7 +929,7 @@ a:hover .fig--hover img {
 
 .on-navy .link::before,
 .section--navy .link::before {
-  background: var(--sun);
+  background: var(--color-secondary);
 }
 
 /* ==========================================================================
@@ -927,8 +964,8 @@ a:hover .fig--hover img {
 }
 
 .numeral--sun {
-  color: var(--sun-deep);
-  opacity: 0.28;
+  color: var(--color-secondary);
+  opacity: 0.32;
 }
 
 /* A hairline that the reader's own scroll draws across the column. */
@@ -951,7 +988,7 @@ a:hover .fig--hover img {
   gap: 8px;
   padding: 7px 12px;
   border-radius: 6px;
-  background: var(--white);
+  background: var(--color-surface-tint);
   box-shadow: inset 0 0 0 1px var(--line-blue);
   font-family: var(--font-body);
   font-size: var(--t-label);
@@ -962,9 +999,9 @@ a:hover .fig--hover img {
 }
 
 .chip--sun {
-  background: var(--sun-soft);
+  background: var(--color-secondary-soft);
   box-shadow: none;
-  color: var(--sun-deep);
+  color: var(--color-secondary-ink);
 }
 
 .chip--ink {

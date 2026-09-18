@@ -24,7 +24,7 @@
   --vm-yellow: var(--blue-bright);
   /* The paint sits on the page's white, so it reads as ink on a fresh sheet
      rather than as colour on a tinted one. */
-  background: var(--white);
+  background: var(--canvas);
   padding-block: var(--section-y);
   overflow-x: clip;
 }

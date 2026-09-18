@@ -422,7 +422,7 @@
   }
 
   .legacy-card:hover .legacy-card__index {
-    color: var(--brand-300);
+    color: var(--accent-300);
   }
 
   /* A card lights the branch that reaches it. */

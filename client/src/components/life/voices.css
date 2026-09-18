@@ -24,7 +24,7 @@
    ========================================================================== */
 
 .reel {
-  background: var(--white);
+  background: var(--canvas);
   /* The panels sit flush to their own radius and the posters scale inside
      them; without this a subpixel edge shows on the outer two. */
   overflow: hidden;

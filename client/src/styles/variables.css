@@ -55,7 +55,7 @@
   --neutral-800: #2c2b35;
   --neutral-700: #45444f;
   --neutral-600: #5b5a66;
-  --neutral-500: #737280;
+  --neutral-500: #6a6977; /* 5.4:1 on white, 4.9:1 on the canvas */
   --neutral-300: #a9a8b3;
   --neutral-200: #e4e3ea;
 
@@ -70,7 +70,7 @@
   --color-navy: var(--brand-900);
   --color-navy-deep: var(--brand-950);
 
-  --color-background: #ffffff;
+  --color-background: var(--canvas);
   --color-surface: #ffffff;
   /* The one tinted ground: selected supporting sections, quiet wells. */
   --color-surface-alt: var(--brand-50);
@@ -98,6 +98,36 @@
 
   --color-focus: var(--brand-500);
 
+  /* ==================================================== secondary accent
+     BRASS. The one colour that is not the logo's, and it is spent in small
+     amounts: a dot on a label, the second stroke of a drawn link, the
+     highlighter behind a headline word, a current-page marker. Never a fill
+     behind type, never a button. It is the warm counterpart to the indigo -
+     the gold the About hero already draws its underline in, taken a step
+     brighter so it reads on white as well as on paper.
+       400 marks, dots, rules - never type
+       600 the only step allowed to be type (5.1:1 on white, 4.6:1 on paper)
+       200/100/50 highlighter and washes */
+  --accent-50: #fbf7ef;
+  --accent-100: #f6ecda;
+  --accent-200: #eed9b4;
+  --accent-300: #e0bd82;
+  --accent-400: #cc9a4e;
+  --accent-500: #b3823b;
+  --accent-600: #8e672f;
+  --accent-700: #6e4f24;
+
+  --color-secondary: var(--accent-400);
+  --color-secondary-ink: var(--accent-600);
+  --color-secondary-soft: var(--accent-100);
+  --color-secondary-wash: var(--accent-50);
+
+  /* Surfaces. A white card on white disappears; one breath of the brand hue
+     lets it read as an object without becoming a coloured panel. */
+  --color-surface-tint: #fbfaff;
+  --color-surface-warm: #fdfbf7;
+  --color-border-card: rgba(70, 53, 149, 0.1);
+
   /* ==================================================== grounds
      THE PAGE IS NOT ONE SHEET OF WHITE.
 
@@ -116,10 +146,16 @@
      Neighbouring grounds are never the same, and cloth is never adjacent to
      cloth. The `.ground-*` classes in globals.css apply these and re-point
      the ink tokens so type on them stays in contrast. */
-  --ground-paper: #f7f5ef;
-  --ground-paper-2: #efebe1;
-  --ground-mist: #efedf7;
-  --ground-mist-2: #e5e2f2;
+  /* CANVAS replaces the old white page. It is the logo ink at about 3%, a
+     cool lavender-white, so the page is never a blank sheet - and every card,
+     form and figure mount that stays pure white now reads as an object
+     laid on it. Paper and mist are pushed a step apart from it so a
+     neighbouring ground is still a visible change. */
+  --canvas: #f5f4fa;
+  --ground-paper: #f8f3ea;
+  --ground-paper-2: #efe7d8;
+  --ground-mist: #ebe8f8;
+  --ground-mist-2: #e0dcf2;
   --ground-cloth: var(--brand-900);
   --ground-cloth-2: #241f55;
   --ground-cloth-deep: var(--brand-950);
@@ -321,6 +357,9 @@
   --e-1: 0 1px 2px rgba(26, 22, 64, 0.04), 0 8px 22px -14px rgba(26, 22, 64, 0.16);
   --e-2: 0 1px 3px rgba(26, 22, 64, 0.05), 0 22px 46px -26px rgba(26, 22, 64, 0.22);
   --e-3: 0 2px 6px rgba(26, 22, 64, 0.05), 0 40px 80px -44px rgba(26, 22, 64, 0.3);
+  /* The coloured lift under a primary action - the logo ink, not grey. */
+  --e-brand: 0 1px 2px rgba(46, 35, 102, 0.18), 0 12px 26px -14px rgba(70, 53, 149, 0.55);
+  --e-brand-hover: 0 1px 2px rgba(46, 35, 102, 0.2), 0 18px 34px -16px rgba(70, 53, 149, 0.62);
 
   /* -------------------------------------------------- z-index */
   --z-base: 0;
