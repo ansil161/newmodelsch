@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ALUMNI,
-  ALUMNI_REACH,
   FACULTY_DEPARTMENTS,
   FACULTY_STATS,
   HERITAGE_CHAPTERS,
@@ -524,12 +523,6 @@ export function AboutAlumni() {
             </li>
           ))}
         </ol>
-
-        <StatReveal
-          items={ALUMNI_REACH.map((reach) => ({ value: reach.value, label: reach.label }))}
-          layout="grid"
-          className="alumni__stats"
-        />
       </div>
     </section>
   );
