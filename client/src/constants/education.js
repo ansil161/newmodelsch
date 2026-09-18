@@ -28,6 +28,84 @@ export const STORY = {
 };
 
 /**
+ * THE RECORD - five photo pillars, read left to right as one sentence:
+ * history, students, teachers, results, the future.
+ *
+ * `from` is where a figure's count-up starts. A year counts up from the
+ * turn of the century rather than from zero, so it reads as time passing
+ * rather than as a tally; `null` means the figure is not counted at all.
+ *
+ * The photographs live in `public/images/about/record/`. The wide campus
+ * frame is used twice, cropped to two different subjects: the walkway for
+ * the teachers, the student for the results. `focus` is what keeps each
+ * subject inside a tall, narrow pillar - move it if a photograph changes.
+ */
+export const RECORD = {
+  eyebrow: 'A legacy of excellence',
+  /** One entry per line; `em` is set in the italic. */
+  titleLines: [{ text: 'Shaping bright minds' }, { text: 'for a better ', em: 'tomorrow.' }],
+  lead: 'For over sixty years, we have been more than a school - we are a community that dreams, learns and grows together, still on the same ground in Bahadurpura.',
+  link: { label: 'Discover Our Story', hash: '#story' },
+  pillars: [
+    {
+      label: 'Established',
+      value: '1962',
+      from: 1900,
+      note: 'A legacy of excellence',
+      photo: {
+        id: '/images/about/record/campus-building.webp',
+        alt: 'The main school building and its entrance steps under a blue sky',
+        focus: '40% 50%',
+      },
+    },
+    {
+      label: 'Students',
+      value: '1,200+',
+      from: 0,
+      note: 'Growing every year',
+      photo: {
+        id: '/images/about/record/students-walking.webp',
+        alt: 'Students in uniform walking together towards the school building',
+        focus: '70% 50%',
+      },
+    },
+    {
+      label: 'Teaching staff',
+      value: '100+',
+      from: 0,
+      note: 'Dedicated educators',
+      photo: {
+        id: '/images/about/record/campus-flag.webp',
+        alt: 'The campus walkway, with students heading into the main building',
+        focus: '27% 50%',
+      },
+    },
+    {
+      label: 'Academic excellence',
+      value: '95%',
+      from: 0,
+      note: 'Board results & beyond',
+      photo: {
+        id: '/images/about/record/campus-flag.webp',
+        alt: 'A student carrying her books, looking out across the campus',
+        focus: '64% 50%',
+      },
+    },
+    {
+      label: 'Our vision',
+      /** The closing pillar carries a statement rather than a figure. */
+      statement: { text: 'A Brighter', em: 'Future' },
+      note: 'For every child',
+      photo: {
+        id: '/images/about/record/flag.webp',
+        alt: 'The school flag flying against a bright sky',
+        focus: '50% 42%',
+      },
+    },
+  ],
+};
+
+/**
  * The opening frame of the About page: an editorial spread on ivory.
  *
  * Separate from STORY because it answers a different job: STORY is the record,

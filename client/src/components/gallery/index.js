@@ -9,6 +9,7 @@
  */
 import './gallery.css';
 import './gallery-home.css';
+import './gallery-eyes.css';
 import './gallery-stories.css';
 import './gallery-archive.css';
 

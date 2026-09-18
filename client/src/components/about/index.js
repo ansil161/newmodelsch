@@ -22,6 +22,7 @@ export {
 
 export { AboutCover } from './AboutHero';
 export { AboutLedger } from './LegacyLedger';
+export { AboutRecord } from './RecordPillars';
 export { VisionMission as AboutVisionMission } from './VisionMission';
 export { CharterScrollSection as AboutCharter } from './CharterScrollSection';
 export { AboutLeadership } from './Leadership';

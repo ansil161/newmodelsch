@@ -19,9 +19,15 @@
    ========================================================================== */
 .vm {
   --vm-blue: var(--blue);
-  /* The second stroke. The class still says yellow; the paint is the light
-     end of the blue ladder, which carries ink type at 5.8:1. */
-  --vm-yellow: var(--blue-bright);
+  /* The second stroke: a warm mustard, the brass accent pushed to full
+     strength so it can carry a fill. Ink type sits on it at well over 7:1. */
+  --vm-yellow: #e0a52e;
+  /* Statement type. A step brighter than the brand indigo the paint uses:
+     the full-strength brand at display size read as near-black on the light
+     canvas. Still 6.8:1 on white. */
+  --vm-heading: #5b4bb0;
+  /* The dark claim line - a warm charcoal rather than the page's ink. */
+  --vm-heading-deep: var(--neutral-700);
   /* The paint sits on the page's white, so it reads as ink on a fresh sheet
      rather than as colour on a tinted one. */
   background: var(--canvas);
@@ -48,11 +54,15 @@
 
 .vm__title {
   max-width: 14ch;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .vm__lead {
   font-size: var(--t-standfirst);
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--color-text-lead);
   max-width: 46ch;
 }
@@ -96,6 +106,10 @@
      Clipped by the section rather than the page, so it never opens a
      horizontal scrollbar. */
   margin-left: calc(var(--gutter) * -0.5);
+  /* A size container, so the wordmark and marker scale with the stroke they
+     sit on rather than with the viewport - the stroke is a different share of
+     the page at every breakpoint and in every phase of the pinned run. */
+  container-type: size;
   will-change: transform;
 }
 
@@ -122,27 +136,40 @@
 }
 
 /* --------------------------------------------------------------------------
-   The wordmark
+   The face
    --------------------------------------------------------------------------
-   Set against the dense middle of the stroke rather than against its box: the
-   roughened edge eats into the corners, and a word placed by the box lands
-   half off the paint.
+   The wordmark and its marker share one centred column laid over the dense
+   body of the paint. The box is the silhouette of the slab in BrushStroke
+   (x 14%-87%, y 24%-84% of the viewBox) rather than the element's box: the
+   roughened edge and the dry streak along the top eat into the corners, and
+   anything centred on the box sits high and off the paint.
+
+   Both strokes use the same face, so the two read as a matched pair and the
+   marker can never land on top of the word it belongs to.
    -------------------------------------------------------------------------- */
-.vm__label {
+.vm__face {
   position: absolute;
-  /* The paint fills roughly 12%–88% of this box in both axes — the rest is
-     where the displacement filter frays the edge away. The wordmark is placed
-     against that silhouette, not against the box, or its last line sits on
-     bare paper. */
-  left: 17%;
-  bottom: 21%;
+  inset: 24% 13% 16% 14%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 5cqb, 22px);
+  text-align: center;
+  pointer-events: none;
+}
+
+.vm__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 8.5vw, 4.75rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  /* Against the stroke, both ways: the width keeps "Mission" inside the paint,
+     the height keeps two lines plus the marker inside the slab. */
+  font-size: clamp(1.5rem, min(8.6cqi, 13cqb), 4rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
   pointer-events: none;
 }
 
@@ -176,16 +203,21 @@
    second button to find and focus never has to be moved.
    -------------------------------------------------------------------------- */
 .vm__hot {
-  position: absolute;
+  position: relative;
   z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   line-height: 0;
+  pointer-events: auto;
 }
 
 .vm__marker {
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(52px, 5.4vw, 74px);
+  flex: none;
+  width: clamp(44px, min(11cqi, 17cqb), 74px);
   aspect-ratio: 1;
   padding: 0;
   border: none;
@@ -279,14 +311,9 @@
 }
 
 /* The cue is the clue. A bare + on a piece of paint reads as decoration, so
-   the control says in words that a statement sits behind it. Floated off the
-   disc rather than stacked with it, so adding it never shifts the marker off
-   the spot the composition puts it on. */
+   the control says in words that a statement sits behind it. It sits beside
+   the disc in the same row, so the pair is one unit under the wordmark. */
 .vm__cue {
-  position: absolute;
-  top: calc(100% + 11px);
-  left: 50%;
-  translate: -50% 0;
   padding: 5px 11px;
   border-radius: var(--r-ctl);
   background: var(--paper);
@@ -302,26 +329,13 @@
   pointer-events: none;
 }
 
-/* Stacked, the marker sits near the top-right of the stroke and a centred cue
-   would hang off the column. */
-.vm__brush .vm__hot {
-  right: 12%;
-  top: 16%;
-}
-
-.vm__brush--yellow .vm__hot {
-  right: auto;
-  left: 14%;
-  top: 20%;
-}
-
 /* --------------------------------------------------------------------------
    The statement
    -------------------------------------------------------------------------- */
 .vm__panel {
   display: flex;
   flex-direction: column;
-  gap: clamp(24px, 3.4vw, 40px);
+  gap: clamp(28px, 3.6vw, 40px);
 }
 
 /* Stacked treatment — quiet connectors between shouted claims.
@@ -332,7 +346,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(6px, 0.9vh, 12px);
+  gap: 6px;
+  margin: 0;
 }
 
 .vm__stack-line {
@@ -341,46 +356,76 @@
 
 .vm__stack-line.is-quiet {
   font-family: var(--font-mono);
-  font-size: var(--t-small);
+  font-size: clamp(0.75rem, 0.85vw, 0.8125rem);
   font-weight: 500;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--ink-3);
-  padding-block: 4px;
+  /* More air above each connector than below it, so it reads as the lead-in
+     to the claim under it rather than the tail of the one above. */
+  padding-top: clamp(14px, 1.8vh, 20px);
+}
+
+.vm__stack-line.is-quiet:first-child {
+  padding-top: 0;
 }
 
 .vm__stack-line.is-primary,
 .vm__stack-line.is-deep {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4.6vw, 3rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.125rem, 4.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
-  /* Caps at this size clip on the descender of a comma; this is the room
-     they need without opening the leading. */
-  padding-bottom: 0.06em;
 }
 
 .vm__stack-line.is-primary {
-  color: var(--vm-blue);
+  color: var(--vm-heading);
 }
 
 .vm__stack-line.is-deep {
-  color: var(--ink);
+  color: var(--vm-heading-deep);
 }
 
 /* -------------------------------------------------- split treatment */
 .vm__split {
   display: grid;
-  gap: clamp(24px, 3vw, 40px);
+  gap: clamp(28px, 3vw, 40px);
+}
+
+/* A tablet has the width for the two halves side by side, which is how the
+   desktop reads them; stacked they leave half the screen empty. */
+@media (min-width: 640px) {
+  .vm__split {
+    --vm-split-gap: clamp(28px, 3vw, 40px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--vm-split-gap);
+  }
+
+  /* Side by side, the ampersand stacked above the first headline would start
+     it a line lower than the second. It hangs on the rule between the two
+     instead - the word it stands for, sitting where the halves join. */
+  .vm__col--end .vm__col-head {
+    position: relative;
+  }
+
+  .vm__col--end .vm__amp {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: calc(var(--vm-split-gap) * -1);
+    translate: 50% 0;
+    margin: 0;
+  }
 }
 
 .vm__col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(14px, 1.6vw, 20px);
 }
 
 /* The rule between the mission's two halves. Stacked it reads as an indent on
@@ -394,38 +439,43 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.1em;
+  margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.375rem, 3.4vw, 2.125rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.0625rem, 3.6vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
-  color: var(--vm-blue);
+  color: var(--vm-heading);
 }
 
-/* The small word set inside a pale disc, as 'THE' is on the reference. */
+/* The small joining word ('THE') - a quiet tag between the two headline
+   lines, not a line of its own. A fixed label size rather than a fraction of
+   the headline, so it stays legible when the headline scales down, and a
+   tight vertical margin so the two loud lines still read as one phrase. */
 .vm__col-inset {
   align-self: flex-start;
-  display: grid;
-  place-items: center;
-  min-width: 3.4em;
-  padding: 0.45em 0.75em;
-  margin-block: 5px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25em 0.6em;
+  margin-block: 0.3rem;
   border-radius: var(--r-ctl);
   background: var(--blue-soft);
   font-family: var(--font-mono);
-  font-size: 0.36em;
+  font-size: clamp(0.625rem, 0.7vw, 0.6875rem);
   font-weight: 500;
-  letter-spacing: 0.14em;
-  color: var(--blue-deep);
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  color: var(--vm-heading);
 }
 
 .vm__col-body {
   font-size: var(--t-small);
-  line-height: 1.65;
+  line-height: 1.75;
   color: var(--ink-2);
-  max-width: 34ch;
+  max-width: 38ch;
+  margin: 0;
 }
 
 /* The ampersand, hung off the edge of the headline it joins and centred on
@@ -433,15 +483,16 @@
 .vm__amp {
   display: grid;
   place-items: center;
-  width: clamp(34px, 3vw, 44px);
+  width: clamp(28px, 2.1vw, 32px);
   aspect-ratio: 1;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border-radius: 50%;
-  background: var(--blue-deep);
+  background: var(--vm-heading);
   color: var(--on-blue);
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.6vw, 1.375rem);
-  font-weight: 600;
+  font-size: clamp(0.875rem, 1vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .vm__foot {
@@ -481,7 +532,7 @@
 }
 
 .vm.is-live .vm__title {
-  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-size: clamp(1.625rem, 2.4vw, 2.25rem);
 }
 
 /* -------------------------------------------------- the shared cell */
@@ -526,21 +577,25 @@
   margin-left: 0;
 }
 
-/* Idle centre: 24% + 70%/2 = 59%. Dock lifts it to 50% → yPercent -12.9. */
+/* The same box for both, mirrored about the centre of the stage: one sits
+   low-left, the other high-right, and the two paints meet in a narrow band
+   through the middle without either face crossing into the other.
+
+   Idle centre: 30% + 66%/2 = 63%. Dock lifts it to 50% → yPercent -19.7. */
 .vm.is-live .vm__brush[data-brush='vision'] {
   left: 0;
-  top: 24%;
+  top: 30%;
   width: 56%;
-  height: 70%;
+  height: 66%;
 }
 
-/* Idle centre: 0% + 64%/2 = 32%. Dock drops it to 50% → yPercent +28.1.
-   Idle left is 40%; the dock is at 0 → xPercent -40/58 = -69. */
+/* Idle centre: 4% + 66%/2 = 37%. Dock drops it to 50% → yPercent +19.7.
+   Idle left is 44%; the dock is at 0 → xPercent -44/56 = -78.6. */
 .vm.is-live .vm__brush[data-brush='mission'] {
-  left: 40%;
-  top: 0;
-  width: 58%;
-  height: 64%;
+  left: 44%;
+  top: 4%;
+  width: 56%;
+  height: 66%;
 }
 
 /* No resting angle is written here. GSAP owns `transform` on these two
@@ -548,67 +603,6 @@
    of `transform` rather than replacing it — a tilt stated in both places is a
    tilt applied twice. The timeline's own from-state renders on creation, so
    there is no frame where the strokes sit square. */
-
-/* -------------------------------------------------- wordmark, on the stage */
-.vm.is-live .vm__label {
-  left: 16%;
-  bottom: 20%;
-  font-size: clamp(2.25rem, 4.6vw, 4.75rem);
-}
-
-/* The yellow stroke sits higher in the composition and its wordmark shares
-   the space with its own marker, so it is set further into the paint. */
-.vm.is-live .vm__brush--yellow .vm__label {
-  left: 19%;
-  bottom: 26%;
-}
-
-/* -------------------------------------------------- markers, on the stage
-   Both sit near the band where the strokes cross, so the eye finds the two of
-   them together rather than at opposite corners of the composition. */
-.vm.is-live .vm__brush[data-brush='vision'] .vm__hot {
-  right: auto;
-  left: 62%;
-  top: 10%;
-}
-
-.vm.is-live .vm__brush[data-brush='mission'] .vm__hot {
-  /* On the leading edge of its own wordmark, where the two strokes cross —
-     the disc clips the first letter, which is what stops the pair reading as
-     two separate graphics each with a button on it. Any further right and it
-     sits in the middle of the word instead. */
-  left: 15%;
-  top: 31%;
-}
-
-/* The mission's marker sits directly above its own wordmark, so its cue goes
-   over the top of the disc instead of under it. */
-.vm.is-live .vm__brush[data-brush='mission'] .vm__cue {
-  top: auto;
-  bottom: calc(100% + 11px);
-}
-
-/* Docked, both markers take the same corner — top right of the paint, clear
-   of the wordmark underneath. The idle positions are the composition's; this
-   one is the statement's, and it is the same for both so the × is in the same
-   place whichever statement is being read.
-
-   `left`/`top` rather than a transform, because GSAP owns this element's
-   transform for the +/× turn and two systems must never write one property.
-   Both are absolutely positioned discs, so moving them costs no layout beyond
-   themselves. The class is set from the scroll position, so this still only
-   happens because the reader scrolled. */
-.vm.is-live .vm__hot {
-  transition:
-    left var(--d-move) var(--ease-out),
-    top var(--d-move) var(--ease-out);
-}
-
-.vm.is-live .vm__block.is-open .vm__hot {
-  left: 62%;
-  top: 8%;
-  right: auto;
-}
 
 /* Nothing left to point at once the statement is open. */
 .vm.is-live .vm__block.is-open .vm__cue {
@@ -627,7 +621,8 @@
   bottom: 0;
   display: grid;
   align-content: center;
-  gap: clamp(20px, 3vh, 38px);
+  justify-items: start;
+  gap: clamp(26px, 3.6vh, 40px);
   /* Hidden state belongs to the live layout only; the timeline sets it and
      the timeline clears it. `visibility` as well as opacity, so a statement
      that is not being read cannot be tabbed into. */
@@ -636,9 +631,12 @@
 }
 
 .vm.is-live .vm__split {
+  justify-self: stretch;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(20px, 2.6vw, 36px);
+  /* Top-aligned, so both headlines start on the same line whichever column
+     wraps further; the rule between them runs the height of the taller. */
+  align-items: start;
+  gap: clamp(24px, 3vw, 44px);
 }
 
 .vm.is-live .vm__col--end {
@@ -647,7 +645,11 @@
 }
 
 .vm.is-live .vm__col--start {
-  padding-left: clamp(18px, 2.4vw, 34px);
+  padding-left: clamp(24px, 3vw, 44px);
+}
+
+.vm.is-live .vm__col-head {
+  font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
 }
 
 /* Right-aligned, the ampersand has a gutter to hang in. */
@@ -668,7 +670,7 @@
   /* Sized against the column rather than the page: each claim has to set on
      one line inside a little under 60% of the stage, and a wrapped claim
      loses the rhythm the alternation depends on. */
-  font-size: clamp(1.25rem, 2.6vw, 2.5rem);
+  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
 }
 
 /* ==========================================================================

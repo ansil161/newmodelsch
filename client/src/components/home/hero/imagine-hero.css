@@ -1,0 +1,513 @@
+/* ==========================================================================
+   HERO 01 - "imagine" - see ImagineHero.jsx
+   --------------------------------------------------------------------------
+   White sheet, the logo's blue as the only accent, brass once (the small
+   figure on the g). Three families: Figtree 800 for the word, Playfair
+   Display for the claim, Inter for everything else, Caveat for the one
+   hand-written note.
+
+   GSAP owns: transforms and opacity on the letters, the lines, the copy's
+   children, the small print and the rings; clip-path on .ih__l-photo and
+   .ih__visual-reveal; background-position on .ih__l-photo; stroke-dashoffset
+   on [data-draw]; x/y on [data-depth]. No rule below sets any of those,
+   except the resting background-position, which is where GSAP returns to.
+   ========================================================================== */
+
+.ih {
+  --ih-h: clamp(680px, 100vh, 980px);
+  --ih-h: clamp(680px, 100svh, 980px);
+  --ih-word: min(17.2vw, calc(var(--ih-h) * 0.31));
+  --ih-ink: var(--brand-900);
+  --ih-ink-2: var(--neutral-600);
+  --ih-blue: var(--blue);
+  --ih-pale: var(--brand-100);
+  --ih-serif: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  --ih-word-font: 'Figtree', var(--font-display);
+  --ih-hand: 'Caveat', 'Segoe Print', cursive;
+
+  position: relative;
+  isolation: isolate;
+  min-height: var(--ih-h);
+  overflow: clip;
+  background: #fff;
+  color: var(--ih-ink);
+}
+
+.ih__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.ih__in {
+  position: relative;
+  min-height: var(--ih-h);
+  padding: calc(var(--nav-h) + clamp(4px, 1.6vh, 22px)) var(--gutter) clamp(36px, 7vh, 72px);
+}
+
+/* ================================================================= the word */
+.ih__word {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 0 -0.045em;
+  font-family: var(--ih-word-font);
+  font-weight: 800;
+  font-size: var(--ih-word);
+  line-height: 0.92;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* The box is padded so the whole glyph - the i's dot above, the g's tail
+   below - sits inside the area the photograph paints. Negative margins give
+   the room back, so the padding changes nothing about where letters sit. */
+.ih__l {
+  --pad-t: 0.08em;
+  --pad-b: 0.22em;
+  --pad-x: 0.04em;
+
+  position: relative;
+  display: inline-block;
+  padding: var(--pad-t) var(--pad-x) var(--pad-b);
+  margin: calc(var(--pad-t) * -1) calc(-0.038em - var(--pad-x)) calc(var(--pad-b) * -1) calc(var(--pad-x) * -1);
+}
+
+.ih__l:first-child {
+  margin-left: 0;
+}
+
+.ih__l-base {
+  color: var(--ih-pale);
+}
+
+.ih__l-photo {
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  background-repeat: no-repeat;
+  background-size: cover; /* replaced by `fit()` once the box is measured */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* The small figure standing on the g. */
+.ih__figure {
+  position: absolute;
+  left: 50%;
+  /* Feet on the top of the g's bowl: the pad, plus the gap between the
+     line box and Figtree's x-height, less the figure's own height. */
+  top: 0.1em;
+  width: 0.19em;
+  margin-left: -0.08em;
+  overflow: visible;
+  fill: none;
+  stroke: var(--accent-400);
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ================================================================= the claim */
+.ih__copy {
+  position: relative;
+  z-index: 2;
+  max-width: min(700px, 50vw);
+  /* Clears the g's tail, which hangs below the word's line box. */
+  margin-top: calc(var(--ih-word) * 0.2);
+}
+
+.ih__title {
+  margin: 0;
+  font-family: var(--ih-serif);
+  font-weight: 400;
+  font-size: clamp(34px, 3.2vw, 54px);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  color: var(--ih-ink);
+}
+
+.ih__title em {
+  font-style: italic;
+  color: var(--ih-blue);
+}
+
+.ih__tl {
+  display: block;
+  white-space: nowrap;
+}
+
+.ih__lead {
+  max-width: 42ch;
+  margin: clamp(14px, 2vh, 22px) 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 1.6;
+  color: var(--ih-ink-2);
+}
+
+.ih__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 26px;
+  margin-top: clamp(22px, 3.2vh, 34px);
+}
+
+.ih__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px 13px 24px;
+  border-radius: 999px;
+  background: var(--ih-blue);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.4s ease;
+}
+
+.ih__cta-arrow {
+  display: inline-flex;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ih__cta:hover {
+  background: var(--blue-ink);
+}
+
+.ih__cta:hover .ih__cta-arrow {
+  transform: translateX(4px);
+}
+
+.ih__video {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ih-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ih__video-ring {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-border-brand);
+  border-radius: 50%;
+  color: var(--ih-blue);
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+.ih__video-ring svg {
+  margin-left: 2px;
+}
+
+.ih__video:hover .ih__video-ring {
+  border-color: var(--ih-blue);
+  background: var(--ih-blue);
+  color: #fff;
+}
+
+.ih__cta:focus-visible,
+.ih__video:focus-visible {
+  outline: 2px solid var(--ih-blue);
+  outline-offset: 4px;
+}
+
+/* ========================================================== the photograph */
+.ih__visual {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: clamp(20px, 5vh, 56px);
+  width: 45vw;
+  height: 60%;
+  margin: 0;
+}
+
+.ih__visual-reveal,
+.ih__visual-clip {
+  position: absolute;
+  inset: 0;
+}
+
+.ih__visual-clip {
+  overflow: hidden;
+  clip-path: url(#ih-blob);
+}
+
+.ih__visual-clip img {
+  display: block;
+  width: 100%;
+  height: 112%;
+  margin-top: -6%;
+  object-fit: cover;
+  object-position: 62% 60%;
+}
+
+.ih__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--ih-blue);
+  stroke-linecap: round;
+}
+
+/* Stroke widths are in the 100-unit box, which stretches with the frame -
+   so a line runs a touch heavier where the frame is wider, as a pen does. */
+.ih__outline {
+  stroke-width: 0.16;
+}
+
+.ih__loop {
+  stroke-width: 0.22;
+  opacity: 0.75;
+}
+
+/* "Bright Futures", written on the page beside the photograph. */
+.ih__script {
+  position: absolute;
+  right: 101%;
+  top: 44%;
+  color: var(--ih-blue);
+  pointer-events: none;
+}
+
+.ih__script-text {
+  display: block;
+  font-family: var(--ih-hand);
+  font-weight: 500;
+  font-size: clamp(26px, 2.2vw, 36px);
+  line-height: 0.92;
+  transform: rotate(-9deg);
+  transform-origin: left center;
+}
+
+.ih__script-mark {
+  display: block;
+  width: clamp(80px, 7vw, 116px);
+  margin: 6px 0 0 6px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(-6deg);
+}
+
+/* ============================================================ small print */
+.ih__brand {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--nav-h) + 18px);
+  right: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding-right: 14px;
+  border-right: 1px solid var(--color-border-brand);
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--ih-ink-2);
+}
+
+.ih__ring {
+  position: absolute;
+  z-index: 1;
+  border: 1.5px solid var(--ih-blue);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.ih__ring--a {
+  top: calc(var(--nav-h) + 6px);
+  left: calc(var(--gutter) - 22px);
+  width: 14px;
+  height: 14px;
+  opacity: 0.55;
+}
+
+.ih__ring--b {
+  right: calc(45vw - 36px);
+  bottom: 12%;
+  width: 9px;
+  height: 9px;
+  background: var(--ih-blue);
+  opacity: 0.35;
+}
+
+.ih__scroll {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  bottom: clamp(20px, 4vh, 40px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ih-ink-2);
+}
+
+.ih__scroll-track {
+  position: relative;
+  width: 18px;
+  height: 34px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ih__scroll-dot {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 1.5px;
+  height: 9px;
+  margin-left: -0.75px;
+  border-radius: 2px;
+  background: var(--ih-blue);
+  animation: ih-scroll 2.4s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+@keyframes ih-scroll {
+  0% { transform: translateY(0); opacity: 0; }
+  25% { opacity: 1; }
+  70% { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(12px); opacity: 0; }
+}
+
+.ih.is-pending .ih__scroll-dot {
+  animation: none;
+}
+
+/* ================================================================== tablet */
+@media (max-width: 1023.98px) {
+  .ih {
+    --ih-h: auto;
+    --ih-word: 19.5vw;
+  }
+
+  .ih__in {
+    min-height: 0;
+    padding-bottom: 40px;
+  }
+
+  .ih__copy {
+    max-width: 620px;
+  }
+
+  /* The photograph leaves the corner and takes its own band under the copy,
+     still bleeding off the right edge. */
+  .ih__visual {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: calc(100% + var(--gutter));
+    height: clamp(340px, 62vw, 560px);
+    margin: 48px calc(var(--gutter) * -1) 0 auto;
+    max-width: 78vw;
+  }
+
+  /* Above the photograph's right shoulder, clear of the two buttons. */
+  .ih__script {
+    left: auto;
+    right: 8%;
+    top: auto;
+    bottom: 96%;
+  }
+
+  .ih__brand {
+    display: none;
+  }
+
+  .ih__ring--b {
+    display: none;
+  }
+
+  .ih__scroll {
+    display: none;
+  }
+}
+
+/* =================================================================== phone */
+@media (max-width: 599.98px) {
+  .ih {
+    --ih-word: 24.5vw;
+  }
+
+  .ih__in {
+    padding-top: calc(var(--nav-h) + 44px);
+  }
+
+  .ih__title {
+    font-size: clamp(30px, 8.6vw, 38px);
+  }
+
+  .ih__tl {
+    display: inline;
+    white-space: normal;
+  }
+
+  .ih__actions {
+    gap: 14px 20px;
+  }
+
+  .ih__visual {
+    max-width: none;
+    width: calc(100% + var(--gutter));
+    height: 118vw;
+    margin-top: 64px;
+  }
+
+  .ih__script {
+    right: 6%;
+  }
+
+  .ih__script-text {
+    font-size: 26px;
+  }
+
+  /* The hero index takes this corner on a phone. */
+  .ih__ring--a {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ih__scroll-dot {
+    animation: none;
+    opacity: 1;
+  }
+
+  .ih__cta,
+  .ih__cta-arrow,
+  .ih__video-ring {
+    transition: none;
+  }
+}

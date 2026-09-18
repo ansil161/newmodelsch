@@ -54,7 +54,7 @@ export function GalleryHero() {
       .from(split?.lines ?? [], { yPercent: 118, duration: 1.1, stagger: 0.09 }, 0.3)
       .from('.gal-hero__print', { y: 70, autoAlpha: 0, duration: 1.1, stagger: 0.13, ease: 'power3.out' }, 0.45)
       .from('.gal-hero__body > *', { y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, 0.7)
-      .from('.gal-hero__note, .gal-hero__stamp', { y: 10, autoAlpha: 0, duration: 0.7, stagger: 0.1 }, 1.2);
+      .from('.gal-hero__stamp', { y: 10, autoAlpha: 0, duration: 0.7 }, 1.2);
 
     const release = onStage(() => tl.play());
     return () => {
@@ -147,9 +147,6 @@ export function GalleryHero() {
             </div>
           ))}
 
-          <p className="gal-hero__note" aria-hidden="true">
-            caught mid-wave
-          </p>
           <span className="gal-hero__stamp meta" aria-hidden="true">
             Vol. 64 · 2025–26
           </span>

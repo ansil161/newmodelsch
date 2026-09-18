@@ -1,0 +1,150 @@
+/* ==========================================================================
+   THE HERO DECK - see HeroDeck.jsx
+   --------------------------------------------------------------------------
+   A small vertical index on the left edge: a hairline track and one dot per
+   chapter, filled for the one on screen. No numbers; the name appears only
+   on hover or focus, so at rest it reads as page furniture -
+   a folio - rather than as a control panel.
+   ========================================================================== */
+
+.hero-deck {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-deck__switch {
+  position: absolute;
+  z-index: 5;
+  left: clamp(10px, 1.6vw, 26px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hero-deck__list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* The track the two dots sit on. */
+.hero-deck__list::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--color-border-strong);
+}
+
+.hero-deck__tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 6px 2px 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--neutral-500);
+  cursor: pointer;
+  transition: color 0.4s ease;
+}
+
+.hero-deck__dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: #fff;
+  transition:
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-deck__name {
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+
+.hero-deck__tab.is-on {
+  color: var(--blue);
+}
+
+.hero-deck__tab.is-on .hero-deck__dot {
+  border-color: var(--blue);
+  background: var(--blue);
+  transform: scale(1.15);
+}
+
+.hero-deck__tab:hover,
+.hero-deck__tab:focus-visible {
+  color: var(--brand-900);
+}
+
+.hero-deck__tab:hover .hero-deck__name,
+.hero-deck__tab:focus-visible .hero-deck__name {
+  opacity: 1;
+  transform: none;
+}
+
+.hero-deck__tab:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Hero 02 puts its type dead centre; the index keeps to the same edge. On
+   a phone both heroes need the full width, so the index turns horizontal
+   and tucks under the masthead, top right. */
+@media (max-width: 599.98px) {
+  .hero-deck__switch {
+    top: calc(var(--nav-h) + 12px);
+    left: auto;
+    right: var(--gutter);
+    transform: none;
+  }
+
+  .hero-deck__list {
+    flex-direction: row;
+    gap: 14px;
+  }
+
+  .hero-deck__list::before {
+    left: 6px;
+    right: 6px;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .hero-deck__tab {
+    padding: 8px 0;
+  }
+
+  .hero-deck__name {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-deck__tab,
+  .hero-deck__dot,
+  .hero-deck__name {
+    transition: none;
+  }
+}

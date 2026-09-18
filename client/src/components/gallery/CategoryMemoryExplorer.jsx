@@ -1,125 +1,190 @@
-import { useRef, useState } from 'react';
-import { GALLERY_CATEGORIES, plural } from '@/constants/gallery';
-import { resolve } from '@/constants/imagery';
+import { useEffect, useRef, useState } from 'react';
+import { GALLERY_CATEGORIES } from '@/constants/gallery';
+import { resolve, resolveSet } from '@/constants/imagery';
+import { Icon } from '@/components/common/Icon';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
-import { gsap } from '@/lib/gsap';
-import { reduced, rise, unmask } from '@/lib/motion';
-import { Mark, SectionHead } from '@/components/editorial';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { lines, reduced, rise, unmask } from '@/lib/motion';
 import { useLightbox } from './PhotoLightbox';
-import { PhotoTile } from './PhotoTile';
 
 /* ==========================================================================
-   THROUGH DIFFERENT EYES - the category explorer
+   THROUGH DIFFERENT EYES - the lens switcher
    --------------------------------------------------------------------------
-   Seven ways of looking at the same school. Choosing one does not filter a
-   grid; it re-curates a spread.
+   Seven ways of looking at one school. A pill bar of lenses, each carrying
+   a small photograph of its own, sits above a bento of four framed photos.
+   The largest frame carries the lens's title, line and a "view all" button
+   over a dark gradient, so the words are always legible on the picture.
 
-   THE TRANSITION IS TWO HALVES, AND REACT SITS BETWEEN THEM.
+   The frames never move. Only their contents change, so the page never
+   jumps: on a change of lens every photograph wipes away upward, the caption
+   lifts out, the next set is committed, and the new photographs wipe in
+   from below and settle from a slight zoom while the new title rises.
 
-     OUT   the current prints are clipped away, each toward a different edge,
-           while the pictures inside them lean in slightly - a table being
-           cleared. The text lifts out with them.
-     SWAP  only once the table is clear does the new category render. The
-           composition also changes shape: the large frame moves between the
-           left, the right and the centre, so the layout itself is part of
-           what changed rather than only the pictures.
-     IN    the new prints are laid down edge by edge and settle from a slight
-           zoom, and the new title and lead rise into place.
-
-   A second choice made mid-transition is not queued behind the first: the
-   running timeline is killed and the swap goes straight to the latest
-   choice. Hovering or focusing a category starts loading its photographs, so
-   by the time it is chosen they are usually already in the cache.
+   While the section is on screen the lenses advance on their own, with a
+   ring around the active lens's thumbnail filling as the clock runs. The
+   clock pauses under the pointer or keyboard focus. With reduced motion
+   there is no clock and no transition: a lens simply changes.
    ========================================================================== */
 
-const pad = (n) => String(n).padStart(2, '0');
-const CELLS = 'abcde';
+const CELLS = 'abcd';
+const DWELL = 7;
+/* Circumference of the progress ring: r = 17 in a 38-unit box. */
+const RING = 2 * Math.PI * 17;
 
-/* The edge each cell leaves by and arrives from. Opposite on the way in, so
-   the new print covers the space the old one uncovered. */
-const OUT = ['inset(0% 0% 100% 0%)', 'inset(0% 0% 0% 100%)', 'inset(100% 0% 0% 0%)', 'inset(0% 100% 0% 0%)'];
-const IN = ['inset(100% 0% 0% 0%)', 'inset(0% 100% 0% 0%)', 'inset(0% 0% 100% 0%)', 'inset(0% 0% 0% 100%)'];
+const SIZES = [
+  '(max-width: 1023px) 92vw, 56vw',
+  '(max-width: 1023px) 92vw, 40vw',
+  '(max-width: 1023px) 46vw, 24vw',
+  '(max-width: 1023px) 46vw, 16vw',
+];
+const WIDTHS = [[640, 1000, 1600], [560, 900, 1300], [360, 560, 900], [320, 480, 760]];
 
 const preloaded = new Set();
 function preload(category) {
   if (preloaded.has(category.id)) return;
   preloaded.add(category.id);
   category.photos.slice(0, CELLS.length).forEach((p, i) => {
-    new Image().src = resolve(p, i === 0 ? 900 : 560);
+    new Image().src = resolve(p, WIDTHS[i][1]);
   });
 }
 
+const TOTAL_PHOTOS = GALLERY_CATEGORIES.reduce((n, c) => n + c.photos.length, 0);
+
 export function CategoryMemoryExplorer() {
   const open = useLightbox();
+  const total = GALLERY_CATEGORIES.length;
   const [selected, setSelected] = useState(0);
   const [shown, setShown] = useState(0);
-  const gridRef = useRef(null);
-  const textRef = useRef(null);
+
+  const stageRef = useRef(null);
+  const tabsRef = useRef(null);
   const running = useRef(null);
   const target = useRef(0);
   const shownRef = useRef(0);
-  /* The category the spread last animated to. Compared rather than a
-     "has mounted" flag, because StrictMode runs layout effects twice on
-     mount and a flag lets the second run play the entrance over the scroll
-     reveal - leaving both stuck in each other's hidden states. */
+  /* The lens the stage last animated to. Compared rather than a "has
+     mounted" flag, because StrictMode runs layout effects twice on mount. */
   const played = useRef(0);
+  const clock = useRef(null);
+  const gate = useRef({ inView: false, hover: false, focus: false });
 
   const category = GALLERY_CATEGORIES[shown];
+  const plates = category.photos.slice(0, CELLS.length);
 
+  /* ------------------------------------------------------------- clock */
+  const syncClock = () => {
+    const c = clock.current;
+    if (!c) return;
+    const g = gate.current;
+    if (g.inView && !g.hover && !g.focus) c.play();
+    else c.pause();
+  };
+
+  /* ---------------------------------------------------- scroll entrance */
   const scope = useGsapScope((_, el) => {
-    const grid = gridRef.current;
-    rise(el.querySelectorAll('.gal-cat__ctl'), {
-      trigger: el.querySelector('.gal-cat__controls'),
-      y: 14,
-      stagger: 0.045,
-    });
-    if (grid) {
-      unmask(grid.querySelectorAll('.gal-cat__cell'), { trigger: grid, stagger: 0.09 });
-      rise(textRef.current?.children ?? [], { trigger: grid, y: 18, delay: 0.2 });
+    const undo = lines(el.querySelector('.lens__h'), { stagger: 0.1 });
+    rise(el.querySelector('.lens__sub'), { trigger: el.querySelector('.lens__head'), y: 18, delay: 0.25 });
+    /* The bar rises as two whole pieces. Rising each tab would slide them
+       through the tab tray's scroll clip and fight their CSS press
+       transition, leaving them cut off at the tray's lower edge. */
+    rise(el.querySelectorAll('.lens__tabs, .lens__ctls'), { trigger: el.querySelector('.lens__bar'), y: 16, stagger: 0.1 });
+    const stage = stageRef.current;
+    if (stage) {
+      unmask(stage.querySelectorAll('.lens__media'), { trigger: stage, stagger: 0.1 });
+      rise(stage.querySelectorAll('.lens__caption > *'), { trigger: stage, y: 24, delay: 0.45, stagger: 0.08 });
     }
+
+    /* The clock runs only while the photographs themselves are on screen,
+       so a lens never changes before the reader has seen it. */
+    const st = ScrollTrigger.create({
+      trigger: stage ?? el,
+      start: 'top 70%',
+      end: 'bottom 30%',
+      onToggle: (self) => {
+        gate.current.inView = self.isActive;
+        syncClock();
+      },
+    });
+    gate.current.inView = st.isActive;
+    syncClock();
+
+    return () => undo?.();
   }, []);
 
+  /* ------------------------------------------------------- parts & swap */
   const parts = () => {
-    const grid = gridRef.current;
+    const stage = stageRef.current;
+    const q = (s) => (stage ? Array.from(stage.querySelectorAll(s)) : []);
     return {
-      cells: grid ? Array.from(grid.querySelectorAll('.gal-cat__cell')) : [],
-      images: grid ? Array.from(grid.querySelectorAll('.gal-cat__cell img')) : [],
-      text: textRef.current ? Array.from(textRef.current.children) : [],
+      media: q('.lens__media'),
+      images: q('.lens__media img'),
+      caption: q('.lens__caption > *'),
+      title: q('.lens__line'),
     };
   };
 
   const playIn = () => {
-    const { cells, images, text } = parts();
+    const { media, images, caption, title } = parts();
     const tl = gsap.timeline({
       onComplete: () => {
         running.current = null;
-        gsap.set(cells, { clearProps: 'clipPath' });
+        gsap.set(media, { clearProps: 'clipPath' });
       },
     });
     tl.fromTo(
-      cells,
-      { clipPath: (i) => IN[i % IN.length] },
-      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.95, ease: 'power4.inOut', stagger: 0.07 },
+      media,
+      { clipPath: 'inset(100% 0% 0% 0%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'power4.out', stagger: 0.07 },
     )
-      .fromTo(images, { scale: 1.14 }, { scale: 1, duration: 1.3, ease: 'power3.out', stagger: 0.07 }, 0)
-      .fromTo(text, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', stagger: 0.06 }, 0.2);
+      .fromTo(images, { scale: 1.18 }, { scale: 1, duration: 1.5, ease: 'power3.out', stagger: 0.07 }, 0.1)
+      .fromTo(caption, { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out', stagger: 0.08 }, 0.45)
+      .fromTo(title, { yPercent: 105 }, { yPercent: 0, duration: 1, ease: 'expo.out' }, 0.45);
     running.current = tl;
   };
 
-  /* The second half: runs after React has committed the new category. */
   useIsomorphicLayoutEffect(() => {
     shownRef.current = shown;
     if (played.current === shown) return;
-    played.current = shown;
-    if (!reduced()) playIn();
+    if (reduced()) {
+      played.current = shown;
+      return undefined;
+    }
+
+    /* The frames stay shut until the new photographs have decoded (or a
+       short timeout passes on a slow line), so a wipe never opens onto an
+       empty mount. The new title is held under its mask meanwhile. */
+    const { images, title } = parts();
+    gsap.set(title, { yPercent: 105 });
+    let cancelled = false;
+    Promise.race([
+      Promise.all(images.map((img) => (img.decode ? img.decode().catch(() => {}) : null))),
+      new Promise((r) => setTimeout(r, 1500)),
+    ]).then(() => {
+      if (cancelled || shownRef.current !== shown || played.current === shown) return;
+      played.current = shown;
+      playIn();
+    });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown]);
+
+  const centreTab = (i) => {
+    const bar = tabsRef.current;
+    const tab = bar?.children[i];
+    if (!bar || !tab || bar.scrollWidth <= bar.clientWidth) return;
+    bar.scrollTo({
+      left: tab.offsetLeft - (bar.clientWidth - tab.offsetWidth) / 2,
+      behavior: reduced() ? 'auto' : 'smooth',
+    });
+  };
 
   const select = (i) => {
     setSelected(i);
     target.current = i;
     preload(GALLERY_CATEGORIES[i]);
+    centreTab(i);
 
     if (reduced()) {
       setShown(i);
@@ -128,95 +193,211 @@ export function CategoryMemoryExplorer() {
     if (i === shownRef.current && !running.current) return;
 
     running.current?.kill();
-    const { cells, images, text } = parts();
+    const { media, images, caption } = parts();
     const tl = gsap.timeline({
       onComplete: () => {
         running.current = null;
         if (target.current === shownRef.current) {
           played.current = shownRef.current;
           playIn();
+        } else {
+          setShown(target.current);
         }
-        else setShown(target.current);
       },
     });
-    tl.to(cells, { clipPath: (k) => OUT[k % OUT.length], duration: 0.5, ease: 'power3.in', stagger: 0.045 })
-      .to(images, { scale: 1.08, duration: 0.5, ease: 'power2.in', stagger: 0.045 }, 0)
-      .to(text, { y: -16, autoAlpha: 0, duration: 0.32, ease: 'power2.in', stagger: 0.03 }, 0);
+    tl.to(media, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.42, ease: 'power3.in', stagger: 0.04 })
+      .to(images, { scale: 1.08, duration: 0.42, ease: 'power2.in', stagger: 0.04 }, 0)
+      .to(caption, { y: -18, autoAlpha: 0, duration: 0.32, ease: 'power2.in', stagger: 0.03 }, 0);
     running.current = tl;
   };
 
-  const visible = category.photos.slice(0, CELLS.length);
-  const more = category.photos.length - visible.length;
+  const step = (d) => select((target.current + d + total) % total);
+
+  /* The clock restarts on every lens. */
+  useEffect(() => {
+    const arcs = tabsRef.current ? Array.from(tabsRef.current.querySelectorAll('.lens__ring-arc')) : [];
+    gsap.set(arcs, { strokeDashoffset: RING });
+    if (reduced()) return undefined;
+    const arc = arcs[selected];
+    if (!arc) return undefined;
+
+    preload(GALLERY_CATEGORIES[(selected + 1) % total]);
+    clock.current = gsap.fromTo(
+      arc,
+      { strokeDashoffset: RING },
+      {
+        strokeDashoffset: 0,
+        duration: DWELL,
+        ease: 'none',
+        paused: true,
+        onComplete: () => step(1),
+      },
+    );
+    syncClock();
+    return () => {
+      clock.current?.kill();
+      clock.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
+
+  /* Roving focus: arrow keys move along the tabs and choose as they go. */
+  const onTabKey = (e) => {
+    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    let next;
+    if (d) next = (target.current + d + total) % total;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = total - 1;
+    else return;
+    e.preventDefault();
+    select(next);
+    tabsRef.current?.children[next]?.focus();
+  };
+
+  const holdOn = (key) => () => {
+    gate.current[key] = true;
+    syncClock();
+  };
+  const holdOff = (key) => (e) => {
+    if (key === 'focus' && e.currentTarget.contains(e.relatedTarget)) return;
+    gate.current[key] = false;
+    syncClock();
+  };
 
   return (
-    <section ref={scope} id="eyes" className="section section--sand gal-cat">
+    <section
+      ref={scope}
+      id="eyes"
+      className="section lens"
+      aria-labelledby="lens-heading"
+      onFocus={holdOn('focus')}
+      onBlur={holdOff('focus')}
+    >
       <div className="wrap">
-        <SectionHead
-          sticker="02 · Through different eyes"
-          stickerTilt={-2.4}
-          title={
-            <>
-              The school, through different <Mark kind="underline">eyes.</Mark>
-            </>
-          }
-          lead="Explore the many sides of life at our school."
-          className="gal-cat__head"
-        />
+        <header className="lens__head">
+          <h2 className="lens__h" id="lens-heading">
+            The school, through <span className="lens__h-accent">different eyes.</span>
+          </h2>
+          <p className="lens__sub">
+            Seven lenses on everyday life at New Model, from the loudest festival to the quietest
+            corner of the library. {TOTAL_PHOTOS} photographs in all.
+          </p>
+        </header>
 
-        <div className="gal-cat__body">
-          <div className="gal-cat__side">
-            <div className="gal-cat__controls" role="group" aria-label="Choose a category of photographs">
-              {GALLERY_CATEGORIES.map((c, i) => (
-                <button
-                  type="button"
-                  key={c.id}
-                  className={`gal-cat__ctl${i === selected ? ' is-on' : ''}`}
-                  aria-pressed={i === selected}
-                  aria-controls="gal-cat-panel"
-                  onClick={() => select(i)}
-                  onPointerEnter={() => preload(c)}
-                  onFocus={() => preload(c)}
-                >
-                  <span className="gal-cat__ctl-num" aria-hidden="true">
-                    {pad(i + 1)}
-                  </span>
-                  <span className="gal-cat__ctl-label">{c.label}</span>
-                  <span className="gal-cat__ctl-thumb" aria-hidden="true">
-                    <img src={resolve(c.photos[0], 96)} alt="" loading="lazy" />
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="gal-cat__text" ref={textRef} aria-live="polite">
-              <p className="meta">
-                {category.label} · {plural(category.photos.length, 'photograph')}
-              </p>
-              <h3 className="ed-h2 gal-cat__title">{category.title}</h3>
-              <p className="gal-cat__lead">{category.lead}</p>
-              <p className="gal-cat__note" aria-hidden="true">
-                {category.note}
-              </p>
-            </div>
-          </div>
-
+        <div className="lens__bar">
           <div
-            id="gal-cat-panel"
-            ref={gridRef}
-            className={`gal-cat__grid gal-cat__grid--v${shown % 3}`}
+            ref={tabsRef}
+            className="lens__tabs"
+            role="tablist"
+            aria-label="Choose a lens"
+            onKeyDown={onTabKey}
           >
-            {visible.map((photo, i) => (
-              <div className={`gal-cat__cell gal-cat__cell--${CELLS[i]}`} key={`${category.id}-${photo.id}`}>
-                <PhotoTile
-                  photo={photo}
-                  width={i === 0 ? 900 : 560}
-                  sizes={i === 0 ? '(max-width: 900px) 92vw, 36vw' : '(max-width: 900px) 46vw, 18vw'}
-                  label={i === visible.length - 1 && more > 0 ? `+${more} more` : category.label}
-                  onOpen={() => open(category.photos, i, category.label)}
-                />
-              </div>
+            {GALLERY_CATEGORIES.map((c, i) => (
+              <button
+                type="button"
+                role="tab"
+                key={c.id}
+                id={`lens-tab-${i}`}
+                className={`lens__tab${i === selected ? ' is-on' : ''}`}
+                aria-selected={i === selected}
+                aria-controls="lens-panel"
+                tabIndex={i === selected ? 0 : -1}
+                onClick={() => select(i)}
+                onPointerEnter={() => preload(c)}
+              >
+                <span className="lens__thumb" aria-hidden="true">
+                  <img src={resolve(c.photos[0], 96)} alt="" loading="lazy" />
+                  <svg className="lens__ring" viewBox="0 0 38 38">
+                    <circle className="lens__ring-track" cx="19" cy="19" r="17" />
+                    <circle
+                      className="lens__ring-arc"
+                      cx="19"
+                      cy="19"
+                      r="17"
+                      strokeDasharray={RING}
+                      strokeDashoffset={RING}
+                    />
+                  </svg>
+                </span>
+                <span className="lens__tab-label">{c.label}</span>
+              </button>
             ))}
           </div>
+
+          <div className="lens__ctls">
+            <button type="button" className="lens__ctl" onClick={() => step(-1)} aria-label="Previous lens">
+              <Icon name="arrowLeft" size={18} />
+            </button>
+            <button type="button" className="lens__ctl" onClick={() => step(1)} aria-label="Next lens">
+              <Icon name="arrowRight" size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={stageRef}
+          id="lens-panel"
+          className="lens__stage"
+          role="tabpanel"
+          aria-labelledby={`lens-tab-${shown}`}
+          onPointerEnter={holdOn('hover')}
+          onPointerLeave={holdOff('hover')}
+        >
+          {plates.map((photo, i) => (
+            <div className={`lens__cell lens__cell--${CELLS[i]}`} key={CELLS[i]}>
+              <div className="lens__frame">
+                <button
+                  type="button"
+                  className="lens__open"
+                  data-cursor="View"
+                  onClick={() => open(category.photos, i, category.label)}
+                >
+                  <span className="lens__media">
+                    <img
+                      key={photo.id}
+                      src={resolve(photo, WIDTHS[i][1])}
+                      srcSet={resolveSet(photo, WIDTHS[i]) || undefined}
+                      sizes={SIZES[i]}
+                      alt=""
+                      loading={shown === 0 ? 'lazy' : 'eager'}
+                      decoding="async"
+                      style={photo.focus ? { objectPosition: photo.focus } : undefined}
+                    />
+                  </span>
+                  <span className="sr-only">Open photograph: {photo.alt}</span>
+                  {i > 0 ? (
+                    <span className="lens__peek" aria-hidden="true">
+                      <Icon name="arrowUpRight" size={18} />
+                    </span>
+                  ) : null}
+                </button>
+
+                {i === 0 ? (
+                  <div className="lens__caption" aria-live="polite">
+                    <p className="lens__label">{category.label}</p>
+                    <h3 className="lens__title">
+                      <span className="lens__mask">
+                        <span className="lens__line" key={category.id}>
+                          {category.title}
+                        </span>
+                      </span>
+                    </h3>
+                    <p className="lens__lead">{category.lead}</p>
+                    <button
+                      type="button"
+                      className="lens__cta"
+                      onClick={() => open(category.photos, 0, category.label)}
+                    >
+                      <span>View all {category.photos.length} photos</span>
+                      <span className="lens__cta-icon" aria-hidden="true">
+                        <Icon name="arrowUpRight" size={16} />
+                      </span>
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

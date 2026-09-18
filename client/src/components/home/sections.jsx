@@ -50,9 +50,14 @@ import './home.css';
    the whole thing, and the small coloured icons ride them rather than float.
    Its geometry, entrance and orbit live beside this file. See
    `hero/OrbitHero.jsx`.
+
+   That orbit is now HERO 02. HERO 01 - photographs inside the word
+   "imagine" - leads, and a small index on the left edge switches between
+   them. `HeroDeck` owns the switch; OrbitHero is mounted as it always was.
+   See `hero/HeroDeck.jsx` and `hero/ImagineHero.jsx`.
    -------------------------------------------------------------------------- */
 
-export { OrbitHero as HomeHero } from './hero/OrbitHero';
+export { HeroDeck as HomeHero } from './hero/HeroDeck';
 
 /* --------------------------------------------------------------------------
    02 - WHY CHOOSE US

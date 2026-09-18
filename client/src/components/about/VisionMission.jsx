@@ -102,9 +102,13 @@ const DOCK_SCALE = 0.66;
  * beside it in `vision-mission.css` says which of these follows it.
  */
 const DOCK = {
-  vision: { xPercent: 0, yPercent: -12.9, rotation: -1.6 },
-  mission: { xPercent: -69, yPercent: 28.1, rotation: -2.6 },
+  vision: { xPercent: 0, yPercent: -19.7, rotation: -2 },
+  mission: { xPercent: -78.6, yPercent: 19.7, rotation: -2 },
 };
+
+/** The angle both strokes rest at as a pair - the same for each, so the two
+    read as one matched composition rather than one straight and one askew. */
+const REST_ROTATION = -4;
 
 /** Where a stroke waits when the other one has the floor. */
 const ASIDE = {
@@ -313,13 +317,13 @@ function buildPinned(root, wiring) {
     .fromTo(
       vision,
       { ...ENTER.vision, autoAlpha: 0 },
-      { xPercent: 0, yPercent: 0, scale: 1, rotation: -3, autoAlpha: 1, duration: enterTo },
+      { xPercent: 0, yPercent: 0, scale: 1, rotation: REST_ROTATION, autoAlpha: 1, duration: enterTo },
       enterFrom,
     )
     .fromTo(
       mission,
       { ...ENTER.mission, autoAlpha: 0 },
-      { xPercent: 0, yPercent: 0, scale: 1, rotation: -6, autoAlpha: 1, duration: enterTo - 2 },
+      { xPercent: 0, yPercent: 0, scale: 1, rotation: REST_ROTATION, autoAlpha: 1, duration: enterTo - 2 },
       enterFrom + 2,
     );
 
@@ -503,7 +507,7 @@ function buildFlow(root) {
       { xPercent: ENTER[id].xPercent * 0.4, rotation: ENTER[id].rotation * 0.5, scale: 0.94 },
       {
         xPercent: 0,
-        rotation: id === 'vision' ? -3 : -6,
+        rotation: REST_ROTATION,
         scale: 1,
         ease: 'none',
         scrollTrigger: { trigger: block, start: 'top 92%', end: 'top 42%', scrub: 0.7 },
@@ -632,41 +636,45 @@ export function VisionMission() {
                 <div className={cx('vm__brush', `vm__brush--${panel.tone}`)} data-brush={id}>
                   <BrushStroke id={`vm-paint-${id}`} seed={panel.tone === 'blue' ? 13 : 37} />
 
-                  {/* Each line masked separately, so the wordmark can be
-                      painted on line by line rather than faded on. */}
-                  <span className="vm__label" data-label={id} aria-hidden="true">
-                    <span>
-                      <i>{panel.labelLines[0]}</i>
-                    </span>
-                    <span>
-                      <i>{panel.labelLines[1]}</i>
-                    </span>
-                  </span>
-
-                  <span className="vm__hot">
-                    <button
-                      type="button"
-                      className="vm__marker"
-                      data-marker={id}
-                      data-cursor="link"
-                      aria-expanded={open}
-                      aria-controls={`vm-panel-${id}`}
-                      onClick={seek(id)}
-                    >
-                      <Icon name="plus" size={24} />
-                      <span className="sr-only">
-                        {open ? 'Back to both statements' : `Read ${panel.labelLines.join(' ')}`}
+                  {/* Wordmark and marker share one centred column over the
+                      body of the paint, so the + can never cover the word. */}
+                  <div className="vm__face">
+                    {/* Each line masked separately, so the wordmark can be
+                        painted on line by line rather than faded on. */}
+                    <span className="vm__label" data-label={id} aria-hidden="true">
+                      <span>
+                        <i>{panel.labelLines[0]}</i>
                       </span>
-                    </button>
-
-                    {/* The words are the affordance. A bare + on a piece of
-                        paint has never told anyone there is a statement
-                        behind it. Hidden from assistive tech because the
-                        button's own label already says this. */}
-                    <span className="vm__cue" data-cue={id} aria-hidden="true">
-                      Read our {id}
+                      <span>
+                        <i>{panel.labelLines[1]}</i>
+                      </span>
                     </span>
-                  </span>
+
+                    <span className="vm__hot">
+                      <button
+                        type="button"
+                        className="vm__marker"
+                        data-marker={id}
+                        data-cursor="link"
+                        aria-expanded={open}
+                        aria-controls={`vm-panel-${id}`}
+                        onClick={seek(id)}
+                      >
+                        <Icon name="plus" size={24} />
+                        <span className="sr-only">
+                          {open ? 'Back to both statements' : `Read ${panel.labelLines.join(' ')}`}
+                        </span>
+                      </button>
+
+                      {/* The words are the affordance. A bare + on a piece of
+                          paint has never told anyone there is a statement
+                          behind it. Hidden from assistive tech because the
+                          button's own label already says this. */}
+                      <span className="vm__cue" data-cue={id} aria-hidden="true">
+                        Read our {id}
+                      </span>
+                    </span>
+                  </div>
                 </div>
 
                 <div

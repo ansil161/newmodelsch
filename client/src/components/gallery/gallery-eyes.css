@@ -1,0 +1,497 @@
+/* ==========================================================================
+   THROUGH DIFFERENT EYES - the lens switcher
+   --------------------------------------------------------------------------
+   Bright and high-contrast on purpose: this is the page's colour moment,
+   between the paper wall above and the navy archive below. Every photograph
+   sits in a double frame - a soft tinted tray with a hairline, and inside it
+   the picture on a deep indigo mount with concentric corners - so the prints
+   read as objects lifted off the page rather than tiles printed onto it.
+
+   One radius system: 28px trays, 22px mounts, full pills for everything
+   that can be pressed.
+   ========================================================================== */
+
+.lens {
+  --lens-ink: var(--brand-900);
+  --lens-deep: var(--brand-950);
+  --lens-accent: var(--brand-500);
+  --lens-tray: rgba(70, 53, 149, 0.05);
+  --lens-hair: rgba(70, 53, 149, 0.12);
+  --lens-r-tray: 28px;
+  --lens-pad: 6px;
+  --lens-r-mount: calc(var(--lens-r-tray) - var(--lens-pad));
+  --lens-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --lens-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  background:
+    radial-gradient(60% 50% at 88% 0%, rgba(122, 109, 189, 0.14), transparent 70%),
+    radial-gradient(50% 40% at 0% 100%, rgba(122, 109, 189, 0.08), transparent 70%),
+    #fcfbff;
+  color: var(--color-text);
+  overflow: clip;
+}
+
+/* --------------------------------------------------------------- heading */
+.lens__head {
+  display: grid;
+  gap: 20px;
+  max-width: 880px;
+}
+
+.lens__h {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5.6vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--lens-ink);
+  text-wrap: balance;
+}
+
+.lens__h-accent {
+  color: var(--lens-accent);
+}
+
+.lens__sub {
+  max-width: 54ch;
+  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  line-height: 1.6;
+  color: var(--neutral-700);
+}
+
+/* ------------------------------------------------------ the lens bar */
+.lens__bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: clamp(36px, 5vw, 60px);
+}
+
+.lens__tabs {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--lens-tray);
+  box-shadow: inset 0 0 0 1px var(--lens-hair);
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+
+.lens__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.lens__tab {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 18px 5px 5px;
+  border-radius: 999px;
+  scroll-snap-align: center;
+  font-family: var(--font-display);
+  font-size: 0.975rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--neutral-800);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 500ms var(--lens-spring),
+    color 300ms var(--lens-spring),
+    box-shadow 500ms var(--lens-spring),
+    transform 300ms var(--lens-spring);
+}
+
+.lens__tab:hover {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(34, 27, 79, 0.06), inset 0 0 0 1px var(--lens-hair);
+}
+
+.lens__tab:active {
+  transform: scale(0.97);
+}
+
+.lens__tab.is-on {
+  background: var(--lens-ink);
+  color: #fff;
+  box-shadow:
+    0 10px 24px -12px rgba(34, 27, 79, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.lens__tab:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.lens__thumb {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 34px;
+}
+
+.lens__thumb img {
+  position: absolute;
+  inset: 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 600ms var(--lens-spring);
+}
+
+.lens__tab:hover .lens__thumb img {
+  transform: scale(1.08);
+}
+
+.lens__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.lens__ring-track {
+  stroke: transparent;
+}
+
+.lens__ring-arc {
+  stroke: transparent;
+  stroke-linecap: round;
+}
+
+.lens__tab.is-on .lens__ring-track {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+
+.lens__tab.is-on .lens__ring-arc {
+  stroke: #fff;
+}
+
+/* Controls: prev, pause, next */
+.lens__ctls {
+  display: none;
+  flex: none;
+  gap: 8px;
+}
+
+.lens__ctl {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(34, 27, 79, 0.06),
+    inset 0 0 0 1px var(--lens-hair);
+  color: var(--lens-ink);
+  cursor: pointer;
+  transition:
+    background 400ms var(--lens-spring),
+    color 300ms var(--lens-spring),
+    transform 300ms var(--lens-spring);
+}
+
+.lens__ctl:hover {
+  background: var(--lens-ink);
+  color: #fff;
+}
+
+.lens__ctl:active {
+  transform: scale(0.94);
+}
+
+.lens__ctl:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------- the stage */
+.lens__stage {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Outer tray: the double frame's shell. */
+.lens__cell {
+  min-width: 0;
+  padding: var(--lens-pad);
+  border-radius: var(--lens-r-tray);
+  background: var(--lens-tray);
+  box-shadow: inset 0 0 0 1px var(--lens-hair);
+}
+
+.lens__cell--a,
+.lens__cell--b {
+  grid-column: 1 / -1;
+}
+
+/* Inner mount: the picture on deep indigo, which is also what shows in the
+   instant between one lens and the next. */
+.lens__frame {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--lens-r-mount);
+  background: var(--lens-deep);
+  box-shadow:
+    0 24px 48px -28px rgba(34, 27, 79, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  isolation: isolate;
+}
+
+.lens__cell--a .lens__frame { aspect-ratio: 4 / 5; }
+.lens__cell--b .lens__frame { aspect-ratio: 16 / 10; }
+.lens__cell--c .lens__frame,
+.lens__cell--d .lens__frame { aspect-ratio: 3 / 4; }
+
+.lens__open {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.lens__open:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: -6px;
+  border-radius: var(--lens-r-mount);
+}
+
+.lens__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  transition: transform 1200ms var(--lens-out);
+}
+
+.lens__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  will-change: transform;
+}
+
+.lens__open:hover .lens__media,
+.lens__open:focus-visible .lens__media {
+  transform: scale(1.045);
+}
+
+/* The dark ground under the caption, so white type always holds. */
+.lens__cell--a .lens__open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      to top,
+      rgba(17, 14, 44, 0.9) 0%,
+      rgba(17, 14, 44, 0.62) 30%,
+      rgba(17, 14, 44, 0.12) 62%,
+      transparent 78%
+    );
+  pointer-events: none;
+}
+
+/* The open icon on the smaller frames. */
+.lens__peek {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--lens-ink);
+  box-shadow: 0 8px 20px -8px rgba(17, 14, 44, 0.5);
+  opacity: 0;
+  transform: translateY(6px) scale(0.85);
+  transition:
+    opacity 400ms var(--lens-spring),
+    transform 600ms var(--lens-spring);
+}
+
+.lens__open:hover .lens__peek,
+.lens__open:focus-visible .lens__peek {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------ the caption on the hero */
+.lens__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(20px, 3vw, 40px);
+  color: #fff;
+  pointer-events: none;
+}
+
+.lens__label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.lens__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.875rem, 3.2vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.lens__mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.lens__line {
+  display: block;
+}
+
+.lens__lead {
+  max-width: 42ch;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* Button-in-button: a white pill with its arrow in its own indigo disc. */
+.lens__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  padding: 6px 6px 6px 22px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--lens-ink);
+  font-family: var(--font-display);
+  font-size: 0.975rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 400ms var(--lens-spring);
+}
+
+.lens__cta-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--lens-accent);
+  color: #fff;
+  transition: transform 500ms var(--lens-spring);
+}
+
+.lens__cta:hover .lens__cta-icon,
+.lens__cta:focus-visible .lens__cta-icon {
+  transform: translate(2px, -2px) scale(1.06);
+}
+
+.lens__cta:active {
+  transform: scale(0.98);
+}
+
+.lens__cta:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Tablet
+   ========================================================================== */
+@media (min-width: 720px) {
+  .lens__ctls {
+    display: flex;
+  }
+
+  .lens__stage {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .lens__cell--a { grid-column: 1 / -1; }
+  .lens__cell--b { grid-column: 1 / 5; }
+  .lens__cell--c { grid-column: 5 / 7; }
+  .lens__cell--d { display: none; }
+
+  .lens__cell--a .lens__frame { aspect-ratio: 16 / 10; }
+  .lens__cell--b .lens__frame,
+  .lens__cell--c .lens__frame { aspect-ratio: auto; height: clamp(240px, 36vw, 340px); }
+}
+
+/* ==========================================================================
+   Desktop: a bento of four, the lens's own photograph dominant.
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .lens__stage {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: repeat(2, clamp(250px, 21vw, 330px));
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .lens__cell--a { grid-column: 1 / 8; grid-row: 1 / 3; }
+  .lens__cell--b { grid-column: 8 / 13; grid-row: 1 / 2; }
+  .lens__cell--c { grid-column: 8 / 11; grid-row: 2 / 3; }
+  .lens__cell--d { display: block; grid-column: 11 / 13; grid-row: 2 / 3; }
+
+  .lens__cell .lens__frame,
+  .lens__cell--a .lens__frame,
+  .lens__cell--b .lens__frame,
+  .lens__cell--c .lens__frame,
+  .lens__cell--d .lens__frame {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lens__tab,
+  .lens__thumb img,
+  .lens__ctl,
+  .lens__media,
+  .lens__peek,
+  .lens__cta,
+  .lens__cta-icon {
+    transition: none;
+  }
+}
