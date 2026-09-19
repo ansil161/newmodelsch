@@ -12,9 +12,9 @@ import './imagine-hero.css';
    HERO 01 - "imagine"
    --------------------------------------------------------------------------
    One oversized word, and the school's own photographs living inside its
-   letters. Under it the claim in an editorial serif, two actions, and on the
-   right one large photograph in an organic frame with a hairline drawn round
-   it by hand.
+   letters, centred across the page. Under it the claim in an editorial serif
+   on one side, the sentence and two actions on the other, and along the foot
+   the school's name, its colour travelling slowly from white into blue.
 
    HOW THE PHOTOGRAPHS GET INSIDE THE LETTERS
 
@@ -33,8 +33,9 @@ import './imagine-hero.css';
 
      0.10  letters rise, pale           0.55  photographs fill each letter
      1.20  the claim, line by line      1.55  the sentence, then the actions
-     1.60  the frame opens              2.30  its outline draws itself
-     2.90  the hand-drawn details, the small print, the scroll cue
+     1.90  the school's name            2.95  the hand-drawn details,
+                                              the small print, the scroll cue
+     3.40  a small student starts hopping along the name, letter to letter
 
    `mode="switch"` is the same score played faster, for when the reader
    arrives here from Hero 02 rather than from a page load.
@@ -63,12 +64,41 @@ const LETTERS = [
   { ch: 'e', src: `${REC}/campus-building.webp`, a: 900 / 1598, at: [40, 52] },
 ];
 
-const FEATURE = {
-  src: `${REC}/students-walking.webp`,
-  alt: 'Students in uniform walking together across the campus towards the main building',
-};
-
 const BRAND_LINES = ['Learning', 'Today', 'Leading', 'Tomorrow'];
+
+/** Seconds for one hop from a letter to the next. */
+const HOP = 0.46;
+
+/**
+ * The student on the school's name: hops from each letter to the next, and
+ * each letter gives a little under the landing. Out to the end of the name,
+ * then turns round and hops back. Built from measured letter positions, so it
+ * is rebuilt whenever the name reflows.
+ */
+function hopAlong(name) {
+  const hopper = name.querySelector('.ih__hop');
+  const letters = [...name.querySelectorAll('.ih__sl')].filter((l) => l.textContent.trim());
+  if (!hopper || letters.length < 2) return gsap.timeline();
+
+  const size = parseFloat(getComputedStyle(name).fontSize);
+  const lift = size * 0.55;
+  const xs = letters.map((l) => l.offsetLeft + l.offsetWidth / 2 - hopper.offsetWidth / 2);
+  // Out from the first letter to the last, then back to the first.
+  const path = [...letters.keys()].slice(1).concat([...letters.keys()].reverse().slice(1));
+
+  gsap.set(hopper, { x: xs[0], y: 0, scaleX: 1 });
+  const tl = gsap.timeline({ repeat: -1 });
+  path.forEach((to, n) => {
+    const from = n === 0 ? 0 : path[n - 1];
+    const at = n * HOP;
+    tl.set(hopper, { scaleX: xs[to] < xs[from] ? -1 : 1 }, at)
+      .to(hopper, { x: xs[to], duration: HOP, ease: 'none' }, at)
+      .to(hopper, { y: -lift, duration: HOP / 2, ease: 'power2.out' }, at)
+      .to(hopper, { y: 0, duration: HOP / 2, ease: 'power2.in' }, at + HOP / 2)
+      .to(letters[to], { y: size * 0.07, duration: 0.1, ease: 'power2.out', yoyo: true, repeat: 1 }, at + HOP);
+  });
+  return tl;
+}
 
 /** Slack over an exact cover, so the picture can move inside the glyph. */
 const SLACK = 1.18;
@@ -94,6 +124,8 @@ export function ImagineHero({ mode = 'load' }) {
     fit(photos);
     const ro = new ResizeObserver(() => fit(photos));
     if (wordRef.current) ro.observe(wordRef.current);
+
+    const name = q('.ih__school-text')[0];
 
     if (reduced()) {
       const fade = gsap.from(q('.ih__in'), { autoAlpha: 0, duration: 0.6, ease: 'power1.out', paused: true });
@@ -139,23 +171,33 @@ export function ImagineHero({ mode = 'load' }) {
       .from(split.lines, { yPercent: 110, duration: 1.15, stagger: 0.12 }, 1.2)
       .from(q('.ih__lead'), { y: 16, autoAlpha: 0, duration: 0.9 }, 1.55)
       .from(q('.ih__actions > *'), { y: 14, autoAlpha: 0, duration: 0.85, stagger: 0.1 }, 1.72)
-      .fromTo(
-        q('.ih__visual-reveal'),
-        { clipPath: 'inset(0% 0% 0% 100%)' },
-        { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.45, ease: 'power4.inOut' },
-        1.6,
-      )
-      .from(q('.ih__visual img'), { scale: 1.16, duration: 2, ease: 'power3.out' }, 1.6)
-      .to(q('.ih__outline'), { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' }, 2.3)
-      .to(q('.ih__loop'), { strokeDashoffset: 0, duration: 1.3, ease: 'power2.inOut' }, 2.55)
-      .from(q('.ih__script-text'), { clipPath: 'inset(0% 100% 0% 0%)', duration: 1, ease: 'power2.inOut' }, 2.9)
-      .to(q('.ih__script [data-draw]'), { strokeDashoffset: 0, duration: 0.8, ease: 'power2.out', stagger: 0.15 }, 3.4)
+      .from(q('.ih__school'), { y: 24, autoAlpha: 0, duration: 1.3 }, 1.9)
       .to(q('.ih__figure [data-draw]'), { strokeDashoffset: 0, duration: 0.7, ease: 'power2.out', stagger: 0.08 }, 2.95)
       .from(q('.ih__ring'), { scale: 0, autoAlpha: 0, duration: 0.7, ease: 'back.out(1.6)', stagger: 0.12 }, 3.05)
       .from(q('.ih__brand > *'), { y: 8, autoAlpha: 0, duration: 0.7, stagger: 0.07 }, 3.1)
       .from(q('.ih__scroll'), { y: 10, autoAlpha: 0, duration: 0.8 }, 3.25);
 
     if (mode === 'switch') tl.timeScale(2.4);
+
+    /* ------------------------------------------ the student on the name */
+    let hop = gsap.timeline({ paused: true });
+    let hopping = false;
+    const startHop = () => {
+      hop.kill();
+      hop = hopAlong(name);
+      if (!hopping) hop.pause();
+    };
+    startHop();
+    tl.from(q('.ih__hop'), { autoAlpha: 0, duration: 0.5 }, 3.3).call(
+      () => {
+        hopping = true;
+        hop.play();
+      },
+      null,
+      3.4,
+    );
+    const hopRo = new ResizeObserver(() => startHop());
+    hopRo.observe(name);
 
     el.classList.remove('is-pending');
     const release = mode === 'load' ? onStage(() => tl.play()) : (tl.play(), () => {});
@@ -201,13 +243,13 @@ export function ImagineHero({ mode = 'load' }) {
     const drift = gsap.timeline({
       scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 0.6 },
     });
-    drift
-      .to(q('.ih__visual-clip img'), { yPercent: 7, ease: 'none' }, 0)
-      .to(q('.ih__word'), { yPercent: -6, ease: 'none' }, 0);
+    drift.to(q('.ih__word'), { yPercent: -6, ease: 'none' }, 0);
 
     return () => {
       release();
       tl.kill();
+      hop.kill();
+      hopRo.disconnect();
       drift.scrollTrigger?.kill();
       drift.kill();
       hovers.forEach((off) => off());
@@ -219,13 +261,6 @@ export function ImagineHero({ mode = 'load' }) {
 
   return (
     <section ref={scope} className="ih is-pending" aria-labelledby="ih-title">
-      {/* The frame's shape, in the image's own 0-1 box. */}
-      <svg className="ih__defs" aria-hidden="true" focusable="false">
-        <clipPath id="ih-blob" clipPathUnits="objectBoundingBox">
-          <path d="M0.10 0.30 C0.14 0.12 0.34 0.02 0.60 0.02 C0.80 0.02 0.96 0.06 1 0.10 L1 1 L0.04 1 C0 0.82 0.02 0.52 0.10 0.30 Z" />
-        </clipPath>
-      </svg>
-
       <div className="ih__in">
         {/* ------------------------------------------------ the word */}
         <p className="ih__word" ref={wordRef} aria-label="imagine" data-depth="-6">
@@ -266,70 +301,40 @@ export function ImagineHero({ mode = 'load' }) {
             </span>
           </h1>
 
-          <p className="ih__lead">
-            At {SCHOOL.name}, we prepare children to flourish and bloom in tomorrow&rsquo;s world.
-          </p>
+          <div className="ih__side">
+            <p className="ih__lead">
+              At {SCHOOL.name}, we prepare children to flourish and bloom in tomorrow&rsquo;s world.
+            </p>
 
-          <div className="ih__actions">
-            <Link className="ih__cta" to={`${ROUTES.about}#story`}>
-              <span>Discover Our Story</span>
-              <span className="ih__cta-arrow" aria-hidden="true">
-                <Icon name="arrowRight" size={16} />
-              </span>
-            </Link>
+            <div className="ih__actions">
+              <Link className="ih__cta" to={`${ROUTES.about}#story`}>
+                <span>Discover Our Story</span>
+                <span className="ih__cta-arrow" aria-hidden="true">
+                  <Icon name="arrowRight" size={16} />
+                </span>
+              </Link>
 
-            <Link className="ih__video" to={`${ROUTES.about}#film`}>
-              <span className="ih__video-ring" aria-hidden="true">
-                <Icon name="play" size={12} />
-              </span>
-              <span>Watch Our Video</span>
-            </Link>
+            </div>
           </div>
         </div>
 
-        {/* ------------------------------------------------ the photograph */}
-        <figure className="ih__visual">
-          <div className="ih__visual-reveal">
-            <div className="ih__visual-clip">
-              <img
-                src={FEATURE.src}
-                alt={FEATURE.alt}
-                width={900}
-                height={1599}
-                decoding="async"
-                fetchPriority="high"
-                draggable={false}
-              />
-            </div>
-          </div>
-
-          <svg className="ih__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              className="ih__outline"
-              data-draw
-              pathLength="1"
-              d="M103 5 C95 1 79 -1.5 59 -1.5 C33 -1.5 11 9 6.5 27 C-1 50 -3 80 1 104"
-            />
-            <path
-              className="ih__loop"
-              data-draw
-              pathLength="1"
-              d="M46 -7 C28 -8 8 -1 0 14 C-3 20 -4 25 -3 30"
-            />
-          </svg>
-
-          <div className="ih__script" aria-hidden="true" data-depth="12">
-            <span className="ih__script-text">
-              Bright
-              <br />
-              Futures
+        {/* ------------------------------------------------ the name */}
+        <p className="ih__school">
+          <span className="ih__school-text" aria-label={SCHOOL.name}>
+            {[...SCHOOL.name].map((ch, i) => (
+              <span className="ih__sl" key={i} aria-hidden="true">
+                {ch === ' ' ? ' ' : ch}
+              </span>
+            ))}
+            <span className="ih__hop" aria-hidden="true">
+              <svg viewBox="0 0 40 52" focusable="false">
+                <circle cx="20" cy="8" r="6" />
+                <path d="M20 15 V34 M20 34 L12 50 M20 34 L28 50" />
+                <path d="M20 21 L8 8 M20 21 L32 8" />
+              </svg>
             </span>
-            <svg className="ih__script-mark" viewBox="0 0 120 40">
-              <path d="M4 10 C30 4 62 4 96 9" data-draw pathLength="1" />
-              <path d="M70 22 C84 28 96 32 112 30 M104 24 L112 30 L103 36" data-draw pathLength="1" />
-            </svg>
-          </div>
-        </figure>
+          </span>
+        </p>
 
         {/* ------------------------------------------------ small print */}
         <p className="ih__brand" aria-hidden="true">
@@ -339,7 +344,6 @@ export function ImagineHero({ mode = 'load' }) {
         </p>
 
         <span className="ih__ring ih__ring--a" aria-hidden="true" data-depth="14" />
-        <span className="ih__ring ih__ring--b" aria-hidden="true" data-depth="-10" />
 
         <div className="ih__scroll" aria-hidden="true">
           <span className="ih__scroll-track">

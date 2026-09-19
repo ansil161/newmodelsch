@@ -36,10 +36,10 @@ const HEROES = [
 /** What leaves first, what closes after it, and what un-draws. */
 const EXIT = {
   1: {
-    type: '.ih__title .ih__line, .ih__lead, .ih__actions > *, .ih__brand, .ih__scroll, .ih__script',
+    type: '.ih__title .ih__line, .ih__lead, .ih__actions > *, .ih__brand, .ih__scroll, .ih__school, .ih__hop',
     word: '.ih__l',
-    media: '.ih__visual-reveal',
-    lines: '.ih__outline, .ih__loop',
+    media: '.ih__l-photo',
+    lines: '.ih__figure [data-draw]',
   },
   2: {
     type: '.oh__badge, .oh__line > span, .oh__cta',
