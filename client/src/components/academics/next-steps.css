@@ -514,8 +514,10 @@
    Under the desktop composition they hold at the label floor instead.
    ========================================================================== */
 @media (max-width: 1179.98px) {
+  /* In the orbit's own 144-unit box: the orbit holds at 634px here, so 2.5
+     units print at the desktop's 11px. */
   .nx__micro {
-    font-size: 3.4px;
+    font-size: 2.5px;
   }
 
   .nx__badge-label,
@@ -527,6 +529,12 @@
 /* On a phone the orbit runs past the screen edge by design, and "Class 11"
    sits outside even the orbit's own box - it would print as half a word.
    Both micro-labels go; the ticks stay, and the stages are named below. */
+@media (max-width: 599.98px) {
+  .nx__micro {
+    font-size: 3px;
+  }
+}
+
 @media (max-width: 479.98px) {
   .nx__micro {
     display: none;

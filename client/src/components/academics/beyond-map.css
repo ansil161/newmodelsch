@@ -396,6 +396,15 @@
   rotate: 2deg;
 }
 
+/* The tinted sheet runs 5% past the print, and a right-hand print already
+   stands on the gutter's edge - on a phone the sheet would be cut by the
+   screen. The print steps in by the same 5% so the sheet lands inside. */
+@media (max-width: 759.98px) {
+  .bm-exp:nth-child(even) .bm-photo {
+    margin-right: 5%;
+  }
+}
+
 .bm-photo__body {
   position: relative;
 }

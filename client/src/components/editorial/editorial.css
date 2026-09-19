@@ -878,6 +878,7 @@
    is sized in `svh` so the whole composition shrinks together on a short
    laptop instead of the last element falling off the bottom. */
 .etl__inner {
+  height: 100vh;
   height: 100svh;
   display: flex;
   flex-direction: column;

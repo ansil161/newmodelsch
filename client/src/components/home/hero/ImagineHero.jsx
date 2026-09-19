@@ -180,6 +180,11 @@ export function ImagineHero({ mode = 'load' }) {
       .from(q('.ih__brand > *'), { y: 8, autoAlpha: 0, duration: 0.7, stagger: 0.07 }, 3.1)
       .from(q('.ih__scroll'), { y: 10, autoAlpha: 0, duration: 0.8 }, 3.25);
 
+    // Once the lines have risen they are only scaffolding. Handing the title
+    // back as plain text lets it rewrap on a resize or a turned tablet rather
+    // than keeping line breaks measured for the old width.
+    tl.call(() => split.revert(), null, 2.9);
+
     if (mode === 'switch') tl.timeScale(2.4);
 
     /* ------------------------------------------ the student on the name */
@@ -223,6 +228,30 @@ export function ImagineHero({ mode = 'load' }) {
     });
 
     /* ------------------------------------------- pointer depth, fine pointers */
+    /* The same layers, the same directions, at a third of the distance: a
+       finger has no cursor to follow, so on touch the page's own scroll
+       moves them as the hero leaves. Re-asked live, so a pointer or a
+       turned tablet swaps one for the other. */
+    const depth = gsap.matchMedia();
+    depth.add(
+      '(hover: none), (pointer: coarse), (max-width: 1023.98px)',
+      () => {
+        q('[data-depth]').forEach((node) => {
+          gsap.to(node, {
+            y: () => parseFloat(node.dataset.depth) * -1.5,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.6,
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+      },
+    );
+
     let offMove = () => {};
     if (window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)').matches) {
       const layers = q('[data-depth]').map((node) => ({
@@ -257,6 +286,7 @@ export function ImagineHero({ mode = 'load' }) {
       drift.kill();
       hovers.forEach((off) => off());
       offMove();
+      depth.revert();
       split.revert();
       ro.disconnect();
     };

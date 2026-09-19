@@ -64,37 +64,24 @@ export function lines(target, opts = {}) {
   const el = gsap.utils.toArray(target)[0];
   if (!el) return;
 
-  /* Lines are a function of width. A phone turned to landscape, a resized
-     window or a late font re-wraps the headline, and `autoSplit` re-splits
-     it - so the entrance is built in `onSplit`, against the lines that exist
-     now. SplitText reverts the tween it returned before each re-split, which
-     is what keeps a stale set of lines from being animated. Once the
-     entrance has started it is not replayed: a headline the reader has
-     already watched arrive simply re-wraps. */
-  let started = false;
-
-  const split = SplitText.create(el, {
+  const split = new SplitText(el, {
     type: 'lines',
     linesClass: 'split-line',
     mask: 'lines',
+    /** Keeps the un-split text available to assistive tech. */
     autoSplit: true,
-    onSplit: (self) => {
-      if (started) return undefined;
-      return gsap.from(self.lines, {
-        yPercent: 118,
-        duration: 1.15,
-        ease: 'power4.out',
-        stagger: opts.stagger ?? 0.09,
-        delay: opts.delay ?? 0,
-        onStart: () => {
-          started = true;
-        },
-        scrollTrigger: {
-          trigger: opts.trigger ?? el,
-          start: opts.start ?? START,
-          once: opts.once ?? true,
-        },
-      });
+  });
+
+  gsap.from(split.lines, {
+    yPercent: 118,
+    duration: 1.15,
+    ease: 'power4.out',
+    stagger: opts.stagger ?? 0.09,
+    delay: opts.delay ?? 0,
+    scrollTrigger: {
+      trigger: opts.trigger ?? el,
+      start: opts.start ?? START,
+      once: opts.once ?? true,
     },
   });
 
@@ -231,20 +218,49 @@ export function drift(target, amount = 80, opts = {}) {
   if (!els.length) return;
 
   els.forEach((el) => {
+    // A photograph drifting inside its own frame needs to be taller than the
+    // frame by exactly its travel, or the frame's ground shows as a band at
+    // one edge. `.fig img` rests at the frame's height, so the extra is added
+    // here, inline (it has to beat section stylesheets that size the image).
+    // The first set is made inside the caller's gsap.context, which records
+    // the image's original inline style and restores it on revert.
+    const frame = el.tagName === 'IMG' ? el.parentElement : null;
+
+    // The travel is read from the layout, not fixed. A desktop frame is 500+
+    // pixels tall and carries the full amount; on a phone the same frame may
+    // be 200, where the full amount would be three times the relative motion.
+    // Below 1024px the travel is held to a sixth of the frame, so the image
+    // breathes by the same proportion it does on desktop.
+    const travel = () => {
+      if (!frame || window.innerWidth >= 1024) return amount;
+      const cap = frame.clientHeight * 0.16;
+      return Math.sign(amount) * Math.min(Math.abs(amount), cap);
+    };
+
+    const pad = () => {
+      if (!frame) return;
+      const t = Math.abs(travel());
+      gsap.set(el, { height: `calc(100% + ${t}px)`, marginTop: -t / 2 });
+    };
+    pad();
+
     gsap.fromTo(
       el,
-      { y: -amount / 2 },
+      { y: () => -travel() / 2 },
       {
-        y: amount / 2,
+        y: () => travel() / 2,
         ease: 'none',
         scrollTrigger: {
           trigger: opts.trigger ?? el,
           start: 'top bottom',
           end: 'bottom top',
           scrub: true,
+          invalidateOnRefresh: true,
+          onRefresh: pad,
         },
       },
     );
+
   });
 }
 
@@ -555,7 +571,29 @@ export function stand(
    die with the timeline.
    -------------------------------------------------------------------------- */
 export function settle(el, strength = 0.32) {
-  if (reduced() || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (reduced()) return;
+
+  // A thumb has no hover to pull toward, so the same give is translated into
+  // a press: the button sinks a little under the finger, the label a little
+  // further, and it springs back on release. Transform only; a tap that turns
+  // into a scroll releases it.
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const label = el.querySelector('.btn__label');
+    const down = () => {
+      gsap.to(el, { scale: 0.96, duration: 0.18, ease: 'power2.out', overwrite: 'auto' });
+      if (label) gsap.to(label, { y: 1, duration: 0.18, ease: 'power2.out', overwrite: 'auto' });
+    };
+    const up = () => {
+      gsap.to(el, { scale: 1, duration: 0.5, ease: 'back.out(3)', overwrite: 'auto' });
+      if (label) gsap.to(label, { y: 0, duration: 0.5, ease: 'back.out(3)', overwrite: 'auto' });
+    };
+    el.addEventListener('pointerdown', down);
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => el.addEventListener(t, up));
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => el.removeEventListener(t, up));
+    };
+  }
 
   const label = el.querySelector('.btn__label');
   const move = gsap.quickTo(el, 'x', { duration: 0.45, ease: 'power3.out' });

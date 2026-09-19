@@ -735,6 +735,13 @@
     min-height: 44px;
   }
 
+  /* The desk sits on a near-white panel, so on a phone a lighter blur reads
+     the same and costs half the sampling while the page scrolls. */
+  .foot__desk {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
   .foot__hours > div {
     flex-direction: column;
     gap: 2px;

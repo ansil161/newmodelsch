@@ -355,54 +355,106 @@
 }
 
 /* ==========================================================================
-   Below 900px the reel stops being a reel
+   The same reel, re-framed per screen
    --------------------------------------------------------------------------
-   There is no pointer to open a panel with, and a tap that only reveals text
-   is a tap that costs the reader something for nothing. So every panel is a
-   whole card: the poster, the quote, the name and a play button, stacked.
+   Every range keeps the idea: four students as slats, one chosen and opened
+   in full colour with the quote and the film, the rest waiting with their
+   names on them. The print and the step forward play exactly as they do on
+   desktop. Only the geometry turns.
 
-   Which is to say the expansion is a desktop affordance, not the content. All
-   four quotes were always in the DOM; here they are simply all visible too.
+   There is no hover on a touchscreen, so a tap on a slat opens it - the
+   card's own click handler - and the play button inside only takes presses
+   once its panel is open, so the first tap on a closed slat can never start
+   a film by accident.
    ========================================================================== */
-@media (max-width: 899px) {
+
+/* A portrait tablet: the desktop row, shorter, with the open panel taking a
+   larger share so the quote still sets at a comfortable measure. */
+@media (min-width: 600px) and (max-width: 899px) {
   .reel__cast {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(14px, 3vw, 22px);
-    height: auto;
+    height: clamp(440px, 60svh, 560px);
   }
 
-  .reel__card,
-  .reel__card.is-on,
-  .reel__card.is-live {
-    flex: none;
-    aspect-ratio: 4 / 5;
-  }
-
-  .reel__spine {
-    display: none;
-  }
-
-  .reel__shot img {
-    filter: none;
+  .reel__cast[data-open='true'] {
+    --grow-on: 3;
   }
 
   .reel__body {
-    width: 100%;
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-    transition: none;
+    padding: 22px;
   }
 }
 
-/* A portrait tablet has room for two whole cards abreast, each about as
-   wide as a phone's single card - so the poster, the quote and the name set
-   exactly as they do on a phone, and four students take two rows rather than
-   four screens. */
-@media (min-width: 600px) and (max-width: 899px) {
+/* A phone: the row turned on its side. The slats become bands stacked down
+   the screen, each showing a strip of its poster with the name across it,
+   and the chosen band opens to a tall portrait. The camera has turned; the
+   scene has not. */
+@media (max-width: 599px) {
   .reel__cast {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+  }
+
+  .reel__card {
+    --band: clamp(76px, 22vw, 96px);
+    flex: none;
+    height: var(--band);
+    /* The box snaps; the movement is a transform and clip-path FLIP played
+       by SlVoices.jsx, so choosing a band costs one layout, not ninety. */
+    transition: none;
+  }
+
+  .reel__cast[data-open='true'] .reel__card.is-on,
+  .reel__card.is-live {
+    height: clamp(420px, calc((100vw - var(--gutter) * 2) * 1.3), 76svh);
+  }
+
+  /* Colour for the chosen one, as on desktop - but as a static state rather
+     than a filter transition, which is the one effect here too costly to
+     animate on a phone's GPU. The waiting bands are held back by a plain
+     overlay instead, faded with opacity. */
+  .reel__shot img,
+  .reel__card.is-on .reel__shot img {
+    filter: none;
+    transition: none;
+  }
+
+  .reel__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: rgba(17, 14, 44, 0.5);
+    pointer-events: none;
+    transition: opacity 600ms var(--ease-out);
+  }
+
+  .reel__cast[data-open='true'] .reel__card.is-on::after,
+  .reel__card.is-live::after {
+    opacity: 0;
+  }
+
+  /* The spine reads across the band rather than up it. */
+  .reel__spine {
+    z-index: 1;
+    top: 50%;
+    bottom: auto;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    writing-mode: horizontal-tb;
+    transform: translateY(-50%);
+  }
+
+  .reel__index {
+    left: auto;
+    right: 18px;
+    top: 18px;
+  }
+
+  .reel__body {
+    z-index: 1;
+    width: 100%;
+    padding: 22px;
   }
 }
 

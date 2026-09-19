@@ -146,6 +146,38 @@ export function AdCover() {
     mm.add('(max-width: 899.98px)', depth(-14, -4));
     mm.add('(min-width: 900px)', depth(-9, -8));
 
+    /* ------------------------------------------------ depth without a pointer
+       A touch screen, or a tablet in either orientation, has no pointer to
+       lean the layers against, so scrolling does it instead: as the cover
+       leaves, each fact card drifts at its own depth and direction, the seal
+       swings out, and the layers separate the way they would under a mouse.
+       Smaller travel on a phone, where the cards sit in a tight grid. */
+    mm.add(
+      {
+        phone: '(max-width: 599.98px)',
+        touch: '(hover: none), (pointer: coarse), (max-width: 899.98px)',
+      },
+      ({ conditions }) => {
+        if (!conditions.touch) return;
+        const reach = conditions.phone ? 10 : 18;
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: el,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+          },
+        });
+        q('.adc__card').forEach((card) => {
+          const depth = Number(card.dataset.depth) || 1;
+          tl.to(card, { x: reach * depth, y: -reach * 1.4 * Math.abs(depth) }, 0);
+        });
+        tl.to(q('.adc__seal-float'), { x: -reach * 1.2, y: -reach }, 0);
+      },
+    );
+
     /* ------------------------------------------------ depth on the pointer
        A mouse only: a finger has no hover to follow, and nothing here carries
        content, so touch readers lose nothing. */

@@ -1248,14 +1248,14 @@
 .wb-page--single .wb-mark__label,
 .wb-page--single .wb-grid__cap,
 .wb-page--single .wb-quote__src {
-  font-size: max(10px, 1.95cqi);
+  font-size: max(11px, 1.95cqi);
   letter-spacing: 0.12em;
 }
 
 .wb-page--single .wb-stat__l,
 .wb-page--single .wb-fig__l,
 .wb-page--single .wb-trio span {
-  font-size: max(10px, 1.85cqi);
+  font-size: max(11px, 1.85cqi);
   letter-spacing: 0.08em;
 }
 

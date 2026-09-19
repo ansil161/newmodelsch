@@ -326,8 +326,11 @@ function buildMotion(scope) {
       );
 
     return () => {
-      tl.scrollTrigger?.kill();
-      tl.kill();
+      // Revert, not kill: this branch is torn down whenever the layout
+      // changes (a tablet rotated across the breakpoint), and a killed
+      // timeline leaves its last transforms on the elements - the other
+      // layout would then inherit a desktop offset.
+      tl.revert();
     };
   });
 
@@ -356,6 +359,57 @@ function buildMotion(scope) {
           ease: 'power4.inOut',
           scrollTrigger: { trigger: col, start: 'top 82%', once: true },
         });
+      }
+
+      /* The desktop plate lands from a zoom onto its column; here the
+         photograph settles from a tenth larger inside its frame as it
+         prints - the same gesture at a phone's distance, and inside the
+         frame's clip, so it can never reach past the edge of the screen.
+         `scale` rather than `yPercent`, which the parallax below owns. */
+      if (img) {
+        gsap.from(img, {
+          scale: 1.1,
+          duration: 1.6,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: col, start: 'top 82%', once: true },
+        });
+      }
+
+      /* ONE BECOMES THREE, RE-FRAMED FOR A COLUMN.
+
+         On a wide screen one centred plate splits into three. Here each plate
+         arrives centred on the column - where the desktop's single plate
+         sits - and is carried out to its own side as it crosses the screen,
+         so the sequence still resolves from one axis into an alternating
+         composition. The distance is measured from the layout, not written
+         down, so it follows the inset at every width and after a rotation. */
+      const panel = col.querySelector('.hc-panel');
+      const media = col.querySelector('.hc-col__media');
+      if (panel && media) {
+        const centre = () => {
+          const box = media.getBoundingClientRect();
+          const host = col.getBoundingClientRect();
+          // Beside its caption on a tablet, a full swing to the centre would
+          // cross the words as they arrive; a third of it still reads as the
+          // plate opening out.
+          const reach = window.matchMedia('(min-width: 600px)').matches ? 0.35 : 1;
+          return (host.left + host.width / 2 - (box.left + box.width / 2)) * reach;
+        };
+        gsap.fromTo(
+          panel,
+          { x: centre },
+          {
+            x: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: col,
+              start: 'top bottom',
+              end: 'top 35%',
+              scrub: 0.8,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
       }
 
       if (img) {

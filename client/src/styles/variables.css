@@ -374,6 +374,38 @@
   --z-overlay: 60;
 }
 
+/* ==========================================================================
+   Breakpoints - the tiers as they exist in the stylesheets
+   --------------------------------------------------------------------------
+   Custom properties cannot be used inside a media query, so these are a
+   record rather than tokens. Write a new query at one of these edges, in the
+   same form, before inventing another.
+
+     MOBILE         < 600px    (max-width: 599.98px)
+                    one column; photographs above their words. A few
+                    components tighten again below 400px (narrow phones).
+     TABLET         600-899px  (min-width: 600px) / (max-width: 899px)
+                    the intermediate composition: two columns where the
+                    content holds them, strips instead of pins.
+     DESKTOP        >= 900px   (min-width: 900px)
+                    the design as drawn: the masthead's links, the pins, the
+                    sticky and scrubbed scenes. gsap.matchMedia asks this same
+                    query, in the same words, so a layout and its choreography
+                    always agree.
+     LARGE          > 1920px   (min-width: 1921px), below
+                    the whole system grows in rem, in step.
+
+   Between these, some components break on their own content (700/1000 for
+   the footer's directory, 1024/1180 for grids that need a fourth column, a
+   short-height landscape phone at max-height: 520px). Those are measured
+   against what they hold, and are documented where they are written.
+
+   Hover effects are keyed to the pointer, not the width -
+   `(hover: hover) and (pointer: fine)` - and touch targets to
+   `(pointer: coarse)`, since a 1024px tablet has the desktop layout and a
+   finger.
+   ========================================================================== */
+
 /* LARGE DESKTOP. Up to 1920px the design is exactly as drawn. Past it the
    whole system grows in step instead of leaving a 1480px strip in the middle
    of a 2560px screen: the root size tracks the viewport from 16px at 1920 to

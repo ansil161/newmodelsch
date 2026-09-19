@@ -310,8 +310,11 @@ function buildMotion(scope) {
         );
 
       return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
+        // Revert, not kill: this branch is torn down whenever the layout
+        // changes (a tablet rotated across the breakpoint), and a killed
+        // timeline leaves its last transforms on the elements - the other
+        // layout would then inherit a desktop offset.
+        tl.revert();
       };
     },
   );

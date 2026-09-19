@@ -32,7 +32,7 @@ import './admission-journey.css';
      [data-aj-rise]              entrance: y, opacity
      .aj-draw [data-stroke]      entrance: the pen strokes draw in
      .aj__frame                  entrance: scale, opacity
-     .aj__media                  hover: GSAP scale to 1.02
+     .aj__media                  hover (mouse) / scroll (touch): GSAP scale
      .aj-step__rail              entrance: drawn top to bottom, segment by segment
      .aj-step__fill              scroll: scrubbed between one node and the next
      .aj-step__dot               entrance: scale, opacity
@@ -147,24 +147,44 @@ export function AdProcess() {
       );
     });
 
-    /* 5 - the film leans in, barely, under a pointer */
+    /* 5 - the film leans in, barely. Under a mouse it answers the pointer;
+       on a touch screen there is no hover, so it leans in as it crosses the
+       middle of the screen and settles back as it leaves - the same small
+       gesture, driven by the scroll. Re-asked live, so a hybrid device that
+       gains or loses a mouse swaps between them. */
     const film = root.querySelector('.aj__film');
     const media = root.querySelector('.aj__media');
-    if (!film || !media || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (!film || !media) return;
 
-    const lean = (to) =>
-      gsap.to(media, { scale: to, duration: 0.9, ease: 'power2.out', overwrite: 'auto' });
-    const enter = () => lean(1.02);
-    const leave = () => lean(1);
-    film.addEventListener('mouseenter', enter);
-    film.addEventListener('mouseleave', leave);
+    const mm = gsap.matchMedia(root);
 
-    return () => {
-      film.removeEventListener('mouseenter', enter);
-      film.removeEventListener('mouseleave', leave);
-      gsap.killTweensOf(media);
-      gsap.set(media, { clearProps: 'transform' });
-    };
+    mm.add('(hover: hover) and (pointer: fine)', () => {
+      const lean = (to) =>
+        gsap.to(media, { scale: to, duration: 0.9, ease: 'power2.out', overwrite: 'auto' });
+      const enter = () => lean(1.02);
+      const leave = () => lean(1);
+      film.addEventListener('mouseenter', enter);
+      film.addEventListener('mouseleave', leave);
+
+      return () => {
+        film.removeEventListener('mouseenter', enter);
+        film.removeEventListener('mouseleave', leave);
+        gsap.killTweensOf(media);
+        gsap.set(media, { clearProps: 'transform' });
+      };
+    });
+
+    mm.add('(hover: none), (pointer: coarse)', () => {
+      gsap
+        .timeline({
+          defaults: { ease: 'sine.inOut' },
+          scrollTrigger: { trigger: film, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+        })
+        .fromTo(media, { scale: 1 }, { scale: 1.04 })
+        .to(media, { scale: 1 });
+    });
+
+    return () => mm.revert();
   }, []);
 
   const jump = (target) => (event) => {

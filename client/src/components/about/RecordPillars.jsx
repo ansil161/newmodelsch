@@ -250,10 +250,26 @@ export function AboutRecord() {
       headBeats(tl);
       playOnScroll(tl, { trigger: el, start: 'top 78%' });
 
-      cols.forEach((col) => {
+      cols.forEach((col, i) => {
         const own = gsap.timeline();
         buildPillar(own, col, 0);
         playOnScroll(own, { trigger: col, start: 'top 85%' });
+
+        // The same depth as the wide parallax, scaled to a stacked column:
+        // each photograph drifts a fraction of its desktop lift inside its
+        // own frame, so the pillars still read as layered, not as a list.
+        const media = col.querySelector('.pillar__media');
+        if (media) {
+          gsap.fromTo(
+            media,
+            { y: LIFT[i] / 3 },
+            {
+              y: -LIFT[i] / 3,
+              ease: 'none',
+              scrollTrigger: { trigger: col, start: 'top bottom', end: 'bottom top', scrub: 1 },
+            },
+          );
+        }
       });
     });
 

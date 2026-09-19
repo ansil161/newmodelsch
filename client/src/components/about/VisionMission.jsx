@@ -520,6 +520,36 @@ function buildFlow(root) {
       },
     );
 
+    /* The long drift, as on the pinned run: once landed, the paint keeps
+       moving a few pixels against the page for as long as it is on screen. */
+    gsap.fromTo(
+      paint,
+      { y: 10 },
+      {
+        y: -10,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: block, start: 'top 42%', end: 'bottom top', scrub: 1 },
+      },
+    );
+
+    /* The handover. On the pinned run a stroke steps aside as the other takes
+       the floor; here it steps aside as the reader moves on to the next one -
+       the same move, at a fraction of the travel, and never fully gone. */
+    gsap.fromTo(
+      paint,
+      { scale: 1 },
+      {
+        xPercent: ASIDE[id].xPercent * 0.4,
+        rotation: ASIDE[id].rotation,
+        scale: 0.92,
+        autoAlpha: 0.55,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: paint, start: 'center 30%', end: 'bottom top', scrub: 0.7 },
+      },
+    );
+
     /* The wordmark and the statement rise once, on first sight. */
     const wordmark = block.querySelector('.vm__label');
     if (wordmark) {

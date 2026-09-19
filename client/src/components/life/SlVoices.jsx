@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { STUDENT_FILMS, STUDENT_VOICES } from '@/constants';
 import { resolve } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
@@ -86,6 +86,9 @@ export function SlVoices() {
   const scope = useGsapScope((_, el) => {
     const cards = el.querySelectorAll('.reel__card');
 
+    // One print for every range: the reel is re-framed rather than
+    // unstacked on smaller screens (see voices.css), so all four slats are on
+    // screen together wherever it is shown and one trigger serves them all.
     unmask(cards, { trigger: el, from: 'bottom', stagger: 0.1 });
     rise(el.querySelectorAll('.reel__foot > *'), {
       trigger: el,
@@ -114,6 +117,65 @@ export function SlVoices() {
       },
     });
   }, []);
+
+  /* THE PHONE'S STEP FORWARD, AS A FLIP.
+
+     On a phone the reel is a column of bands and the chosen one is tall, so
+     choosing changes box heights. Transitioning `height` would re-lay out the
+     whole column every frame for most of a second; instead the boxes snap to
+     their new sizes in one layout, and the movement is played back with
+     compositor-only properties: every band that moved slides from where it
+     was (transform), and the band that grew opens downward from its old edge
+     (clip-path). Row layouts (600px up) animate `flex-grow` inside a fixed
+     row height, which moves nothing else on the page, and are left alone. */
+  const castRef = useRef(null);
+  const boxes = useRef(null);
+
+  useLayoutEffect(() => {
+    const cast = castRef.current;
+    if (!cast) return undefined;
+    const cards = [...cast.children];
+    // Layout boxes, not bounding rects: they ignore any slide still in
+    // flight, so an interrupted choice is measured from where it was headed.
+    const now = cards.map((c) => ({ top: c.offsetTop, h: c.offsetHeight }));
+    const prev = boxes.current;
+    boxes.current = now;
+    if (!prev || !window.matchMedia('(max-width: 599px)').matches) return undefined;
+
+    const moved = now.some((b, i) => b.h !== prev[i].h);
+    if (!moved) return undefined;
+
+    // Everything below the reel has just moved by the change in its height.
+    const settle = gsap.delayedCall(0.05, () => ScrollTrigger.refresh());
+    if (reduced()) return () => settle.kill();
+
+    const tweens = [];
+    cards.forEach((card, i) => {
+      const dy = prev[i].top - now[i].top;
+      const grew = now[i].h - prev[i].h;
+      if (dy) {
+        tweens.push(
+          gsap.fromTo(card, { y: dy }, { y: 0, duration: 0.9, ease: 'expo.out', clearProps: 'transform' }),
+        );
+      }
+      // Not while the band is still being printed: that tween already owns
+      // its clip, and the print is itself a reveal from the bottom.
+      if (grew > 0 && !gsap.isTweening(card)) {
+        tweens.push(
+          gsap.fromTo(
+            card,
+            { clipPath: `inset(0px 0px ${grew}px 0px round 16px)` },
+            { clipPath: 'inset(0px 0px 0px 0px round 16px)', duration: 0.9, ease: 'expo.out', clearProps: 'clipPath' },
+          ),
+        );
+      }
+    });
+
+    return () => {
+      settle.kill();
+      tweens.forEach((t) => t.progress(1).kill());
+    };
+  }, [active, open, playing, failed]);
 
   /** Hover, focus, or the first press. Never while something is playing. */
   const look = (i) => {
@@ -152,7 +214,7 @@ export function SlVoices() {
           className="reel__head"
         />
 
-        <ul className="reel__cast" data-open={open ? 'true' : 'false'}>
+        <ul className="reel__cast" data-open={open ? 'true' : 'false'} ref={castRef}>
           {STUDENT_FILMS.map((film, i) => {
             const on = i === active;
             const live = on && playing && !failed;
@@ -162,6 +224,9 @@ export function SlVoices() {
                 key={film.id}
                 className={`reel__card${on ? ' is-on' : ''}${live ? ' is-live' : ''}`}
                 onMouseEnter={() => look(i)}
+                // A tap opens a slat on a touchscreen, where there is no
+                // hover to do it. Harmless with a mouse: it is already open.
+                onClick={() => look(i)}
               >
                 {live ? (
                   <>
@@ -200,7 +265,7 @@ export function SlVoices() {
                       photo={film.poster}
                       width={900}
                       widths={[420, 640, 900, 1280]}
-                      sizes="(max-width: 899px) 92vw, (max-width: 1199px) 46vw, 34vw"
+                      sizes="(max-width: 599px) 92vw, (max-width: 1199px) 46vw, 34vw"
                       shape="square"
                       ratio="free"
                       className="reel__shot"

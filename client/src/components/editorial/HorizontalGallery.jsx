@@ -59,6 +59,41 @@ export function HorizontalGallery({
         clearProps: 'transform,opacity,visibility',
         scrollTrigger: { trigger: viewport, start: 'top 85%', once: true },
       });
+
+      // The desktop's idle drift, translated. The strip's own scroll position
+      // eases a fraction of a screen as the section crosses the viewport -
+      // native scrolling, so the strip stays exactly as swipeable as before.
+      // Snapping is paused while the page drives it (a mandatory snap would
+      // pull every frame back to a card edge), and the first touch hands the
+      // strip to the reader for good: the drift stops and snapping returns.
+      viewport.style.scrollSnapType = 'none';
+      let owned = false;
+      const release = () => {
+        if (owned) return;
+        owned = true;
+        drift.kill();
+        viewport.style.scrollSnapType = '';
+      };
+      const drift = ScrollTrigger.create({
+        trigger: el,
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => {
+          if (owned) return;
+          viewport.scrollLeft = self.progress * Math.min(span(), viewport.clientWidth * 0.35);
+        },
+      });
+      ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((type) =>
+        viewport.addEventListener(type, release, { passive: true }),
+      );
+
+      return () => {
+        ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach((type) =>
+          viewport.removeEventListener(type, release),
+        );
+        drift.kill();
+        viewport.style.scrollSnapType = '';
+      };
     });
 
     return () => mm.revert();
@@ -84,7 +119,7 @@ export function HorizontalGallery({
               <Figure
                 photo={frame.photo}
                 width={WIDTHS[frame.size ?? 'md']}
-                sizes="(max-width: 900px) 72vw, 30vw"
+                sizes="(max-width: 899px) 72vw, 30vw"
                 shape={frame.shape ?? 'frame'}
                 ratio={frame.size === 'tall' ? 'tall' : frame.size === 'lg' ? 'wide' : 'landscape'}
               />

@@ -102,24 +102,27 @@ const PER_STAGE = { wide: 0.8, narrow: 0.7 };
 function buildMotion(root) {
   const mm = gsap.matchMedia(root);
 
-  /* The live stage is one viewport tall with a 560px floor, so a window
-     shorter than that - a phone turned on its side - would pin a card whose
-     foot is off the screen. There the charter stays the resting list, which
-     reads the same six principles in order. */
+  /* Every size gets the pinned story; only reduced motion gets the list. A
+     window shorter than the stage's usual floor - a phone on its side - is
+     reframed in the stylesheet rather than skipped: card beside the words,
+     sized to the height there is. */
   mm.add(
     {
-      motion: '(prefers-reduced-motion: no-preference) and (min-height: 560px)',
+      motion: '(prefers-reduced-motion: no-preference)',
       narrow: '(max-width: 699px)',
+      short: '(max-height: 559px)',
     },
     (context) => {
-      const { motion, narrow } = context.conditions;
+      const { motion, narrow, short } = context.conditions;
       if (!motion) return;
 
       /* The blur that softens a leaving paragraph is a full repaint of the
          column on every frame. A desktop GPU does not notice; a phone's does,
-         and at phone size the move and the fade carry the handover alone. */
-      const soft = narrow ? {} : { filter: 'blur(0px)' };
-      const blurred = narrow ? {} : { filter: 'blur(6px)' };
+         and on a phone, either way up, the move and the fade carry the
+         handover alone. */
+      const phone = narrow || short;
+      const soft = phone ? {} : { filter: 'blur(0px)' };
+      const blurred = phone ? {} : { filter: 'blur(6px)' };
 
       const stage = root.querySelector('.charter__stage');
       const steps = gsap.utils.toArray('.charter-step', root);
@@ -262,8 +265,11 @@ function buildMotion(root) {
       tl.set({}, {}, n);
 
       return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
+        // Revert, not kill: this branch is torn down whenever the layout
+        // changes (a tablet rotated across the breakpoint), and a killed
+        // timeline leaves its last transforms on the elements - the other
+        // layout would then inherit a desktop offset.
+        tl.revert();
         root.classList.remove('is-live');
       };
     },

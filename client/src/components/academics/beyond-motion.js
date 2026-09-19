@@ -232,13 +232,13 @@ function fadeIn(r) {
    Float - each print sways on its own clock, only while the map is on screen
    -------------------------------------------------------------------------- */
 
-function float(r, state) {
+function float(r, state, amp = 1) {
   const sways = r.groups.map((g) =>
     gsap.fromTo(
       g.photo,
-      { rotation: g.float[0] },
+      { rotation: g.float[0] * amp },
       {
-        rotation: g.float[1],
+        rotation: g.float[1] * amp,
         duration: gsap.utils.random(4, 6),
         ease: 'sine.inOut',
         repeat: -1,
@@ -342,12 +342,14 @@ function hover(r, track, pointer) {
     offs.push(() => el.removeEventListener(type, fn));
   };
 
+  const setter = (g) => (key, value) => () => {
+    if (g.hover[key] === value) return;
+    g.hover[key] = value;
+    render(g);
+  };
+
   r.groups.forEach((g) => {
-    const set = (key, value) => () => {
-      if (g.hover[key] === value) return;
-      g.hover[key] = value;
-      render(g);
-    };
+    const set = setter(g);
 
     if (pointer) {
       listen(g.photo, 'pointerenter', set('photo', true));
@@ -358,6 +360,24 @@ function hover(r, track, pointer) {
     listen(g.card, 'focusin', set('card', true));
     listen(g.card, 'focusout', set('card', false));
   });
+
+  /* A touch screen has no hover, so the lift would never be seen. There the
+     page's own scroll stands in for the pointer: each experience takes the
+     hovered-print state while it crosses the middle of the screen - the
+     print straightens and rises, the card lifts - and lets it go as it
+     leaves. One at a time, in reading order, which is what the map's
+     lighting does on a desktop. */
+  if (!pointer) {
+    r.groups.forEach((g) => {
+      const st = ScrollTrigger.create({
+        trigger: g.el,
+        start: 'top 58%',
+        end: 'bottom 42%',
+        onToggle: (self) => setter(g)('photo', self.isActive)(),
+      });
+      offs.push(() => st.kill());
+    });
+  }
 
   return () => {
     offs.forEach((off) => off());
@@ -505,6 +525,10 @@ export function animateBeyond(root) {
   mm.add(
     {
       wide: '(min-width: 1180px)',
+      // Never read, but it must be here: GSAP only runs this callback while
+      // at least one condition matches, and without it a touch screen under
+      // 1180px - every phone - matched none and got no choreography at all.
+      narrow: '(max-width: 1179.98px)',
       fine: '(hover: hover) and (pointer: fine)',
       reduce: '(prefers-reduced-motion: reduce)',
     },
@@ -529,8 +553,13 @@ export function animateBeyond(root) {
         offs.push(shake(r, state, track), activate(r, track));
         if (fine) offs.push(parallax(r));
       } else {
+        // The same scene, sized to a phone: the stack arrives in reading
+        // order, and the prints drift and sway at half the desktop travel.
+        // The idle nudge is left out - its job is to draw the eye across a
+        // static map, and here the scroll focus below already does that.
         revealStack(r);
         drift(r, { scale: 0.5, each: true });
+        float(r, state, 0.6);
       }
 
       offs.push(hover(r, track, Boolean(fine)));

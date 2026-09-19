@@ -36,9 +36,18 @@ export function GalleryHero() {
   const all = [HERO_PHOTOS.main, ...HERO_PHOTOS.supporting];
 
   const scope = useGsapScope((_, el) => {
-    el.querySelectorAll('[data-depth]').forEach((node) => {
-      drift(node, Number(node.dataset.depth), { trigger: el });
-    });
+    // Depth in proportion to the prints: a 160px drift reads as layers on a
+    // desktop spread and as a photograph sliding off a phone. The same
+    // parallax, scaled per range, and rebuilt live on rotation.
+    gsap.matchMedia(el).add(
+      { phone: '(max-width: 599px)', tablet: '(min-width: 600px) and (max-width: 1024px)' },
+      ({ conditions }) => {
+        const k = conditions.phone ? 0.45 : conditions.tablet ? 0.7 : 1;
+        el.querySelectorAll('[data-depth]').forEach((node) => {
+          drift(node, Number(node.dataset.depth) * k, { trigger: el });
+        });
+      },
+    );
 
     if (reduced()) return;
 
