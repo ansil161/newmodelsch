@@ -10,6 +10,7 @@ import {
   HomeWeek,
   HomeWhy,
 } from '@/components/home';
+import { AboutRecord } from '@/components/about';
 
 export function HomePage() {
   usePageMeta({
@@ -32,19 +33,22 @@ export function HomePage() {
       {/* 04 - the place */}
       <HomeCampus />
 
-      {/* 05 - one child's path through it, drawn as a line */}
+      {/* 05 - the record: five photo pillars, 1962 to the vision */}
+      <AboutRecord />
+
+      {/* 06 - one child's path through it, drawn as a line */}
       <HomeJourney />
 
-      {/* 06 - what it is like from outside */}
+      {/* 07 - what it is like from outside */}
       <HomeVoices />
 
-      {/* 07 - who is accountable */}
+      {/* 08 - who is accountable */}
       <HomePrincipal />
 
-      {/* 08 - what an ordinary week looks like, as a moving ribbon */}
+      {/* 09 - what an ordinary week looks like, as a moving ribbon */}
       <HomeWeek />
 
-      {/* 09 - the ask, and nothing else */}
+      {/* 10 - the ask, and nothing else */}
       <HomeAdmissions />
     </>
   );

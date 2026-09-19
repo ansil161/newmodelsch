@@ -1,4 +1,5 @@
-import { RECORD } from '@/constants';
+import { useNavigate } from 'react-router-dom';
+import { RECORD, ROUTES } from '@/constants';
 import { resolve, resolveSet } from '@/constants/imagery';
 import { gsap, ScrollTrigger, SplitText } from '@/lib/gsap';
 import { useGsapScope } from '@/hooks/useGsapScope';
@@ -127,6 +128,7 @@ function buildPillar(tl, pillar, at) {
 
 export function AboutRecord() {
   const { scrollTo } = useSmoothScroll();
+  const navigate = useNavigate();
 
   const scope = useGsapScope((_, el) => {
     const nums = el.querySelectorAll('[data-value]');
@@ -273,7 +275,10 @@ export function AboutRecord() {
               href={link.hash}
               onClick={(e) => {
                 e.preventDefault();
-                scrollTo(link.hash, -80);
+                // On the About page the story is on the same page; anywhere
+                // else (the home page) the button takes the reader there.
+                if (document.querySelector(link.hash)) scrollTo(link.hash, -80);
+                else navigate(`${ROUTES.about}${link.hash}`);
               }}
             >
               <span className="record__cta-ring" aria-hidden="true">

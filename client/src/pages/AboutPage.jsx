@@ -9,7 +9,6 @@ import {
   AboutLeadership,
   AboutPhilosophy,
   AboutPrincipal,
-  AboutRecord,
   AboutStory,
   AboutVisionMission,
 } from '@/components/about';
@@ -28,9 +27,8 @@ export function AboutPage() {
       <AboutCover />
       <AboutStory />
       <AboutFilm />
-      {/* The record: five photo pillars in the slot the horizontal timeline
-          held. `AboutTimeline` is still exported if it is wanted back. */}
-      <AboutRecord />
+      {/* The record (five photo pillars) now lives on the home page, after
+          the campus. `AboutRecord` is still exported from here. */}
       <AboutVisionMission />
       <AboutCharter />
       <AboutPhilosophy />
