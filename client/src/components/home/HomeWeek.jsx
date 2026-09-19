@@ -260,6 +260,10 @@ function buildMotion(scope) {
         );
       });
 
+      /* A blur scrubbed across a dozen words is paid for on every frame, and
+         a phone's GPU pays most. Below 900px the words rise and fade alone. */
+      const blur = (px) => (narrow ? {} : { filter: `blur(${px}px)` });
+
       /* ---- the words -----------------------------------------------------
          The oversized word opens from its centre first, behind everything.
          The sentence is already there, faint and blurred under the cluster -
@@ -273,8 +277,8 @@ function buildMotion(scope) {
       )
         .fromTo(
           '.week__eyebrow',
-          { y: 22, autoAlpha: 0, filter: 'blur(6px)' },
-          { y: 0, autoAlpha: 1, filter: 'blur(0px)', duration: 0.18, ease: 'power2.out' },
+          { y: 22, autoAlpha: 0, ...blur(6) },
+          { y: 0, autoAlpha: 1, ...blur(0), duration: 0.18, ease: 'power2.out' },
           0.44,
         )
         .fromTo(
@@ -285,11 +289,11 @@ function buildMotion(scope) {
         )
         .fromTo(
           '.week__word',
-          { yPercent: 55, autoAlpha: 0.08, filter: 'blur(12px)' },
+          { yPercent: 55, autoAlpha: 0.08, ...blur(12) },
           {
             yPercent: 0,
             autoAlpha: 1,
-            filter: 'blur(0px)',
+            ...blur(0),
             duration: 0.22,
             stagger: 0.016,
             ease: 'power2.out',
@@ -300,8 +304,8 @@ function buildMotion(scope) {
            has finished - never while the prints are still crossing it. */
         .fromTo(
           '.week__cta',
-          { y: 18, autoAlpha: 0, filter: 'blur(6px)' },
-          { y: 0, autoAlpha: 1, filter: 'blur(0px)', duration: 0.12, ease: 'power2.out' },
+          { y: 18, autoAlpha: 0, ...blur(6) },
+          { y: 0, autoAlpha: 1, ...blur(0), duration: 0.12, ease: 'power2.out' },
           0.76,
         );
 

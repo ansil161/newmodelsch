@@ -39,6 +39,11 @@ export function YearGalleryHeader({ year }) {
       .from('.gal-yhead__media img', { scale: 1.12, duration: 1.8, ease: 'power3.out' }, 0.5)
       .from('.gal-yhead__years', { y: 16, autoAlpha: 0, duration: 0.7 }, 1.2);
 
+    // The split exists for the entrance only. Put the title back once it has
+    // played, so a later resize or rotation re-wraps real text rather than
+    // leaving stale lines to wrap again inside their own clipping masks.
+    tl.eventCallback('onComplete', () => split?.revert());
+
     const release = onStage(() => tl.play());
     return () => {
       release();

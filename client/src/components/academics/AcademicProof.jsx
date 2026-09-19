@@ -49,10 +49,16 @@ import './academic-proof.css';
 const TALL = everydayImages.classroom;
 const NEAR = studentImages[6];
 
-/* Wide enough for the columns to stand side by side, and motion allowed. On a
-   phone the page's scroll belongs to the thumb, and columns sliding apart
-   under it read as lag rather than as depth. */
-const DESYNC = '(min-width: 1024px) and (prefers-reduced-motion: no-preference)';
+/* Wide enough for the columns to stand side by side, the full desync. On a
+   phone the page's scroll belongs to the thumb, and copy sliding under it
+   reads as lag rather than as depth - so below it only the two photographs
+   give, at a fraction of the travel, and the text holds still. */
+const DESYNC = {
+  wide: '(min-width: 1024px)',
+  motion: '(prefers-reduced-motion: no-preference)',
+};
+/** The share of the desktop travel the photographs keep on a narrow screen. */
+const NARROW_GIVE = 0.4;
 
 /** Pixels of offset per px/s of scroll velocity, and the ceiling. */
 const NEAR_GAIN = 0.012;
@@ -132,11 +138,16 @@ export function AcProof() {
        ------------------------------------------------------------------ */
     const mm = gsap.matchMedia(root);
 
-    mm.add(DESYNC, () => {
+    mm.add(DESYNC, (context) => {
+      const { wide, motion } = context.conditions;
+      if (!motion) return undefined;
+      const give = wide ? 1 : NARROW_GIVE;
+      const textGive = wide ? 1 : 0;
+
       const near = root.querySelector('.ac-proof__shot--near');
       const tall = root.querySelector('.ac-proof__shot--tall');
       const text = root.querySelector('.ac-proof__text');
-      if (!near || !tall || !text) return;
+      if (!near || !tall || !text) return undefined;
 
       const tween = { duration: SETTLE, ease: 'power3.out' };
       const nearY = gsap.quickTo(near, 'y', tween);
@@ -162,9 +173,9 @@ export function AcProof() {
         onUpdate: (self) => {
           const v = self.getVelocity();
           // Positive velocity is the page moving up; the columns trail it.
-          nearY(clamp(NEAR_MAX, v * NEAR_GAIN));
-          textY(clamp(TEXT_MAX, v * TEXT_GAIN));
-          tallSqueeze(1 - SQUEEZE_MAX * Math.min(1, Math.abs(v) / SQUEEZE_AT));
+          nearY(clamp(NEAR_MAX * give, v * NEAR_GAIN * give));
+          textY(clamp(TEXT_MAX * textGive, v * TEXT_GAIN * textGive));
+          tallSqueeze(1 - SQUEEZE_MAX * give * Math.min(1, Math.abs(v) / SQUEEZE_AT));
           rest?.kill();
           rest = gsap.delayedCall(0.1, settle);
         },

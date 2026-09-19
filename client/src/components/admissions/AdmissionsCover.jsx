@@ -84,7 +84,6 @@ export function AdCover() {
     if (reduced()) return releaseMagnet;
 
     const q = gsap.utils.selector(el);
-    const desktop = window.matchMedia('(min-width: 900px)').matches;
 
     /* ------------------------------------------------ the entrance */
     const tl = gsap.timeline({ paused: !stageOpen(), defaults: { ease: 'expo.out' } });
@@ -126,21 +125,31 @@ export function AdCover() {
 
     const release = onStage(() => tl.play());
 
-    /* ------------------------------------------------ depth on scroll */
-    const depth = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 0.6 },
-    });
+    /* ------------------------------------------------ depth on scroll
+       Built per layout, and re-built when a rotation crosses the stylesheet's
+       900px line: the stacked phone cover drifts the word further and the
+       students less, the spread does the reverse. */
+    const mm = gsap.matchMedia(el);
 
-    depth
-      .to(q('.adc__giant'), { xPercent: desktop ? -9 : -14, yPercent: 16 }, 0)
-      .to(q('.adc__people'), { yPercent: desktop ? -8 : -4 }, 0)
-      .to(q('.adc__lede'), { yPercent: -30, autoAlpha: 0.2 }, 0)
-      .to(q('.adc__seal-turn'), { rotate: 220 }, 0);
+    const depth = (word, people) => () => {
+      gsap
+        .timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 0.6 },
+        })
+        .to(q('.adc__giant'), { xPercent: word, yPercent: 16 }, 0)
+        .to(q('.adc__people'), { yPercent: people }, 0)
+        .to(q('.adc__lede'), { yPercent: -30, autoAlpha: 0.2 }, 0)
+        .to(q('.adc__seal-turn'), { rotate: 220 }, 0);
+    };
 
-    /* ------------------------------------------------ depth on the pointer */
-    let detachPointer;
-    if (desktop && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    mm.add('(max-width: 899.98px)', depth(-14, -4));
+    mm.add('(min-width: 900px)', depth(-9, -8));
+
+    /* ------------------------------------------------ depth on the pointer
+       A mouse only: a finger has no hover to follow, and nothing here carries
+       content, so touch readers lose nothing. */
+    mm.add('(min-width: 900px) and (hover: hover) and (pointer: fine)', () => {
       const tween = (target, prop) =>
         gsap.quickTo(target, prop, { duration: 1.1, ease: 'power3.out' });
 
@@ -182,16 +191,20 @@ export function AdCover() {
 
       el.addEventListener('pointermove', onMove);
       el.addEventListener('pointerleave', onLeave);
-      detachPointer = () => {
+      return () => {
         el.removeEventListener('pointermove', onMove);
         el.removeEventListener('pointerleave', onLeave);
+        gsap.set(
+          q('.adc__giant-float, .adc__people-float, .adc__seal-float, .adc__card'),
+          { x: 0, y: 0 },
+        );
       };
-    }
+    });
 
     return () => {
       release();
       tl.kill();
-      detachPointer?.();
+      mm.revert();
       releaseMagnet?.();
     };
   }, []);
@@ -250,8 +263,7 @@ export function AdCover() {
                   alt={STUDENTS.alt}
                   loading="eager"
                   decoding="async"
-                  // @ts-expect-error -- fetchPriority landed in React 19 typings late
-                  fetchpriority="high"
+                  fetchPriority="high"
                 />
               </div>
 

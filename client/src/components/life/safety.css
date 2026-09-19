@@ -336,7 +336,9 @@
   .sw__hand {
     left: 74%;
     top: 58%;
-    font-size: 1.25rem;
+    /* Eases down on the narrowest phones: at a flat 20px "tomorrow." ran a
+       few pixels past a 320px screen. */
+    font-size: clamp(1.0625rem, 5.4vw, 1.25rem);
   }
 }
 

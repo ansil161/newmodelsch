@@ -42,11 +42,14 @@ import './journey.css';
    finishes it goes straight to that stage - never through the ones in
    between - so a fast scroll is one clean change rather than five flashes.
 
-   BELOW 900px, OR UNDER REDUCED MOTION
+   BELOW 900px
 
-   No pin and no stack. Five stages down the page, each its photograph with
-   its sheet laid across the foot of it; on a phone the words rise in gently
-   as each sheet reaches the screen.
+   The same stack at pocket size. The claim scrolls past as ordinary text,
+   then the deck alone is held while its five sheets change places on a
+   shorter run of scroll. A screen too short to hold one sheet and its ledges
+   (a phone on its side) gets the column instead: five stages down the page,
+   each its photograph with its sheet across the foot of it, the words rising
+   in as each sheet arrives. Reduced motion gets the column at any width.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -83,10 +86,18 @@ const COUNT = STAGES.length;
 
 /** The same questions the stylesheet asks, in the same words. */
 const FEED = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
-const COLUMN = '(max-width: 899px) and (prefers-reduced-motion: no-preference)';
+/* A phone held upright has the height for one sheet and its ledges, so it
+   gets the same stack, pinned by the deck alone. Turned on its side it does
+   not, and a pin taller than the screen hides the sheet it is showing. */
+const POCKET =
+  '(max-width: 899px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)';
+const COLUMN =
+  '(max-width: 899px) and (max-height: 559.98px) and (prefers-reduced-motion: no-preference)';
 
-/** Screen-heights of scroll per stage while the section is held. */
+/** Screen-heights of scroll per stage while the section is held. The pocket
+ *  stack is a smaller object read at thumb speed, so it holds for less. */
 const BEAT = 0.85;
+const POCKET_BEAT = 0.55;
 
 function pose(offset) {
   if (offset < 0) return { yPercent: -14, scale: 0.97, autoAlpha: 0, zIndex: 50 };
@@ -107,136 +118,21 @@ function buildMotion(
 ) {
   const mm = gsap.matchMedia(scope);
 
-  mm.add(FEED, () => {
-    const cards = gsap.utils.toArray('.jr-card', scope);
-    if (cards.length !== COUNT) return;
+  mm.add(FEED, () =>
+    buildStack(scope, onStage, run, { pin: scope, start: 'top top', beat: BEAT }),
+  );
 
-    const plates = cards.map((card) => card.querySelector('.jr-card__plate'));
-    const copy = cards.map((card) => card.querySelectorAll('[data-jr-copy]'));
+  // A phone, upright: the deck alone is held, centred under the masthead.
+  mm.add(POCKET, () =>
+    buildStack(scope, onStage, run, {
+      pin: scope.querySelector('.jr__deck'),
+      start: 'center 54%',
+      beat: POCKET_BEAT,
+    }),
+  );
 
-    /** The stage the stack is resting on, or travelling to. */
-    let shown = 0;
-    /** The stage the scroll is asking for. */
-    let wanted = 0;
-    let travelling = null;
-
-    /* Put the stack straight onto a stage, with nothing moving. */
-    const place = (index) => {
-      cards.forEach((card, i) => {
-        const on = i === index;
-        gsap.set(card, pose(i - index));
-        const plate = plates[i];
-        if (plate) gsap.set(plate, { autoAlpha: on ? 1 : 0, yPercent: 0 });
-        gsap.set(copy[i], { autoAlpha: on ? 1 : 0, y: 0 });
-      });
-      shown = index;
-      wanted = index;
-      onStage(index);
-    };
-
-    /* One change of stage, as one timeline. */
-    const travel = (to) => {
-      const from = shown;
-      if (from === to) return;
-
-      const dir = to > from ? 1 : -1;
-      shown = to;
-      onStage(to);
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          travelling = null;
-          if (wanted !== shown) travel(wanted);
-        },
-      });
-      travelling = tl;
-
-      // 1. The old words leave, before anything else moves.
-      tl.to(
-        copy[from],
-        { autoAlpha: 0, y: -12 * dir, duration: 0.3, ease: 'power2.in', stagger: 0.03 },
-        0,
-      );
-
-      const oldPlate = plates[from];
-      if (oldPlate) {
-        tl.to(oldPlate, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, 0.12);
-      }
-
-      // 2. The sheets change places. Stacking order changes at once, so a
-      //    sheet lifted off (forward) or laid back on (backward) is in front
-      //    of the one it passes for the whole of its travel.
-      cards.forEach((card, i) => {
-        const { zIndex, ...rest } = pose(i - to);
-        tl.set(card, { zIndex }, 0);
-        tl.to(card, { ...rest, duration: 0.72, ease: 'power3.inOut' }, 0.18);
-      });
-
-      // 3. The new photograph settles in behind the arriving sheet.
-      const newPlate = plates[to];
-      if (newPlate) {
-        tl.fromTo(
-          newPlate,
-          { autoAlpha: 0, yPercent: 5 * dir },
-          { autoAlpha: 1, yPercent: 0, duration: 0.75, ease: 'power3.out' },
-          0.4,
-        );
-      }
-
-      // 4. The new words arrive once their sheet has all but landed.
-      tl.fromTo(
-        copy[to],
-        { autoAlpha: 0, y: 12 * dir },
-        { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', stagger: 0.05 },
-        0.6,
-      );
-    };
-
-    /* Every request goes through here. A running change is never interrupted
-       or stacked on; the latest request waits for it to finish. */
-    const request = (index) => {
-      wanted = index;
-      if (!travelling) travel(index);
-    };
-
-    const stageAt = (progress) =>
-      gsap.utils.clamp(0, COUNT - 1, Math.floor(progress * COUNT));
-
-    place(0);
-
-    const trigger = ScrollTrigger.create({
-      trigger: scope,
-      start: 'top top',
-      end: () => `+=${Math.round(window.innerHeight * BEAT * COUNT)}`,
-      // The section, not a descendant. See the note at the top of `journey.css`.
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => request(stageAt(self.progress)),
-    });
-
-    run.current = trigger;
-
-    // Arriving mid-section - a reload, a back button - lands on the right
-    // stage without playing the ones before it.
-    const start = stageAt(trigger.progress);
-    if (start !== 0) place(start);
-
-    return () => {
-      travelling?.kill();
-      travelling = null;
-      run.current = null;
-      // Changes of stage run outside the setup, so the context cannot revert
-      // them. Hand the column layout clean elements.
-      [...cards, ...plates, ...copy.flatMap((list) => [...list])].forEach((el) =>
-        el?.removeAttribute('style'),
-      );
-      onStage(0);
-    };
-  });
-
-  // A phone: nothing held, the words on each sheet rise in as it arrives.
+  // A phone on its side: nothing held, the words on each sheet rise in as it
+  // arrives.
   mm.add(COLUMN, () => {
     gsap.utils.toArray('.jr-card__sheet', scope).forEach((sheet) => {
       rise(sheet.querySelectorAll('[data-jr-copy]'), {
@@ -249,6 +145,139 @@ function buildMotion(
   });
 
   return () => mm.revert();
+}
+
+/* One stack, at either size. `pin` is what is held - the section on a wide
+   screen, where the claim stays beside the stack; the deck alone on a phone,
+   where the claim has already been read above it. */
+function buildStack(scope, onStage, run, { pin, start, beat }) {
+  const cards = gsap.utils.toArray('.jr-card', scope);
+  if (cards.length !== COUNT) return;
+
+  const plates = cards.map((card) => card.querySelector('.jr-card__plate'));
+  const copy = cards.map((card) => card.querySelectorAll('[data-jr-copy]'));
+
+  /** The stage the stack is resting on, or travelling to. */
+  let shown = 0;
+  /** The stage the scroll is asking for. */
+  let wanted = 0;
+  let travelling = null;
+
+  /* Put the stack straight onto a stage, with nothing moving. */
+  const place = (index) => {
+    cards.forEach((card, i) => {
+      const on = i === index;
+      gsap.set(card, pose(i - index));
+      const plate = plates[i];
+      if (plate) gsap.set(plate, { autoAlpha: on ? 1 : 0, yPercent: 0 });
+      gsap.set(copy[i], { autoAlpha: on ? 1 : 0, y: 0 });
+    });
+    shown = index;
+    wanted = index;
+    onStage(index);
+  };
+
+  /* One change of stage, as one timeline. */
+  const travel = (to) => {
+    const from = shown;
+    if (from === to) return;
+
+    const dir = to > from ? 1 : -1;
+    shown = to;
+    onStage(to);
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        travelling = null;
+        if (wanted !== shown) travel(wanted);
+      },
+    });
+    travelling = tl;
+
+    // 1. The old words leave, before anything else moves.
+    tl.to(
+      copy[from],
+      { autoAlpha: 0, y: -12 * dir, duration: 0.3, ease: 'power2.in', stagger: 0.03 },
+      0,
+    );
+
+    const oldPlate = plates[from];
+    if (oldPlate) {
+      tl.to(oldPlate, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, 0.12);
+    }
+
+    // 2. The sheets change places. Stacking order changes at once, so a
+    //    sheet lifted off (forward) or laid back on (backward) is in front
+    //    of the one it passes for the whole of its travel.
+    cards.forEach((card, i) => {
+      const { zIndex, ...rest } = pose(i - to);
+      tl.set(card, { zIndex }, 0);
+      tl.to(card, { ...rest, duration: 0.72, ease: 'power3.inOut' }, 0.18);
+    });
+
+    // 3. The new photograph settles in behind the arriving sheet.
+    const newPlate = plates[to];
+    if (newPlate) {
+      tl.fromTo(
+        newPlate,
+        { autoAlpha: 0, yPercent: 5 * dir },
+        { autoAlpha: 1, yPercent: 0, duration: 0.75, ease: 'power3.out' },
+        0.4,
+      );
+    }
+
+    // 4. The new words arrive once their sheet has all but landed.
+    tl.fromTo(
+      copy[to],
+      { autoAlpha: 0, y: 12 * dir },
+      { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', stagger: 0.05 },
+      0.6,
+    );
+  };
+
+  /* Every request goes through here. A running change is never interrupted
+     or stacked on; the latest request waits for it to finish. */
+  const request = (index) => {
+    wanted = index;
+    if (!travelling) travel(index);
+  };
+
+  const stageAt = (progress) =>
+    gsap.utils.clamp(0, COUNT - 1, Math.floor(progress * COUNT));
+
+  place(0);
+
+  const trigger = ScrollTrigger.create({
+    trigger: pin,
+    start,
+    end: () => `+=${Math.round(window.innerHeight * beat * COUNT)}`,
+    // On a wide screen, the section rather than a descendant. See the note
+    // at the top of `journey.css`.
+    pin: true,
+    pinSpacing: true,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => request(stageAt(self.progress)),
+  });
+
+  run.current = trigger;
+
+  // Arriving mid-section - a reload, a back button - lands on the right
+  // stage without playing the ones before it.
+  const landing = stageAt(trigger.progress);
+  if (landing !== 0) place(landing);
+
+  return () => {
+    travelling?.kill();
+    travelling = null;
+    run.current = null;
+    // Changes of stage run outside the setup, so the context cannot revert
+    // them. Hand the column layout clean elements.
+    [...cards, ...plates, ...copy.flatMap((list) => [...list])].forEach((el) =>
+      el?.removeAttribute('style'),
+    );
+    onStage(0);
+  };
 }
 
 /* ==========================================================================

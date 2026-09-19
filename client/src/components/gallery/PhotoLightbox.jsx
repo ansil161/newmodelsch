@@ -88,15 +88,22 @@ function PhotoLightbox({
     rootRef.current?.focus();
 
     const root = rootRef.current;
+    let entrance;
     if (root && !reduced()) {
-      gsap
+      entrance = gsap
         .timeline()
         .from(root, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, 0)
         .from(root.querySelector('.gal-lb__frame'), { y: 36, scale: 0.95, autoAlpha: 0, duration: 0.7, ease: 'power3.out' }, 0.08)
-        .from(root.querySelectorAll('.gal-lb__bar > *, .gal-lb__nav, .gal-lb__thumbs'), { y: 10, autoAlpha: 0, duration: 0.5, stagger: 0.05 }, 0.2);
+        // Opacity, not autoAlpha: autoAlpha writes an inline `visibility`, which
+        // would override the stylesheet hiding the filmstrip on phones.
+        .from(root.querySelectorAll('.gal-lb__bar > *, .gal-lb__nav, .gal-lb__thumbs'), { y: 10, opacity: 0, duration: 0.5, stagger: 0.05 }, 0.2);
     }
 
     return () => {
+      // Reverted rather than killed: a killed `from` leaves the viewer at its
+      // start state, and a second run (StrictMode, a fast reopen) would then
+      // read opacity 0 as the value to arrive at.
+      entrance?.revert();
       html.classList.remove('is-locked');
       start();
       if (opener?.isConnected) opener.focus({ preventScroll: true });

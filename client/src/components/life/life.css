@@ -497,7 +497,10 @@
 .strand--mint .strand__stat .stat-num { color: var(--green); }
 .strand--blue .strand__stat .stat-num { color: var(--blue); }
 
-@media (min-width: 860px) {
+/* Side by side from a portrait tablet up: at 640px each track is still
+   ~280px, wide enough for a landscape print beside its list, and a strand
+   stacked at that width is a phone's layout with more air round it. */
+@media (min-width: 640px) {
   .strand {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   }

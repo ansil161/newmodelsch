@@ -1060,6 +1060,31 @@ html.is-locked {
 }
 
 /* ==========================================================================
+   Touch targets
+   --------------------------------------------------------------------------
+   A handful of links are set as quiet type - a breadcrumb, a "read more"
+   under a card - and their drawn box is a line of 11-13px text. That is the
+   design, and a mouse finds it easily; a fingertip does not. On a coarse
+   pointer the hit area grows invisibly to at least 44px tall around the
+   text, so nothing moves and nothing is redrawn.
+   ========================================================================== */
+@media (pointer: coarse) {
+  .gal-crumbs__trail a,
+  .nx-card__more,
+  .bm-card__more {
+    position: relative;
+  }
+
+  .gal-crumbs__trail a::after,
+  .nx-card__more::after,
+  .bm-card__more::after {
+    content: '';
+    position: absolute;
+    inset: -14px -6px;
+  }
+}
+
+/* ==========================================================================
    Reduced motion
    --------------------------------------------------------------------------
    Everything the site animates has a resting state that is the finished

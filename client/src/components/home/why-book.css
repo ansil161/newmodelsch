@@ -191,8 +191,10 @@
 
 .wb-book--single {
   --ratio: 0.7;
+  /* The floor gives way on a phone turned on its side, where 300px of page
+     and its boards is more than the screen under the masthead. */
   --page-h: clamp(
-    300px,
+    min(300px, calc(100svh - 130px)),
     min(calc(100svh - 210px), calc((100vw - 2 * var(--gutter) - 42px) / var(--ratio))),
     860px
   );
@@ -1230,6 +1232,47 @@
   height: max(28px, 10cqi);
 }
 
+/* Beside the ring the heading has to give way, or on a 320px phone it runs
+   past the fore-edge of the page. */
+.wb-page--single .wb-head .wb-h {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A phone's page is a third of a spread's width, so type sized purely in
+   `cqi` falls to 7px on it. The furniture and the labels keep a floor a
+   reader can actually read: 10px for tracked capitals, 11px for sentences. */
+.wb-page--single .wb-run,
+.wb-page--single .wb-meta,
+.wb-page--single .wb-eyebrow,
+.wb-page--single .wb-mark__label,
+.wb-page--single .wb-grid__cap,
+.wb-page--single .wb-quote__src {
+  font-size: max(10px, 1.95cqi);
+  letter-spacing: 0.12em;
+}
+
+.wb-page--single .wb-stat__l,
+.wb-page--single .wb-fig__l,
+.wb-page--single .wb-trio span {
+  font-size: max(10px, 1.85cqi);
+  letter-spacing: 0.08em;
+}
+
+.wb-page--single .wb-cap,
+.wb-page--single .wb-hint {
+  font-size: max(11px, 2cqi);
+}
+
+/* The running head has room for one of its two halves on a phone. The
+   school's name is already on the cover; the chapter is what locates you. */
+@container wbpage (max-width: 420px) {
+  .wb-run > span:first-child:not(:only-child),
+  .wb-meta > span:first-child:not(:only-child) {
+    display: none;
+  }
+}
+
 .wb-page--single .wb-head .wb-h {
   margin: 0 !important;
   max-width: 18ch;
@@ -1282,6 +1325,47 @@
 
 .wb-page--single .wb-quote {
   font-size: max(17px, 7.4cqi);
+}
+
+/* ---- a small laptop's spread ---------------------------------------------
+   Between 900 and 1280px a spread's page is 300-450px wide, and the `cqi`
+   sizes above bottom out at 7px. The floors come up just far enough to read;
+   from 1280px the `cqi` sizes are already above them and nothing changes. */
+@media (min-width: 900px) and (max-width: 1279.98px) {
+  .wb-page--l .wb-run,
+  .wb-page--r .wb-run,
+  .wb-page--l .wb-meta,
+  .wb-page--r .wb-meta {
+    font-size: max(8.5px, 1.7cqi);
+  }
+
+  .wb-page--l .wb-eyebrow,
+  .wb-page--r .wb-eyebrow,
+  .wb-page--l .wb-mark__label,
+  .wb-page--r .wb-mark__label,
+  .wb-page--l .wb-grid__cap,
+  .wb-page--r .wb-grid__cap,
+  .wb-page--l .wb-quote__src,
+  .wb-page--r .wb-quote__src {
+    font-size: max(8.5px, 1.95cqi);
+  }
+
+  .wb-page--l .wb-stat__l,
+  .wb-page--r .wb-stat__l,
+  .wb-page--l .wb-fig__l,
+  .wb-page--r .wb-fig__l {
+    font-size: max(8.5px, 1.85cqi);
+  }
+
+  .wb-page--l .wb-trio span,
+  .wb-page--r .wb-trio span {
+    font-size: max(8.5px, 1.65cqi);
+  }
+
+  .wb-page--l .wb-cap,
+  .wb-page--r .wb-cap {
+    font-size: max(9.5px, 2cqi);
+  }
 }
 
 /* ---- a page too short for everything drops the least important first ---- */

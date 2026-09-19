@@ -148,18 +148,22 @@ export function AdEligibility() {
       },
     });
 
-    /* Parallax on the prints is for a wide screen, where they float around
-       the film. On a phone they are a row under it and should stay put. */
-    const mm = gsap.matchMedia(root);
-    mm.add('(min-width: 900px)', () => {
+    /* Parallax on the prints. On a wide screen they float around the film at
+       full travel; on a phone or tablet they are a row under it, so the same
+       drift runs at a third of the distance - enough to read as depth without
+       the row losing its line. Re-asked live, so a rotation rebuilds it. */
+    const drift = (scale) => () => {
       gsap.utils.toArray('.wca-float', root).forEach((print) => {
         gsap.to(print, {
-          y: Number(print.dataset.speed ?? 0),
+          y: Number(print.dataset.speed ?? 0) * scale,
           ease: 'none',
           scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
         });
       });
-    });
+    };
+    const mm = gsap.matchMedia(root);
+    mm.add('(min-width: 900px)', drift(1));
+    mm.add('(max-width: 899.98px)', drift(0.35));
 
     /* 4 - the ledger */
     gsap.from(root.querySelectorAll('.wca-row'), {

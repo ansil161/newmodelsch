@@ -64,24 +64,37 @@ export function lines(target, opts = {}) {
   const el = gsap.utils.toArray(target)[0];
   if (!el) return;
 
-  const split = new SplitText(el, {
+  /* Lines are a function of width. A phone turned to landscape, a resized
+     window or a late font re-wraps the headline, and `autoSplit` re-splits
+     it - so the entrance is built in `onSplit`, against the lines that exist
+     now. SplitText reverts the tween it returned before each re-split, which
+     is what keeps a stale set of lines from being animated. Once the
+     entrance has started it is not replayed: a headline the reader has
+     already watched arrive simply re-wraps. */
+  let started = false;
+
+  const split = SplitText.create(el, {
     type: 'lines',
     linesClass: 'split-line',
     mask: 'lines',
-    /** Keeps the un-split text available to assistive tech. */
     autoSplit: true,
-  });
-
-  gsap.from(split.lines, {
-    yPercent: 118,
-    duration: 1.15,
-    ease: 'power4.out',
-    stagger: opts.stagger ?? 0.09,
-    delay: opts.delay ?? 0,
-    scrollTrigger: {
-      trigger: opts.trigger ?? el,
-      start: opts.start ?? START,
-      once: opts.once ?? true,
+    onSplit: (self) => {
+      if (started) return undefined;
+      return gsap.from(self.lines, {
+        yPercent: 118,
+        duration: 1.15,
+        ease: 'power4.out',
+        stagger: opts.stagger ?? 0.09,
+        delay: opts.delay ?? 0,
+        onStart: () => {
+          started = true;
+        },
+        scrollTrigger: {
+          trigger: opts.trigger ?? el,
+          start: opts.start ?? START,
+          once: opts.once ?? true,
+        },
+      });
     },
   });
 

@@ -483,6 +483,12 @@
     display: none;
   }
 
+  /* With the title gone the bar has two items, not three; left on three
+     tracks the close button would drop into the middle one. */
+  .gal-lb__bar {
+    grid-template-columns: 1fr auto;
+  }
+
   .gal-lb__stage {
     padding-inline: 12px;
   }

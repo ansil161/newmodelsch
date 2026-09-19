@@ -116,12 +116,23 @@ export function AcCover() {
       gsap.to(target, {
         ...vars,
         ease: 'none',
-        scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
+        scrollTrigger: {
+          trigger: el,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
       });
 
+    // The cards' lift is written for a desktop cover. On a phone the cover is
+    // a third as tall, so the same pixels would tear them off the photograph;
+    // they keep the lift in proportion, read afresh on every resize.
+    const lift = (px) => () => px * (window.innerWidth < 1024 ? 0.5 : 1);
+
     layer(image, { yPercent: 6 });
-    layer(q('.ach__float--years'), { y: -26 });
-    layer(q('.ach__float--stages'), { y: -52 });
+    layer(q('.ach__float--years'), { y: lift(-26) });
+    layer(q('.ach__float--stages'), { y: lift(-52) });
 
     return () => release();
   }, []);
@@ -159,7 +170,7 @@ export function AcCover() {
               alt={PHOTO.alt}
               loading="eager"
               decoding="async"
-              fetchpriority="high"
+              fetchPriority="high"
               style={{ '--ach-focus': PHOTO.focus }}
             />
 

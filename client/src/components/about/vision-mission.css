@@ -470,6 +470,12 @@
   color: var(--vm-heading);
 }
 
+/* Stacked - a phone, a tablet - the vw term bottoms out at 10px, which is
+   below what a label can be read at. The pinned composition keeps its own. */
+.vm:not(.is-live) .vm__col-inset {
+  font-size: 0.6875rem;
+}
+
 .vm__col-body {
   font-size: var(--t-small);
   line-height: 1.75;

@@ -374,6 +374,31 @@
   --z-overlay: 60;
 }
 
+/* LARGE DESKTOP. Up to 1920px the design is exactly as drawn. Past it the
+   whole system grows in step instead of leaving a 1480px strip in the middle
+   of a 2560px screen: the root size tracks the viewport from 16px at 1920 to
+   ~21px at 2560, and because the type scale is in rem, every heading and
+   line of copy grows with it. The container, section rhythm and masthead are
+   restated in rem so they grow by the same factor and the composition keeps
+   its proportions. The percentage floor keeps a reader's own font setting. */
+@media (min-width: 1921px) {
+  html {
+    font-size: clamp(100%, 0.8333vw, 133.34%);
+  }
+
+  :root {
+    --container: 92.5rem;
+    --container-narrow: 67.5rem;
+    --gutter: clamp(20px, 5vw, 5.5rem);
+    --section-y: clamp(88px, 10vw, 10.75rem);
+    --section-y-tight: clamp(56px, 6vw, 6rem);
+    --nav-h: 5.25rem;
+    --nav-h-compact: 4.125rem;
+    --logo-h: 3.5rem;
+    --logo-h-compact: 2.75rem;
+  }
+}
+
 /* A phone gets a shorter bar and a smaller - still clearly legible - logo. */
 @media (max-width: 600px) {
   :root {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
 import { onStage } from '@/lib/stage';
@@ -30,6 +31,16 @@ import './assistant.css';
      a click outside   closes, and focus stays where the visitor clicked
      a route change    closes - an answer about Admissions left open over the
                        Contact page is an answer to a question nobody asked
+
+   ON A PHONE, IT STEPS ASIDE WHILE YOU READ
+
+   A 44px button in the corner of a 375px screen sits on top of whatever is
+   there - the end of a line, a counter, a card's last word. So on a phone the
+   dock tucks below the edge while the page is being scrolled down, and comes
+   back the moment it is scrolled up, reaches the top or the foot of the page,
+   or is focused. It is the same rule a phone browser applies to its own
+   toolbar, so it is one a visitor already knows. A transform only; wider
+   screens have the margin to keep it in place.
 
    ENTRANCE
 
@@ -67,6 +78,40 @@ export function FloatingAssistant() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  const phone = useMediaQuery('(max-width: 767px)');
+  const [tucked, setTucked] = useState(false);
+
+  useEffect(() => {
+    setTucked(false);
+    if (!phone) return;
+
+    let lastY = window.scrollY;
+    let frame = 0;
+
+    const read = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const dy = y - lastY;
+      // A few pixels of jitter from a resting thumb is not a direction.
+      if (Math.abs(dy) < 8) return;
+      lastY = y;
+
+      const doc = document.documentElement;
+      const atTop = y < 120;
+      const atEnd = y + window.innerHeight > doc.scrollHeight - 160;
+      setTucked(!atTop && !atEnd && dy > 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(read);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.cancelAnimationFrame(frame);
+    };
+  }, [phone, pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -114,7 +159,7 @@ export function FloatingAssistant() {
   }, []);
 
   return (
-    <div ref={root} className={cx('fa', open && 'is-open')}>
+    <div ref={root} className={cx('fa', open && 'is-open', tucked && !open && 'is-tucked')}>
       <div className="fa-dock">
         <div ref={dock} className="fa-dock__row">
           <ChatButton ref={trigger} active={open} controls={panelId} onClick={toggle} />

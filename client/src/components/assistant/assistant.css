@@ -31,7 +31,15 @@
   z-index: var(--z-assistant);
   transition:
     opacity var(--d-state) var(--ease-out),
-    visibility var(--d-state);
+    visibility var(--d-state),
+    transform var(--d-move) var(--ease-out);
+}
+
+/* Tucked below the edge on a phone while the page scrolls down (see
+   FloatingAssistant.jsx). Focus brings it straight back, so a keyboard or
+   switch user never tabs onto a button they cannot see. */
+.fa.is-tucked .fa-dock:not(:focus-within) {
+  transform: translateY(calc(100% + var(--fa-bottom) + var(--fa-safe-b) + 8px));
 }
 
 .fa-dock__row {
@@ -729,5 +737,26 @@ html.is-locked .fa-panel {
   /* Below 16px, iOS zooms the whole page on focus. */
   .fa-field textarea {
     font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   A phone on its side
+   --------------------------------------------------------------------------
+   Around 360-430px of height, stacking the panel above the dock leaves the
+   conversation a strip barely three lines tall. Here the panel stands beside
+   the dock instead, bottom-aligned with it, and takes the full height.
+   ========================================================================== */
+@media (max-height: 520px) and (min-width: 568px) and (orientation: landscape) {
+  .fa-panel {
+    left: auto;
+    right: calc(var(--fa-right) + var(--fa-chat) + var(--fa-lift) + var(--fa-safe-r));
+    bottom: calc(var(--fa-bottom) + var(--fa-safe-b));
+    width: min(384px, 58vw);
+    height: calc(100vh - var(--fa-bottom) - 12px);
+    height: calc(100dvh - var(--fa-bottom) - var(--fa-safe-b) - 12px);
+    max-height: none;
+    /* It grows out of the dock beside it, not from above it. */
+    transform-origin: 100% calc(100% - 24px);
   }
 }

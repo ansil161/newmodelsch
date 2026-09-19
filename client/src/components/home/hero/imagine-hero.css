@@ -14,8 +14,10 @@
    ========================================================================== */
 
 .ih {
-  --ih-h: clamp(680px, 100vh, 980px);
-  --ih-h: clamp(680px, 100svh, 980px);
+  /* Caps in rem so the hero grows with the root size on a large desktop
+     (see variables.css); identical to px up to 1920. */
+  --ih-h: clamp(680px, 100vh, 61.25rem);
+  --ih-h: clamp(680px, 100svh, 61.25rem);
   --ih-word: min(23.5vw, calc(var(--ih-h) * 0.4));
   --ih-ink: var(--brand-900);
   --ih-ink-2: var(--neutral-600);
@@ -120,20 +122,20 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 32px 64px;
-  width: min(100%, 1320px);
+  width: min(100%, 82.5rem);
   margin: calc(var(--ih-word) * 0.2) auto 0; /* clears the g's tail */
 }
 
 /* The sentence and the two actions, on the right of the claim. */
 .ih__side {
-  flex: 0 1 440px;
+  flex: 0 1 27.5rem;
 }
 
 .ih__title {
   margin: 0;
   font-family: var(--ih-serif);
   font-weight: 400;
-  font-size: clamp(34px, 3.2vw, 54px);
+  font-size: clamp(34px, 3.2vw, 3.375rem);
   line-height: 1.14;
   letter-spacing: -0.012em;
   color: var(--ih-ink);
@@ -153,7 +155,7 @@
   max-width: 42ch;
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(15px, 1.1vw, 17px);
+  font-size: clamp(15px, 1.1vw, 1.0625rem);
   line-height: 1.6;
   color: var(--ih-ink-2);
 }
@@ -175,7 +177,7 @@
   background: var(--ih-blue);
   color: #fff;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 0.4s ease;
@@ -213,10 +215,11 @@
   text-align: center;
   font-family: var(--ih-word-font);
   font-weight: 800;
-  font-size: clamp(38px, 5.6vw, 92px);
+  font-size: clamp(38px, 5.6vw, 5.75rem);
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .ih__school-text {
@@ -227,7 +230,13 @@
   animation: ih-fade 8s ease-in-out infinite;
 }
 
-/* Each letter is its own box so it can give under the student's landing. */
+/* Each letter is its own box so it can give under the student's landing;
+   each word holds its letters together so a line only breaks between words. */
+.ih__sw {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .ih__sl {
   display: inline-block;
 }
@@ -236,8 +245,8 @@
    the g, and drawn in a stroke that scales with the type. */
 .ih__hop {
   position: absolute;
+  top: 0;
   left: 0;
-  bottom: calc(100% - 0.14em);
   width: 0.42em;
   pointer-events: none;
 }
@@ -271,7 +280,7 @@
   padding-right: 14px;
   border-right: 1px solid var(--color-border-brand);
   font-family: var(--font-body);
-  font-size: 9.5px;
+  font-size: 0.59375rem;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: 0.26em;
@@ -305,7 +314,7 @@
   align-items: center;
   gap: 14px;
   font-family: var(--font-body);
-  font-size: 9.5px;
+  font-size: 0.59375rem;
   font-weight: 600;
   line-height: 1.5;
   letter-spacing: 0.24em;
@@ -346,6 +355,9 @@
 }
 
 /* ================================================================== tablet */
+/* The word, the claim and the name are one centred column here, so the hero
+   holds the first screen of an upright tablet rather than stopping two
+   thirds of the way down it with the next section showing underneath. */
 @media (max-width: 1023.98px) {
   .ih {
     --ih-h: auto;
@@ -364,6 +376,42 @@
     max-width: 620px;
     margin-left: 0;
   }
+}
+
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .ih__in {
+    min-height: clamp(560px, 100svh, 73.75rem);
+    justify-content: center;
+  }
+
+  .ih__copy {
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .ih__lead {
+    margin-inline: auto;
+  }
+
+  .ih__actions {
+    justify-content: center;
+  }
+
+  .ih__school {
+    margin-top: 0;
+  }
+}
+
+/* The small print shares its corner with the chat button until the screen is
+   wide enough to set them apart. */
+@media (max-width: 1199.98px) {
+  .ih__brand {
+    display: none;
+  }
+}
+
+@media (max-width: 1023.98px) {
 
   .ih__side {
     flex: none;
@@ -372,10 +420,6 @@
   .ih__school {
     margin-bottom: 0;
     padding-top: 48px;
-  }
-
-  .ih__brand {
-    display: none;
   }
 
   .ih__scroll {
@@ -407,7 +451,8 @@
   }
 
   .ih__school {
-    font-size: clamp(24px, 7.6vw, 40px);
+    font-size: clamp(26px, 9.4vw, 44px);
+    line-height: 1.12;
     letter-spacing: 0.02em;
   }
 

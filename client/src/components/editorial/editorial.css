@@ -595,6 +595,60 @@
   display: none;
 }
 
+/* A tablet is not a wide phone. Between the single column and the sticky
+   stack, each practice becomes its own spread: the words on one side and
+   their photograph beside them, set upright and alternating sides down the
+   list, so the section keeps the rhythm of text-against-image that the
+   desktop builds with a sticky frame. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .sticky-story__text {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    column-gap: clamp(28px, 5vw, 48px);
+    align-items: center;
+  }
+
+  .sticky-story__text > * {
+    grid-column: 1;
+  }
+
+  /* Spans every row the text makes; the rows it does not need are empty
+     and collapse to nothing. */
+  .sticky-story__inline {
+    grid-column: 2;
+    grid-row: 1 / span 6;
+    margin-top: 0;
+  }
+
+  .sticky-story__panel:nth-child(even) .sticky-story__text {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .sticky-story__panel:nth-child(even) .sticky-story__text > * {
+    grid-column: 2;
+  }
+
+  .sticky-story__panel:nth-child(even) .sticky-story__inline {
+    grid-column: 1;
+  }
+
+  /* The numeral heads the words, so on a photograph-first row it moves over
+     with them: past the first track (0.85 of 2 fractions) and the gap. */
+  .sticky-story__panel:nth-child(even) .sticky-story__index {
+    margin-left: calc((100% - clamp(28px, 5vw, 48px)) * 0.425 + clamp(28px, 5vw, 48px));
+  }
+
+  /* Upright in a half-width column, where a landscape crop would be a
+     postage stamp. The photograph is cropped, never stretched. */
+  .sticky-story__inline .fig {
+    aspect-ratio: 4 / 5;
+  }
+
+  .sticky-story__title {
+    max-width: 14ch;
+  }
+}
+
 @media (min-width: 900px) {
   .sticky-story {
     grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
@@ -747,7 +801,11 @@
   color: var(--brand-800);
 }
 
-@media (max-width: 899px) {
+/* The complement of the query HorizontalGallery.jsx builds its drag on, so
+   every width and every motion preference gets exactly one of the two. A
+   reader who has asked for less motion on a wide screen gets the native
+   strip too - otherwise the photographs past the edge would be unreachable. */
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
   /* A thumb already knows how to do this, so it is native scrolling with snap
      points rather than a transform the page has to drive. */
   .hgal__viewport {
@@ -774,7 +832,7 @@
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
   /* The contextual cursor. It is a pseudo-element on the viewport rather than
      a real custom cursor, so it costs no pointer tracking and cannot be left
      behind on the page when the section unmounts. */
@@ -922,8 +980,10 @@
 }
 
 /* On a short laptop the body copy is the first thing to go. The year, the
-   photograph and the title still carry the whole diagram without it. */
-@media (max-height: 720px) {
+   photograph and the title still carry the whole diagram without it. Only
+   while pinned: the swipe strip is not held to one screen, so a landscape
+   phone keeps every word. */
+@media (max-height: 720px) and (min-width: 900px) and (prefers-reduced-motion: no-preference) {
   .etl__body {
     display: none;
   }
@@ -955,7 +1015,24 @@
   flex: none;
 }
 
-@media (max-width: 899px) {
+.etl__cue-strip {
+  display: none;
+}
+
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+  .etl__cue-pin {
+    display: none;
+  }
+
+  .etl__cue-strip {
+    display: inline;
+  }
+}
+
+/* The complement of the query EditorialTimeline.jsx pins on. Without the
+   reduced-motion half, a wide screen that skips the pin would keep the
+   clipped one-screen stage and strand every milestone past its edge. */
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
   .etl__inner {
     height: auto;
     overflow: visible;

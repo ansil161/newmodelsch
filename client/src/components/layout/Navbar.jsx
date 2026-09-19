@@ -5,6 +5,7 @@ import { everydayImages, studentImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
 import { ScrollTrigger, gsap } from '@/lib/gsap';
 import { reduced } from '@/lib/motion';
+import { Email } from '@/components/common/Email';
 import { Icon } from '@/components/common/Icon';
 import { Logo } from '@/components/common/Logo';
 import { Figure } from '@/components/editorial';
@@ -245,7 +246,7 @@ export function Navbar() {
                 {SCHOOL.phone}
               </a>
               <a className="menu__mail" href={`mailto:${SCHOOL.email}`}>
-                {SCHOOL.email}
+                <Email>{SCHOOL.email}</Email>
               </a>
               <p className="menu__addr">{SCHOOL.address}</p>
             </div>

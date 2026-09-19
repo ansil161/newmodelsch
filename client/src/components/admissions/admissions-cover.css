@@ -14,7 +14,10 @@
    ========================================================================== */
 
 .adc {
-  --adc-g: clamp(5.5rem, 22vw, 9rem);
+  /* "chapter." is 3.57 of its own em wide, so on a phone the word is sized
+     from the measure it has to fill - edge to edge at 320px as at 480px -
+     rather than from a floor that pushed its last letters off the page. */
+  --adc-g: min(9rem, calc((100vw - var(--gutter) * 2) / 3.64));
   --adc-l: clamp(2.25rem, 9.6vw, 3.5rem);
   --adc-ground: var(--brand-50);
 
@@ -299,6 +302,14 @@
   color: var(--color-primary);
 }
 
+/* The number is quiet type, but it is a call button: a fingertip gets a
+   44px row to land on. The CTA beside it is taller, so nothing moves. */
+@media (pointer: coarse) {
+  .adc__call {
+    min-height: 44px;
+  }
+}
+
 .adc__call span {
   background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px no-repeat;
   transition: background-size 0.5s var(--ease-out);
@@ -504,6 +515,24 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   color: var(--color-text);
+}
+
+/* A narrow phone's half-width card cannot hold an icon and "28 Feb 2026"
+   side by side; the icon sits above the figure instead, so the value keeps
+   its size and stays inside its card. */
+@media (max-width: 439.98px) {
+  .adc__card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 14px 13px;
+  }
+
+  .adc__card-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+  }
 }
 
 /* The deadline: the one card in the brand ink. */

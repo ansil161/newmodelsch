@@ -254,7 +254,7 @@ export function SlBeyond() {
               <Figure
                 photo={[sportsImages[0], artsImages[0], studentImages[3], galleryImages[5]][i]}
                 width={820}
-                sizes="(max-width: 900px) 90vw, 46vw"
+                sizes="(max-width: 639px) 90vw, 46vw"
                 shape={i % 2 === 0 ? 'blob' : 'arch'}
                 ratio="landscape"
                 hover

@@ -584,6 +584,57 @@
 }
 
 /* ==========================================================================
+   Phones - the headline flows
+   --------------------------------------------------------------------------
+   The three set lines are written for a column that holds them; on a phone
+   each one re-wraps on its own and leaves a word stranded per line. Below
+   600px the headline runs as one paragraph and breaks where the width does.
+   ========================================================================== */
+@media (max-width: 599.98px) {
+  .aj__line {
+    display: inline;
+  }
+}
+
+/* The smallest phones cannot spare a column for the step numbers: the rail
+   and its nodes already carry the order, so the numbers step aside and the
+   copy gets the width back. */
+@media (max-width: 399.98px) {
+  .aj {
+    --aj-num: 0px;
+  }
+
+  .aj-step__num {
+    display: none;
+  }
+
+  .aj-steps {
+    margin-left: calc(var(--aj-gap) * -1);
+  }
+}
+
+/* The film's caption and each step's "next" link are set small; on a
+   touch screen the caption takes the label size and the link a fingertip's
+   hit area, without either being redrawn. */
+@media (max-width: 899.98px) {
+  .aj__cue-label {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .aj-step__action {
+    position: relative;
+  }
+
+  .aj-step__action::after {
+    content: '';
+    position: absolute;
+    inset: -10px -6px;
+  }
+}
+
+/* ==========================================================================
    Wider phones - the note and the lower arc have room
    ========================================================================== */
 @media (min-width: 600px) {

@@ -419,17 +419,27 @@ function parallax(r) {
 
 /* --------------------------------------------------------------------------
    Drift - the prints slide a few percent against the scroll
+   --------------------------------------------------------------------------
+   On the map every print rides the whole stage. In the narrow stack the
+   stage is four screens tall, so each print rides its own experience
+   instead, at half the travel: the same slide against the card, sized to a
+   phone's shorter scroll.
    -------------------------------------------------------------------------- */
 
-function drift(r) {
+function drift(r, { scale = 1, each = false } = {}) {
   r.groups.forEach((g) => {
     gsap.fromTo(
       g.photo,
-      { yPercent: g.drift },
+      { yPercent: g.drift * scale },
       {
-        yPercent: -g.drift,
+        yPercent: -g.drift * scale,
         ease: 'none',
-        scrollTrigger: { trigger: r.stage, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+        scrollTrigger: {
+          trigger: each ? g.el : r.stage,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.6,
+        },
       },
     );
   });
@@ -520,6 +530,7 @@ export function animateBeyond(root) {
         if (fine) offs.push(parallax(r));
       } else {
         revealStack(r);
+        drift(r, { scale: 0.5, each: true });
       }
 
       offs.push(hover(r, track, Boolean(fine)));

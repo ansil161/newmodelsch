@@ -31,6 +31,15 @@ if (typeof window !== 'undefined') {
   // ScrollTrigger recalculates on resize; ignoring the mobile address-bar
   // resize avoids a full refresh every time the browser chrome collapses.
   ScrollTrigger.config({ ignoreMobileResize: true });
+
+  // Pins must be measured in page order: each one adds scroll length that
+  // every trigger below it has to include. ScrollTrigger measures in creation
+  // order, which is page order on first load - but a `gsap.matchMedia` block
+  // rebuilt after a rotation creates its pin last, so a rebuilt pin near the
+  // top was measured after the pins below it and they overlapped. Re-sorting
+  // at the start of every refresh restores page order (refreshPriority first,
+  // then position) wherever a rebuild happens.
+  ScrollTrigger.addEventListener('refreshInit', () => ScrollTrigger.sort());
 }
 
 export { gsap, ScrollTrigger, SplitText, Draggable, Observer, CustomEase };

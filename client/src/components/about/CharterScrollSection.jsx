@@ -102,14 +102,24 @@ const PER_STAGE = { wide: 0.8, narrow: 0.7 };
 function buildMotion(root) {
   const mm = gsap.matchMedia(root);
 
+  /* The live stage is one viewport tall with a 560px floor, so a window
+     shorter than that - a phone turned on its side - would pin a card whose
+     foot is off the screen. There the charter stays the resting list, which
+     reads the same six principles in order. */
   mm.add(
     {
-      motion: '(prefers-reduced-motion: no-preference)',
+      motion: '(prefers-reduced-motion: no-preference) and (min-height: 560px)',
       narrow: '(max-width: 699px)',
     },
     (context) => {
       const { motion, narrow } = context.conditions;
       if (!motion) return;
+
+      /* The blur that softens a leaving paragraph is a full repaint of the
+         column on every frame. A desktop GPU does not notice; a phone's does,
+         and at phone size the move and the fade carry the handover alone. */
+      const soft = narrow ? {} : { filter: 'blur(0px)' };
+      const blurred = narrow ? {} : { filter: 'blur(6px)' };
 
       const stage = root.querySelector('.charter__stage');
       const steps = gsap.utils.toArray('.charter-step', root);
@@ -163,11 +173,11 @@ function buildMotion(root) {
         /* ---- the words leave: up, fading, very slightly blurred ---------- */
         tl.fromTo(
           parts(steps[k]),
-          { y: 0, autoAlpha: 1, filter: 'blur(0px)' },
+          { y: 0, autoAlpha: 1, ...soft },
           {
             y: -24,
             autoAlpha: 0,
-            filter: 'blur(6px)',
+            ...blurred,
             duration: BEAT.leaveFor,
             stagger: 0.03,
             ease: 'power2.in',
@@ -224,11 +234,11 @@ function buildMotion(root) {
         /* ---- the next words arrive: title first, then the argument ------- */
         tl.fromTo(
           parts(steps[next]),
-          { y: 28, autoAlpha: 0, filter: 'blur(6px)' },
+          { y: 28, autoAlpha: 0, ...blurred },
           {
             y: 0,
             autoAlpha: 1,
-            filter: 'blur(0px)',
+            ...soft,
             duration: BEAT.arriveFor,
             stagger: 0.04,
             ease: 'power2.out',

@@ -327,10 +327,12 @@
   position: relative;
   display: grid;
   grid-template-columns: 2.25rem 2.75rem minmax(0, 1fr) 2.5rem;
+  /* The description and tag run on under the arrow: at phone widths the
+     column between icon and arrow alone is barely 130px of text. */
   grid-template-areas:
     'num icon stage arrow'
-    '.   .    desc  .'
-    '.   .    tag   .';
+    '.   .    desc  desc'
+    '.   .    tag   tag';
   column-gap: 12px;
   align-items: center;
   padding: 20px 6px;
@@ -504,6 +506,17 @@
   margin: 0 12px 0.3em;
   vertical-align: middle;
   background: var(--wca-hair-strong);
+}
+
+/* A phone gives the row's detail the width of the icon column as well, so
+   it reads as a paragraph under its heading rather than a narrow column. */
+@media (max-width: 479.98px) {
+  .wca-row {
+    grid-template-areas:
+      'num icon stage arrow'
+      '.   desc desc  desc'
+      '.   tag  tag   tag';
+  }
 }
 
 /* ==========================================================================

@@ -344,6 +344,25 @@
     height: clamp(38px, 9vw, 62px);
   }
 
+  .day-row__body {
+    max-width: none;
+  }
+}
+
+/* A tablet keeps the card's two tracks - copy beside a cloud that still
+   hangs past the edge - because a portrait tablet has the width for a print
+   laid on paper and a single centred crop there reads as a phone scaled up.
+   Only the hour has moved above the card. */
+@media (min-width: 600px) and (max-width: 880px) {
+  .day-row__card {
+    --shot: clamp(168px, 26vw, 220px);
+    max-width: none;
+  }
+}
+
+/* A phone unstacks the card too. The frame leads: a picture under three
+   lines of copy is a footnote; above them it is the reason to read them. */
+@media (max-width: 599.98px) {
   .day-row__card,
   .day-row--flip .day-row__card {
     grid-template-columns: minmax(0, 1fr);
@@ -351,8 +370,6 @@
     padding: clamp(22px, 5vw, 32px);
   }
 
-  /* The frame leads on a phone. A picture under three lines of copy is a
-     footnote; above them it is the reason to read the three lines. */
   .day-row__text,
   .day-row--flip .day-row__text {
     order: 2;
@@ -365,10 +382,6 @@
     width: min(74%, 320px);
     justify-self: center;
     margin: 0 auto;
-  }
-
-  .day-row__body {
-    max-width: none;
   }
 }
 

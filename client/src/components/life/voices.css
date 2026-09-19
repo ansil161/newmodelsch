@@ -396,6 +396,16 @@
   }
 }
 
+/* A portrait tablet has room for two whole cards abreast, each about as
+   wide as a phone's single card - so the poster, the quote and the name set
+   exactly as they do on a phone, and four students take two rows rather than
+   four screens. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .reel__cast {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 900px) and (max-width: 1199px) {
   /* Three panels' worth of room and four panels in it: the open one has to
      take a smaller share or the slats fall below a readable name. */

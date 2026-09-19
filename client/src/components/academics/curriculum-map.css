@@ -127,6 +127,10 @@
 
 .cm__frame {
   display: grid;
+  /* One column that may shrink below its content. Left to the implicit
+     `auto` track, the swipeable tab row and the stacked panels set the
+     column to their min-content width - a thousand pixels on a phone. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(28px, 4vw, 56px);
 }
@@ -466,6 +470,7 @@
    ========================================================================== */
 .cm__stage {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(28px, 4vw, 56px);
   min-height: 0;
 }
@@ -577,6 +582,7 @@
 
 .cm__panel-stack {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .cm-panel {
@@ -869,6 +875,15 @@
 
   .cm-count__now {
     font-size: 2rem;
+  }
+
+  /* The 10px mono labels read as furniture on a wide plate; held a phone's
+     length away they are simply small. One step up, to the label floor. */
+  .cm-tab__range,
+  .cm-panel__facts dt,
+  .cm-panel__detail footer,
+  .cm-hint {
+    font-size: 0.6875rem;
   }
 }
 

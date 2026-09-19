@@ -19,6 +19,12 @@ export function StickyStory({
     const items = gsap.utils.toArray('.sticky-story__panel', el);
     const frames = gsap.utils.toArray('.sticky-story__frame', el);
 
+    // Set below once the frames are prepared. A handover repaints at once, so
+    // the photograph never waits for the next scroll frame - a scroll that
+    // comes to rest just past a handover line would otherwise leave the
+    // previous panel's picture showing.
+    let paint = null;
+
     items.forEach((panel, i) => {
       rise(panel.querySelectorAll('[data-lift]'), {
         trigger: panel,
@@ -38,6 +44,7 @@ export function StickyStory({
           if (!self.isActive) return;
           activeRef.current = i;
           setActive(i);
+          paint?.(i);
         },
       });
     });
@@ -47,7 +54,7 @@ export function StickyStory({
     // The frames are driven imperatively rather than by a React class swap:
     // a state change re-renders nine <img> elements to move one opacity, and
     // GSAP is already the thing holding the timeline.
-    const paint = (index) => {
+    paint = (index) => {
       frames.forEach((frame, i) => {
         gsap.to(frame, {
           autoAlpha: i === index ? 1 : 0,
@@ -148,7 +155,7 @@ export function StickyStory({
                 <Figure
                   photo={panel.photo}
                   width={640}
-                  sizes="90vw"
+                  sizes="(min-width: 600px) 40vw, 90vw"
                   shape={shape === 'arch' ? 'arch' : 'frame'}
                   ratio="landscape"
                 />

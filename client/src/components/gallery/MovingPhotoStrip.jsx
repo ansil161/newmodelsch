@@ -164,7 +164,7 @@ export function MovingPhotoStrip() {
           }
         />
         <p className="gal-strip__hint meta" aria-hidden="true">
-          Drag or swipe · hover to pause
+          Drag or swipe<span className="gal-strip__hint-hover"> · hover to pause</span>
         </p>
       </div>
 

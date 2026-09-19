@@ -240,3 +240,12 @@
     gap: clamp(48px, 6vw, 96px);
   }
 }
+
+/* The date's state is the one word that says whether it has passed. At
+   10px it is a desktop detail; on a phone or tablet it is read at arm's
+   length, so it takes the label tier's size. */
+@media (max-width: 899.98px) {
+  .date__state {
+    font-size: 0.6875rem;
+  }
+}

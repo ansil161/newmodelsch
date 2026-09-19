@@ -108,7 +108,8 @@ export function Footer() {
           <div className="foot__say">
             <p className="foot__eyebrow" data-lift>
               <span className="foot__pulse" aria-hidden="true" />
-              Admissions open for {SCHOOL.session}
+              {/* The session is one token: "2026-27" never splits at its hyphen. */}
+              Admissions open for <span className="foot__session">{SCHOOL.session}</span>
             </p>
             <h2 id="foot-title" className="ed-h1 foot__title">
               Every child here is known <span className="mark">by name.</span>

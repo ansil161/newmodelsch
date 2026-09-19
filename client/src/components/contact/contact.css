@@ -19,6 +19,9 @@
 
 .hello__inner {
   display: grid;
+  /* One track that may shrink below its content, so the email address in
+     the quick links can never push the page wider than a small phone. */
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(32px, 4vw, 64px);
   align-items: center;
 }
@@ -46,6 +49,13 @@
   margin-top: 8px;
 }
 
+/* The address is one long unbroken word; on a 320px phone it breaks at any
+   point rather than running off the edge. */
+.hello__quick .link {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .hello__phone {
   display: inline-flex;
   align-items: center;
@@ -68,9 +78,17 @@
   width: 100%;
 }
 
-@media (min-width: 900px) {
+/* A tablet already has room for the spread: stacked, the arch ran the full
+   width and pushed everything under it below the first screen. */
+@media (min-width: 700px) {
   .hello__inner {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(32px, 6vw, 96px);
+  }
+}
+
+@media (min-width: 900px) {
+  .hello__inner {
     gap: clamp(48px, 6vw, 96px);
   }
 }
@@ -147,6 +165,42 @@
 .chan:hover .chan__go {
   color: var(--blue);
   transform: translate(2px, -2px);
+}
+
+/* Below the two-column spread the value gets the card's whole width: the
+   icon and label share the top line, the number or address runs underneath.
+   Squeezed between icon and arrow on a phone, a domain name broke mid-word.
+   A tablet has room for the four cards as a pair of pairs, rather than one
+   column of wide, mostly empty strips. */
+@media (max-width: 859.98px) {
+  .chan {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 6px 14px;
+    padding: 16px 18px 18px;
+  }
+
+  .chan__icon {
+    grid-row: 1;
+  }
+
+  .chan__go {
+    grid-row: 1;
+  }
+
+  .chan__value,
+  .chan__detail {
+    grid-column: 1 / -1;
+  }
+
+  .chan__value {
+    margin-top: 6px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 859.98px) {
+  .chan-sec__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* --------------------------------------------------------------------------

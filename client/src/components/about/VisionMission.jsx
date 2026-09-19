@@ -307,6 +307,12 @@ function buildPinned(root, wiring) {
 
   wiring.trigger = timeline.scrollTrigger ?? null;
 
+  /* Triggers refresh in the order they were made. Rebuilt on a rotation, this
+     pin is newer than the charter's below it, which would then be measured
+     without this pin's spacer and start on top of it. Put them back in page
+     order. */
+  ScrollTrigger.sort();
+
   /* ---------------------------------------------------------------- 1. entry
      The pair arrives. Each stroke comes in from the side it lives on and
      rotates the last few degrees into place, so the two read as having been
@@ -557,15 +563,23 @@ export function VisionMission() {
 
     const mm = gsap.matchMedia(root);
 
+    /* The pinned run docks a stroke beside its statement, which needs a
+       landscape stage it can hold whole. A tablet held upright has the height
+       but not the width - the statement is squeezed into a column beside a
+       small stroke with half the stage empty above - and a phone turned on
+       its side has the width but not the height. Both get the flowing version
+       of the same two arrivals instead. */
     mm.add(
       {
-        pinned: '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
-        flowing: '(max-width: 899px) and (prefers-reduced-motion: no-preference)',
+        motion: '(prefers-reduced-motion: no-preference)',
+        stage: '(min-width: 900px) and (min-height: 600px)',
       },
       (context) => {
-        const { pinned, flowing } = context.conditions;
-        if (pinned) return buildPinned(root, wiring.current);
-        if (flowing) buildFlow(root);
+        const { motion, stage } = context.conditions;
+        if (!motion) return undefined;
+        if (stage) return buildPinned(root, wiring.current);
+        buildFlow(root);
+        return undefined;
       },
     );
 

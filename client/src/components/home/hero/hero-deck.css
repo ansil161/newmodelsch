@@ -107,6 +107,21 @@
   border-radius: 4px;
 }
 
+/* A fingertip needs more than a 9px dot. The drawn mark stays a folio; only
+   the invisible hit area grows, centred on the dot: 40px across the index,
+   and the full pitch between dots along it, so neighbours never overlap. */
+@media (pointer: coarse) {
+  .hero-deck__tab::before {
+    content: '';
+    position: absolute;
+    left: 4.5px;
+    top: 50%;
+    width: 40px;
+    height: 27px;
+    transform: translate(-50%, -50%);
+  }
+}
+
 /* Hero 02 puts its type dead centre; the index keeps to the same edge. On
    a phone both heroes need the full width, so the index turns horizontal
    and tucks under the masthead, top right. */
@@ -120,7 +135,7 @@
 
   .hero-deck__list {
     flex-direction: row;
-    gap: 14px;
+    gap: 16px;
   }
 
   .hero-deck__list::before {
@@ -138,6 +153,11 @@
 
   .hero-deck__name {
     display: none;
+  }
+
+  .hero-deck__tab::before {
+    width: 25px;
+    height: 40px;
   }
 }
 

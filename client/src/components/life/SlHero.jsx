@@ -45,6 +45,10 @@ export function SlHero() {
 
     if (reduced()) return;
 
+    // Read once, on purpose: this only chooses how the entrance plays - on a
+    // timeline with the panel, or card by card on scroll - and an entrance
+    // happens once. Nothing below depends on the layout staying on one side
+    // of the breakpoint afterwards.
     const wide = window.matchMedia(WIDE).matches;
 
     const tl = gsap.timeline({ paused: !stageOpen(), defaults: { ease: 'power3.out' } });
@@ -55,7 +59,7 @@ export function SlHero() {
       0,
     )
       .from('.slh__plane', { xPercent: 10, autoAlpha: 0, duration: 1.8, stagger: 0.14, ease: 'power2.out' }, 0.2)
-      .from('.slh__visual', { x: 90, autoAlpha: 0, duration: 1.5 }, 0.25)
+      .from('.slh__visual', { x: wide ? 90 : 36, autoAlpha: 0, duration: 1.5 }, 0.25)
       .from('.slh__visual img', { scale: 1.16, duration: 2.2, ease: 'power2.out' }, 0.25)
       .from('.slh__eyebrow', { y: 12, autoAlpha: 0, duration: 0.8 }, 0.45)
       .from('.slh__line > span', { yPercent: 105, duration: 1.15, ease: 'power4.out', stagger: 0.1 }, 0.5)
@@ -112,7 +116,7 @@ export function SlHero() {
         ease: 'none',
         scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
       });
-    scrub('.slh__visual img', { y: 70 });
+    scrub('.slh__visual img', { y: wide ? 70 : 36 });
     scrub('.slh__pill-slot--a', { y: -34 });
     scrub('.slh__pill-slot--b', { y: -56 });
     scrub('.slh__pill-slot--c', { y: -22 });

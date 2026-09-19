@@ -39,8 +39,7 @@ export function Figure({
         aria-hidden={decorative || undefined}
         loading={eager ? 'eager' : 'lazy'}
         decoding={eager ? 'sync' : 'async'}
-        // @ts-expect-error -- fetchPriority landed in React 19 typings late
-        fetchpriority={eager ? 'high' : undefined}
+        fetchPriority={eager ? 'high' : undefined}
         style={photo.focus ? { objectPosition: photo.focus } : undefined}
       />
       {note ? <figcaption className="fig-note">{note}</figcaption> : null}

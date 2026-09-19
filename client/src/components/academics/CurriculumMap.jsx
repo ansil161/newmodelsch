@@ -10,6 +10,10 @@ import './curriculum-map.css';
 
 const MOTION = '(prefers-reduced-motion: no-preference)';
 const WIDE = '(min-width: 1024px)';
+/* Not read, only watched: turning a device changes the height the fit test
+   below measures against, so it has to be asked again. A phone turned to
+   landscape is two hundred pixels too short for the held frame. */
+const PORTRAIT = '(orientation: portrait)';
 
 /** Screen-heights of scroll per stage while the section is held. */
 const STEP_WIDE = 0.9;
@@ -60,7 +64,7 @@ export function CurriculumMap({ stages, colophon, id }) {
 
       const mm = gsap.matchMedia(root);
 
-      mm.add({ motion: MOTION, wide: WIDE }, (context) => {
+      mm.add({ motion: MOTION, wide: WIDE, portrait: PORTRAIT }, (context) => {
         const { motion, wide } = context.conditions;
         if (!motion) return;
 

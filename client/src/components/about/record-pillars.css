@@ -397,8 +397,8 @@
   }
 
   .pillar__label {
-    font-size: 9.5px;
-    letter-spacing: 0.13em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
   }
 
   .pillar__value {
@@ -452,8 +452,8 @@
   }
 
   .pillar__label {
-    font-size: 10.5px;
-    letter-spacing: 0.17em;
+    font-size: 11px;
+    letter-spacing: 0.15em;
   }
 
   .pillar__value {

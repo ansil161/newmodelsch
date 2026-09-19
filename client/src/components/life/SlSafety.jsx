@@ -168,6 +168,34 @@ function buildMotion(scope) {
         scrollTrigger: { trigger: measures, start: 'top 85%', once: true },
       });
     }
+
+    /* The same scene at a smaller scale: the arc is still drawn round the
+       photograph as it arrives, and the photograph and the card slices keep
+       a few pixels of depth - about half the desktop travel, so a thumb's
+       quick flick never makes a print visibly slide in its frame. */
+    const arc = scope.querySelector('.sw__ring-arc');
+    if (arc && visual) {
+      const len = arc.getTotalLength();
+      gsap.fromTo(
+        arc,
+        { strokeDasharray: len, strokeDashoffset: len },
+        {
+          strokeDashoffset: 0,
+          duration: 1.2,
+          ease: 'power1.inOut',
+          delay: 0.25,
+          scrollTrigger: { trigger: visual, start: 'top 82%', once: true },
+        },
+      );
+    }
+
+    const across = (trigger) => ({ trigger, start: 'top bottom', end: 'bottom top', scrub: true });
+    if (visual) {
+      gsap.fromTo(q('.sw__photo img'), { y: -9 }, { y: 9, ease: 'none', scrollTrigger: across(visual) });
+    }
+    if (measures) {
+      gsap.fromTo(q('.sw-card__fig img'), { y: -4 }, { y: 4, ease: 'none', scrollTrigger: across(measures) });
+    }
   });
 
   return () => mm.revert();

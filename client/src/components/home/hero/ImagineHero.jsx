@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES, SCHOOL } from '@/constants';
 import { useGsapScope } from '@/hooks/useGsapScope';
@@ -83,18 +83,21 @@ function hopAlong(name) {
   const size = parseFloat(getComputedStyle(name).fontSize);
   const lift = size * 0.55;
   const xs = letters.map((l) => l.offsetLeft + l.offsetWidth / 2 - hopper.offsetWidth / 2);
+  // Feet on the top of the capitals, on whichever line the letter sits:
+  // the name wraps onto two lines on a phone.
+  const ys = letters.map((l) => l.offsetTop + size * 0.14 - hopper.offsetHeight);
   // Out from the first letter to the last, then back to the first.
   const path = [...letters.keys()].slice(1).concat([...letters.keys()].reverse().slice(1));
 
-  gsap.set(hopper, { x: xs[0], y: 0, scaleX: 1 });
+  gsap.set(hopper, { x: xs[0], y: ys[0], scaleX: 1 });
   const tl = gsap.timeline({ repeat: -1 });
   path.forEach((to, n) => {
     const from = n === 0 ? 0 : path[n - 1];
     const at = n * HOP;
     tl.set(hopper, { scaleX: xs[to] < xs[from] ? -1 : 1 }, at)
       .to(hopper, { x: xs[to], duration: HOP, ease: 'none' }, at)
-      .to(hopper, { y: -lift, duration: HOP / 2, ease: 'power2.out' }, at)
-      .to(hopper, { y: 0, duration: HOP / 2, ease: 'power2.in' }, at + HOP / 2)
+      .to(hopper, { y: Math.min(ys[from], ys[to]) - lift, duration: HOP / 2, ease: 'power2.out' }, at)
+      .to(hopper, { y: ys[to], duration: HOP / 2, ease: 'power2.in' }, at + HOP / 2)
       .to(letters[to], { y: size * 0.07, duration: 0.1, ease: 'power2.out', yoyo: true, repeat: 1 }, at + HOP);
   });
   return tl;
@@ -321,10 +324,19 @@ export function ImagineHero({ mode = 'load' }) {
         {/* ------------------------------------------------ the name */}
         <p className="ih__school">
           <span className="ih__school-text" aria-label={SCHOOL.name}>
-            {[...SCHOOL.name].map((ch, i) => (
-              <span className="ih__sl" key={i} aria-hidden="true">
-                {ch === ' ' ? ' ' : ch}
-              </span>
+            {/* Letters grouped by word, so the name only ever breaks
+                between words. */}
+            {SCHOOL.name.split(' ').map((word, w) => (
+              <Fragment key={w}>
+                {w > 0 ? ' ' : null}
+                <span className="ih__sw" aria-hidden="true">
+                  {[...word].map((ch, i) => (
+                    <span className="ih__sl" key={i}>
+                      {ch}
+                    </span>
+                  ))}
+                </span>
+              </Fragment>
             ))}
             <span className="ih__hop" aria-hidden="true">
               <svg viewBox="0 0 40 52" focusable="false">

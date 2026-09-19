@@ -853,18 +853,33 @@ export function HomeVoices() {
        sheet. The rail's horizontal position belongs to the index, not to the
        scroll, so the active card is always the whole one. */
     const rail = railRef.current;
-    if (rail && !reduced() && !window.matchMedia(NATIVE_RAIL).matches) {
-      ScrollTrigger.create({
-        trigger: rail,
-        start: 'top 40%',
-        end: 'bottom top',
-        scrub: 0.7,
-        onUpdate: (self) => {
-          depthCards.current.forEach((card, i) => {
-            gsap.set(card, { y: (i % 2 ? 10 : 17) * (1 - self.progress * 2) });
+    const depth = gsap.matchMedia();
+    if (rail) {
+      /* The swipe rail on a phone gets the same lean at under half the
+         travel: the cards are nearer the reader's thumb there, and a large
+         vertical wobble under a horizontal swipe reads as the row slipping.
+         Re-asked live, so turning a tablet rebuilds it at the other size. */
+      depth.add(
+        { wide: LOOP_RAIL, motion: '(prefers-reduced-motion: no-preference)' },
+        ({ conditions }) => {
+          if (!conditions.motion) return undefined;
+          const amp = conditions.wide ? 1 : 0.45;
+          ScrollTrigger.create({
+            trigger: rail,
+            start: 'top 40%',
+            end: 'bottom top',
+            scrub: 0.7,
+            onUpdate: (self) => {
+              depthCards.current.forEach((card, i) => {
+                gsap.set(card, { y: (i % 2 ? 10 : 17) * amp * (1 - self.progress * 2) });
+              });
+            },
           });
+          // Set from a callback, outside the context's record.
+          return () =>
+            depthCards.current.forEach((card) => card && gsap.set(card, { clearProps: 'y' }));
         },
-      });
+      );
     }
 
     /* ---- whether the section is on screen, for the clock. */
@@ -892,6 +907,7 @@ export function HomeVoices() {
     syncAutoplay();
 
     return () => {
+      depth.revert();
       alive.current = false;
       ready.current = false;
       window.removeEventListener('resize', onResize);

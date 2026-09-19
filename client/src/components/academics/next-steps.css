@@ -507,6 +507,33 @@
 }
 
 /* ==========================================================================
+   Below the composed stage - type that scaled with it
+   --------------------------------------------------------------------------
+   The orbit's micro-labels and the card numerals are sized in the stage's
+   own units, which is right on a 1400px stage and illegible on a 320px one.
+   Under the desktop composition they hold at the label floor instead.
+   ========================================================================== */
+@media (max-width: 1179.98px) {
+  .nx__micro {
+    font-size: 3.4px;
+  }
+
+  .nx__badge-label,
+  .nx-card__num {
+    font-size: 0.6875rem;
+  }
+}
+
+/* On a phone the orbit runs past the screen edge by design, and "Class 11"
+   sits outside even the orbit's own box - it would print as half a word.
+   Both micro-labels go; the ticks stay, and the stages are named below. */
+@media (max-width: 479.98px) {
+  .nx__micro {
+    display: none;
+  }
+}
+
+/* ==========================================================================
    Tablet - two columns of panels
    ========================================================================== */
 @media (min-width: 760px) and (max-width: 1179.98px) {

@@ -791,7 +791,9 @@
   border-top: 1px solid var(--line);
 }
 
-@media (min-width: 800px) {
+/* From a tablet held upright there is room for the portrait beside its
+   words; stacked, the column left half the screen empty. */
+@media (min-width: 600px) {
   .alum {
     grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
   }

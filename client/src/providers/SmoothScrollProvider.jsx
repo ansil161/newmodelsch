@@ -103,7 +103,57 @@ export function SmoothScrollProvider({ children }) {
     };
     document.addEventListener('load', onMediaLoad, true);
 
+    // KEEPING THE READER'S PLACE THROUGH A ROTATION.
+    //
+    // A refresh scrolls the page to the top to measure, then puts it back.
+    // When a resize also crosses a breakpoint that a `gsap.matchMedia` block
+    // listens to - a tablet turned from portrait to landscape, a window
+    // dragged past 900px - the media change and the resize each refresh, one
+    // inside the other, and the inner one records the "back" position while
+    // the page is still at the top. The reader lands at the top of the page.
+    //
+    // So the place is remembered here, as a fraction of the scrollable length
+    // rather than a pixel offset, because the page is a different height in
+    // the new orientation. It is taken on the first resize of a burst, before
+    // any refresh has run, and put back after every refresh the burst causes.
+    // Only a width change counts: a phone's address bar collapsing changes the
+    // height alone, and must never move the page under a thumb.
+    let lastWidth = window.innerWidth;
+    let place = null;
+    let placeTimer = 0;
+
+    const maxScroll = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+    const onResize = () => {
+      const width = window.innerWidth;
+      if (width === lastWidth) return;
+      lastWidth = width;
+      if (place === null) {
+        const max = maxScroll();
+        place = max ? window.scrollY / max : 0;
+      }
+      window.clearTimeout(placeTimer);
+      placeTimer = window.setTimeout(() => {
+        place = null;
+      }, 1500);
+    };
+
+    const restorePlace = () => {
+      if (place === null) return;
+      const target = Math.round(place * maxScroll());
+      if (Math.abs(window.scrollY - target) > 2) {
+        lenis.scrollTo(target, { immediate: true, force: true });
+      }
+    };
+
+    window.addEventListener('resize', onResize);
+    ScrollTrigger.addEventListener('refresh', restorePlace);
+
     return () => {
+      window.clearTimeout(placeTimer);
+      window.removeEventListener('resize', onResize);
+      ScrollTrigger.removeEventListener('refresh', restorePlace);
       window.clearTimeout(timer);
       window.clearTimeout(imageTimer);
       document.removeEventListener('load', onMediaLoad, true);

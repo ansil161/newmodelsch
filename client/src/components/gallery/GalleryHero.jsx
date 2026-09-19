@@ -56,6 +56,11 @@ export function GalleryHero() {
       .from('.gal-hero__body > *', { y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, 0.7)
       .from('.gal-hero__stamp', { y: 10, autoAlpha: 0, duration: 0.7 }, 1.2);
 
+    // The split exists for the entrance only. Put the title back once it has
+    // played, so a later resize or rotation re-wraps real text rather than
+    // leaving stale lines to wrap again inside their own clipping masks.
+    tl.eventCallback('onComplete', () => split?.revert());
+
     const release = onStage(() => tl.play());
     return () => {
       release();

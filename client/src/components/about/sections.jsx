@@ -488,7 +488,7 @@ export function AboutAlumni() {
               <Figure
                 photo={facultyImages[5 + (i % 4)]}
                 width={480}
-                sizes="(max-width: 800px) 46vw, 22vw"
+                sizes="(max-width: 599px) 80vw, (max-width: 800px) 30vw, 22vw"
                 shape={i % 2 === 0 ? 'blob' : 'arch'}
                 ratio="portrait"
                 hover

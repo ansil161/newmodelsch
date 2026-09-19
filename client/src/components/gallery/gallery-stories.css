@@ -33,6 +33,9 @@
   padding: 30px var(--gutter) 72px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  /* Snap to the gutter, not the screen edge: without this the first year
+     lands flush against the left of a phone, its title touching the glass. */
+  scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
 }
 
@@ -291,6 +294,14 @@
 
 .gal-strip__hint {
   padding-bottom: 10px;
+}
+
+/* A touch screen has no hover to pause with; a thumb on the strip already
+   stops it, so the cue only offers what the device can do. */
+@media (hover: none) {
+  .gal-strip__hint-hover {
+    display: none;
+  }
 }
 
 .gal-strip__viewport {

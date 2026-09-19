@@ -343,6 +343,50 @@
   margin-top: clamp(28px, 5vw, 40px);
 }
 
+/* --------------------------------------------------------------------------
+   The column, set wide - portrait tablets, and wide screens without motion
+   --------------------------------------------------------------------------
+   Past 600px a single 560px strip leaves a third of the screen dark and
+   stretches each plate to most of a viewport's height. Here each chapter is
+   a plate with its label beside it, the plate taking alternate sides - the
+   same sequence with the same rhythm, composed for the width it has.
+   -------------------------------------------------------------------------- */
+@media (min-width: 600px) and (max-width: 899px),
+  (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .hc-cols {
+    max-width: 1080px;
+    gap: clamp(56px, 8vw, 96px);
+  }
+
+  .hc-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: clamp(28px, 5vw, 64px);
+  }
+
+  .hc-col:nth-child(2) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+
+  .hc-col:nth-child(2) .hc-col__media {
+    order: 2;
+  }
+
+  .hc-col:nth-child(n) .hc-col__media,
+  .hc-col:nth-child(n) .hc-cap {
+    margin: 0;
+  }
+
+  .hc-col__media {
+    height: clamp(320px, 54vw, 480px);
+  }
+
+  .hc-cap {
+    padding-bottom: clamp(4px, 1vw, 12px);
+  }
+}
+
 /* ==========================================================================
    THE TRANSFORMATION - 900px and up, motion allowed
    --------------------------------------------------------------------------

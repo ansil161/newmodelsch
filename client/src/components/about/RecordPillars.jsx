@@ -141,14 +141,44 @@ export function AboutRecord() {
     const shapes = el.querySelectorAll('.record__shape');
     const head = el.querySelector('.record__title');
     const cols = gsap.utils.toArray(el.querySelectorAll('.pillar'));
-    const split = new SplitText(head, { type: 'lines', mask: 'lines', linesClass: 'record__line' });
+    /* The heading's lines are re-split whenever its width changes - a turned
+       tablet, a resized window, a late font - so the reveal never plays, and
+       the finished heading never keeps, line breaks measured for another
+       width. The reveal is a tween the split owns; the timeline below only
+       says when it starts. Once it has played, a re-split lands finished. */
+    let revealed = false;
+    let reveal;
+    const split = SplitText.create(head, {
+      type: 'lines',
+      mask: 'lines',
+      linesClass: 'record__line',
+      autoSplit: true,
+      onSplit: (self) => {
+        reveal = gsap.from(self.lines, {
+          yPercent: 110,
+          duration: 1.2,
+          ease: 'power4.out',
+          stagger: 0.14,
+          paused: true,
+        });
+        if (revealed) reveal.progress(1);
+        return reveal;
+      },
+    });
     const mm = gsap.matchMedia();
 
     const headBeats = (tl, at = 0) => {
       tl.from(shapes, { opacity: 0, y: 40, scale: 0.97, duration: 1.8, ease: 'power2.out', stagger: 0.2 }, at);
       tl.from('.record__eyebrow-rule', { scaleX: 0, transformOrigin: 'left center', duration: 1, ease: 'power3.inOut' }, at + 0.35);
       tl.from('.record__eyebrow-text', { y: 10, opacity: 0, duration: 0.8 }, at + 0.45);
-      tl.from(split.lines, { yPercent: 110, duration: 1.2, ease: 'power4.out', stagger: 0.14 }, at + 0.6);
+      tl.call(
+        () => {
+          revealed = true;
+          reveal?.play();
+        },
+        undefined,
+        at + 0.6,
+      );
       tl.from('.record__lead', { y: 18, opacity: 0, duration: 0.9 }, at + 1.15);
       tl.from('.record__cta', { y: 14, opacity: 0, duration: 0.9 }, at + 1.3);
     };

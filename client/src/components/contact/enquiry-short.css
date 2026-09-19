@@ -306,3 +306,12 @@
     top: calc(var(--nav-h) + 5vh);
   }
 }
+
+/* On a phone the field labels are the only guide to a field's purpose once
+   a parent starts typing, so they are lifted off the 11px label tier. */
+@media (max-width: 599.98px) {
+  .qe__field label,
+  .qe__phone-label {
+    font-size: 0.75rem;
+  }
+}

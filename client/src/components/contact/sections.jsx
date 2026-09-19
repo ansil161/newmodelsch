@@ -8,7 +8,9 @@ import {
 } from '@/constants';
 import { admissionImages, campusImages } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
+import { gsap } from '@/lib/gsap';
 import { draw, drift, lines, rise, unmask } from '@/lib/motion';
+import { Email } from '@/components/common/Email';
 import { Icon } from '@/components/common/Icon';
 import { CTASection, Figure, Mark, SectionHead, Sticker } from '@/components/editorial';
 import './contact.css';
@@ -50,7 +52,15 @@ export function CoHello() {
       start: 'top 90%',
       from: 'bottom',
     });
-    drift(el.querySelector('.hello__fig img'), 60, { trigger: el });
+
+    /* The photograph drifts inside its arch. On a phone the arch is the full
+       width and much shorter on screen, so the same drift runs at a little
+       over half the distance; re-asked live, so a rotation rebuilds it. */
+    const img = el.querySelector('.hello__fig img');
+    const mm = gsap.matchMedia(el);
+    mm.add('(min-width: 900px)', () => drift(img, 60, { trigger: el }));
+    mm.add('(max-width: 899.98px)', () => drift(img, 34, { trigger: el }));
+    return () => mm.revert();
   }, []);
 
   return (
@@ -76,7 +86,7 @@ export function CoHello() {
               {SCHOOL.phone}
             </a>
             <a className="link" href={`mailto:${SCHOOL.email}`}>
-              {SCHOOL.email}
+              <Email>{SCHOOL.email}</Email>
               <Icon name="arrowUpRight" size={15} />
             </a>
           </div>
@@ -124,7 +134,7 @@ export function CoChannels() {
                   <Icon name={channel.icon} size={18} />
                 </span>
                 <span className="chan__label meta">{channel.label}</span>
-                <span className="chan__value">{channel.value}</span>
+                <span className="chan__value"><Email>{channel.value}</Email></span>
                 <span className="chan__detail">{channel.detail}</span>
                 <Icon name="arrowUpRight" size={16} className="chan__go" />
               </a>

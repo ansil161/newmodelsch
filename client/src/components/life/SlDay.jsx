@@ -316,7 +316,7 @@ export function SlDay() {
                     photo={event.photo}
                     ratio="square-ar"
                     shape="square"
-                    sizes="(max-width: 880px) 60vw, 340px"
+                    sizes="(max-width: 599px) 74vw, 340px"
                     width={340}
                     widths={[280, 340, 560, 680]}
                   />
