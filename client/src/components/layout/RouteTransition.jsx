@@ -26,7 +26,8 @@ const MAX_FRAMES = 240;
 /**
  * When the anchor re-checks itself, in ms after the first scroll. These are
  * the moments the page is still capable of changing height: the webfont swap,
- * the smooth-scroll provider's settle timer, and the route's own late refresh.
+ * the smooth-scroll provider's settle timer, and the refresh its layout guard
+ * runs when late images or fonts move the page.
  */
 const CORRECTIONS = [400, 1000, 2200];
 
@@ -82,12 +83,14 @@ export function RouteTransition() {
     main?.setAttribute('tabindex', '-1');
     main?.focus({ preventScroll: true });
 
-    // Late-loading images change document height long after the swap.
-    const timer = window.setTimeout(() => ScrollTrigger.refresh(), 800);
+    // Late-loading images and fonts change the document height long after the
+    // swap. That is SmoothScrollProvider's layout guard's job now: it
+    // re-measures only when the height actually changes, where a timer here
+    // re-measured unconditionally - often just as the reader started to
+    // scroll the new page.
 
     return () => {
       cancelAnimationFrame(raf);
-      window.clearTimeout(timer);
       disposeAnchor?.();
     };
   }, [pathname, hash, navigationType, scrollTo]);

@@ -226,6 +226,5 @@ function buildStrip(el, track, viewport, span) {
     // Dragging and the drift write the offset outside the context's record;
     // clear it so the narrow snap strip does not inherit it.
     gsap.set(track, { clearProps: 'transform' });
-    ScrollTrigger.refresh();
   };
 }

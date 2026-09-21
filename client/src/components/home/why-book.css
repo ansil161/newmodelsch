@@ -165,6 +165,49 @@
 }
 
 /* ==========================================================================
+   A small screen: the same open book, further away
+   ==========================================================================
+   Below 900px the book is not re-laid out. It is composed at the 1280px
+   desktop's size - both pages, both page blocks, the gutter, the boards, the
+   ribbon - and scaled as ONE object by `--wb-k`, which HomeWhy.jsx sets to fit
+   the stage (and at most 92% of the screen's width). Re-laying it out at a
+   phone's width would let the type floors printed on every page take over,
+   and the pages would no longer be the desktop's pages.
+
+   The scale sits on the book itself, from its top-left corner; the tilt that
+   holds it is given the scaled size, so the grid centres what is actually
+   drawn. The camera moves closer by the same factor, so the tilt, the arrival
+   and every turning leaf keep the desktop's depth rather than flattening as
+   the book gets smaller. The reference size (600px pages at 0.74) must match
+   REFERENCE in HomeWhy.jsx. */
+@media (max-width: 899.98px) {
+  .wb {
+    --wb-k: 1;
+  }
+
+  .wb__scene {
+    perspective: calc(2300px * var(--wb-k));
+  }
+
+  .wb:not(.wb--static) .wb__tilt,
+  .wb-static__slot {
+    width: calc(888px * var(--wb-k));
+    height: calc(600px * var(--wb-k));
+  }
+
+  .wb .wb-book {
+    --page-h: 600px;
+    transform: scale(var(--wb-k));
+    transform-origin: 0 0;
+  }
+
+  /* The edition line has no room beside the eyebrow on a phone. */
+  .wb__edition {
+    display: none;
+  }
+}
+
+/* ==========================================================================
    The book
    ========================================================================== */
 .wb-book {
@@ -187,21 +230,6 @@
   width: calc(var(--page-w) * 2);
   height: var(--page-h);
   user-select: none;
-}
-
-.wb-book--single {
-  --ratio: 0.7;
-  /* The floor gives way on a phone turned on its side, where 300px of page
-     and its boards is more than the screen under the masthead. */
-  --page-h: clamp(
-    min(300px, calc(100svh - 130px)),
-    min(calc(100svh - 210px), calc((100vw - 2 * var(--gutter) - 42px) / var(--ratio))),
-    860px
-  );
-  --board-x: 24px;
-  --board-top: 12px;
-  --board-bottom: 22px;
-  width: var(--page-w);
 }
 
 /* ---- on the desk -------------------------------------------------------- */
@@ -309,19 +337,6 @@
   );
 }
 
-.wb-book--single .wb-cover__board--r {
-  left: 12px;
-  width: auto;
-  border-radius: 4px 13px 13px 4px;
-}
-
-.wb-book--single .wb-cover__spine {
-  left: 0;
-  width: 14px;
-  transform: none;
-  border-radius: 10px 2px 2px 10px;
-}
-
 /* ---- the text block: real sheets ---------------------------------------- */
 .wb-stack {
   position: absolute;
@@ -337,10 +352,6 @@
 
 .wb-stack--r {
   left: var(--page-w);
-}
-
-.wb-book--single .wb-stack--r {
-  left: 0;
 }
 
 .wb-sheet {
@@ -401,17 +412,6 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.1));
 }
 
-/* On a phone the tail is shorter and central, so it clears the indicator
-   row beneath the book. */
-.wb-book--single .wb-ribbon {
-  left: 50%;
-  bottom: calc((var(--board-bottom) + 26px) * -1);
-}
-
-.wb-book--single .wb-ribbon::after {
-  bottom: calc(26px + var(--board-bottom) - 6px);
-}
-
 /* ---- pages that never move ---------------------------------------------- */
 .wb-book__base,
 .wb-leaf {
@@ -433,18 +433,10 @@
   left: var(--page-w);
 }
 
-.wb-book--single .wb-book__base--r {
-  left: 0;
-}
-
 /* ---- pages that turn ---------------------------------------------------- */
 .wb-leaf {
   z-index: 10;
   left: var(--page-w);
-}
-
-.wb-book--single .wb-leaf {
-  left: 0;
 }
 
 .wb-seg {
@@ -537,12 +529,6 @@
   );
 }
 
-.wb-book--single .wb-book__gutter {
-  left: 0;
-  width: 14px;
-  background: linear-gradient(90deg, rgba(12, 10, 30, 0.3), rgba(var(--wb-cool), 0));
-}
-
 .wb-book__cast {
   position: absolute;
   z-index: 99;
@@ -563,10 +549,6 @@
     rgba(var(--wb-cool), 0.13) 58%,
     rgba(var(--wb-cool), 0)
   );
-}
-
-.wb-book--single .wb-book__cast--r {
-  left: 0;
 }
 
 .wb-book__cast--l {
@@ -597,10 +579,6 @@
   border-radius: 16% 5px 5px 16% / 1.3% 5px 5px 1.3%;
 }
 
-.wb-page--single {
-  border-radius: 9% 5px 5px 9% / 0.9% 5px 5px 0.9%;
-}
-
 .wb-page--l,
 .wb-page--back {
   border-radius: 5px 16% 16% 5px / 5px 1.3% 1.3% 5px;
@@ -624,17 +602,6 @@
     rgba(var(--wb-warm), 0) 72%,
     rgba(var(--wb-warm), 0.05) 95%,
     rgba(var(--wb-warm), 0.1) 100%
-  );
-}
-
-.wb-page--single::after {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--wb-warm), 0.18) 0%,
-    rgba(255, 255, 255, 0.16) 5%,
-    rgba(255, 255, 255, 0) 11%,
-    rgba(var(--wb-warm), 0) 80%,
-    rgba(var(--wb-warm), 0.08) 100%
   );
 }
 
@@ -667,10 +634,6 @@
 
 .wb-page--r .wb-page__inner {
   padding-inline: 9.4cqi 7cqi;
-}
-
-.wb-page--single .wb-page__inner {
-  padding: 6.6cqi 6.4cqi 7cqi 8.4cqi;
 }
 
 .wb-page p {
@@ -1218,113 +1181,13 @@
   color: var(--blue);
 }
 
-/* ---- a phone's page ----------------------------------------------------- */
-.wb-page--single .wb-head {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 3.4cqi;
-  margin: 4.8cqi 0 2.8cqi;
-}
-
-.wb-page--single .wb-head .wb-ring {
-  width: max(28px, 10cqi);
-  height: max(28px, 10cqi);
-}
-
-/* Beside the ring the heading has to give way, or on a 320px phone it runs
-   past the fore-edge of the page. */
-.wb-page--single .wb-head .wb-h {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-/* A phone's page is a third of a spread's width, so type sized purely in
-   `cqi` falls to 7px on it. The furniture and the labels keep a floor a
-   reader can actually read: 10px for tracked capitals, 11px for sentences. */
-.wb-page--single .wb-run,
-.wb-page--single .wb-meta,
-.wb-page--single .wb-eyebrow,
-.wb-page--single .wb-mark__label,
-.wb-page--single .wb-grid__cap,
-.wb-page--single .wb-quote__src {
-  font-size: max(11px, 1.95cqi);
-  letter-spacing: 0.12em;
-}
-
-.wb-page--single .wb-stat__l,
-.wb-page--single .wb-fig__l,
-.wb-page--single .wb-trio span {
-  font-size: max(11px, 1.85cqi);
-  letter-spacing: 0.08em;
-}
-
-.wb-page--single .wb-cap,
-.wb-page--single .wb-hint {
-  font-size: max(11px, 2cqi);
-}
-
-/* The running head has room for one of its two halves on a phone. The
+/* The running head has room for one of its two halves on a narrow page. The
    school's name is already on the cover; the chapter is what locates you. */
 @container wbpage (max-width: 420px) {
   .wb-run > span:first-child:not(:only-child),
   .wb-meta > span:first-child:not(:only-child) {
     display: none;
   }
-}
-
-.wb-page--single .wb-head .wb-h {
-  margin: 0 !important;
-  max-width: 18ch;
-  font-size: max(16px, 6.6cqi);
-}
-
-.wb-page--single .wb-eyebrow {
-  margin: 4.8cqi 0 2.4cqi !important;
-}
-
-.wb-page--single .wb-display {
-  max-width: 14ch;
-  margin-bottom: 3cqi !important;
-  font-size: max(19px, 8.2cqi);
-}
-
-.wb-page--single .wb-lead,
-.wb-page--single .wb-body {
-  max-width: none;
-  font-size: clamp(11.5px, 3.7cqi, 16px);
-  line-height: 1.5;
-}
-
-.wb-page--single .wb-stats,
-.wb-page--single .wb-fig,
-.wb-page--single .wb-trio {
-  margin-top: 4.4cqi;
-}
-
-.wb-page--single .wb-stat__v {
-  font-size: max(28px, 13cqi);
-}
-
-.wb-page--single .wb-fig__v {
-  font-size: max(26px, 12cqi);
-}
-
-.wb-page--single .wb-frame {
-  min-height: 16cqh;
-}
-
-.wb-page--single .wb-grid {
-  flex: 1.3 1 0;
-  gap: 3.6cqi 3cqi;
-}
-
-.wb-page--single .wb-quote__mark {
-  margin-top: 4cqi;
-}
-
-.wb-page--single .wb-quote {
-  font-size: max(17px, 7.4cqi);
 }
 
 /* ---- a small laptop's spread ---------------------------------------------
@@ -1443,17 +1306,6 @@
 }
 
 /* ==========================================================================
-   Phones and portrait tablets
-   ========================================================================== */
-.wb--single .wb__edition {
-  display: none;
-}
-
-.wb--single .wb-cue {
-  display: none;
-}
-
-/* ==========================================================================
    Reduced motion - the spreads printed flat, one under the other
    ========================================================================== */
 .wb--static .wb__stage {
@@ -1482,6 +1334,3 @@
   --page-h: min(calc((100vw - 2 * var(--gutter) - 70px) / 2 / var(--ratio)), 760px);
 }
 
-.wb-book--static.wb-book--single {
-  --page-h: min(calc((100vw - 2 * var(--gutter) - 42px) / var(--ratio)), 820px);
-}

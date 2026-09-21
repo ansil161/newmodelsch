@@ -33,6 +33,7 @@ export function EditorialTimeline({
     /* WIDE: the reader scrolls, the years travel past a pinned stage and the
        axis fills behind them. */
     mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+      let travel = span();
       setFill(0);
       ScrollTrigger.create({
         trigger: el,
@@ -45,8 +46,12 @@ export function EditorialTimeline({
         scrub: 0.9,
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        // The travel is measured once per refresh, not on every scrub frame.
+        onRefresh: () => {
+          travel = span();
+        },
         onUpdate: (self) => {
-          gsap.set(track, { x: -span() * self.progress });
+          gsap.set(track, { x: -travel * self.progress });
           setFill(self.progress);
         },
       });

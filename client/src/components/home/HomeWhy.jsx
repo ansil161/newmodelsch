@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ADMISSIONS_INTRO, MILESTONES, SCHOOL, STATS, WHY_CHOOSE } from '@/constants';
 import {
   academicImages,
@@ -11,32 +11,30 @@ import {
   studentImages,
 } from '@/constants/imagery';
 import { useGsapScope } from '@/hooks/useGsapScope';
-import { useMediaQuery, useReducedMotion } from '@/hooks/useMediaQuery';
+import { useReducedMotion } from '@/hooks/useMediaQuery';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { useSmoothScroll } from '@/providers/SmoothScrollProvider';
 import { Icon } from '@/components/common/Icon';
 import './why-book.css';
 
-const SPREAD_QUERY = '(min-width: 900px) and (min-aspect-ratio: 11/10)';
+/** Below this width the open book is composed at REFERENCE size and scaled
+ *  as one object (see `fitBook`). The same query as the stylesheet's. */
+const MINI_QUERY = '(max-width: 899.98px)';
+
+/** The spread a small screen's book is composed at: the 1280px desktop's,
+ *  the smallest at which no type floor on a page has kicked in, so what is
+ *  printed is exactly the desktop's composition. Must match why-book.css. */
+const REFERENCE = { pageH: 600, ratio: 0.74 };
 
 /** Page-width fractions of each hinged strip, spine to edge. */
-const SEGMENTS = {
-  spread: [0.44, 0.31, 0.25],
-  single: [0.56, 0.44],
-};
+const SEGMENTS = [0.44, 0.31, 0.25];
 
 /** Extra rotation per strip at the height of the curl, in degrees. The sum
  *  must stay under 57, or the edge passes through the page it lands on. */
-const CURL = {
-  spread: [0, 16, 22],
-  single: [0, 20],
-};
+const CURL = [0, 16, 22];
 
 /** Shear per strip at mid-turn, in degrees: the lower corner leads. */
-const SKEW = {
-  spread: [0, -0.5, -0.9],
-  single: [0, -0.7],
-};
+const SKEW = [0, -0.5, -0.9];
 
 /** Sheets in each side's text block. */
 const SHEETS = 16;
@@ -48,7 +46,7 @@ const TURN = 1;
 const HOLD = 0.55;
 
 /** Viewport heights of scroll per timeline unit. */
-const UNIT = { spread: 0.62, single: 0.5 };
+const UNIT = 0.62;
 
 const reason = (id) => {
   const found = WHY_CHOOSE.find((item) => item.id === id);
@@ -515,117 +513,6 @@ function RightPage({ s }) {
   }
 }
 
-/** A phone's chapter heading: the chapter's icon beside the title. */
-function Heading({ id }) {
-  return (
-    <div className="wb-head" data-rise>
-      <span className="wb-ring">
-        <Icon name={chapter(id).icon} size={24} />
-      </span>
-      <p className="wb-h">{reason(id).title}</p>
-    </div>
-  );
-}
-
-/** A phone's page for spread `s`: its own composition, not the spread. */
-function SinglePage({ s }) {
-  const meta = (id) => (
-    <Meta
-      left={SCHOOL.name}
-      right={id ? <Hint icon={chapter(id).icon} label={chapter(id).label} /> : est}
-    />
-  );
-
-  switch (s) {
-    case 0:
-      return (
-        <Page side="single">
-          {meta()}
-          <Plate photo={PHOTOS.opening} className="wb-frame" />
-          <p className="wb-eyebrow" data-rise>
-            Why choose us
-          </p>
-          <p className="wb-display" data-rise>
-            What makes this place different?
-          </p>
-          <p className="wb-lead" data-rise>
-            {INTRO_LEAD}
-          </p>
-        </Page>
-      );
-    case 1:
-      return (
-        <Page side="single">
-          {meta('results')}
-          <Plate photo={PHOTOS.results} className="wb-frame" />
-          <Heading id="results" />
-          <p className="wb-body" data-rise>
-            {reason('results').description}
-          </p>
-          <BoardStats />
-        </Page>
-      );
-    case 2:
-      return (
-        <Page side="single">
-          {meta('known')}
-          <Plate photo={PHOTOS.known} className="wb-frame" />
-          <Heading id="known" />
-          <p className="wb-body" data-rise>
-            {reason('known').description}
-          </p>
-          <Mentors />
-        </Page>
-      );
-    case 3:
-      return (
-        <Page side="single">
-          {meta('breadth')}
-          <StrandGrid />
-          <Heading id="breadth" />
-          <p className="wb-body" data-rise>
-            {reason('breadth').description}
-          </p>
-        </Page>
-      );
-    case 4:
-      return (
-        <Page side="single" variant="quote">
-          {meta('honesty')}
-          <span className="wb-quote__mark" data-rise />
-          <p className="wb-quote" data-rise>
-            {HONESTY_QUOTE}
-          </p>
-          <Heading id="honesty" />
-          <p className="wb-body" data-rise>
-            {HONESTY_LEAD}
-          </p>
-        </Page>
-      );
-    default:
-      return (
-        <Page side="single">
-          {meta('legacy')}
-          <Plate photo={PHOTOS.legacy} className="wb-frame" />
-          <Heading id="legacy" />
-          <p className="wb-body" data-rise>
-            {reason('legacy').description}
-          </p>
-          <Trio />
-        </Page>
-      );
-  }
-}
-
-/** The reverse of a phone's page, seen only while it turns away. */
-function PaperBack() {
-  return (
-    <div className="wb-page wb-page--back">
-      <div className="wb-page__inner" />
-    </div>
-  );
-}
-
 /* ==========================================================================
    The book
    ========================================================================== */
@@ -650,8 +537,8 @@ function Stack({ side }) {
   );
 }
 
-function Leaf({ index, faces, mode }) {
-  const segments = SEGMENTS[mode];
+function Leaf({ index, faces }) {
+  const segments = SEGMENTS;
 
   const strip = (j, from) => {
     const to = from + segments[j];
@@ -682,78 +569,70 @@ function Leaf({ index, faces, mode }) {
   );
 }
 
-function Book({ mode }) {
-  const single = mode === 'single';
+/* One book at every size. Phones and portrait tablets used to get a book of
+   their own, a single page with its own layout; the open spread is the book,
+   so every screen gets this one, and a small screen sees it scaled whole. */
+function Book() {
   const leaves = Array.from({ length: LEAVES }, (_, k) => ({
     k,
-    faces: single
-      ? { front: <SinglePage s={k} />, back: <PaperBack /> }
-      : { front: <RightPage s={k} />, back: <LeftPage s={k + 1} /> },
+    faces: { front: <RightPage s={k} />, back: <LeftPage s={k + 1} /> },
   }));
 
   return (
-    <div className={`wb-book wb-book--${mode}`} aria-hidden="true">
+    <div className="wb-book" aria-hidden="true">
       <span className="wb-book__contact" />
 
       <span className="wb-cover">
-        {!single && <span className="wb-cover__board wb-cover__board--l" />}
+        <span className="wb-cover__board wb-cover__board--l" />
         <span className="wb-cover__board wb-cover__board--r" />
         <span className="wb-cover__spine" />
       </span>
 
-      {!single && <Stack side="l" />}
+      <Stack side="l" />
       <Stack side="r" />
       <span className="wb-ribbon" />
 
-      {!single && (
-        <div className="wb-book__base wb-book__base--l">
-          <LeftPage s={0} />
-        </div>
-      )}
+      <div className="wb-book__base wb-book__base--l">
+        <LeftPage s={0} />
+      </div>
       <div className="wb-book__base wb-book__base--r">
-        {single ? <SinglePage s={LEAVES} /> : <RightPage s={LEAVES} />}
+        <RightPage s={LEAVES} />
       </div>
 
       {/* Reversed, so before the module runs the natural stacking order
           already has the first leaf on top. */}
       {[...leaves].reverse().map(({ k, faces }) => (
-        <Leaf key={k} index={k} faces={faces} mode={mode} />
+        <Leaf key={k} index={k} faces={faces} />
       ))}
 
       <span className="wb-book__grain" />
       <span className="wb-book__gutter" />
       <span className="wb-book__cast wb-book__cast--r" />
-      {!single && <span className="wb-book__cast wb-book__cast--l" />}
+      <span className="wb-book__cast wb-book__cast--l" />
     </div>
   );
 }
 
 /** Reduced motion: every spread printed flat, in order. */
-function StaticBooks({ mode }) {
+function StaticBooks() {
   return (
     <div className="wb-static" aria-hidden="true">
       {Array.from({ length: SPREADS }, (_, s) => (
-        <div className={`wb-book wb-book--${mode} wb-book--static`} key={s}>
-          <span className="wb-cover">
-            {mode === 'spread' && <span className="wb-cover__board wb-cover__board--l" />}
-            <span className="wb-cover__board wb-cover__board--r" />
-            <span className="wb-cover__spine" />
-          </span>
-          {mode === 'spread' ? (
-            <>
-              <div className="wb-book__base wb-book__base--l">
-                <LeftPage s={s} />
-              </div>
-              <div className="wb-book__base wb-book__base--r">
-                <RightPage s={s} />
-              </div>
-            </>
-          ) : (
-            <div className="wb-book__base wb-book__base--r">
-              <SinglePage s={s} />
+        <div className="wb-static__slot" key={s}>
+          <div className="wb-book wb-book--static">
+            <span className="wb-cover">
+              <span className="wb-cover__board wb-cover__board--l" />
+              <span className="wb-cover__board wb-cover__board--r" />
+              <span className="wb-cover__spine" />
+            </span>
+            <div className="wb-book__base wb-book__base--l">
+              <LeftPage s={s} />
             </div>
-          )}
-          <span className="wb-book__gutter" />
+            <div className="wb-book__base wb-book__base--r">
+              <RightPage s={s} />
+            </div>
+            <span className="wb-book__gutter" />
+          </div>
         </div>
       ))}
     </div>
@@ -777,7 +656,6 @@ function collect(pages) {
 
 function buildBook(
   scope,
-  mode,
   onPage,
   scrollTo,
 ) {
@@ -785,9 +663,8 @@ function buildBook(
   const tilt = scope.querySelector('.wb__tilt');
   if (!book || !tilt) return;
 
-  const single = mode === 'single';
-  const curl = CURL[mode];
-  const skew = SKEW[mode];
+  const curl = CURL;
+  const skew = SKEW;
 
   const leafEls = gsap.utils
     .toArray('.wb-leaf', book)
@@ -819,7 +696,7 @@ function buildBook(
   /** The printed surfaces of spread `s`. */
   const surfaces = (s) => {
     const right = s < L ? leaves[s].front : baseRS;
-    const left = single ? empty : s === 0 ? baseLS : leaves[s - 1].back;
+    const left = s === 0 ? baseLS : leaves[s - 1].back;
     return { left, right };
   };
 
@@ -874,7 +751,7 @@ function buildBook(
     leaves.forEach((leaf, k) => {
       const prog = k < a ? 1 : k > a ? 0 : p;
       const turning = prog > 0 && prog < 1;
-      const visible = Math.abs(k - a) <= 1 && !(single && prog >= 1);
+      const visible = Math.abs(k - a) <= 1;
 
       leaf.el.style.visibility = visible ? '' : 'hidden';
       leaf.el.style.zIndex = String(turning ? 100 : prog >= 0.5 ? 10 + 2 * k : 10 + 2 * (L - k));
@@ -904,7 +781,6 @@ function buildBook(
         if (back) back.style.opacity = phi > 90 ? (light * 0.95).toFixed(3) : '1';
       });
 
-      leaf.el.style.opacity = single ? String(1 - smooth(0.58, 0.9, prog)) : '';
     });
 
     /* ---- the shadow of the moving page --------------------------------- */
@@ -961,7 +837,7 @@ function buildBook(
     scrollTrigger: {
       trigger: scope,
       start: 'top top',
-      end: () => `+=${Math.round(window.innerHeight * UNIT[mode] * TOTAL)}`,
+      end: () => `+=${Math.round(window.innerHeight * UNIT * TOTAL)}`,
       pin: true,
       pinSpacing: true,
       scrub: 0.9,
@@ -1067,27 +943,74 @@ function buildBook(
 }
 
 /* ==========================================================================
+   A small screen's book: the same object, seen from further away
+   ==========================================================================
+   Below 900px a spread's page would be 150-330px wide, and every size printed
+   on it is a fraction of that width with a legibility floor under it. Shrunk
+   that far the floors take over: headings come out relatively larger than on
+   a desktop, push the rest off the page, and the book is no longer the same
+   book. So a small screen's book is composed at REFERENCE size - exactly the
+   desktop's composition - and the whole object is scaled to fit, boards,
+   spine, page blocks, ribbon, shadows and all, the way a photograph of the
+   book would be. One number, `--wb-k`, does it; the stylesheet scales the
+   book and moves the camera closer by the same factor, so the 3D reads the
+   same at any size.
+
+   It fits the stage's middle row (the space the book is given) and at most
+   92% of the screen's width: the complete open book, always inside the
+   screen, never cropped. */
+const COVER = { x: 26, top: 14, bottom: 26, ribbon: 48 };
+const REF_W = REFERENCE.pageH * REFERENCE.ratio * 2 + COVER.x * 2;
+const REF_H = REFERENCE.pageH + COVER.top + COVER.bottom + COVER.ribbon;
+
+function fitBook(section) {
+  const mini = window.matchMedia(MINI_QUERY);
+
+  const fit = () => {
+    if (!mini.matches) {
+      section.style.removeProperty('--wb-k');
+      return;
+    }
+    const area = section.querySelector('.wb__scene');
+    if (!area) return;
+    const width = Math.min(area.clientWidth, window.innerWidth * 0.92);
+    // The flowing reduced-motion column has no height to fit; the pinned
+    // stage does.
+    const height = section.classList.contains('wb--static') ? Infinity : area.clientHeight;
+    const k = Math.min(1, width / REF_W, height / REF_H);
+    section.style.setProperty('--wb-k', k.toFixed(4));
+  };
+
+  fit();
+  const ro = new ResizeObserver(fit);
+  ro.observe(section);
+  mini.addEventListener('change', fit);
+  return () => {
+    ro.disconnect();
+    mini.removeEventListener('change', fit);
+    section.style.removeProperty('--wb-k');
+  };
+}
+
+/* ==========================================================================
    The section
    ========================================================================== */
 
 export function HomeWhy() {
-  const wide = useMediaQuery(SPREAD_QUERY);
   const reduced = useReducedMotion();
-  const mode = wide ? 'spread' : 'single';
 
   const [page, setPage] = useState(0);
   const { scrollTo } = useSmoothScroll();
 
   const scope = useGsapScope(
-    (_, el) => (reduced ? undefined : buildBook(el, mode, setPage, (y) => scrollTo(y))),
-    [mode, reduced],
+    (_, el) => (reduced ? undefined : buildBook(el, setPage, (y) => scrollTo(y))),
+    [reduced],
   );
 
+  useEffect(() => (scope.current ? fitBook(scope.current) : undefined), [scope, reduced]);
+
   /* Thirty-odd printed pages: a change of page must not re-render them. */
-  const book = useMemo(
-    () => (reduced ? <StaticBooks mode={mode} /> : <Book mode={mode} />),
-    [mode, reduced],
-  );
+  const book = useMemo(() => (reduced ? <StaticBooks /> : <Book />), [reduced]);
 
   const current = INDEX[page] ?? INDEX[0];
   const title = page > 0 ? reason(CHAPTERS[page - 1].id).title : '';
@@ -1095,7 +1018,7 @@ export function HomeWhy() {
   return (
     <section
       ref={scope}
-      className={`wb wb--${mode}${reduced ? ' wb--static' : ''}`}
+      className={`wb${reduced ? ' wb--static' : ''}`}
       id="why"
       aria-labelledby="why-title"
     >
@@ -1116,7 +1039,7 @@ export function HomeWhy() {
             </p>
           </header>
 
-          <div className="wb__scene" key={`${mode}-${reduced}`}>
+          <div className="wb__scene" key={reduced ? 'static' : 'live'}>
             <div className="wb__float">
               <div className="wb__tilt">{book}</div>
             </div>

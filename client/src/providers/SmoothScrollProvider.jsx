@@ -62,46 +62,55 @@ export function SmoothScrollProvider({ children }) {
     };
     document.addEventListener('visibilitychange', onVisible);
 
-    // LATE-LOADING PHOTOGRAPHY, AND WHY THIS IS NOW A GUARD RATHER THAN A HOOK.
+    // LATE LAYOUT, AND WHY THIS IS A GUARD RATHER THAN A HOOK.
     //
-    // Interior pages run to ten thousand pixels of lazily-loaded images. This
-    // used to call `ScrollTrigger.refresh()` 180ms after every single one of
-    // them, because an image arriving pushed everything below it down and a
-    // `once` reveal whose start had drifted past the viewport would never fire.
+    // ScrollTrigger measures every start and end once, and anything that
+    // changes the page's height afterwards leaves the triggers below it
+    // pointing at where the content used to be: a reveal fires early or late,
+    // a pin engages a few dozen pixels off. Photographs are not the only late
+    // arrival. The webfonts are served with `display=swap` and land seconds
+    // after first paint, re-wrapping headings; an FAQ answer opens; a route's
+    // lazy sections mount. So the page itself is watched rather than one kind
+    // of event: a ResizeObserver on <body>.
     //
-    // That is no longer true. Every photograph on the site goes through
-    // `Figure`, which reserves its aspect ratio before the file arrives, so a
-    // loading image does not move anything. What the old listener did instead
-    // was feed a loop: on a page with a pinned section, `refresh()` re-measures
-    // the pin spacer, which shifts what is in the viewport, which starts more
-    // lazy loads, which schedules another refresh. On a long page that ran for
-    // seconds and could lock the renderer outright.
+    // It refreshes only when the document height has ACTUALLY changed, and at
+    // most once per settle (250ms after the last change). A refresh can itself
+    // change the height - it re-measures pin spacers - and on a page with a
+    // pinned section that used to feed a loop: refresh, spacer moves, more lazy
+    // loads, refresh. Reading the height back after the refresh breaks it.
     //
-    // So the listener stays, because a stray unsized image in future content
-    // should not silently strand a section - but it only refreshes when the
-    // document height has ACTUALLY changed, and never more than once every
-    // 400ms. In the normal case it now costs one height comparison per image
-    // and does nothing.
-    let imageTimer = 0;
+    // A change of window height alone is ignored: that is a phone's address
+    // bar collapsing mid-scroll, and re-measuring under a moving thumb is the
+    // very jump `ignoreMobileResize` exists to prevent.
+    let layoutTimer = 0;
     let lastHeight = document.documentElement.scrollHeight;
+    let lastView = [window.innerWidth, window.innerHeight];
 
-    const onMediaLoad = (event) => {
-      const target = event.target;
-      if (!target || target.tagName !== 'IMG') return;
-
-      window.clearTimeout(imageTimer);
-      imageTimer = window.setTimeout(() => {
+    const layout = new ResizeObserver(() => {
+      window.clearTimeout(layoutTimer);
+      layoutTimer = window.setTimeout(() => {
         const height = document.documentElement.scrollHeight;
-        if (height === lastHeight) return;
-        lastHeight = height;
+        const view = [window.innerWidth, window.innerHeight];
+        const addressBar = view[0] === lastView[0] && view[1] !== lastView[1];
+        lastView = view;
+        if (height === lastHeight || addressBar) {
+          lastHeight = height;
+          return;
+        }
         refresh();
-        // Read the height back *after* the refresh, so the pin-spacer changes
-        // the refresh itself made are not mistaken for the next image moving
-        // the page. This is the line that breaks the feedback loop.
-        lastHeight = document.documentElement.scrollHeight;
-      }, 400);
+      }, 250);
+    });
+    layout.observe(document.body);
+
+    // The baseline is the height as of the LAST refresh, whoever ran it - a
+    // route settling, a section re-measuring after its own split, this
+    // observer. Read *after* the refresh, so the pin-spacer changes a refresh
+    // makes are never mistaken for the next late change (the line that breaks
+    // the feedback loop), and a component's own refresh is never repeated.
+    const syncHeight = () => {
+      lastHeight = document.documentElement.scrollHeight;
     };
-    document.addEventListener('load', onMediaLoad, true);
+    ScrollTrigger.addEventListener('refresh', syncHeight);
 
     // KEEPING THE READER'S PLACE THROUGH A ROTATION.
     //
@@ -155,8 +164,9 @@ export function SmoothScrollProvider({ children }) {
       window.removeEventListener('resize', onResize);
       ScrollTrigger.removeEventListener('refresh', restorePlace);
       window.clearTimeout(timer);
-      window.clearTimeout(imageTimer);
-      document.removeEventListener('load', onMediaLoad, true);
+      window.clearTimeout(layoutTimer);
+      layout.disconnect();
+      ScrollTrigger.removeEventListener('refresh', syncHeight);
       window.removeEventListener('load', refresh);
       document.removeEventListener('visibilitychange', onVisible);
       gsap.ticker.remove(tick);

@@ -204,8 +204,15 @@ export function AboutRecord() {
       });
 
       // The structure behind moves against the pillars, a few px at most.
+      // It moves as one layer - the ground that holds the shapes - rather than
+      // shape by shape. The entrance above owns the shapes' transforms, and a
+      // parallax on the same elements both fought it for the whole entrance
+      // and saved the entrance's first frame as their "original" style: on a
+      // turned phone, reverting this branch wrote that frame back, and the
+      // phone entrance then animated to it and left the shapes shrunk and
+      // lowered for good. One owner per element.
       gsap.fromTo(
-        shapes,
+        el.querySelector('.record__ground'),
         { y: -14 },
         {
           y: 14,

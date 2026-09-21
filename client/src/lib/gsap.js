@@ -15,7 +15,59 @@ import { Draggable } from 'gsap/Draggable';
 import { Observer } from 'gsap/Observer';
 import { CustomEase } from 'gsap/CustomEase';
 
+/* ONE BREAKPOINT CROSSING, ONE REFRESH.
+
+   Every `gsap.matchMedia().add(query)` on the site registers GSAP's media
+   handler on its own MediaQueryList, and when a tablet turns or a window is
+   dragged past 900px, the browser fires every list that flipped, one after
+   another. GSAP only merges changes that land within 2ms of each other - but
+   each call runs a full revert-and-refresh of every ScrollTrigger on the page
+   synchronously, so the next one always lands later, and a single rotation
+   became seven complete refreshes back to back (about two seconds of frozen
+   main thread on the homepage, measured on a desktop CPU). The first call has
+   already applied every flipped query; the other six re-did its work.
+
+   So the handler's calls are collected and run once, on the next task, by
+   which time every list has flipped and one pass sees them all. This is
+   scoped to the legacy `addListener` API, which GSAP registers with and
+   nothing else here uses (the site's own media queries use
+   `addEventListener`, and are left untouched). */
+function coalesceMediaListeners() {
+  const proto = window.MediaQueryList?.prototype;
+  if (!proto?.addListener || proto.addListener.__coalesced) return;
+
+  const add = proto.addListener;
+  const remove = proto.removeListener;
+  const wrappers = new WeakMap();
+  const queued = new Set();
+
+  const wrap = (fn) => {
+    let wrapper = wrappers.get(fn);
+    if (!wrapper) {
+      wrapper = () => {
+        if (queued.has(fn)) return;
+        queued.add(fn);
+        window.setTimeout(() => {
+          queued.delete(fn);
+          fn();
+        }, 0);
+      };
+      wrappers.set(fn, wrapper);
+    }
+    return wrapper;
+  };
+
+  proto.addListener = function addListener(fn) {
+    return add.call(this, typeof fn === 'function' ? wrap(fn) : fn);
+  };
+  proto.addListener.__coalesced = true;
+  proto.removeListener = function removeListener(fn) {
+    return remove.call(this, wrappers.get(fn) ?? fn);
+  };
+}
+
 if (typeof window !== 'undefined') {
+  coalesceMediaListeners();
   gsap.registerPlugin(ScrollTrigger, SplitText, Draggable, Observer, CustomEase);
 
   /* A CSS cubic-bezier, available to GSAP by name.
